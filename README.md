@@ -1,2 +1,2 @@
 # SYSTEME-DE-RECOMMANDATION-HYBRIDE-
-Stage à KmerAI
+Stage de fin de formation
