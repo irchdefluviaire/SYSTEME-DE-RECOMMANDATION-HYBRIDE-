@@ -1027,38 +1027,86 @@ Son principe est simple : si un candidat possède Python, SQL, statistiques et v
 L'avantage principal du filtrage basé sur le contenu est son interprétabilité relative : on peut expliquer une recommandation par les caractéristiques communes entre le profil et l'offre. Sa limite est qu'il tend à enfermer l'utilisateur dans ce qu'il possède déjà. Si un candidat a un profil statistique, le système peut négliger des trajectoires proches mais exigeant une courte montée en compétences vers la data engineering ou le marketing analytics. Cette limite justifie l'introduction du skill gap et des relations de proximité dans le graphe \cite{pazzani2007content}.
 
 
-\subsection{Filtrage collaboratif (\textit{Collaborative Filtering})}
-Le filtrage collaboratif recommande des items à partir des comportements collectifs observés. L'idée centrale est que deux utilisateurs ayant eu des comportements similaires dans le passé peuvent être intéressés par des items similaires dans le futur. Dans une plateforme d'emploi, cela peut signifier que des candidats ayant des profils et parcours comparables postulent aux mêmes offres, consultent les mêmes formations ou réussissent dans des métiers proches.
+%\subsection{Filtrage collaboratif (\textit{Collaborative Filtering})}
+%Le filtrage collaboratif recommande des items à partir des comportements collectifs observés. L'idée centrale est que deux utilisateurs ayant eu des comportements similaires dans le passé peuvent être intéressés par des items similaires dans le futur. Dans une plateforme d'emploi, cela peut signifier que des candidats ayant des profils et parcours comparables postulent aux mêmes offres, consultent les mêmes formations ou réussissent dans des métiers proches.
 
-Les méthodes collaboratives peuvent être fondées sur la similarité entre utilisateurs, sur la similarité entre items ou sur des modèles factoriels. Les approches de factorisation matricielle, popularisées notamment dans les systèmes de recommandation à grande échelle, apprennent des représentations latentes des utilisateurs et des items à partir d'une matrice d'interactions \cite{koren2009matrix}. Dans le cas emploi-compétences, cette matrice peut contenir des signaux comme \textit{a consulté}, \textit{a postulé}, \textit{a été retenu}, \textit{a suivi la formation} ou \textit{a validé la compétence}.
+%Les méthodes collaboratives peuvent être fondées sur la similarité entre utilisateurs, sur la similarité entre items ou sur des modèles factoriels. Les approches de factorisation matricielle, popularisées notamment dans les systèmes de recommandation à grande échelle, apprennent des représentations latentes des utilisateurs et des items à partir d'une matrice d'interactions \cite{koren2009matrix}. Dans le cas emploi-compétences, cette matrice peut contenir des signaux comme \textit{a consulté}, \textit{a postulé}, \textit{a été retenu}, \textit{a suivi la formation} ou \textit{a validé la compétence}.
 
-L'avantage du filtrage collaboratif est qu'il capte des régularités que les caractéristiques explicites ne révèlent pas toujours. Sa limite est le problème du démarrage à froid : lorsqu'un nouveau candidat ou une nouvelle offre apparaît sans historique d'interaction, le système dispose de peu d'information comportementale. En contexte camerounais, où les données d'interaction peuvent être rares ou peu structurées, cette limite est importante. Il serait donc imprudent de fonder tout le système uniquement sur du collaboratif.
+%L'avantage du filtrage collaboratif est qu'il capte des régularités que les caractéristiques explicites ne révèlent pas toujours. Sa limite est le problème du démarrage à froid : lorsqu'un nouveau candidat ou une nouvelle offre apparaît sans historique d'interaction, le système dispose de peu d'information comportementale. En contexte camerounais, où les données d'interaction peuvent être rares ou peu structurées, cette limite est importante. Il serait donc imprudent de fonder tout le système uniquement sur du collaboratif.
 
 
-\subsection{Filtrage hybride (\textit{Hybrid Filtering})}
-Le filtrage hybride combine plusieurs sources de signal afin de réduire les limites propres à chaque approche. Dans ce mémoire, l'hybridation est particulièrement adaptée, car le problème ne consiste pas seulement à prédire une préférence ; il consiste à évaluer une compatibilité professionnelle, mesurer un écart de compétences et proposer une trajectoire d'amélioration.
+%\subsection{Filtrage hybride (\textit{Hybrid Filtering})}
+%Le filtrage hybride combine plusieurs sources de signal afin de réduire les limites propres à chaque approche. Dans ce mémoire, l'hybridation est particulièrement adaptée, car le problème ne consiste pas seulement à prédire une préférence ; il consiste à évaluer une compatibilité professionnelle, mesurer un écart de compétences et proposer une trajectoire d'amélioration.
 
-Un moteur hybride emploi-compétences peut combiner quatre scores. Le premier est un score sémantique, issu de la proximité vectorielle entre le profil et l'offre. Le deuxième est un score structurel, issu du graphe de connaissances et des relations entre métiers, compétences et formations. Le troisième est un score collaboratif, issu des comportements observés sur la plateforme. Le quatrième est un score de skill gap, qui pénalise les offres pour lesquelles les compétences manquantes sont trop nombreuses ou trop critiques.
+%Un moteur hybride emploi-compétences peut combiner quatre scores. Le premier est un score sémantique, issu de la proximité vectorielle entre le profil et l'offre. Le deuxième est un score structurel, issu du graphe de connaissances et des relations entre métiers, compétences et formations. Le troisième est un score collaboratif, issu des comportements observés sur la plateforme. Le quatrième est un score de skill gap, qui pénalise les offres pour lesquelles les compétences manquantes sont trop nombreuses ou trop critiques.
 
-Une formulation simple du score hybride peut être donnée par :
+%Une formulation simple du score hybride peut être donnée par :
 
-\begin{equation}
-Score_{hyb} =
-\alpha S_{sem} + \beta S_{graph} + \gamma S_{collab} - \delta Gap
-\end{equation}
+%\begin{equation}
+%Score_{hyb} =
+%\alpha S_{sem} + \beta S_{graph} + \gamma S_{collab} - \delta Gap
+%\end{equation}
 
-où $S_{sem}$ désigne la similarité sémantique, $S_{graph}$ la proximité structurelle dans le graphe, $S_{collab}$ le signal collaboratif, $Gap$ l'écart de compétences, et $\alpha$, $\beta$, $\gamma$, $\delta$ des poids à calibrer empiriquement.
+%où $S_{sem}$ désigne la similarité sémantique, $S_{graph}$ la proximité structurelle dans le graphe, $S_{collab}$ le signal collaboratif, $Gap$ l'écart de compétences, et $\alpha$, $\beta$, $\gamma$, $\delta$ des poids à calibrer empiriquement.
 
-L'intérêt d'une telle architecture est double. D'abord, elle améliore la robustesse du système : si les interactions collaboratives sont faibles, le contenu et le graphe restent exploitables ; si les descriptions textuelles sont ambiguës, le graphe fournit une structure de contrôle. Ensuite, elle améliore l'explicabilité : le système peut indiquer qu'une offre est recommandée parce que le profil est sémantiquement proche, que plusieurs compétences clés sont déjà acquises, que le métier appartient à une trajectoire proche, et que deux formations permettent de combler les compétences manquantes.
+%L'intérêt d'une telle architecture est double. D'abord, elle améliore la robustesse du système : si les interactions collaboratives sont faibles, le contenu et le graphe restent exploitables ; si les descriptions textuelles sont ambiguës, le graphe fournit une structure de contrôle. Ensuite, elle améliore l'explicabilité : le système peut indiquer qu'une offre est recommandée parce que le profil est sémantiquement proche, que plusieurs compétences clés sont déjà acquises, que le métier appartient à une trajectoire proche, et que deux formations permettent de combler les compétences manquantes.
 
-La recommandation hybride est donc cohérente avec l'objectif général du mémoire. Elle permet de dépasser une logique naïve de mots-clés pour construire un système capable de raisonner sur les compétences, les relations entre métiers et les parcours de montée en qualification \cite{burke2002hybrid,ricci2011recommender}.
+%La recommandation hybride est donc cohérente avec l'objectif général du mémoire. Elle permet de dépasser une logique naïve de mots-clés pour construire un système capable de raisonner sur les compétences, les relations entre métiers et les parcours de montée en qualification \cite{burke2002hybrid,ricci2011recommender}.
 
 
 
 % ============================================================
 \section{Recherche sémantique et Génération Augmentée par Récupération (\RAG{}) et GraphRAG}
 % ============================================================
- 
+
+La recherche sémantique consiste à représenter une requête et un ensemble de documents dans un même espace vectoriel, puis à classer les documents selon leur proximité avec la requête. Contrairement à une recherche par mots-clés, elle ne dépend pas uniquement de la présence des mêmes termes. Elle cherche plutôt à capturer la proximité de sens entre deux formulations. Dans le cadre de ce mémoire, cette propriété est essentielle : un profil mentionnant \og analyse statistique, tableaux de bord et SQL \fg{} doit pouvoir être rapproché d'une offre de \og data analyst \fg{}, même lorsque les formulations exactes ne se recouvrent pas.
+
+La \RAG{} prolonge cette logique en combinant deux opérations : une étape de récupération d'information et une étape de génération. Le système commence par rechercher des passages, documents ou objets structurés pertinents dans une base externe ; il transmet ensuite ces éléments à un modèle génératif, qui produit une réponse conditionnée par le contexte récupéré \cite{lewis2020rag}. Son fonctionnement peut être décomposé en cinq étapes. Premièrement, les documents sont préparés, découpés si nécessaire, puis encodés sous forme de vecteurs. Deuxièmement, ces vecteurs sont stockés dans un index ou une base vectorielle. Troisièmement, lorsqu'une requête arrive, elle est encodée dans le même espace vectoriel que les documents. Quatrièmement, le système récupère les éléments les plus proches selon une mesure comme la similarité cosinus. Cinquièmement, ces éléments sont ajoutés au prompt du modèle génératif afin qu'il produise une réponse fondée sur le contexte récupéré.
+
+Dans cette architecture, le modèle de langage ne répond donc pas seulement à partir de ses connaissances internes. Il reçoit un contexte externe, généralement plus récent, plus spécifique ou plus local que ce qu'il a appris pendant son entraînement. L'intérêt est double. D'une part, le modèle génératif n'est plus obligé de s'appuyer uniquement sur ses paramètres internes, qui peuvent être incomplets ou obsolètes. D'autre part, la réponse peut être rattachée à des sources ou à des éléments vérifiables. Cette architecture reste toutefois fragile lorsque la récupération initiale est mauvaise : si le contexte fourni au modèle est incomplet, bruité ou mal classé, la génération finale peut devenir convaincante en surface mais faible sur le fond.
+
+Dans un système de recommandation emploi-compétences, une \RAG{} purement vectorielle permettrait par exemple de récupérer les offres les plus proches du profil d'un candidat, puis de générer une explication en langage naturel. Cette solution améliore la lisibilité de la recommandation, mais elle reste insuffisante pour juger la compatibilité professionnelle. Deux profils peuvent être proches sémantiquement tout en étant séparés par un niveau de qualification, une contrainte de localisation, une compétence obligatoire ou un domaine de formation. Une offre peut aussi ressembler lexicalement à un profil sans être réellement accessible au candidat.
+
+Le GraphRAG répond à cette limite en introduisant un graphe de connaissances dans la boucle de récupération. Au lieu de transmettre seulement des textes proches, le système récupère également des relations explicites : un candidat possède certaines compétences, une offre en exige d'autres, un métier est associé à des compétences, une formation prépare à un métier, un niveau \NCF{} contraint l'accès à certaines offres, et un groupe \MEPC{} situe le métier dans une nomenclature nationale. Le mécanisme change donc la nature du contexte : la récupération ne porte plus seulement sur des documents similaires, mais aussi sur des chemins de graphe, des voisins, des contraintes et des relations typées. Le graphe permet ainsi de passer d'une proximité textuelle à une explication relationnelle. Il ne se contente pas de dire que deux textes sont proches ; il peut indiquer par quels chemins ils le sont, et quelles contraintes restent bloquantes.
+
+Concrètement, une requête du type \og recommander une offre à ce candidat \fg{} peut suivre deux voies complémentaires. La voie vectorielle retrouve les offres proches du profil dans l'espace des embeddings. La voie graphe vérifie ensuite les relations explicites : niveau de formation requis, compétences possédées, compétences manquantes, métier visé, secteur et formations possibles. Le GraphRAG assemble ces deux familles d'information avant la génération. La réponse finale peut donc expliquer qu'une offre est retenue non seulement parce qu'elle est proche textuellement, mais aussi parce que le candidat possède plusieurs compétences clés, que le niveau \NCF{} est compatible et que les compétences manquantes peuvent être couvertes par des formations identifiées.
+
+Pour le présent projet, cette distinction est déterminante. Le modèle d'embeddings fine-tuné sert à produire une première liste d'offres candidates par similarité sémantique. Neo4j sert ensuite à contrôler cette liste par les relations métier--compétence--formation. Enfin, la couche générative cible doit verbaliser les résultats sans inventer les justifications. Le \LLM{} intervient donc comme un rédacteur contrôlé par le contexte, et non comme une autorité autonome sur la compatibilité professionnelle.
+
+\begin{figure}[H]
+  \centering
+  \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
+  \label{fig:rag_graphrag_agentic_rag}
+  \includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
+  \source{Figure reprise du dossier du projet, inspirée de l'article Medium sur l'Agentic RAG \cite{nimeesha2024agenticrag}}
+\end{figure}
+
+La figure \ref{fig:rag_graphrag_agentic_rag} illustre la rupture entre une \RAG{} traditionnelle et une architecture agentique. Dans le flux traditionnel, la requête traverse une chaîne relativement fixe : indexation, récupération d'un document, génération, puis réponse finale. Dans le flux agentique, la requête passe par un ou plusieurs agents capables de coordonner la récupération, de solliciter plusieurs outils et d'organiser la réponse. L'image met surtout en évidence que l'Agentic RAG n'est pas seulement une meilleure recherche documentaire ; c'est une organisation dynamique de la recherche et de la génération.
+
+\section{Agentic RAG}
+
+L'Agentic RAG désigne une extension de la \RAG{} dans laquelle la récupération n'est plus une étape fixe et unique, mais une séquence pilotée par un agent. L'idée, mise en avant dans les travaux récents sur les agents outillés et illustrée dans des synthèses techniques comme l'article Medium consulté \cite{nimeesha2024agenticrag}, est de remplacer une chaîne linéaire \og requête--recherche--génération \fg{} par une boucle plus adaptative : planifier, appeler un outil, observer le résultat, décider si l'information est suffisante, puis continuer ou produire la réponse. Cette logique rejoint les modèles de raisonnement-action tels que ReAct, où un modèle alterne raisonnement et usage d'outils externes \cite{yao2023react}.
+
+La différence avec une \RAG{} classique est importante. Dans une \RAG{} standard, la stratégie de récupération est déterminée à l'avance : le système récupère, par exemple, les dix documents les plus proches puis génère une réponse. Dans un Agentic RAG, le système peut décider que les documents récupérés sont insuffisants, reformuler la requête, interroger une autre base, vérifier une contrainte ou demander un calcul complémentaire. Des approches comme Self-RAG montrent également l'intérêt d'introduire des mécanismes de critique ou d'auto-vérification afin de décider quand récupérer de l'information et comment contrôler la génération \cite{asai2024selfrag}.
+
+Son fonctionnement repose donc sur quatre composantes. La première est un planificateur, qui transforme l'objectif utilisateur en étapes : chercher, vérifier, comparer, expliquer. La deuxième est une bibliothèque d'outils, par exemple une base vectorielle, un graphe de connaissances, un module de scoring ou une API métier. La troisième est une mémoire ou une trace d'exécution, qui conserve les observations produites à chaque étape. La quatrième est un module de contrôle, qui vérifie si la réponse est suffisamment fondée avant de la présenter. Sans ce contrôle, l'agentivité devient un risque : le système peut multiplier les actions sans améliorer la vérité de la réponse.
+
+Dans le cadre du matching emploi-compétences, l'Agentic RAG ne doit pas être compris comme un agent libre qui \og pense \fg{} à la place de l'expert. Ce serait méthodologiquement fragile. Il doit plutôt être conçu comme une orchestration contrôlée de fonctions spécialisées. Le système peut, par exemple, recevoir l'objectif suivant : recommander des offres accessibles à un candidat et proposer une trajectoire de montée en compétences. L'agent transforme alors cet objectif en un plan opérationnel :
+
+\begin{enumerate}
+    \item récupérer le profil normalisé du candidat;
+    \item rechercher les offres proches dans la base vectorielle \texttt{pgvector};
+    \item vérifier dans Neo4j les contraintes de niveau \NCF{}, de secteur, de localisation et de compétences;
+    \item calculer le \emph{skill gap} pour les offres présélectionnées;
+    \item pénaliser les offres présentant trop de compétences essentielles manquantes;
+    \item générer une justification fondée sur les scores, les relations du graphe et les formations associées.
+\end{enumerate}
+
+La plus-value est donc différente de celle d'un simple modèle de langue. Un Agentic RAG apporte une capacité d'orchestration : il combine recherche sémantique, interrogation du graphe, calcul de score, contrôle des contraintes et verbalisation finale. Dans un système emploi-formation, cette orchestration est précieuse parce que la bonne recommandation n'est pas nécessairement l'offre textuellement la plus proche. Elle est l'offre dont la proximité sémantique, la compatibilité institutionnelle, les compétences requises et les possibilités de formation forment un ensemble cohérent.
+
+Pour éviter l'effet de mode, il faut toutefois poser des limites claires. Un Agentic RAG n'améliore pas automatiquement la qualité d'un système. S'il appelle de mauvais outils, s'il dispose d'un graphe incomplet ou s'il n'enregistre pas ses décisions, il peut produire des recommandations plus complexes mais pas plus fiables. Dans ce mémoire, l'agentivité doit donc être envisagée comme une couche cible d'orchestration explicable : les scores restent calculés par le code, les contraintes sont vérifiées dans les données, les chemins de graphe sont traçables, et le \LLM{} sert à organiser et formuler la réponse. Cette position est plus défendable qu'une présentation vague où l'agent serait supposé prendre de meilleures décisions par lui-même.
+
+Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le modèle d'embeddings propose des candidats, le graphe vérifie et explique, le module de scoring classe, le générateur rédige, et l'agent coordonne la séquence en fonction de l'objectif. La valeur ajoutée scientifique tient alors à l'articulation entre représentation vectorielle, raisonnement relationnel et contrôle génératif ; la valeur ajoutée opérationnelle tient à la capacité d'expliquer non seulement quelle offre est recommandée, mais aussi pourquoi elle est accessible, quelles compétences manquent et quelles formations peuvent réduire cet écart.
 
 
 \chapter{Approche méthodologique et données}
