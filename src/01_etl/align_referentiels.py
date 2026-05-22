@@ -25,10 +25,10 @@ from config import (
 from utils import clean_whitespace, log
 
 ESCO_DIR = DATA_RAW / "esco"
-ESCO_OCC_PATH   = Path("/mnt/user-data/uploads/occupations_fr.csv")
-ESCO_SKILLS_PATH = Path("/mnt/user-data/uploads/skills_fr.csv")
-ESCO_ISCO_PATH  = Path("/mnt/user-data/uploads/ISCOGroups_fr.csv")
-ESCO_REL_PATH   = Path("/mnt/user-data/uploads/occupationSkillRelations_fr.csv")
+ESCO_OCC_PATH    = ESCO_DIR / "occupations_fr.csv"
+ESCO_SKILLS_PATH = ESCO_DIR / "skills_fr.csv"
+ESCO_ISCO_PATH   = ESCO_DIR / "ISCOGroups_fr.csv"
+ESCO_REL_PATH    = ESCO_DIR / "occupationSkillRelations_fr.csv"
 
 
 # ─────────────────────────────────────────────────────────────────

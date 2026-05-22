@@ -72,14 +72,15 @@ def load_model(model_path: str):
     from sentence_transformers import SentenceTransformer
 
     path = Path(model_path)
-    if path.exists():
+    if path.exists() and (path / "modules.json").exists():
         log.info(f"Chargement modèle fine-tuné : {model_path}")
     else:
-        log.warning(f"Modèle fine-tuné absent ({model_path})")
-        log.warning(f"  → Fallback sur : {MODEL_FALLBACK}")
+        reason = "absent" if not path.exists() else "incomplet (modules.json absent)"
+        log.warning(f"Modèle fine-tuné {reason} : {model_path}")
+        log.warning(f"  -> Fallback sur : {MODEL_FALLBACK}")
         model_path = MODEL_FALLBACK
 
-    model = SentenceTransformer(model_path)
+    model = SentenceTransformer(model_path, local_files_only=True)
     dim   = model.get_sentence_embedding_dimension()
     n_par = sum(p.numel() for p in model.parameters())
     log.info(f"  Dimension   : {dim}d")
