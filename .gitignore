@@ -10,7 +10,7 @@ __pycache__/
 >>>>>>> 4083789 (Initial commit)
 # C extensions
 *.so
-
+.vscode
 # Distribution / packaging
 .Python
 build/
