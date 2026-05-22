@@ -4,7 +4,7 @@
 -- Système de recommandation emploi-compétences · Cameroun
 --
 -- Exécution :
---   psql -U postgres -d recommandation -f schema_pgvector.sql
+--   psql -U postgres -d test_kmer -f schema_pgvector.sql
 -- ============================================================
 
 -- ── EXTENSIONS ────────────────────────────────────────────────

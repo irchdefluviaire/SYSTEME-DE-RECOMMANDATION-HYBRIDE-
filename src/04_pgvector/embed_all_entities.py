@@ -22,7 +22,7 @@ Usage :
   python embed_all_entities.py --model ./models/st_finetuned/final
 
 Dépendances :
-  pip install sentence-transformers psycopg2-binary pandas pyarrow
+  pip install sentence-transformers psycopg[binary] pandas pyarrow
 ===========================================================================
 """
 
@@ -38,6 +38,8 @@ from typing import Optional
 import numpy as np
 import pandas as pd
 
+from config_pgvector import ESCO_DIR, MODEL_BASE, MODEL_PATH, PG_CONN
+
 log = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
@@ -48,18 +50,8 @@ logging.basicConfig(
 # ── Chemins ────────────────────────────────────────────────────────────────
 ROOT      = Path(__file__).resolve().parent.parent.parent
 PROC      = ROOT / "data" / "processed"
-ESCO_DIR  = Path("/mnt/user-data/uploads")
-MODEL_DIR = ROOT / "models" / "st_finetuned" / "final"
-MODEL_FALLBACK = "sentence-transformers/all-MiniLM-L6-v2"
-
-# ── Config PostgreSQL (adapter selon installation) ─────────────────────────
-PG_CONN = {
-    "host":     "localhost",
-    "port":     5432,
-    "dbname":   "recommandation",
-    "user":     "postgres",
-    "password": "postgres",
-}
+MODEL_DIR = MODEL_PATH
+MODEL_FALLBACK = MODEL_BASE
 
 # ── Paramètres d'encodage ──────────────────────────────────────────────────
 DEFAULT_BATCH_SIZE    = 64
@@ -100,8 +92,8 @@ def load_model(model_path: str):
 # ─────────────────────────────────────────────────────────────────────────
 
 def get_pg_conn():
-    import psycopg2
-    conn = psycopg2.connect(**PG_CONN)
+    import psycopg
+    conn = psycopg.connect(**PG_CONN)
     log.info("Connexion PostgreSQL OK")
     return conn
 
@@ -112,16 +104,7 @@ def create_schema(conn):
     with open(sql_path, encoding="utf-8") as f:
         sql = f.read()
     with conn.cursor() as cur:
-        # Exécuter statement par statement (ignorer commentaires)
-        statements = [s.strip() for s in sql.split(";")
-                      if s.strip() and not s.strip().startswith("--")]
-        for stmt in statements:
-            try:
-                cur.execute(stmt)
-            except Exception as e:
-                conn.rollback()
-                if "already exists" not in str(e).lower():
-                    log.warning(f"Schema warning: {e}")
+        cur.execute(sql)
     conn.commit()
     log.info("Schéma pgvector créé/vérifié")
 

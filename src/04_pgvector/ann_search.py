@@ -317,9 +317,9 @@ def main():
     parser.add_argument("--top-k",     type=int, default=10)
     args = parser.parse_args()
 
-    import psycopg2
+    import psycopg
     from embed_all_entities import PG_CONN, load_model, DEFAULT_MODEL_PATH
-    conn = psycopg2.connect(**PG_CONN)
+    conn = psycopg.connect(**PG_CONN)
 
     if args.eval:
         model = load_model(DEFAULT_MODEL_PATH)
