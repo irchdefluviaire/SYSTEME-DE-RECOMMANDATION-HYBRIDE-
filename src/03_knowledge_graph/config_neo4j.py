@@ -13,7 +13,7 @@ from pathlib import Path
 # ── CONNEXION NEO4J ────────────────────────────────────────────────────────
 NEO4J_URI      = "bolt://localhost:7687"
 NEO4J_USER     = "neo4j"
-NEO4J_PASSWORD = "1234567890"          # À adapter selon votre installation
+NEO4J_PASSWORD = "15081960"            # À adapter selon votre installation
 NEO4J_DATABASE = "neo4j"             # Base de données cible
 
 # ── CHEMINS ────────────────────────────────────────────────────────────────
