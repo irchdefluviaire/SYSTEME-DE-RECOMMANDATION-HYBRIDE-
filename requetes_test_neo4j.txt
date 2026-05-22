@@ -1,0 +1,199 @@
+REQUETES CYPHER POUR TESTER LA BASE NEO4J
+=========================================
+
+1. Vue globale
+--------------
+
+Titre : Compter les noeuds par type
+MATCH (n)
+RETURN labels(n) AS labels, count(n) AS total
+ORDER BY total DESC;
+
+Titre : Compter les relations par type
+MATCH ()-[r]->()
+RETURN type(r) AS relation, count(r) AS total
+ORDER BY total DESC;
+
+
+2. Verifier les entites principales
+-----------------------------------
+
+Titre : Afficher un echantillon d'offres d'emploi
+MATCH (o:OffreEmploi)
+RETURN o
+LIMIT 20;
+
+Titre : Afficher un echantillon de candidats
+MATCH (c:Candidat)
+RETURN c
+LIMIT 20;
+
+Titre : Afficher un echantillon de competences ESCO
+MATCH (s:`Competence`)
+RETURN s.preferredLabel, s.skillType, s.isDigital, s.isGreen
+LIMIT 20;
+
+Titre : Afficher un echantillon de metiers ESCO
+MATCH (m:`Metier`)
+RETURN m.preferredLabel, m.description
+LIMIT 20;
+
+
+3. Tester offres, secteurs, employeurs, villes
+----------------------------------------------
+
+Titre : Repartition des offres par secteur
+MATCH (o:OffreEmploi)-[:DANS_SECTEUR]->(s:Secteur)
+RETURN s.nom AS secteur, count(o) AS nb_offres
+ORDER BY nb_offres DESC
+LIMIT 20;
+
+Titre : Repartition des offres par employeur
+MATCH (o:OffreEmploi)-[:PUBLIEE_PAR]->(e:Employeur)
+RETURN e.nom AS employeur, count(o) AS nb_offres
+ORDER BY nb_offres DESC
+LIMIT 20;
+
+Titre : Repartition des offres par localisation
+MATCH (o:OffreEmploi)-[:LOCALISEE_A]->(l:Localisation)
+RETURN l.nom AS ville, count(o) AS nb_offres
+ORDER BY nb_offres DESC
+LIMIT 20;
+
+
+4. Tester ESCO : metiers vers competences
+-----------------------------------------
+
+Titre : Metiers ESCO avec le plus grand nombre de competences requises
+MATCH (m:`Metier`)-[:NECESSITE]->(s:`Competence`)
+RETURN m.preferredLabel AS metier,
+       collect(s.preferredLabel)[0..10] AS competences,
+       count(s) AS nb_competences
+ORDER BY nb_competences DESC
+LIMIT 10;
+
+Titre : Competences ESCO les plus transversales
+MATCH (s:`Competence`)<-[:NECESSITE]-(m:`Metier`)
+RETURN s.preferredLabel AS competence,
+       count(m) AS nb_metiers
+ORDER BY nb_metiers DESC
+LIMIT 20;
+
+
+5. Tester MEPC
+--------------
+
+Titre : Afficher les grands groupes MEPC
+MATCH (g:GrandGroupeMEPC)
+RETURN g
+LIMIT 20;
+
+Titre : Groupes MEPC les plus relies aux metiers ESCO
+MATCH (m:`Metier`)-[:CORRESPOND_MEPC]->(g:GroupeBaseMEPC)
+RETURN g.libelle AS groupe_mepc,
+       count(m) AS nb_metiers_esco
+ORDER BY nb_metiers_esco DESC
+LIMIT 20;
+
+Titre : Alignement entre groupes de base MEPC et groupes ISCO
+MATCH (g:GroupeBaseMEPC)-[:ALIGNE_AVEC]->(i:GroupeISCO)
+RETURN g.code AS code_mepc,
+       g.libelle AS groupe_mepc,
+       i.code AS code_isco,
+       i.preferredLabel AS groupe_isco
+LIMIT 30;
+
+
+6. Tester NCF
+-------------
+
+Titre : Afficher les niveaux de formation NCF
+MATCH (n:NiveauFormationNCF)
+RETURN n
+ORDER BY n.code;
+
+Titre : Hierarchie NCF entre grands domaines et domaines specialises
+MATCH (g:GrandDomaineNCF)-[:CONTIENT]->(s:`DomaineSpecialiseNCF`)
+RETURN g.libelle AS grand_domaine,
+       collect(s.libelle)[0..10] AS domaines_specialises,
+       count(s) AS nb
+ORDER BY nb DESC;
+
+Titre : Hierarchie NCF entre domaines specialises et domaines detailles
+MATCH (s:`DomaineSpecialiseNCF`)-[:CONTIENT]->(d:`DomaineDetailleNCF`)
+RETURN s.libelle AS domaine_specialise,
+       collect(d.libelle)[0..10] AS domaines_detailles,
+       count(d) AS nb
+ORDER BY nb DESC
+LIMIT 20;
+
+
+7. Tester candidats et formation
+--------------------------------
+
+Titre : Repartition des candidats par niveau de formation
+MATCH (c:Candidat)-[:A_NIVEAU]->(n:NiveauFormationNCF)
+RETURN n.libelle AS niveau,
+       count(c) AS nb_candidats
+ORDER BY nb_candidats DESC;
+
+Titre : Formations detaillees NCF les plus presentes chez les candidats
+MATCH (c:Candidat)-[:A_FORMATION]->(d:`DomaineDetailleNCF`)
+RETURN d.libelle AS formation,
+       count(c) AS nb_candidats
+ORDER BY nb_candidats DESC
+LIMIT 20;
+
+
+8. Requete de parcours utile pour le systeme hybride
+----------------------------------------------------
+
+Titre : Parcours candidat vers formation, metier et competences
+MATCH path =
+  (c:Candidat)-[:A_FORMATION]->(d:`DomaineDetailleNCF`)
+  -[:PREPARE_POUR]->(m:`Metier`)
+  -[:NECESSITE]->(s:`Competence`)
+RETURN c, d, m, s
+LIMIT 25;
+
+
+9. Audit des anomalies
+----------------------
+
+Titre : Detecter les offres sans secteur
+MATCH (o:OffreEmploi)
+WHERE NOT (o)-[:DANS_SECTEUR]->(:Secteur)
+RETURN count(o) AS offres_sans_secteur;
+
+Titre : Detecter les offres sans employeur
+MATCH (o:OffreEmploi)
+WHERE NOT (o)-[:PUBLIEE_PAR]->(:Employeur)
+RETURN count(o) AS offres_sans_employeur;
+
+Titre : Detecter les metiers sans competence requise
+MATCH (m:`Metier`)
+WHERE NOT (m)-[:NECESSITE]->(:`Competence`)
+RETURN count(m) AS metiers_sans_competence;
+
+Titre : Detecter les candidats sans niveau de formation
+MATCH (c:Candidat)
+WHERE NOT (c)-[:A_NIVEAU]->(:NiveauFormationNCF)
+RETURN count(c) AS candidats_sans_niveau;
+
+
+10. Points critiques a verifier apres le chargement
+---------------------------------------------------
+
+Titre : Verifier l'existence des relations PLUS_LARGE_QUE
+MATCH ()-[r:PLUS_LARGE_QUE]->()
+RETURN count(r) AS nb_plus_large_que;
+
+Titre : Verifier la hierarchie MEPC depuis les grands groupes
+MATCH (:GrandGroupeMEPC)-[r:CONTIENT]->()
+RETURN count(r) AS contient_mepc_grand;
+
+Remarque critique :
+Si les deux dernieres requetes retournent 0, il faut auditer le chargement
+des relations hierarchiques dans src/03_knowledge_graph/load_neo4j.py.
+Un graphe avec des noeuds sans structure relationnelle coherente est
+statistiquement pauvre et peu explicable pour un systeme de recommandation.
