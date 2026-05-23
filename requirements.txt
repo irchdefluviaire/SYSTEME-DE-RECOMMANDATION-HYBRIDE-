@@ -29,3 +29,11 @@ pgvector>=0.3.0
 openai>=1.40.0
 mistralai>=1.0.0
 python-dotenv>=1.0.0
+
+# Agentic GraphRAG / LangGraph Studio
+langchain>=1.0.0
+langchain-core>=1.0.0
+langchain-ollama>=1.0.0
+langgraph>=1.0.0
+langgraph-cli[inmem]>=0.4.0
+langsmith>=0.4.0

@@ -3,7 +3,7 @@ load_neo4j.py
 ===========================================================================
 Module 03 — Chargement du Graphe de Connaissances Neo4j
 
-Pipeline de chargement en 7 étapes ordonnées :
+Pipeline de chargement en 8 étapes ordonnées :
   1. Création du schéma (contraintes + index)
   2. Chargement des référentiels ESCO (Compétences, Métiers, ISCO, GroupeComp)
   3. Chargement des référentiels MEPC (3 niveaux)
@@ -11,6 +11,7 @@ Pipeline de chargement en 7 étapes ordonnées :
   5. Chargement des Offres + nœuds contextuels (Secteur, Employeur, Localisation)
   6. Chargement des Candidats
   7. Création des relations inter-entités
+  8. Liaison offres/candidats vers les Compétences ESCO
 
 Principe d'idempotence : MERGE sur la clé unique → relancer sans doublon.
 Principe de batch : toutes les transactions sont batched pour la performance.
@@ -19,6 +20,7 @@ Usage :
     python load_neo4j.py                    # pipeline complet
     python load_neo4j.py --step esco        # étape spécifique
     python load_neo4j.py --step offres
+    python load_neo4j.py --step skills      # relations REQUIERT/POSSEDE
     python load_neo4j.py --dry-run          # validation sans écriture
     python load_neo4j.py --clear            # vider la base avant rechargement
 
@@ -30,9 +32,11 @@ Dépendances :
 import argparse
 import csv
 import logging
+import re
 import sys
 import time
 import importlib
+import unicodedata
 from pathlib import Path
 from typing import Generator
 
@@ -113,6 +117,119 @@ def read_csv_safe(path: Path, **kwargs) -> list[dict]:
 def to_rows(df: pd.DataFrame) -> list[dict]:
     """Convertit un DataFrame en liste de dicts (None → None conservé)."""
     return df.where(df.notna(), other=None).to_dict(orient="records")
+
+
+STOPWORDS_FR = {
+    "avec", "dans", "des", "du", "elle", "eux", "les", "leur", "leurs",
+    "pour", "sur", "une", "aux", "par", "pas", "plus", "sans", "sous",
+    "non", "autre", "autres", "emploi", "offre", "categorie", "categories",
+    "recrutement", "cameroun", "services", "service",
+}
+
+
+def normalize_match_text(value: str) -> str:
+    text = unicodedata.normalize("NFKD", str(value or ""))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    return re.sub(r"[^a-z0-9]+", " ", text.lower()).strip()
+
+
+def tokens_for_match(value: str) -> set[str]:
+    return {
+        token for token in normalize_match_text(value).split()
+        if len(token) >= 4 and token not in STOPWORDS_FR
+    }
+
+
+def split_skill_terms(value) -> list[str]:
+    if value is None:
+        raw = []
+    elif isinstance(value, (list, tuple, set)):
+        raw = list(value)
+    elif hasattr(value, "tolist") and not isinstance(value, str):
+        raw = value.tolist()
+    else:
+        raw = re.split(r"[,;/|+\n-]+", str(value))
+    terms = []
+    for item in raw:
+        term = str(item or "").strip()
+        if len(term) >= 3 and normalize_match_text(term) not in STOPWORDS_FR:
+            terms.append(term)
+    return terms[:8]
+
+
+def build_esco_skill_index() -> tuple[list[dict], dict[str, set[int]]]:
+    rows = read_csv_safe(ESCO_SKILLS)
+    skills: list[dict] = []
+    inverted: dict[str, set[int]] = {}
+    for row in rows:
+        uri = row.get("conceptUri", "")
+        label = row.get("preferredLabel", "")
+        if not uri or not label:
+            continue
+        text = " ".join(
+            [
+                label,
+                row.get("altLabels", ""),
+                row.get("hiddenLabels", ""),
+                row.get("description", "")[:250],
+            ]
+        )
+        tokens = tokens_for_match(text)
+        item = {
+            "uri": uri,
+            "label": label,
+            "skill_type": row.get("skillType", ""),
+            "tokens": tokens,
+        }
+        idx = len(skills)
+        skills.append(item)
+        for token in tokens:
+            inverted.setdefault(token, set()).add(idx)
+    return skills, inverted
+
+
+def match_esco_skills(
+    terms: list[str],
+    skills: list[dict],
+    inverted: dict[str, set[int]],
+    *,
+    limit: int = 5,
+    min_score: float = 0.18,
+) -> list[dict]:
+    matches: dict[str, dict] = {}
+    for term in terms:
+        query_tokens = tokens_for_match(term)
+        if not query_tokens:
+            continue
+        candidate_idx: set[int] = set()
+        for token in query_tokens:
+            candidate_idx.update(inverted.get(token, set()))
+        scored = []
+        norm_term = normalize_match_text(term)
+        for idx in candidate_idx:
+            skill = skills[idx]
+            overlap = query_tokens & skill["tokens"]
+            if not overlap:
+                continue
+            union = query_tokens | skill["tokens"]
+            score = len(overlap) / max(len(union), 1)
+            norm_label = normalize_match_text(skill["label"])
+            if norm_term and (norm_term in norm_label or norm_label in norm_term):
+                score += 0.35
+            if score >= min_score:
+                scored.append((score, skill))
+        scored.sort(key=lambda item: item[0], reverse=True)
+        for score, skill in scored[:limit]:
+            current = matches.get(skill["uri"])
+            if current is None or score > current["confidence"]:
+                matches[skill["uri"]] = {
+                    "skill_uri": skill["uri"],
+                    "skill_label": skill["label"],
+                    "skill_type": skill["skill_type"],
+                    "source_text": term[:180],
+                    "confidence": round(float(min(score, 1.0)), 4),
+                }
+    return sorted(matches.values(), key=lambda item: item["confidence"], reverse=True)[:limit]
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -844,6 +961,84 @@ def load_relations_complementaires(driver: Driver):
     log.info("  Relations complémentaires terminées")
 
 
+def load_esco_entity_skill_links(driver: Driver):
+    """Materialise Offre/Candidat -> Compétence ESCO relations.
+
+    Les données locales exposent des libellés larges, pas des URI ESCO.
+    Les liens créés sont donc approximatifs et auditables via `matchMethod`,
+    `sourceText`, `sourceField` et `confidence`.
+    """
+
+    log.info("[8/8] Liaison Offres/Candidats vers Compétences ESCO...")
+    skills, inverted = build_esco_skill_index()
+    log.info(f"  Index lexical ESCO : {len(skills):,} compétences")
+
+    df_o = pd.read_parquet(OFFRES_PARQUET)
+    offre_rels = []
+    for _, row in df_o.iterrows():
+        terms = []
+        terms.extend(split_skill_terms(row.get("skills_list")))
+        terms.extend(split_skill_terms(row.get("skills_raw")))
+        terms.extend(split_skill_terms(row.get("titre_poste")))
+        matches = match_esco_skills(terms, skills, inverted, limit=6, min_score=0.20)
+        for m in matches:
+            offre_rels.append(
+                {
+                    "oid": str(row["offre_id"]),
+                    **m,
+                    "relation_type": "essential",
+                    "source_field": "skills_raw|skills_list|titre_poste",
+                }
+            )
+
+    offre_rels = list({(r["oid"], r["skill_uri"]): r for r in offre_rels}.values())
+    q_offre_skill = """
+    UNWIND $rows AS row
+    MATCH (o:OffreEmploi {id: row.oid})
+    MATCH (s:Compétence {conceptUri: row.skill_uri})
+    MERGE (o)-[r:REQUIERT]->(s)
+    SET r.relationType = row.relation_type,
+        r.skillType = row.skill_type,
+        r.sourceText = row.source_text,
+        r.sourceField = row.source_field,
+        r.matchMethod = 'lexical_esco',
+        r.confidence = row.confidence
+    """
+    batch_merge(driver, q_offre_skill, offre_rels, BATCH_SIZE_RELS, ":REQUIERT")
+    log.info(f"  :REQUIERT OffreEmploi→Compétence : {len(offre_rels):,}")
+
+    df_c = pd.read_parquet(CANDIDATS_PARQUET)
+    cand_rels = []
+    for _, row in df_c.iterrows():
+        terms = []
+        for col in ["qualification_metier", "metier_vise", "filiere_specialite", "secteur_metier"]:
+            terms.extend(split_skill_terms(row.get(col)))
+        matches = match_esco_skills(terms, skills, inverted, limit=6, min_score=0.20)
+        for m in matches:
+            cand_rels.append(
+                {
+                    "cid": str(row["candidat_id"]),
+                    **m,
+                    "source_field": "qualification_metier|metier_vise|filiere_specialite|secteur_metier",
+                }
+            )
+
+    cand_rels = list({(r["cid"], r["skill_uri"]): r for r in cand_rels}.values())
+    q_cand_skill = """
+    UNWIND $rows AS row
+    MATCH (c:Candidat {id: row.cid})
+    MATCH (s:Compétence {conceptUri: row.skill_uri})
+    MERGE (c)-[r:POSSEDE]->(s)
+    SET r.skillType = row.skill_type,
+        r.sourceText = row.source_text,
+        r.sourceField = row.source_field,
+        r.matchMethod = 'lexical_esco',
+        r.confidence = row.confidence
+    """
+    batch_merge(driver, q_cand_skill, cand_rels, BATCH_SIZE_RELS, ":POSSEDE")
+    log.info(f"  :POSSEDE Candidat→Compétence : {len(cand_rels):,}")
+
+
 # ─────────────────────────────────────────────────────────────────────────
 # VALIDATION DU GRAPHE
 # ─────────────────────────────────────────────────────────────────────────
@@ -868,6 +1063,8 @@ def validate_graph(driver: Driver) -> dict:
         "Employeurs":             "MATCH (e:Employeur)      RETURN count(e) AS n",
         "Localisations":          "MATCH (l:Localisation)   RETURN count(l) AS n",
         "Rel :NECESSITE":         "MATCH ()-[r:NECESSITE]->()         RETURN count(r) AS n",
+        "Rel :REQUIERT":          "MATCH ()-[r:REQUIERT]->()          RETURN count(r) AS n",
+        "Rel :POSSEDE":           "MATCH ()-[r:POSSEDE]->()           RETURN count(r) AS n",
         "Rel :CLASSIFIE_DANS":    "MATCH ()-[r:CLASSIFIE_DANS]->()    RETURN count(r) AS n",
         "Rel :PLUS_LARGE_QUE":    "MATCH ()-[r:PLUS_LARGE_QUE]->()   RETURN count(r) AS n",
         "Rel :CORRESPOND_MEPC":   "MATCH ()-[r:CORRESPOND_MEPC]->()   RETURN count(r) AS n",
@@ -906,6 +1103,7 @@ STEPS = {
     "offres":    load_offres,
     "candidats": load_candidats,
     "relations": load_relations_complementaires,
+    "skills":    load_esco_entity_skill_links,
 }
 
 

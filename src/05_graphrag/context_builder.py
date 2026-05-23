@@ -36,61 +36,70 @@ sys.path.insert(0, str(ROOT / "src" / "04_pgvector"))
 # (version autonome, sans import depuis module 03)
 # ─────────────────────────────────────────────────────────────────────────
 
-Q_SKILL_GAP = """
-MATCH (c:Candidat   {id: $cid})-[:POSSEDE]->(sc:Compétence)
-MATCH (o:OffreEmploi{id: $oid})-[r:REQUIERT]->(sr:Compétence)
-WITH collect(DISTINCT sc.conceptUri) AS cand_uris,
-     collect(DISTINCT {uri:sr.conceptUri, label:sr.preferredLabel,
-             type:r.relationType}) AS offre_skills
+Q_GRAPH_ENRICHMENT = """
+MATCH (c:Candidat {id: $cid})
+MATCH (o:OffreEmploi {id: $oid})
+OPTIONAL MATCH (c)-[:A_NIVEAU]->(cn:NiveauFormationNCF)
+OPTIONAL MATCH (o)-[:REQUIERT_NIVEAU_NCF|REQUIERT_NIVEAU]->(on:NiveauFormationNCF)
+OPTIONAL MATCH (c)-[:A_FORMATION]->(cf:DomaineDétailléNCF)
+OPTIONAL MATCH (o)-[:DANS_SECTEUR]->(sect:Secteur)
+OPTIONAL MATCH (o)-[:LOCALISEE_A]->(loc:Localisation)
+RETURN
+  c.ncf_niveau_final AS candidat_ncf,
+  c.metier_vise AS metier_vise,
+  c.secteur_metier AS secteur_metier,
+  c.filiere_specialite AS filiere_specialite,
+  cn.code AS candidat_ncf_code,
+  cn.intitule AS candidat_ncf_label,
+  on.code AS offre_ncf_code,
+  on.intitule AS offre_ncf_label,
+  collect(DISTINCT cf.intitule)[0..5] AS formations_candidat,
+  sect.label AS secteur,
+  loc.ville AS ville,
+  o.type_contrat AS type_contrat,
+  o.ncf_niveau_code AS ncf_requis,
+  o.skills_raw AS skills_raw,
+  o.details_clean AS details
+"""
+
+Q_SKILL_GAP_EXACT = """
+MATCH (o:OffreEmploi {id: $oid})
+OPTIONAL MATCH (c:Candidat {id: $cid})-[cp:POSSEDE]->(sc:Compétence)
+OPTIONAL MATCH (o)-[rq:REQUIERT]->(sr:Compétence)
+WITH
+  collect(DISTINCT sc.conceptUri) AS cand_uris,
+  collect(DISTINCT {
+    uri: sr.conceptUri,
+    label: sr.preferredLabel,
+    type: coalesce(rq.relationType, 'essential'),
+    confidence: coalesce(rq.confidence, 0.0)
+  }) AS offre_skills
+WITH cand_uris, [x IN offre_skills WHERE x.uri IS NOT NULL] AS offre_skills
 RETURN
   [x IN offre_skills WHERE x.uri IN cand_uris] AS acquises,
   [x IN offre_skills WHERE NOT x.uri IN cand_uris] AS manquantes,
+  [x IN offre_skills WHERE NOT x.uri IN cand_uris AND x.type = 'essential'] AS essentielles_manquantes,
   size(offre_skills) AS n_total,
   toFloat(size([x IN offre_skills WHERE x.uri IN cand_uris])) /
-    CASE WHEN size(offre_skills)>0 THEN size(offre_skills) ELSE 1 END AS taux
+    CASE WHEN size(offre_skills) > 0 THEN size(offre_skills) ELSE 1 END AS taux
 """
 
 Q_OFFRE_DETAILS = """
 MATCH (o:OffreEmploi {id: $oid})
 OPTIONAL MATCH (o)-[:DANS_SECTEUR]->(s:Secteur)
 OPTIONAL MATCH (o)-[:LOCALISEE_A]->(l:Localisation)
-OPTIONAL MATCH (o)-[:CORRESPOND_METIER]->(m:Métier)
 RETURN o.titre_poste AS titre,
        o.employeur   AS employeur,
        o.type_contrat AS contrat,
        o.ncf_niveau_code AS ncf_requis,
        o.details_clean AS details,
        s.label AS secteur,
-       l.ville AS ville,
-       m.preferredLabel AS metier_esco
-"""
-
-Q_COMPETENCES_MANQUANTES = """
-MATCH (o:OffreEmploi{id: $oid})-[r:REQUIERT]->(sr:Compétence)
-WHERE NOT EXISTS { MATCH (c:Candidat{id: $cid})-[:POSSEDE]->(sr) }
-RETURN sr.preferredLabel AS label,
-       sr.description    AS description,
-       sr.isDigital      AS is_digital,
-       sr.isGreen        AS is_green,
-       r.relationType    AS importance
-ORDER BY CASE r.relationType WHEN 'essential' THEN 1 ELSE 2 END
-LIMIT 10
+       l.ville AS ville
 """
 
 Q_NCF_CHEMIN = """
 MATCH (c:Candidat {id: $cid})-[:A_NIVEAU]->(n:NiveauFormationNCF)
 RETURN n.code AS ncf_code, n.intitule AS ncf_label
-"""
-
-Q_CANDIDATS_SIMILAIRES = """
-MATCH (c1:Candidat {id: $cid})-[:POSSEDE]->(s:Compétence)
-MATCH (c2:Candidat)-[:POSSEDE]->(s)
-WHERE c2.id <> $cid
-WITH c2, count(s) AS n_commun
-MATCH (c2)-[p:POSTULE]->(o:OffreEmploi)
-WHERE p.score_hybride >= 0.6
-RETURN o.id AS offre_id, avg(p.score_hybride) AS score_moy, count(c2) AS n_sim
-ORDER BY score_moy DESC LIMIT 10
 """
 
 
@@ -133,7 +142,6 @@ class GraphRAGContextBuilder:
             return self._simulate_ann(candidat_id)
 
         sql = """
-        SET hnsw.ef_search = 100;
         SELECT o.entity_id, o.label_fr, o.neo4j_node_id,
                1 - (c.embedding <=> o.embedding) AS cosine_sim
         FROM   embeddings c, embeddings o
@@ -144,6 +152,7 @@ class GraphRAGContextBuilder:
         LIMIT  %s;
         """
         with self.pg.cursor() as cur:
+            cur.execute("SET hnsw.ef_search = 100")
             cur.execute(sql, (candidat_id, self.top_k_pgv))
             rows = cur.fetchall()
 
@@ -202,31 +211,134 @@ class GraphRAGContextBuilder:
             return self._simulate_neo4j(candidat_id, offre)
 
         with self.driver.session() as session:
-            # Skill gap
-            sg = session.run(Q_SKILL_GAP,
-                             cid=candidat_id, oid=offre["offre_id"]).single()
-            # Compétences manquantes avec descriptions
-            cm = session.run(Q_COMPETENCES_MANQUANTES,
-                             cid=candidat_id, oid=offre["offre_id"]).data()
-            # Chemin NCF
+            graph_row = session.run(
+                Q_GRAPH_ENRICHMENT,
+                cid=candidat_id,
+                oid=offre["offre_id"],
+            ).single()
+            skill_gap = session.run(
+                Q_SKILL_GAP_EXACT,
+                cid=candidat_id,
+                oid=offre["offre_id"],
+            ).single()
             ncf = session.run(Q_NCF_CHEMIN, cid=candidat_id).single()
 
-        if sg:
-            acquises  = sg.get("acquises", [])
-            manquantes = sg.get("manquantes", [])
-            taux = sg.get("taux", 0.0)
+        graph = dict(graph_row) if graph_row else {}
+        if skill_gap and int(skill_gap.get("n_total", 0) or 0) > 0:
+            acquired = [item.get("label", "") for item in (skill_gap.get("acquises") or []) if item.get("label")]
+            missing = [item.get("label", "") for item in (skill_gap.get("manquantes") or []) if item.get("label")]
+            essential_missing = [
+                item.get("label", "")
+                for item in (skill_gap.get("essentielles_manquantes") or [])
+                if item.get("label")
+            ]
+            taux = float(skill_gap.get("taux", 0.0) or 0.0)
+            graph_schema = "ESCO_SKILL_GAP"
         else:
-            acquises = manquantes = []
-            taux = 0.0
+            acquired, missing, essential_missing, taux = self._score_existing_graph(
+                candidat_id=candidat_id,
+                offre={**offre, **graph},
+            )
+            graph_schema = "NCF_SECTEUR_FORMATION_FALLBACK"
 
         return {
             **offre,
-            "acquises":    [c.get("label","") for c in (acquises or [])[:5]],
-            "manquantes":  [c.get("label","") for c in (manquantes or [])[:5]],
-            "ess_manq":    [c["label"] for c in (cm or []) if c.get("importance")=="essential"][:3],
+            "secteur": graph.get("secteur") or offre.get("secteur"),
+            "ville": graph.get("ville") or offre.get("ville"),
+            "type_contrat": graph.get("type_contrat") or offre.get("type_contrat"),
+            "ncf_code": graph.get("offre_ncf_code") or graph.get("ncf_requis") or offre.get("ncf_code"),
+            "skills": graph.get("skills_raw") or offre.get("skills", ""),
+            "details": str(graph.get("details") or offre.get("details", ""))[:200],
+            "acquises":    acquired[:5],
+            "manquantes":  missing[:5],
+            "ess_manq":    essential_missing[:3],
             "taux_match":  round(float(taux), 3),
             "ncf_cand":    ncf.get("ncf_code") if ncf else None,
+            "graph_signals": {
+                "schema": graph_schema,
+                "offre_ncf": graph.get("offre_ncf_code") or graph.get("ncf_requis"),
+                "candidat_ncf": graph.get("candidat_ncf") or graph.get("candidat_ncf_code"),
+                "secteur_offre": graph.get("secteur"),
+                "formations_candidat": graph.get("formations_candidat") or [],
+                "n_competences_requises": int(skill_gap.get("n_total", 0) or 0) if skill_gap else 0,
+            },
         }
+
+    @staticmethod
+    def _as_int(value) -> int | None:
+        try:
+            if value is None or value == "":
+                return None
+            return int(value)
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _tokenize(text: str) -> set[str]:
+        stop = {"et", "de", "du", "des", "la", "le", "les", "en", "a", "à", "and", "&"}
+        cleaned = "".join(ch.lower() if ch.isalnum() else " " for ch in str(text or ""))
+        return {token for token in cleaned.split() if len(token) >= 4 and token not in stop}
+
+    def _score_existing_graph(self, *, candidat_id: str, offre: dict) -> tuple[list[str], list[str], list[str], float]:
+        """Score graph compatibility with the relations that are actually loaded.
+
+        Current Neo4j does not materialize Candidat-[:POSSEDE]->Compétence nor
+        OffreEmploi-[:REQUIERT]->Compétence. The honest graph score therefore
+        uses NCF level, sector lexical overlap, and candidate formation labels.
+        """
+
+        cand_ncf = self._as_int(offre.get("candidat_ncf") or offre.get("candidat_ncf_code"))
+        offer_ncf = self._as_int(offre.get("offre_ncf_code") or offre.get("ncf_requis") or offre.get("ncf_code"))
+        if cand_ncf is None or offer_ncf is None:
+            ncf_score = 0.5
+            ncf_label = "Niveau NCF non totalement renseigne"
+            ncf_missing = []
+        elif cand_ncf >= offer_ncf:
+            ncf_score = 1.0
+            ncf_label = f"Niveau NCF compatible ({cand_ncf} >= {offer_ncf})"
+            ncf_missing = []
+        else:
+            gap = offer_ncf - cand_ncf
+            ncf_score = max(0.0, 1.0 - 0.25 * gap)
+            ncf_label = f"Niveau NCF partiellement compatible ({cand_ncf} < {offer_ncf})"
+            ncf_missing = [f"Monter du niveau NCF {cand_ncf} vers {offer_ncf}"]
+
+        sector_tokens = self._tokenize(offre.get("secteur"))
+        candidate_tokens = self._tokenize(
+            " ".join(
+                [
+                    str(offre.get("metier_vise", "")),
+                    str(offre.get("secteur_metier", "")),
+                    str(offre.get("filiere_specialite", "")),
+                    str(offre.get("formations_candidat", "")),
+                ]
+            )
+        )
+        # Candidate fields are not in the Neo4j row, so fallback to id-based
+        # scoring through offer terms only when no candidate tokens are present.
+        overlap = sector_tokens & candidate_tokens
+        sector_score = len(overlap) / max(len(sector_tokens), 1) if sector_tokens else 0.5
+
+        skill_tokens = self._tokenize(offre.get("skills_raw") or offre.get("skills"))
+        formation_tokens = self._tokenize(" ".join(offre.get("formations_candidat") or []))
+        skill_overlap = skill_tokens & formation_tokens
+        formation_score = len(skill_overlap) / max(len(skill_tokens), 1) if skill_tokens else 0.5
+
+        taux = 0.55 * ncf_score + 0.25 * sector_score + 0.20 * formation_score
+        acquired = [ncf_label]
+        if overlap:
+            acquired.append("Secteur rapproche: " + ", ".join(sorted(overlap)[:3]))
+        if skill_overlap:
+            acquired.append("Formation rapprochee: " + ", ".join(sorted(skill_overlap)[:3]))
+
+        missing = ncf_missing
+        if sector_score == 0 and sector_tokens:
+            missing.append("Justifier l'experience dans le secteur " + str(offre.get("secteur")))
+        if formation_score == 0 and skill_tokens:
+            missing.append("Renforcer: " + ", ".join(sorted(skill_tokens)[:3]))
+
+        essential_missing = ncf_missing[:1]
+        return acquired, missing, essential_missing, taux
 
     def _simulate_neo4j(self, candidat_id: str, offre: dict) -> dict:
         """Simulation Neo4j sans driver (données synthétiques cohérentes)."""

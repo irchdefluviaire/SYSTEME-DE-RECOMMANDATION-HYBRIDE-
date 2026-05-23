@@ -8,16 +8,21 @@ Contient :
   - Constantes de chargement (batch sizes, etc.)
   - Labels et types de relations (nomenclature du graphe)
 """
+import os
 from pathlib import Path
 
+from dotenv import load_dotenv
+
+ROOT = Path(__file__).resolve().parent.parent.parent
+load_dotenv(ROOT / ".env")
+
 # ── CONNEXION NEO4J ────────────────────────────────────────────────────────
-NEO4J_URI      = "bolt://localhost:7687"
-NEO4J_USER     = "neo4j"
-NEO4J_PASSWORD = "15081960"            # À adapter selon votre installation
-NEO4J_DATABASE = "neo4j"             # Base de données cible
+NEO4J_URI      = os.getenv("NEO4J_URI", "bolt://localhost:7687")
+NEO4J_USER     = os.getenv("NEO4J_USER", "neo4j")
+NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "")
+NEO4J_DATABASE = os.getenv("NEO4J_DATABASE", "neo4j")
 
 # ── CHEMINS ────────────────────────────────────────────────────────────────
-ROOT      = Path(__file__).resolve().parent.parent.parent
 DATA_PROC = ROOT / "data" / "processed"
 ESCO_DIR  = ROOT / "data" / "raw" / "esco"   # CSV ESCO v1.2 FR
 
