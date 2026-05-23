@@ -1,0 +1,231 @@
+"""
+schemas.py — Schémas Pydantic v2 pour l'API FastAPI
+Module 06 — Système de Recommandation Emploi-Compétences · Cameroun
+
+Valide automatiquement :
+  - Les entrées (profil candidat, paramètres de requête)
+  - Les sorties (recommandations, skill gap, roadmap, embeddings)
+"""
+
+from __future__ import annotations
+from datetime import datetime
+from typing import Optional, List, Any
+from pydantic import BaseModel, Field, model_validator
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# ENTRÉES
+# ─────────────────────────────────────────────────────────────────────────
+
+class CandidatProfile(BaseModel):
+    """Profil d'un demandeur d'emploi — entrée principale du système."""
+
+    candidat_id: str = Field(
+        ...,
+        description="Matricule unique du candidat (ex: PPKOU2501080016340)",
+        examples=["PPKOU2501080016340"],
+    )
+    metier_vise: Optional[str] = Field(
+        None, description="Intitulé du métier recherché", max_length=200
+    )
+    secteur_metier: Optional[str] = Field(
+        None, description="Secteur d'activité souhaité", max_length=100
+    )
+    ncf_niveau_final: Optional[int] = Field(
+        None, description="Code NCF niveau d'études (1=primaire … 9=doctorat)", ge=1, le=9
+    )
+    filiere_specialite: Optional[str] = Field(
+        None, description="Filière / spécialité de formation", max_length=200
+    )
+    objectif: Optional[str] = Field(
+        None, description="Objectif professionnel déclaré", max_length=500
+    )
+    diplome_raw: Optional[str] = Field(
+        None, description="Diplôme obtenu (libellé brut)", max_length=200
+    )
+    secteur_demande: Optional[str] = Field(
+        None, description="Secteur d'emploi demandé", max_length=100
+    )
+    mobilite_geo_bool: Optional[bool] = Field(
+        None, description="Accepte la mobilité géographique"
+    )
+
+    model_config = {"json_schema_extra": {
+        "example": {
+            "candidat_id": "PPKOU2501080016340",
+            "metier_vise": "Data Analyst",
+            "secteur_metier": "Finance",
+            "ncf_niveau_final": 8,
+            "filiere_specialite": "Statistiques et sciences apparentées",
+            "objectif": "Intégrer une équipe data pour contribuer à la prise de décision stratégique",
+            "mobilite_geo_bool": True,
+        }
+    }}
+
+
+class RecommendRequest(BaseModel):
+    """Corps de la requête POST /recommend"""
+    profil: CandidatProfile
+    top_k: int = Field(5, description="Nombre d'offres à retourner", ge=1, le=20)
+    llm_backend: str = Field(
+        "simulation",
+        description="Backend LLM : 'simulation' | 'mistral' | 'openai'",
+        pattern="^(simulation|mistral|openai)$",
+    )
+    include_roadmap: bool = Field(True, description="Inclure la roadmap de formation")
+    include_skill_gap: bool = Field(True, description="Inclure l'analyse skill gap")
+
+
+class SkillGapRequest(BaseModel):
+    """Corps de la requête POST /skill-gap"""
+    candidat_id: str = Field(..., description="Matricule du candidat")
+    offre_id: str = Field(..., description="UUID de l'offre d'emploi")
+    llm_backend: str = Field("simulation", pattern="^(simulation|mistral|openai)$")
+
+
+class EmbedRequest(BaseModel):
+    """Corps de la requête POST /embed"""
+    textes: List[str] = Field(
+        ..., description="Liste de textes à encoder", min_length=1, max_length=100
+    )
+    entity_kind: str = Field(
+        "OFFRE_EMPLOI",
+        description="Type d'entité : OFFRE_EMPLOI | CANDIDAT | COMPETENCE | METIER",
+    )
+    normalize: bool = Field(True, description="Normaliser les vecteurs (norme=1)")
+
+
+# ─────────────────────────────────────────────────────────────────────────
+# SORTIES
+# ─────────────────────────────────────────────────────────────────────────
+
+class OffreRecommandee(BaseModel):
+    """Une offre d'emploi dans le classement de recommandation."""
+    rang: int
+    offre_id: str
+    titre_poste: str
+    secteur: Optional[str] = None
+    ville: Optional[str] = None
+    type_contrat: Optional[str] = None
+    score_hybride: float = Field(..., ge=0, le=1)
+    score_semantique: float = Field(..., ge=0, le=1)
+    score_graphe: float = Field(..., ge=0, le=1)
+    taux_matching: float = Field(..., ge=0, le=1)
+    competences_acquises: List[str] = Field(default_factory=list)
+    competences_manquantes: List[str] = Field(default_factory=list)
+    essentielles_manquantes: List[str] = Field(default_factory=list)
+
+
+class RoadmapEtape(BaseModel):
+    """Une étape de la roadmap de formation."""
+    priorite: int
+    competence_cible: str
+    importance: str  # "essentielle" | "optionnelle"
+    formation_nom: Optional[str] = None
+    etablissement: Optional[str] = None
+    duree: Optional[str] = None
+    cout_estimatif: Optional[str] = None
+    modalite: Optional[str] = None  # "presentiel" | "en ligne" | "hybride"
+    delai_acquisition: Optional[str] = None
+    impact_score: Optional[float] = None
+
+
+class Roadmap(BaseModel):
+    """Plan d'action personnalisé pour améliorer le profil."""
+    poste_cible: str
+    score_matching_actuel: float
+    score_matching_projete: float
+    duree_totale_estimee: Optional[str] = None
+    etapes: List[RoadmapEtape] = Field(default_factory=list)
+    ressources_gratuites: List[str] = Field(default_factory=list)
+    certifications_utiles: List[str] = Field(default_factory=list)
+    conseil_candidature_immediate: Optional[str] = None
+    message_motivation: Optional[str] = None
+
+
+class SkillGapAnalysis(BaseModel):
+    """Analyse complète de l'écart de compétences."""
+    taux_matching: float
+    niveau_gap: str  # "faible" | "modéré" | "important" | "critique"
+    eligible_maintenant: bool
+    competences_critiques: List[dict] = Field(default_factory=list)
+    score_projete_apres_formation: Optional[float] = None
+    message_candidat: Optional[str] = None
+
+
+class RecommendResponse(BaseModel):
+    """Réponse complète de l'endpoint POST /recommend"""
+    candidat_id: str
+    timestamp: datetime = Field(default_factory=datetime.now)
+    n_offres_analysees: int
+    top_offres: List[OffreRecommandee]
+    analyse_globale: Optional[str] = None
+    score_employabilite_global: Optional[float] = None
+    conseil_global: Optional[str] = None
+    prochaine_action: Optional[str] = None
+    skill_gap: Optional[SkillGapAnalysis] = None
+    roadmap: Optional[Roadmap] = None
+    latence_ms: float
+    llm_backend: str
+    model_version: str = "all-MiniLM-L6-v2-ft-offres-cm"
+
+
+class SkillGapResponse(BaseModel):
+    """Réponse de l'endpoint POST /skill-gap"""
+    candidat_id: str
+    offre_id: str
+    analyse: SkillGapAnalysis
+    roadmap: Optional[Roadmap] = None
+    latence_ms: float
+
+
+class EmbedResponse(BaseModel):
+    """Réponse de l'endpoint POST /embed"""
+    n_textes: int
+    dimension: int = 384
+    embeddings: List[List[float]]
+    model_id: str = "all-MiniLM-L6-v2-ft-offres-cm"
+    latence_ms: float
+
+
+class OffreDetail(BaseModel):
+    """Détails complets d'une offre d'emploi (GET /offre/{id})"""
+    offre_id: str
+    titre_poste: str
+    employeur: Optional[str] = None
+    type_entreprise: Optional[str] = None
+    secteur_principal: Optional[str] = None
+    secteurs_list: Optional[List[str]] = None
+    ville_principale: Optional[str] = None
+    villes_list: Optional[List[str]] = None
+    type_contrat: Optional[str] = None
+    groupe_contrat: Optional[str] = None
+    ncf_niveau_code: Optional[int] = None
+    niveau_etudes_raw: Optional[str] = None
+    experience_min_ans: Optional[int] = None
+    skills_list: Optional[List[str]] = None
+    details_clean: Optional[str] = None
+    metadata_str: Optional[str] = None
+
+
+class HealthResponse(BaseModel):
+    """Réponse de l'endpoint GET /health"""
+    status: str = "healthy"
+    version: str = "1.0.0"
+    timestamp: datetime = Field(default_factory=datetime.now)
+    services: dict = Field(
+        default_factory=lambda: {
+            "neo4j":     "unknown",
+            "pgvector":  "unknown",
+            "st_model":  "unknown",
+            "llm":       "simulation",
+        }
+    )
+
+
+class ErrorResponse(BaseModel):
+    """Format d'erreur standardisé."""
+    code: int
+    message: str
+    detail: Optional[str] = None
+    timestamp: datetime = Field(default_factory=datetime.now)

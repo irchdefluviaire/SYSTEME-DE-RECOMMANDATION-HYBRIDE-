@@ -1,0 +1,137 @@
+{
+  "timestamp": "2026-05-22T22:29:14.825766",
+  "version": "1.0.0",
+  "donnees": {
+    "n_offres": 7861,
+    "n_candidats": 1105,
+    "n_paires_ft": 3304
+  },
+  "llm1_sentencetransformer": {
+    "modele_base": "all-MiniLM-L6-v2",
+    "modele_ft": "all-MiniLM-L6-v2-ft-offres-cm",
+    "dim": 384,
+    "metriques_test": {
+      "ndcg_at_10": {
+        "valeur": 0.679,
+        "seuil_cible": 0.65,
+        "atteint": true,
+        "delta": 0.029
+      },
+      "mrr_at_10": {
+        "valeur": 0.598,
+        "seuil_cible": 0.55,
+        "atteint": true,
+        "delta": 0.048
+      },
+      "recall_at_5": {
+        "valeur": 0.692,
+        "seuil_cible": 0.6,
+        "atteint": true,
+        "delta": 0.092
+      },
+      "recall_at_10": {
+        "valeur": 0.822,
+        "seuil_cible": 0.75,
+        "atteint": true,
+        "delta": 0.072
+      },
+      "spearman": {
+        "valeur": 0.641,
+        "seuil_cible": 0.6,
+        "atteint": true,
+        "delta": 0.041
+      }
+    },
+    "delta_vs_baseline": {
+      "ndcg_at_10": 0.564,
+      "mrr_at_10": 0.511,
+      "recall_at_10": 0.629,
+      "spearman": 0.61
+    }
+  },
+  "llm2_graphrag": {
+    "metriques_retrieval": {
+      "precision_at_5": {
+        "valeur": 0.784,
+        "seuil_cible": 0.6,
+        "atteint": true,
+        "delta": 0.184
+      },
+      "recall_at_10": {
+        "valeur": 0.98,
+        "seuil_cible": 0.7,
+        "atteint": true,
+        "delta": 0.28
+      },
+      "ndcg_at_5": {
+        "valeur": 0.7926,
+        "seuil_cible": 0.65,
+        "atteint": true,
+        "delta": 0.1426
+      }
+    },
+    "qualite_generation": {
+      "faithfulness": {
+        "valeur": 0.9702,
+        "seuil_cible": 0.85,
+        "atteint": true,
+        "delta": 0.1202
+      },
+      "roadmap_quality": {
+        "valeur": 1.0,
+        "seuil_cible": 0.8,
+        "atteint": true,
+        "delta": 0.2
+      }
+    }
+  },
+  "score_hybride": {
+    "formule": "α×sémantique + β×graphe + γ×collaboratif",
+    "poids": {
+      "alpha": 0.4,
+      "beta": 0.35,
+      "gamma": 0.25
+    },
+    "distribution": {
+      "mean": 0.5302,
+      "std": 0.0069,
+      "min": 0.513,
+      "max": 0.5581,
+      "p25": 0.5257,
+      "p50": 0.5298,
+      "p75": 0.5338
+    },
+    "eligibilite": {
+      "n_eligibles": 100,
+      "taux_eligibilite": 1.0,
+      "taux_matching_moy": 0.56
+    }
+  },
+  "latence": {
+    "mode": "simulation (sans LLM réel)",
+    "p50_ms": {
+      "valeur": 188.0,
+      "seuil_cible": 500,
+      "atteint": false,
+      "delta": -312.0
+    },
+    "p95_ms": {
+      "valeur": 191.5,
+      "seuil_cible": 1500,
+      "atteint": false,
+      "delta": -1308.5
+    },
+    "composantes_ms": {
+      "ann_pgvector": 50,
+      "cypher_neo4j": 80,
+      "score_hybride": 10,
+      "llm_2_mistral": 2000,
+      "llm_2_gpt4o": 800
+    }
+  },
+  "resume": {
+    "seuils_atteints": 10,
+    "seuils_total": 10,
+    "taux_succes": 1.0
+  }
+}
