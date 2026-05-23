@@ -229,3 +229,4 @@ __marimo__/
 *.log
 *.synctex.gz
 .env.example
+.langgraph_api/.langgraph_ops.pckl
