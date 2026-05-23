@@ -23,13 +23,19 @@ class AgentState(TypedDict, total=False):
     """
 
     user_query: str
+    message: str
+    message_humain: str
+    question: str
+    input: str
     messages: Annotated[list[AnyMessage], add_messages]
     human_message: dict[str, Any]
     candidat_id: str
     top_k: int
     mode: Literal["real"]
+    intent: Literal["recommendation", "career_advice"]
 
     candidate_profile: dict[str, Any]
+    career_guidance: dict[str, Any]
     vector_results: list[dict[str, Any]]
     graph_results: list[dict[str, Any]]
     skill_gaps: list[dict[str, Any]]
@@ -42,3 +48,21 @@ class AgentState(TypedDict, total=False):
 
     final_answer: str
     traces: list[AgentTrace]
+
+
+class AgentInput(TypedDict, total=False):
+    """External input accepted by LangGraph Studio/API.
+
+    Keep this schema lighter than AgentState: users should be able to start a
+    run with a plain text field instead of constructing the full internal state.
+    """
+
+    message: str
+    message_humain: str
+    question: str
+    input: str
+    user_query: str
+    messages: Annotated[list[AnyMessage], add_messages]
+    candidat_id: str
+    top_k: int
+    mode: Literal["real"]

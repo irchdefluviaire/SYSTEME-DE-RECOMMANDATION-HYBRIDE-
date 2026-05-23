@@ -7,6 +7,7 @@ PostgreSQL/pgvector connections for retrieval and graph enrichment.
 from __future__ import annotations
 
 import sys
+from collections import Counter
 from pathlib import Path
 from typing import Any
 
@@ -22,6 +23,32 @@ sys.path.insert(0, str(SRC / "04_pgvector"))
 
 from context_builder import GraphRAGContextBuilder  # noqa: E402
 from roadmap_generator import generate_roadmap  # noqa: E402
+
+
+CAREER_KEYWORDS = {
+    "python": "Python",
+    "sql": "SQL",
+    "statistique": "Statistiques appliquees",
+    "statistiques": "Statistiques appliquees",
+    "econometrie": "Econometrie",
+    "machine learning": "Machine learning",
+    "apprentissage automatique": "Machine learning",
+    "power bi": "Power BI",
+    "tableau": "Tableau",
+    "excel": "Excel avance",
+    "base de donnees": "Bases de donnees",
+    "bases de donnees": "Bases de donnees",
+    "data warehouse": "Data warehouse",
+    "etl": "ETL",
+    "visualisation": "Visualisation de donnees",
+    "dashboard": "Dashboarding",
+    "credit scoring": "Credit scoring",
+    "score de credit": "Credit scoring",
+    "risque": "Gestion du risque",
+    "fraude": "Detection de fraude",
+    "reglementaire": "Reporting reglementaire",
+    "conformite": "Conformite",
+}
 
 
 def _trace(step: str, message: str, status: str = "ok", **details: Any) -> dict:
@@ -60,6 +87,40 @@ def load_candidate_profile(candidat_id: str) -> tuple[dict[str, Any], dict[str, 
     return profile, _trace("load_candidate", message, status, candidat_id=profile["candidat_id"])
 
 
+def build_career_competency_guidance(user_query: str) -> tuple[dict[str, Any], dict[str, Any]]:
+    """Build career guidance without pretending that a candidate profile exists."""
+
+    target_role = _infer_target_role(user_query)
+    target_domain = _infer_target_domain(user_query)
+    offers_path = ROOT / "data" / "processed" / "offres_normalized.parquet"
+    esco_path = ROOT / "data" / "raw" / "esco" / "skills_fr.csv"
+
+    local_evidence = _summarize_local_offer_evidence(offers_path, target_role, target_domain)
+    esco_skills = _find_esco_skill_labels(esco_path)
+    priority_skills = _rank_priority_skills(local_evidence["keyword_counts"], target_domain)
+
+    guidance = {
+        "intent": "career_advice",
+        "target_role": target_role,
+        "target_domain": target_domain,
+        "local_evidence": local_evidence,
+        "priority_skills": priority_skills,
+        "esco_references": esco_skills,
+        "sources": [
+            "data/processed/offres_normalized.parquet",
+            "data/raw/esco/skills_fr.csv",
+        ],
+    }
+    trace = _trace(
+        "career_guidance",
+        "Orientation metier generee sans profil candidat force.",
+        target_role=target_role,
+        target_domain=target_domain,
+        n_local_offers=local_evidence["n_matching_offers"],
+    )
+    return guidance, trace
+
+
 def build_retrieval_context(
     candidat_id: str,
     candidate_profile: dict[str, Any],
@@ -92,6 +153,121 @@ def build_retrieval_context(
     ]
     _close_optional(pg_conn=pg_conn, neo4j_driver=neo4j_driver)
     return context, traces
+
+
+def _infer_target_role(user_query: str) -> str:
+    text = user_query.lower()
+    if "data scientist" in text:
+        return "Data scientist"
+    if "data analyst" in text or "analyste" in text:
+        return "Data analyst"
+    if "statisticien" in text:
+        return "Statisticien data"
+    return "Professionnel data"
+
+
+def _infer_target_domain(user_query: str) -> str:
+    text = user_query.lower()
+    if any(word in text for word in ("banque", "bancaire", "microfinance", "finance")):
+        return "banque/finance au Cameroun"
+    return "marche camerounais"
+
+
+def _summarize_local_offer_evidence(path: Path, target_role: str, target_domain: str) -> dict[str, Any]:
+    if not path.exists():
+        return {
+            "n_matching_offers": 0,
+            "sample_titles": [],
+            "keyword_counts": {},
+            "note": f"Fichier introuvable: {path.as_posix()}",
+        }
+
+    df = pd.read_parquet(path)
+    text_cols = [col for col in ("titre_poste", "secteur_principal", "skills_raw", "details_clean", "text_to_embed") if col in df.columns]
+    combined = df[text_cols].fillna("").astype(str).agg(" ".join, axis=1).str.lower()
+
+    role_terms = ("data scientist", "data analyst", "analyste", "donnees", "données", "statisticien", "business intelligence", " bi ")
+    role_mask = combined.apply(lambda value: any(term in value for term in role_terms))
+    if "banque/finance" in target_domain:
+        domain_terms = ("banque", "bancaire", "microfinance", "finance", "financier", "assurance", "credit", "crédit")
+        domain_mask = combined.apply(lambda value: any(term in value for term in domain_terms))
+        filtered = df[role_mask & domain_mask].copy()
+        if filtered.empty:
+            filtered = df[role_mask].copy()
+    else:
+        filtered = df[role_mask].copy()
+
+    keyword_counts: Counter[str] = Counter()
+    filtered_text = filtered[text_cols].fillna("").astype(str).agg(" ".join, axis=1).str.lower()
+    for text in filtered_text:
+        for raw, label in CAREER_KEYWORDS.items():
+            if raw in text:
+                keyword_counts[label] += 1
+
+    title_col = "titre_poste" if "titre_poste" in filtered.columns else filtered.columns[0]
+    sample_titles = [str(value) for value in filtered[title_col].dropna().head(5).tolist()]
+    return {
+        "n_matching_offers": int(len(filtered)),
+        "sample_titles": sample_titles,
+        "keyword_counts": dict(keyword_counts.most_common(12)),
+        "note": "Filtre local sur offres data puis banque/finance quand disponible.",
+    }
+
+
+def _find_esco_skill_labels(path: Path) -> list[str]:
+    if not path.exists():
+        return []
+    labels = pd.read_csv(path, usecols=["preferredLabel"]).dropna()["preferredLabel"].astype(str)
+    wanted = (
+        "analyser des donnees",
+        "analyser des données",
+        "science des donnees",
+        "science des données",
+        "statistiques",
+        "apprentissage automatique",
+        "bases de donnees",
+        "bases de données",
+        "visualisation",
+        "risque",
+    )
+    matches = []
+    for label in labels:
+        low = label.lower()
+        if any(term in low for term in wanted):
+            matches.append(label)
+        if len(matches) >= 8:
+            break
+    return matches
+
+
+def _rank_priority_skills(keyword_counts: dict[str, int], target_domain: str) -> list[dict[str, Any]]:
+    baseline = [
+        ("SQL", "extraire, joindre et auditer les donnees bancaires"),
+        ("Python", "automatiser les analyses, modeliser et produire des pipelines reproductibles"),
+        ("Statistiques appliquees", "quantifier l'incertitude et eviter les conclusions fragiles"),
+        ("Machine learning", "scoring, segmentation, prevision et detection d'anomalies"),
+        ("Visualisation de donnees", "transformer les resultats en decisions lisibles"),
+        ("ETL", "nettoyer et fiabiliser les donnees operationnelles"),
+    ]
+    if "banque/finance" in target_domain:
+        baseline.extend(
+            [
+                ("Credit scoring", "relier les modeles aux decisions de credit"),
+                ("Gestion du risque", "parler le langage metier banque et portefeuille"),
+                ("Conformite", "tenir compte des contraintes de donnees sensibles et reporting"),
+            ]
+        )
+    rows = []
+    for label, reason in baseline:
+        rows.append(
+            {
+                "competence": label,
+                "priorite": "forte" if label in {"SQL", "Python", "Statistiques appliquees", "Machine learning"} else "moyenne",
+                "evidence_locale": int(keyword_counts.get(label, 0)),
+                "pourquoi": reason,
+            }
+        )
+    return rows
 
 
 def extract_skill_gaps(top_offers: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict]:

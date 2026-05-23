@@ -15,7 +15,7 @@ sys.path.insert(0, str(CURRENT_DIR))
 from langchain_core.messages import AIMessage, HumanMessage
 from langgraph.graph import END, START, StateGraph
 
-from agent_state import AgentState
+from agent_state import AgentInput, AgentState
 from llm import ollama_generate
 from prompts import SYSTEM_FINAL, build_final_prompt
 from settings import (
@@ -29,6 +29,7 @@ from settings import (
     USE_OLLAMA,
 )
 from tools import (
+    build_career_competency_guidance,
     build_retrieval_context,
     build_training_roadmap,
     extract_skill_gaps,
@@ -46,17 +47,31 @@ def _latest_human_text(state: AgentState) -> str:
     for message in reversed(messages):
         if isinstance(message, HumanMessage):
             return str(message.content)
+        if isinstance(message, dict):
+            role = str(message.get("type") or message.get("role") or "").lower()
+            if role in {"human", "user"}:
+                return str(message.get("content") or "")
         if getattr(message, "type", None) == "human":
             return str(getattr(message, "content", ""))
-    return str(state.get("user_query", "") or "")
+    for key in ("message", "message_humain", "question", "input", "user_query"):
+        value = state.get(key)
+        if value:
+            return str(value)
+    return ""
 
 
 def analyse_request(state: AgentState) -> AgentState:
     """Supervisor node: normalize user goal and runtime options."""
 
     user_query = _latest_human_text(state)
+    if not user_query.strip():
+        user_query = (
+            "Recommande les meilleures offres, explique les gaps de competences "
+            "et propose une roadmap."
+        )
     candidat_id = state.get("candidat_id") or _extract_candidate_id(user_query)
-    if not candidat_id:
+    intent = _infer_intent(user_query, candidat_id)
+    if not candidat_id and intent == "recommendation":
         candidat_id = "AUTO"
     human_message = HumanMessage(
         content=user_query,
@@ -64,6 +79,7 @@ def analyse_request(state: AgentState) -> AgentState:
             "candidat_id": candidat_id,
             "top_k": int(state.get("top_k") or DEFAULT_TOP_K),
             "mode": "real",
+            "intent": intent,
         },
     )
     messages_update = [] if state.get("messages") else [human_message]
@@ -78,14 +94,12 @@ def analyse_request(state: AgentState) -> AgentState:
                 "project": LANGSMITH_PROJECT if LANGSMITH_TRACING else None,
             },
             "plan": [
-                "charger_profil",
-                "recherche_vectorielle_pgvector",
-                "verification_graphe_neo4j",
-                "skill_gap",
-                "scoring_hybride",
-                "critique",
-                "roadmap",
-                "generation_finale_ollama",
+                "orientation_competences"
+                if intent == "career_advice"
+                else "charger_profil",
+                "generation_finale_ollama"
+                if intent == "career_advice"
+                else "recherche_vectorielle_pgvector",
             ]
         },
     }
@@ -99,11 +113,21 @@ def analyse_request(state: AgentState) -> AgentState:
             "metadata": human_message.additional_kwargs,
         },
         "candidat_id": candidat_id,
+        "intent": intent,
         "top_k": int(state.get("top_k") or DEFAULT_TOP_K),
         "mode": "real",
         "replan_count": int(state.get("replan_count") or 0),
         "traces": _append_trace(state, trace),
     }
+
+
+def route_after_analysis(state: AgentState) -> Literal["career_advice", "recommendation"]:
+    return "career_advice" if state.get("intent") == "career_advice" else "recommendation"
+
+
+def build_career_guidance(state: AgentState) -> AgentState:
+    guidance, trace = build_career_competency_guidance(state.get("user_query", ""))
+    return {**state, "career_guidance": guidance, "traces": _append_trace(state, trace)}
 
 
 def load_profile(state: AgentState) -> AgentState:
@@ -224,6 +248,9 @@ def generate_final_answer(state: AgentState) -> AgentState:
 
 
 def _deterministic_answer(state: AgentState) -> str:
+    if state.get("intent") == "career_advice":
+        return _deterministic_career_answer(state)
+
     ranked = state.get("ranked_offers", [])
     profile = state.get("candidate_profile", {})
     critique = state.get("critique", {})
@@ -257,20 +284,79 @@ def _deterministic_answer(state: AgentState) -> str:
     )
 
 
+def _deterministic_career_answer(state: AgentState) -> str:
+    guidance = state.get("career_guidance", {})
+    local = guidance.get("local_evidence", {})
+    skills = guidance.get("priority_skills", [])
+    esco = guidance.get("esco_references", [])
+    n_offers = local.get("n_matching_offers", 0)
+    top_skills = skills[:6]
+    lines = [
+        f"Objectif detecte: {guidance.get('target_role', 'Professionnel data')} dans le domaine {guidance.get('target_domain', 'camerounais')}.",
+        (
+            f"Evidence locale: {n_offers} offre(s) du fichier local correspondent au filtre data/banque-finance."
+            if n_offers
+            else "Evidence locale limitee: aucune offre locale assez proche n'a ete isolee; la reponse doit rester une orientation, pas une preuve de demande marche."
+        ),
+        "Competences a mettre en avant:",
+    ]
+    for item in top_skills:
+        evidence = item.get("evidence_locale", 0)
+        lines.append(
+            f"- {item.get('competence')} ({item.get('priorite')}): {item.get('pourquoi')}."
+            + (f" Occurrences locales: {evidence}." if evidence else "")
+        )
+    if "banque/finance" in str(guidance.get("target_domain", "")):
+        lines.extend(
+            [
+                "Angle bancaire a defendre: montre que tu sais relier un modele a un risque metier, pas seulement entrainer un algorithme.",
+                "Exemples de preuves dans ton portfolio: scoring de credit interpretable, segmentation client, detection d'anomalies/fraude, tableau de bord risque ou performance agence.",
+            ]
+        )
+    if esco:
+        lines.append("References ESCO proches: " + ", ".join(esco[:5]) + ".")
+    lines.append("Sources utilisees: " + ", ".join(guidance.get("sources", [])) + ".")
+    return "\n".join(lines)
+
+
 def route_after_critique(state: AgentState) -> Literal["replan", "roadmap"]:
     return "replan" if state.get("should_replan") else "roadmap"
+
+
+def _infer_intent(text: str, candidat_id: str) -> Literal["recommendation", "career_advice"]:
+    lower = text.lower()
+    career_markers = (
+        "je veux devenir",
+        "devenir",
+        "quelles competences",
+        "quelles compétences",
+        "competences je dois",
+        "compétences je dois",
+        "mettre en avant",
+        "orientation",
+        "carriere",
+        "carrière",
+    )
+    if not candidat_id and any(marker in lower for marker in career_markers):
+        return "career_advice"
+    return "recommendation"
 
 
 def _extract_candidate_id(text: str) -> str:
     tokens = text.replace(",", " ").replace(";", " ").split()
     for token in tokens:
-        if token.upper().startswith(("PP", "CAND", "C")) and len(token) >= 3:
-            return token.strip()
+        cleaned = token.strip().strip(".:()[]{}")
+        upper = cleaned.upper()
+        if upper.startswith(("PP", "CAND")) and len(cleaned) >= 3:
+            return cleaned
+        if upper.startswith("C") and len(cleaned) >= 3 and any(ch.isdigit() for ch in cleaned):
+            return cleaned
     return ""
 
 
-workflow = StateGraph(AgentState)
+workflow = StateGraph(AgentState, input_schema=AgentInput)
 workflow.add_node("analyse_request", analyse_request)
+workflow.add_node("build_career_guidance", build_career_guidance)
 workflow.add_node("load_profile", load_profile)
 workflow.add_node("retrieve_and_check_graph", retrieve_and_check_graph)
 workflow.add_node("compute_skill_gap", compute_skill_gap)
@@ -281,7 +367,12 @@ workflow.add_node("create_roadmap", create_roadmap)
 workflow.add_node("generate_final_answer", generate_final_answer)
 
 workflow.add_edge(START, "analyse_request")
-workflow.add_edge("analyse_request", "load_profile")
+workflow.add_conditional_edges(
+    "analyse_request",
+    route_after_analysis,
+    {"career_advice": "build_career_guidance", "recommendation": "load_profile"},
+)
+workflow.add_edge("build_career_guidance", "generate_final_answer")
 workflow.add_edge("load_profile", "retrieve_and_check_graph")
 workflow.add_edge("retrieve_and_check_graph", "compute_skill_gap")
 workflow.add_edge("compute_skill_gap", "score_and_rank")

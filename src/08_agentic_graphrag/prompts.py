@@ -13,6 +13,9 @@ de formations. Si une information manque, signale-le clairement."""
 
 
 def build_final_prompt(state: dict[str, Any]) -> str:
+    if state.get("intent") == "career_advice":
+        return _build_career_prompt(state)
+
     offers = []
     for offer in state.get("ranked_offers", [])[:3]:
         offers.append(
@@ -60,6 +63,26 @@ Contraintes:
 - citer les limites quand elles existent;
 - proposer une prochaine action concrete au candidat;
 - ne pas affirmer qu'une offre est excellente si la critique signale un risque.
+
+Donnees disponibles:
+{json.dumps(payload, ensure_ascii=False, indent=2, default=str)}
+"""
+
+
+def _build_career_prompt(state: dict[str, Any]) -> str:
+    payload = {
+        "question_utilisateur": state.get("user_query", ""),
+        "orientation": state.get("career_guidance", {}),
+    }
+    return f"""
+Redige une reponse concise en francais pour une question d'orientation metier.
+
+Contraintes:
+- ne pas pretendre qu'un candidat precis a ete charge;
+- distinguer competences techniques, competences metier bancaire et preuves de portfolio;
+- signaler clairement si l'evidence locale est limitee;
+- citer les sources locales disponibles dans les donnees;
+- ne pas inventer de scores, d'offres ou de formations.
 
 Donnees disponibles:
 {json.dumps(payload, ensure_ascii=False, indent=2, default=str)}

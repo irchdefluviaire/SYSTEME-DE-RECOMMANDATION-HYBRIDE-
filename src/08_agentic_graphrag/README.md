@@ -71,7 +71,39 @@ Test CLI:
 python src/08_agentic_graphrag/run_agent.py --candidat "<ID_CANDIDAT>"
 ```
 
-Exemple d'entree LangGraph Studio avec `HumanMessage`:
+Dans LangGraph Studio local, utilise le lien affiche par `langgraph dev`:
+
+```text
+https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
+```
+
+Le bouton `Deployer` sert au deploiement LangSmith cloud. Pour tester le graphe
+localement, utilise `Interagir`, `Chat` ou `Executer l'experience`; ne clique
+pas sur `Deployer` tant que tu veux seulement executer le serveur local.
+
+Entree minimale LangGraph Studio:
+
+```json
+{
+  "message": "Recommande les meilleures offres pour le candidat PPKOU2501080016340, explique les gaps de competences et propose une roadmap."
+}
+```
+
+Question d'orientation sans identifiant candidat:
+
+```json
+{
+  "message": "je veux devenir data scientist dans le domaine bancaire au cameroun quelles competences je dois mettre en avant ?"
+}
+```
+
+Dans ce cas, le graphe bascule vers l'intention `career_advice`: il ne force pas
+un faux candidat `AUTO`, ne charge pas le premier profil disponible, et produit
+une orientation a partir des offres locales normalisees et des libelles ESCO.
+
+Aliases acceptes pour le texte utilisateur: `message`, `message_humain`,
+`question`, `input` ou `user_query`. L'ancien format avec `HumanMessage` reste
+compatible:
 
 ```json
 {
