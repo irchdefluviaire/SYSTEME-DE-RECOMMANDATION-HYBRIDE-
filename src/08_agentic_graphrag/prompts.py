@@ -6,10 +6,12 @@ import json
 from typing import Any
 
 
-SYSTEM_FINAL = """Tu es un agent de recommandation emploi-competences.
-Tu expliques des decisions fondees sur des donnees: scores, graphe, skill gap,
-NCF/MEPC/ESCO et roadmap. Tu ne dois pas inventer de competences, de scores ou
-de formations. Si une information manque, signale-le clairement."""
+SYSTEM_FINAL = """Tu es un conseiller emploi-competences expert du marche camerounais.
+Tu reponds directement au candidat en langage naturel fluide en francais.
+Tu te bases exclusivement sur les donnees fournies (scores pgvector, graphe Neo4j,
+skill gap, niveaux NCF/MEPC/ESCO, roadmap). Tu n'inventes aucune competence, score
+ou formation. Quand une information manque, tu le signales naturellement dans ta reponse.
+Ta reponse est un texte continu, sans listes a puces ni JSON."""
 
 
 def build_final_prompt(state: dict[str, Any]) -> str:
@@ -59,16 +61,17 @@ def build_final_prompt(state: dict[str, Any]) -> str:
         },
     }
     return f"""
-Redige une reponse concise en francais pour le memoire/prototype.
+L'utilisateur a pose la question suivante : "{payload['question_utilisateur']}"
 
-Contraintes:
-- expliquer comment la recommandation a ete obtenue;
-- distinguer score semantique, competences, niveau NCF et alignement secteur/metier;
-- donner un verdict recruteur: pret a postuler, postuler avec plan, vivier a developper ou hors cible;
-- citer les limites quand elles existent;
-- proposer les competences prioritaires a developper avant une candidature forte;
-- proposer une prochaine action concrete au candidat;
-- ne pas affirmer qu'une offre est excellente si la critique signale un risque.
+Reponds-lui directement en langage naturel fluide (pas de listes, pas de JSON).
+Ta reponse doit en un seul texte continu :
+- accuser reception de sa question et presenter le candidat et l'offre principale retenue;
+- expliquer en termes simples comment le systeme a calcule le score (similarite semantique
+  via pgvector, couverture de competences et contraintes NCF/secteur via le graphe Neo4j);
+- donner le verdict recruteur de maniere claire et justifiee;
+- mentionner les competences prioritaires a developper si des ecarts existent;
+- proposer la prochaine etape concrete a partir de la roadmap;
+- si la critique a detecte des reserves, les mentionner honnêtement.
 
 Donnees disponibles:
 {json.dumps(payload, ensure_ascii=False, indent=2, default=str)}
@@ -81,14 +84,15 @@ def _build_career_prompt(state: dict[str, Any]) -> str:
         "orientation": state.get("career_guidance", {}),
     }
     return f"""
-Redige une reponse concise en francais pour une question d'orientation metier.
+L'utilisateur a pose la question suivante : "{payload['question_utilisateur']}"
 
-Contraintes:
-- ne pas pretendre qu'un candidat precis a ete charge;
-- distinguer competences techniques, competences metier bancaire et preuves de portfolio;
-- signaler clairement si l'evidence locale est limitee;
-- citer les sources locales disponibles dans les donnees;
-- ne pas inventer de scores, d'offres ou de formations.
+Reponds-lui directement en langage naturel fluide (pas de listes, pas de JSON).
+Ta reponse doit en un seul texte continu :
+- repondre directement a sa question d'orientation;
+- distinguer competences techniques et competences metier specifiques au secteur vise;
+- signaler si l'evidence locale (offres camerounaises) est limitee;
+- suggerer des preuves concretes a mettre en avant dans un portfolio ou entretien;
+- ne pas inventer de scores, d'offres ou de formations inexistantes.
 
 Donnees disponibles:
 {json.dumps(payload, ensure_ascii=False, indent=2, default=str)}

@@ -32,7 +32,7 @@ def ollama_generate(
             model=model,
             base_url=OLLAMA_BASE_URL,
             temperature=OLLAMA_TEMPERATURE,
-            num_predict=220,
+            num_predict=600,
         )
         messages = [HumanMessage(content=prompt)]
         if system:
@@ -48,7 +48,7 @@ def ollama_generate(
         "prompt": prompt,
         "system": system,
         "stream": False,
-        "options": {"temperature": OLLAMA_TEMPERATURE, "num_predict": 220},
+        "options": {"temperature": OLLAMA_TEMPERATURE, "num_predict": 600},
     }
     data = json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(

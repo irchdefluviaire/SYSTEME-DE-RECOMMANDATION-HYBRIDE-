@@ -266,41 +266,78 @@ def _deterministic_answer(state: AgentState) -> str:
     profile = state.get("candidate_profile", {})
     critique = state.get("critique", {})
     roadmap = state.get("roadmap", {})
+
     if not ranked:
         return (
-            "Aucune recommandation robuste n'a ete produite. "
-            "Le systeme doit elargir la recherche ou verifier les donnees du candidat."
+            "Apres analyse de votre profil dans la base vectorielle et le graphe de connaissances, "
+            "aucune offre suffisamment proche n'a pu etre identifiee. "
+            "Je vous recommande d'elargir vos criteres de recherche ou de verifier que votre profil "
+            "est bien renseigne dans le systeme."
         )
+
     top = ranked[0]
     issues = critique.get("issues", [])
-    reserve = " avec reserve" if issues else ""
-    missing = top.get("manquantes", [])[:3]
     fit = top.get("fit_profile", {})
     dimensions = top.get("score_components", {}) or fit.get("dimensions", {})
     verdict = top.get("verdict_recrutement") or fit.get("verdict", "non calcule")
-    priorities = top.get("priorites_developpement", []) or fit.get("priorites_developpement", [])
-    return "\n".join(
-        [
-            f"Recommandation principale{reserve}: {top.get('titre')} ({top.get('offre_id')}).",
-            f"Verdict recruteur: {verdict}.",
-            f"Candidat: {profile.get('metier_vise')} | Niveau NCF: {profile.get('ncf_niveau_final')}.",
-            (
-                f"Score hybride: {top.get('score_hybride')} "
-                f"(semantique={dimensions.get('semantique', top.get('score_sem'))}, "
-                f"competences={dimensions.get('competences', top.get('taux_match'))}, "
-                f"NCF={dimensions.get('niveau_ncf', 'n/a')}, "
-                f"secteur/metier={dimensions.get('secteur_metier', 'n/a')})."
-            ),
-            "Competences manquantes prioritaires: "
-            + (", ".join(priorities[:5] or missing) if (priorities or missing) else "aucune competence critique detectee dans le contexte disponible."),
-            "Critique: " + ("; ".join(issues) if issues else "aucun blocage majeur detecte par l'agent critique."),
-            (
-                f"Roadmap: viser {roadmap.get('poste_cible', top.get('titre'))}, "
-                f"score projete {roadmap.get('score_matching_projete', 'non calcule')}."
-            ),
-            "Cette sortie utilise les bases Neo4j et pgvector; active AGENT_USE_OLLAMA=1 pour la redaction par Llama 3.1.",
-        ]
-    )
+    priorities = (top.get("priorites_developpement", []) or fit.get("priorites_developpement", []))[:5]
+    missing = top.get("manquantes", [])[:3]
+    score_sem = dimensions.get("semantique") or top.get("score_sem", "n/a")
+    score_comp = dimensions.get("competences") or top.get("taux_match", "n/a")
+    score_ncf = dimensions.get("niveau_ncf", "n/a")
+    score_sect = dimensions.get("secteur_metier", "n/a")
+
+    verdict_labels = {
+        "pret_a_postuler": "pret a postuler immediatement",
+        "postuler_avec_plan": "eligible avec un plan de montee en competences",
+        "vivier_a_developper": "a integrer dans le vivier candidats pour une candidature future",
+        "hors_cible_actuel": "hors cible pour ce poste dans l'immediat",
+    }
+    verdict_text = verdict_labels.get(str(verdict), str(verdict))
+
+    paragraphs = [
+        f"Suite a votre demande, le systeme a interroge la base vectorielle pgvector "
+        f"et le graphe de connaissances Neo4j pour identifier les offres les plus compatibles "
+        f"avec votre profil de {profile.get('metier_vise', 'professionnel')} "
+        f"(niveau NCF {profile.get('ncf_niveau_final', 'non precise')}).",
+
+        f"L'offre qui ressort en tete est \"{top.get('titre', 'N/A')}\" "
+        f"(reference {top.get('offre_id', 'N/A')})"
+        + (f", localisee a {top.get('ville')}" if top.get("ville") else "")
+        + (f" dans le secteur {top.get('secteur')}" if top.get("secteur") else "")
+        + f". Le score hybride obtenu est de {top.get('score_hybride', 'n/a')}, "
+        f"compose de la similarite semantique ({score_sem}), "
+        f"de la couverture de competences ESCO ({score_comp}), "
+        f"de la compatibilite de niveau NCF ({score_ncf}) "
+        f"et de l'alignement secteur/metier ({score_sect}).",
+
+        f"Le verdict du systeme pour ce profil face a cette offre est : {verdict_text}.",
+    ]
+
+    if priorities or missing:
+        comp_list = ", ".join(priorities or missing)
+        paragraphs.append(
+            f"Pour renforcer votre candidature, les competences prioritaires a developper "
+            f"identifiees dans le graphe sont : {comp_list}."
+        )
+
+    if roadmap and roadmap.get("poste_cible"):
+        etapes = roadmap.get("etapes_court_terme", [])[:2]
+        etapes_text = " puis ".join(str(e) for e in etapes) if etapes else "a definir selon votre disponibilite"
+        paragraphs.append(
+            f"La trajectoire recommandee vise le poste de {roadmap.get('poste_cible')} "
+            f"avec un score projete de {roadmap.get('score_matching_projete', 'n/a')} apres montee en competences. "
+            f"Prochaine etape concrete : {etapes_text}."
+        )
+
+    if issues:
+        reserves = " ; ".join(issues)
+        paragraphs.append(
+            f"L'agent critique a toutefois signale les reserves suivantes : {reserves}. "
+            f"Tenez-en compte avant de finaliser votre candidature."
+        )
+
+    return "\n\n".join(paragraphs)
 
 
 def _deterministic_career_answer(state: AgentState) -> str:
@@ -310,32 +347,56 @@ def _deterministic_career_answer(state: AgentState) -> str:
     esco = guidance.get("esco_references", [])
     n_offers = local.get("n_matching_offers", 0)
     top_skills = skills[:6]
-    lines = [
-        f"Objectif detecte: {guidance.get('target_role', 'Professionnel data')} dans le domaine {guidance.get('target_domain', 'camerounais')}.",
-        (
-            f"Evidence locale: {n_offers} offre(s) du fichier local correspondent au filtre data/banque-finance."
+    query = state.get("user_query", "votre question")
+
+    paragraphs = [
+        f"Vous souhaitez vous orienter vers le metier de "
+        f"{guidance.get('target_role', 'professionnel')} dans le domaine "
+        f"{guidance.get('target_domain', 'camerounais')}. "
+        + (
+            f"Le graphe de connaissances local recense {n_offers} offre(s) correspondant "
+            f"a ce profil sur le marche camerounais."
             if n_offers
-            else "Evidence locale limitee: aucune offre locale assez proche n'a ete isolee; la reponse doit rester une orientation, pas une preuve de demande marche."
+            else
+            "Les donnees locales disponibles ne contiennent pas encore suffisamment d'offres "
+            "correspondant precisement a ce profil ; la reponse ci-dessous est donc une "
+            "orientation generale et non une preuve de demande du marche."
         ),
-        "Competences a mettre en avant:",
     ]
-    for item in top_skills:
-        evidence = item.get("evidence_locale", 0)
-        lines.append(
-            f"- {item.get('competence')} ({item.get('priorite')}): {item.get('pourquoi')}."
-            + (f" Occurrences locales: {evidence}." if evidence else "")
+
+    if top_skills:
+        skill_texts = []
+        for item in top_skills:
+            evidence = item.get("evidence_locale", 0)
+            line = f"{item.get('competence')} ({item.get('priorite')}) : {item.get('pourquoi')}"
+            if evidence:
+                line += f" — {evidence} occurrence(s) dans les offres locales"
+            skill_texts.append(line)
+        paragraphs.append(
+            "Les competences a mettre en avant en priorite, identifiees via le graphe ESCO "
+            "et les offres locales, sont les suivantes : " + " ; ".join(skill_texts) + "."
         )
+
     if "banque/finance" in str(guidance.get("target_domain", "")):
-        lines.extend(
-            [
-                "Angle bancaire a defendre: montre que tu sais relier un modele a un risque metier, pas seulement entrainer un algorithme.",
-                "Exemples de preuves dans ton portfolio: scoring de credit interpretable, segmentation client, detection d'anomalies/fraude, tableau de bord risque ou performance agence.",
-            ]
+        paragraphs.append(
+            "Pour le secteur bancaire et financier camerounais, l'angle decisif est de montrer "
+            "que vous savez relier un modele a un risque metier concret, pas seulement entrainer "
+            "un algorithme. Des preuves convaincantes pour un recruteur : un scoring de credit "
+            "interpretable, une segmentation client, une detection d'anomalies ou de fraude, "
+            "ou un tableau de bord de performance agence."
         )
+
     if esco:
-        lines.append("References ESCO proches: " + ", ".join(esco[:5]) + ".")
-    lines.append("Sources utilisees: " + ", ".join(guidance.get("sources", [])) + ".")
-    return "\n".join(lines)
+        paragraphs.append(
+            "Les metiers ESCO les plus proches de votre cible dans le referentiel sont : "
+            + ", ".join(esco[:5]) + "."
+        )
+
+    sources = guidance.get("sources", [])
+    if sources:
+        paragraphs.append("Sources interrogees : " + ", ".join(sources) + ".")
+
+    return "\n\n".join(paragraphs)
 
 
 def route_after_critique(state: AgentState) -> Literal["replan", "roadmap"]:
