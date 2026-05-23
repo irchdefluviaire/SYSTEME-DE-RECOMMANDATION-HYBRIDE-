@@ -373,18 +373,174 @@ class GraphRAGContextBuilder:
         }
 
     # ── Étape 3 : Score hybride ──────────────────────────────────────────
+    @staticmethod
+    def _clamp(value, low: float = 0.0, high: float = 1.0) -> float:
+        try:
+            return max(low, min(high, float(value)))
+        except (TypeError, ValueError):
+            return low
+
+    @staticmethod
+    def _first_present(*values):
+        for value in values:
+            if value is None:
+                continue
+            try:
+                if value != value:
+                    continue
+            except TypeError:
+                pass
+            if str(value) in {"", "<NA>", "nan", "NaN", "None"}:
+                continue
+            return value
+        return None
+
+    def _ncf_fit(self, offre: dict) -> tuple[float, int | None, str]:
+        cand_ncf = self._as_int(
+            self._first_present(
+                offre.get("ncf_cand"),
+                offre.get("candidat_ncf"),
+                offre.get("candidat_ncf_code"),
+                offre.get("graph_signals", {}).get("candidat_ncf"),
+            )
+        )
+        offer_ncf = self._as_int(
+            self._first_present(
+                offre.get("ncf_code"),
+                offre.get("ncf_requis"),
+                offre.get("offre_ncf_code"),
+                offre.get("graph_signals", {}).get("offre_ncf"),
+            )
+        )
+        if cand_ncf is None or offer_ncf is None:
+            return 0.55, None, "niveau formation incomplet"
+        gap = offer_ncf - cand_ncf
+        if gap <= 0:
+            return 1.0, gap, "niveau formation compatible"
+        if gap == 1:
+            return 0.72, gap, "niveau juste inferieur au requis"
+        if gap == 2:
+            return 0.45, gap, "ecart de niveau formation important"
+        return 0.20, gap, "ecart de niveau formation bloquant"
+
+    def _sector_fit(self, offre: dict) -> tuple[float, list[str]]:
+        candidate_text = " ".join(
+            [
+                str(offre.get("metier_vise", "")),
+                str(offre.get("secteur_metier", "")),
+                str(offre.get("filiere_specialite", "")),
+                str(offre.get("formations_candidat", "")),
+            ]
+        )
+        offer_text = " ".join(
+            [
+                str(offre.get("titre", "")),
+                str(offre.get("secteur", "")),
+                str(offre.get("skills", "")),
+                str(offre.get("details", "")),
+            ]
+        )
+        cand_tokens = self._tokenize(candidate_text)
+        offer_tokens = self._tokenize(offer_text)
+        if not cand_tokens or not offer_tokens:
+            return 0.50, []
+        overlap = sorted(cand_tokens & offer_tokens)
+        return self._clamp(len(overlap) / max(min(len(cand_tokens), len(offer_tokens)), 1)), overlap[:5]
+
+    def _recruitment_verdict(self, score: float, n_essential: int, ncf_gap: int | None) -> tuple[str, list[str]]:
+        blockers: list[str] = []
+        if n_essential >= 4:
+            blockers.append(f"{n_essential} competences essentielles manquantes")
+        elif n_essential >= 2:
+            blockers.append(f"{n_essential} competences essentielles a combler")
+        if ncf_gap is not None and ncf_gap >= 2:
+            blockers.append(f"niveau NCF inferieur de {ncf_gap} niveau(x)")
+
+        if score >= 0.72 and n_essential <= 1 and not (ncf_gap is not None and ncf_gap > 0):
+            verdict = "pret_a_postuler"
+        elif score >= 0.55 and n_essential <= 3 and not (ncf_gap is not None and ncf_gap >= 3):
+            verdict = "postuler_avec_plan_de_montee_en_competence"
+        elif score >= 0.42:
+            verdict = "vivier_a_developper"
+        else:
+            verdict = "hors_cible_actuel"
+        return verdict, blockers
+
+    def _compute_fit_profile(self, offre_enriched: dict) -> dict:
+        semantic_fit = self._clamp(offre_enriched.get("score_sem", 0.5))
+        raw_skill_fit = self._clamp(offre_enriched.get("taux_match", 0.5))
+        n_essential = len(offre_enriched.get("ess_manq", []) or [])
+        essential_penalty = min(0.45, n_essential * 0.12)
+        skill_fit = self._clamp(raw_skill_fit - essential_penalty)
+        ncf_fit, ncf_gap, ncf_message = self._ncf_fit(offre_enriched)
+        sector_fit, sector_overlap = self._sector_fit(offre_enriched)
+
+        score = (
+            0.35 * semantic_fit
+            + 0.30 * skill_fit
+            + 0.20 * ncf_fit
+            + 0.15 * sector_fit
+        )
+        if ncf_gap is not None and ncf_gap >= 3:
+            score *= 0.75
+        if n_essential >= 4:
+            score *= 0.80
+        score = round(self._clamp(score), 4)
+        verdict, blockers = self._recruitment_verdict(score, n_essential, ncf_gap)
+
+        strengths = []
+        if semantic_fit >= 0.65:
+            strengths.append("proximite semantique forte avec le profil")
+        if raw_skill_fit >= 0.70:
+            strengths.append("bonne couverture des competences")
+        if ncf_fit >= 0.90:
+            strengths.append(ncf_message)
+        if sector_fit >= 0.50 and sector_overlap:
+            strengths.append("alignement sectoriel: " + ", ".join(sector_overlap[:3]))
+
+        development_priorities = []
+        development_priorities.extend(offre_enriched.get("ess_manq", [])[:3])
+        if ncf_gap is not None and ncf_gap > 0:
+            development_priorities.append(f"combler le gap NCF de {ncf_gap} niveau(x)")
+        for item in offre_enriched.get("manquantes", []):
+            if item not in development_priorities:
+                development_priorities.append(item)
+            if len(development_priorities) >= 5:
+                break
+
+        return {
+            "score": score,
+            "verdict": verdict,
+            "dimensions": {
+                "semantique": round(semantic_fit, 4),
+                "competences": round(skill_fit, 4),
+                "competences_brut": round(raw_skill_fit, 4),
+                "niveau_ncf": round(ncf_fit, 4),
+                "secteur_metier": round(sector_fit, 4),
+            },
+            "poids": {
+                "semantique": 0.35,
+                "competences": 0.30,
+                "niveau_ncf": 0.20,
+                "secteur_metier": 0.15,
+            },
+            "ncf_gap": ncf_gap,
+            "ncf_message": ncf_message,
+            "facteurs_bloquants": blockers,
+            "points_forts": strengths,
+            "priorites_developpement": development_priorities[:5],
+        }
+
     def _compute_hybrid_score(self, offre_enriched: dict) -> float:
-        """
-        Score hybride = α·sémantique + β·graphe + γ·collaboratif
-        α=0.40, β=0.35, γ=0.25
-        """
-        s_sem  = offre_enriched.get("score_sem", 0.5)
-        taux   = offre_enriched.get("taux_match", 0.5)
-        n_ess  = len(offre_enriched.get("ess_manq", []))
-        penalite = min(1.0, n_ess * 0.15)
-        s_graph = taux * (1 - penalite)
-        s_collab = offre_enriched.get("score_collab", 0.5)
-        return round(0.40 * s_sem + 0.35 * s_graph + 0.25 * s_collab, 4)
+        """Recruitment-oriented score with explicit fit dimensions."""
+
+        fit_profile = self._compute_fit_profile(offre_enriched)
+        offre_enriched["fit_profile"] = fit_profile
+        offre_enriched["score_components"] = fit_profile["dimensions"]
+        offre_enriched["verdict_recrutement"] = fit_profile["verdict"]
+        offre_enriched["facteurs_bloquants"] = fit_profile["facteurs_bloquants"]
+        offre_enriched["priorites_developpement"] = fit_profile["priorites_developpement"]
+        return fit_profile["score"]
 
     # ── Assemblage du contexte ───────────────────────────────────────────
     def build_context(
@@ -409,7 +565,6 @@ class GraphRAGContextBuilder:
         enriched = []
         for offre in candidates:
             e = self._enrich_with_neo4j(candidat_id, offre)
-            e["score_collab"] = 0.5   # baseline (remplacé par le vrai score collab)
             e["score_hybride"] = self._compute_hybrid_score(e)
             enriched.append(e)
 
@@ -449,9 +604,12 @@ class GraphRAGContextBuilder:
                 f"Contrat   : {o.get('type_contrat', o.get('contrat', ''))}",
                 f"Match     : {o.get('taux_match', 0):.0%}  "
                 f"(sem={o['score_sem']:.3f})",
+                f"Verdict   : {o.get('verdict_recrutement', 'non calcule')}",
+                f"Dimensions: {json.dumps(o.get('score_components', {}), ensure_ascii=False)}",
                 f"Acquises  : {', '.join(o.get('acquises', [])[:3]) or 'Aucune déclarée'}",
                 f"Manquantes: {', '.join(o.get('manquantes', [])[:3]) or 'Aucune'}",
                 f"Essentielles manquantes: {', '.join(o.get('ess_manq', [])) or 'Aucune'}",
+                f"Priorites developpement: {', '.join(o.get('priorites_developpement', [])[:3]) or 'Aucune'}",
             ]
 
         return "\n".join(lines)

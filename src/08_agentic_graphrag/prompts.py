@@ -25,6 +25,10 @@ def build_final_prompt(state: dict[str, Any]) -> str:
                 "score_hybride": offer.get("score_hybride"),
                 "score_sem": offer.get("score_sem"),
                 "taux_match": offer.get("taux_match"),
+                "verdict_recrutement": offer.get("verdict_recrutement"),
+                "score_components": offer.get("score_components", {}),
+                "facteurs_bloquants": offer.get("facteurs_bloquants", []),
+                "priorites_developpement": offer.get("priorites_developpement", [])[:5],
                 "secteur": offer.get("secteur"),
                 "ville": offer.get("ville"),
                 "manquantes": offer.get("manquantes", [])[:3],
@@ -59,8 +63,10 @@ Redige une reponse concise en francais pour le memoire/prototype.
 
 Contraintes:
 - expliquer comment la recommandation a ete obtenue;
-- distinguer score semantique, verification graphe et skill gap;
+- distinguer score semantique, competences, niveau NCF et alignement secteur/metier;
+- donner un verdict recruteur: pret a postuler, postuler avec plan, vivier a developper ou hors cible;
 - citer les limites quand elles existent;
+- proposer les competences prioritaires a developper avant une candidature forte;
 - proposer une prochaine action concrete au candidat;
 - ne pas affirmer qu'une offre est excellente si la critique signale un risque.
 

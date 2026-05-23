@@ -16,6 +16,17 @@ Workflow:
 Mode par defaut: `real`. Le mode simulation est desactive: le graphe exige Neo4j et PostgreSQL/pgvector.
 La generation finale est deterministe par defaut pour garder Studio reactif.
 
+Le scoring est oriente recrutement et montee en competence. Chaque offre
+recoit:
+
+- un `score_hybride` explicable;
+- des dimensions separees: semantique, competences, niveau NCF, secteur/metier;
+- un `verdict_recrutement`: `pret_a_postuler`,
+  `postuler_avec_plan_de_montee_en_competence`, `vivier_a_developper` ou
+  `hors_cible_actuel`;
+- des `facteurs_bloquants` et `priorites_developpement` qui alimentent la
+  critique agentique et la roadmap.
+
 Le scoring graphe s'aligne sur le schema Neo4j actuellement charge:
 
 - candidat -> `POSSEDE` -> `Compétence` ESCO

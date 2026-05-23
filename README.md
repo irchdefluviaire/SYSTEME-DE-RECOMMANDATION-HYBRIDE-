@@ -34,7 +34,11 @@ metiers ESCO, niveaux NCF, groupes MEPC, secteurs, employeurs et localisations.
 La recommandation finale est hybride: elle exploite la similarite vectorielle,
 les relations du graphe, des regles de niveau/competence et, selon le mode
 choisi, une generation LLM pour formuler les explications, le skill gap et la
-roadmap.
+roadmap. Le score final est interpretable pour un usage recrutement: il combine
+la proximite semantique, la couverture des competences, la compatibilite de
+niveau NCF et l'alignement metier/secteur, puis produit un verdict operationnel
+(`pret_a_postuler`, `postuler_avec_plan_de_montee_en_competence`,
+`vivier_a_developper` ou `hors_cible_actuel`).
 
 ## Structure utile du depot
 

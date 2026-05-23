@@ -303,9 +303,10 @@ def build_training_roadmap(
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     """Generate a structured training roadmap for the best offer."""
 
+    priority_labels = top_offer.get("priorites_developpement", []) or top_offer.get("manquantes", [])
     missing = [
         {"label": label, "importance": "essential" if label in top_offer.get("ess_manq", []) else "optional"}
-        for label in top_offer.get("manquantes", [])
+        for label in priority_labels
     ]
     roadmap = generate_roadmap(
         candidat=candidate_profile,

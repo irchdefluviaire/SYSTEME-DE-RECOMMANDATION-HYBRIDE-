@@ -166,6 +166,8 @@ def critique_recommendations(state: AgentState) -> AgentState:
     top = ranked[0] if ranked else {}
     score = float(top.get("score_hybride", 0.0) or 0.0)
     essential_gaps = len(top.get("ess_manq", []) or [])
+    verdict = top.get("verdict_recrutement") or top.get("fit_profile", {}).get("verdict")
+    blockers = top.get("facteurs_bloquants", []) or top.get("fit_profile", {}).get("facteurs_bloquants", [])
     issues: list[str] = []
     if not ranked:
         issues.append("Aucune offre candidate n'a ete recuperee.")
@@ -175,6 +177,13 @@ def critique_recommendations(state: AgentState) -> AgentState:
         issues.append(
             f"Trop de competences essentielles manquantes ({essential_gaps} > {MAX_ESSENTIAL_GAPS})."
         )
+    if verdict == "hors_cible_actuel":
+        issues.append("Verdict recruteur: hors cible actuel.")
+    if verdict == "vivier_a_developper":
+        issues.append("Verdict recruteur: profil a developper avant candidature forte.")
+    for blocker in blockers:
+        if blocker not in issues:
+            issues.append(str(blocker))
 
     should_replan = bool(issues) and int(state.get("replan_count") or 0) < MAX_REPLAN
     critique = {
@@ -182,6 +191,8 @@ def critique_recommendations(state: AgentState) -> AgentState:
         "issues": issues,
         "top_score": score,
         "essential_gaps": essential_gaps,
+        "verdict_recrutement": verdict,
+        "facteurs_bloquants": blockers,
     }
     trace = {
         "step": "critic",
@@ -264,16 +275,24 @@ def _deterministic_answer(state: AgentState) -> str:
     issues = critique.get("issues", [])
     reserve = " avec reserve" if issues else ""
     missing = top.get("manquantes", [])[:3]
+    fit = top.get("fit_profile", {})
+    dimensions = top.get("score_components", {}) or fit.get("dimensions", {})
+    verdict = top.get("verdict_recrutement") or fit.get("verdict", "non calcule")
+    priorities = top.get("priorites_developpement", []) or fit.get("priorites_developpement", [])
     return "\n".join(
         [
             f"Recommandation principale{reserve}: {top.get('titre')} ({top.get('offre_id')}).",
+            f"Verdict recruteur: {verdict}.",
             f"Candidat: {profile.get('metier_vise')} | Niveau NCF: {profile.get('ncf_niveau_final')}.",
             (
                 f"Score hybride: {top.get('score_hybride')} "
-                f"(semantique={top.get('score_sem')}, graphe/skill-gap={top.get('taux_match')})."
+                f"(semantique={dimensions.get('semantique', top.get('score_sem'))}, "
+                f"competences={dimensions.get('competences', top.get('taux_match'))}, "
+                f"NCF={dimensions.get('niveau_ncf', 'n/a')}, "
+                f"secteur/metier={dimensions.get('secteur_metier', 'n/a')})."
             ),
             "Competences manquantes prioritaires: "
-            + (", ".join(missing) if missing else "aucune competence critique detectee dans le contexte disponible."),
+            + (", ".join(priorities[:5] or missing) if (priorities or missing) else "aucune competence critique detectee dans le contexte disponible."),
             "Critique: " + ("; ".join(issues) if issues else "aucun blocage majeur detecte par l'agent critique."),
             (
                 f"Roadmap: viser {roadmap.get('poste_cible', top.get('titre'))}, "
