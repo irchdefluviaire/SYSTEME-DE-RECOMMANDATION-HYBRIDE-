@@ -605,16 +605,10 @@ L'objectif général de cette étude est de concevoir et d'évaluer un système 
 Plus spécifiquement, il sera question de :
 
 \begin{itemize}
-    \item structurer les données locales d'emploi et de profils candidats afin de produire des variables exploitables pour le matching : intitulé de poste, secteur, niveau de formation, expérience, localisation, compétences, objectif professionnel et texte d'embedding;
-    \item aligner les informations issues des offres et des profils avec les référentiels \ESCO{}, \MEPC{} et \NCF{} afin de réduire l'hétérogénéité des formulations et d'ancrer le système dans un vocabulaire métier et institutionnel cohérent;
-    \item formuler le rapprochement offre--profil comme un problème de recherche sémantique, en construisant des paires d'apprentissage reliant les métadonnées structurées des offres à leurs descriptions textuelles détaillées;
-    \item adapter un modèle \textit{SentenceTransformer} au domaine emploi-compétences pour produire une première liste d'offres candidates par similarité vectorielle, sans confondre cette étape de retrieval avec la décision finale de recommandation;
-    \item construire un graphe de connaissances sous Neo4j représentant les relations entre candidats, offres, compétences, métiers, secteurs, employeurs, localisations, niveaux \NCF{}, domaines de formation et groupes \MEPC{};
-    \item définir un mécanisme de \emph{skill gap} permettant de distinguer les compétences acquises, les compétences manquantes, les compétences essentielles et les écarts de niveau ou de domaine de formation;
-    \item concevoir un score hybride orienté recrutement combinant la proximité sémantique, la couverture des compétences, la compatibilité du niveau \NCF{} et l'alignement métier/secteur;
-    \item produire des verdicts interprétables pour l'aide à la décision : profil prêt à postuler, profil pouvant postuler avec plan de montée en compétence, profil à développer en vivier ou profil actuellement hors cible;
-    \item générer une trajectoire de montée en compétence en reliant les écarts identifiés aux formations, domaines \NCF{} ou ressources pertinentes;
-    \item évaluer le dispositif à partir de métriques de recherche d'information, de l'analyse des composantes du score et de la cohérence qualitative des recommandations produites.
+    \item normaliser et aligner les offres d'emploi et profils candidats avec les référentiels \ESCO{}, \MEPC{} et \NCF{} afin de produire des variables structurées — intitulé de poste, compétences, niveau \NCF{}, secteur, localisation — exploitables par le système de matching;
+    \item adapter par \emph{fine-tuning} contrastif un modèle \textit{SentenceTransformer} au domaine emploi-compétences à partir de paires offre--profil, puis indexer les représentations produites dans une base vectorielle \texttt{pgvector} pour le retrieval sémantique;
+    \item construire un graphe de connaissances sous Neo4j modélisant les relations entre candidats, offres, compétences, métiers, secteurs et niveaux \NCF{}, et concevoir un score hybride combinant similarité sémantique, couverture de compétences, compatibilité \NCF{} et alignement sectoriel;
+    \item générer des verdicts interprétables de matching — profil prêt, profil avec plan de montée en compétence, profil en vivier, profil hors cible — assortis d'une analyse de \emph{skill gap} et évalués par les métriques Recall@K, NDCG@K, MRR@K et MAP@K.
 \end{itemize}
 
 
