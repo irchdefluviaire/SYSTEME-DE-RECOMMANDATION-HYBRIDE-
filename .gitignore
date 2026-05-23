@@ -230,3 +230,5 @@ __marimo__/
 *.synctex.gz
 .env.example
 .langgraph_api/.langgraph_ops.pckl
+rapport/Memoire_GT_ISE_2026.tex
+.claude/settings.local.json
