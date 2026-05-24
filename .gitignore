@@ -232,3 +232,4 @@ __marimo__/
 .langgraph_api/.langgraph_ops.pckl
 rapport/Memoire_GT_ISE_2026.tex
 .claude/settings.local.json
+.langgraph_api/.langgraph_ops.pckl
