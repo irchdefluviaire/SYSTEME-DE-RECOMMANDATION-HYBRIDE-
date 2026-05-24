@@ -1,370 +1,287 @@
-"""Domain tools exposed to the Agentic GraphRAG workflow.
+"""Outils LangChain pour l'agent ReAct Agentic GraphRAG.
 
-The functions wrap the existing project modules and require live Neo4j +
-PostgreSQL/pgvector connections for retrieval and graph enrichment.
+Chaque outil est décoré @tool et appelé dynamiquement par llama3.1.
+La recherche sémantique utilise le SentenceTransformer fine-tuné réel.
 """
 
 from __future__ import annotations
 
+import json
 import sys
-from collections import Counter
 from pathlib import Path
 from typing import Any
 
+import numpy as np
 import pandas as pd
-
-from settings import DEFAULT_TOP_K, USE_REAL_DBS
+from langchain_core.tools import tool
 
 ROOT = Path(__file__).resolve().parents[2]
-SRC = ROOT / "src"
-sys.path.insert(0, str(SRC / "05_graphrag"))
-sys.path.insert(0, str(SRC / "03_knowledge_graph"))
-sys.path.insert(0, str(SRC / "04_pgvector"))
+SRC  = ROOT / "src"
+for _p in [SRC / "05_graphrag", SRC / "03_knowledge_graph", SRC / "04_pgvector"]:
+    _s = str(_p)
+    if _s not in sys.path:
+        sys.path.insert(0, _s)
 
-from context_builder import GraphRAGContextBuilder  # noqa: E402
-from roadmap_generator import generate_roadmap  # noqa: E402
+# ── Modèle sémantique (chargé une seule fois) ─────────────────────────────────
+_ST_MODEL = None
 
-
-CAREER_KEYWORDS = {
-    "python": "Python",
-    "sql": "SQL",
-    "statistique": "Statistiques appliquees",
-    "statistiques": "Statistiques appliquees",
-    "econometrie": "Econometrie",
-    "machine learning": "Machine learning",
-    "apprentissage automatique": "Machine learning",
-    "power bi": "Power BI",
-    "tableau": "Tableau",
-    "excel": "Excel avance",
-    "base de donnees": "Bases de donnees",
-    "bases de donnees": "Bases de donnees",
-    "data warehouse": "Data warehouse",
-    "etl": "ETL",
-    "visualisation": "Visualisation de donnees",
-    "dashboard": "Dashboarding",
-    "credit scoring": "Credit scoring",
-    "score de credit": "Credit scoring",
-    "risque": "Gestion du risque",
-    "fraude": "Detection de fraude",
-    "reglementaire": "Reporting reglementaire",
-    "conformite": "Conformite",
-}
+def _model():
+    global _ST_MODEL
+    if _ST_MODEL is not None:
+        return _ST_MODEL
+    from sentence_transformers import SentenceTransformer
+    ft = ROOT / "models" / "st_finetuned" / "checkpoints" / "checkpoint-292"
+    path = str(ft) if ft.exists() else "sentence-transformers/all-MiniLM-L6-v2"
+    _ST_MODEL = SentenceTransformer(path)
+    return _ST_MODEL
 
 
-def _trace(step: str, message: str, status: str = "ok", **details: Any) -> dict:
-    return {"step": step, "status": status, "message": message, "details": details}
+def _encode(texts: list[str]) -> np.ndarray:
+    return _model().encode(texts, normalize_embeddings=True, batch_size=64, show_progress_bar=False)
 
 
-def load_candidate_profile(candidat_id: str) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Load one normalized candidate profile from local processed data."""
+def _load_offers() -> pd.DataFrame:
+    return pd.read_parquet(ROOT / "data" / "processed" / "offres_normalized.parquet")
 
-    df = pd.read_parquet(ROOT / "data" / "processed" / "candidats_normalized.parquet")
+
+def _load_candidates() -> pd.DataFrame:
+    return pd.read_parquet(ROOT / "data" / "processed" / "candidats_normalized.parquet")
+
+
+# ── Helpers scoring ────────────────────────────────────────────────────────────
+
+def _ncf_score(cand_ncf, offre_ncf) -> tuple[float, int | None]:
+    try:
+        c, o = int(cand_ncf), int(offre_ncf)
+        gap = o - c
+        if gap <= 0:
+            return 1.0, gap
+        if gap == 1:
+            return 0.72, gap
+        if gap == 2:
+            return 0.45, gap
+        return 0.20, gap
+    except (TypeError, ValueError):
+        return 0.5, None
+
+
+def _sector_score(cand_text: str, offre_text: str) -> float:
+    def tok(t):
+        stop = {"et","de","du","des","la","le","les","en","a","au","aux","and","the","pour"}
+        return {w for w in t.lower().split() if len(w) >= 4 and w not in stop}
+    ct, ot = tok(cand_text), tok(offre_text)
+    if not ct or not ot:
+        return 0.45
+    return min(1.0, len(ct & ot) / max(min(len(ct), len(ot)), 1))
+
+
+def _skill_overlap(cand_text: str, skills_raw: str) -> tuple[list[str], list[str], float]:
+    skills = {s.strip() for s in str(skills_raw).replace(",", " ").split() if len(s.strip()) >= 4}
+    ctoks  = {t for t in cand_text.lower().split() if len(t) >= 4}
+    acq    = sorted(skills & ctoks)[:6]
+    manq   = sorted(skills - ctoks)[:6]
+    taux   = round(len(acq) / max(len(skills), 1), 3)
+    return acq, manq, taux
+
+
+def _verdict(score: float, ncf_gap: int | None, n_manq: int) -> str:
+    if score >= 0.65 and (ncf_gap is None or ncf_gap <= 0) and n_manq <= 2:
+        return "pret_a_postuler"
+    if score >= 0.50 and (ncf_gap is None or ncf_gap <= 2):
+        return "postuler_avec_plan"
+    if score >= 0.38:
+        return "vivier_a_developper"
+    return "hors_cible_actuel"
+
+
+def _enrich_offer(row: pd.Series, sem_score: float,
+                  cand_ncf=None, cand_profile_text: str = "") -> dict:
+    offre_ncf   = row.get("ncf_niveau_code")
+    offre_text  = " ".join([str(row.get("titre_poste","")), str(row.get("secteur_principal",""))])
+    ns, gap     = _ncf_score(cand_ncf, offre_ncf)
+    ss          = _sector_score(cand_profile_text, offre_text)
+    acq, manq, taux = _skill_overlap(cand_profile_text, str(row.get("skills_raw","")))
+    score = round(0.40 * sem_score + 0.30 * taux + 0.20 * ns + 0.10 * ss, 4)
+    return {
+        "offre_id":      str(row.get("offre_id", "")),
+        "titre":         str(row.get("titre_poste", "")),
+        "secteur":       str(row.get("secteur_principal", "")),
+        "ville":         str(row.get("ville_principale", "")),
+        "type_contrat":  str(row.get("type_contrat_norm", "")),
+        "ncf_requis":    str(offre_ncf) if offre_ncf else None,
+        "details":       str(row.get("details_clean", ""))[:250],
+        "score_sem":     round(float(sem_score), 4),
+        "score_hybride": score,
+        "ncf_score":     round(ns, 3),
+        "ncf_gap":       gap,
+        "sector_score":  round(ss, 3),
+        "skill_taux":    taux,
+        "acquises":      acq,
+        "manquantes":    manq,
+        "verdict":       _verdict(score, gap, len(manq)),
+    }
+
+
+# ── Outils exposés à l'agent ───────────────────────────────────────────────────
+
+@tool
+def search_offers(query: str, top_k: int = 5) -> str:
+    """Recherche sémantique d'offres d'emploi à partir d'une description en langage naturel.
+    Utilise le SentenceTransformer fine-tuné pour calculer la similarité cosinus.
+    Utilise cet outil pour toute requête générale sans ID candidat.
+
+    Args:
+        query: Description du profil, du poste ou du secteur recherché.
+        top_k: Nombre d'offres à retourner (défaut 5).
+    """
+    df      = _load_offers()
+    texts   = df["text_to_embed"].fillna("").astype(str).tolist()[:600]
+    q_vec   = _encode([query])[0]
+    o_vecs  = _encode(texts)
+    sims    = o_vecs @ q_vec
+    idx     = np.argsort(-sims)[:top_k]
+    results = []
+    for i in idx:
+        row = df.iloc[i]
+        results.append({
+            "offre_id":     str(row.get("offre_id", "")),
+            "titre":        str(row.get("titre_poste", "")),
+            "secteur":      str(row.get("secteur_principal", "")),
+            "ville":        str(row.get("ville_principale", "")),
+            "type_contrat": str(row.get("type_contrat_norm", "")),
+            "ncf_requis":   str(row.get("ncf_niveau_code", "")) or None,
+            "skills_raw":   str(row.get("skills_raw", ""))[:200],
+            "details":      str(row.get("details_clean", ""))[:200],
+            "score_sem":    round(float(sims[i]), 4),
+        })
+    return json.dumps(results, ensure_ascii=False, indent=2)
+
+
+@tool
+def get_candidate_profile(candidat_id: str) -> str:
+    """Charge le profil complet d'un candidat à partir de son identifiant.
+    Utilise toujours cet outil en premier quand un ID candidat est fourni.
+
+    Args:
+        candidat_id: Identifiant du candidat (ex: PP001, CAND_042, C001).
+    """
+    df  = _load_candidates()
     row = df[df["candidat_id"].astype(str) == str(candidat_id)]
     if row.empty:
-        row = df.iloc[[0]]
-        status = "warning"
-        message = f"Candidat {candidat_id} introuvable, premier profil utilise."
-    else:
-        status = "ok"
-        message = f"Candidat {candidat_id} charge."
+        available = df["candidat_id"].astype(str).head(8).tolist()
+        return json.dumps({"erreur": f"Candidat '{candidat_id}' introuvable.",
+                           "ids_disponibles": available})
     r = row.iloc[0]
-    profile = {
-        "candidat_id": str(r.get("candidat_id", candidat_id)),
-        "metier_vise": str(r.get("metier_vise", "") or ""),
-        "secteur_metier": str(r.get("secteur_metier", "") or ""),
-        "secteur_demande": str(r.get("secteur_demande", "") or ""),
-        "ncf_niveau_final": (
-            int(r["ncf_niveau_final"]) if pd.notna(r.get("ncf_niveau_final")) else None
-        ),
-        "filiere_specialite": str(r.get("filiere_specialite", "") or ""),
-        "diplome_raw": str(r.get("diplome_raw", "") or ""),
-        "objectif": str(r.get("objectif", "") or "")[:250],
-        "mobilite_geo_bool": bool(r.get("mobilite_geo_bool"))
-        if pd.notna(r.get("mobilite_geo_bool"))
-        else None,
-        "text_to_embed": str(r.get("text_to_embed", "") or ""),
-    }
-    return profile, _trace("load_candidate", message, status, candidat_id=profile["candidat_id"])
+    return json.dumps({
+        "candidat_id":       str(r.get("candidat_id", candidat_id)),
+        "metier_vise":       str(r.get("metier_vise", "") or ""),
+        "secteur_metier":    str(r.get("secteur_metier", "") or ""),
+        "ncf_niveau_final":  int(r["ncf_niveau_final"]) if pd.notna(r.get("ncf_niveau_final")) else None,
+        "filiere_specialite":str(r.get("filiere_specialite", "") or ""),
+        "diplome_raw":       str(r.get("diplome_raw", "") or ""),
+        "objectif":          str(r.get("objectif", "") or "")[:300],
+        "text_to_embed":     str(r.get("text_to_embed", "") or "")[:350],
+    }, ensure_ascii=False, indent=2)
 
 
-def build_career_competency_guidance(user_query: str) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Build career guidance without pretending that a candidate profile exists."""
+@tool
+def search_offers_for_candidate(candidat_id: str, top_k: int = 5) -> str:
+    """Recherche et classe les meilleures offres pour un candidat spécifique.
+    Calcule un score hybride : 40% sémantique + 30% compétences + 20% NCF + 10% secteur.
+    Utilise cet outil après avoir chargé le profil du candidat.
 
-    target_role = _infer_target_role(user_query)
-    target_domain = _infer_target_domain(user_query)
-    offers_path = ROOT / "data" / "processed" / "offres_normalized.parquet"
-    esco_path = ROOT / "data" / "raw" / "esco" / "skills_fr.csv"
+    Args:
+        candidat_id: Identifiant du candidat.
+        top_k: Nombre d'offres à retourner (défaut 5).
+    """
+    df_c = _load_candidates()
+    df_o = _load_offers()
+    row  = df_c[df_c["candidat_id"].astype(str) == str(candidat_id)]
+    if row.empty:
+        return json.dumps({"erreur": f"Candidat '{candidat_id}' introuvable."})
 
-    local_evidence = _summarize_local_offer_evidence(offers_path, target_role, target_domain)
-    esco_skills = _find_esco_skill_labels(esco_path)
-    priority_skills = _rank_priority_skills(local_evidence["keyword_counts"], target_domain)
+    r           = row.iloc[0]
+    query       = str(r.get("text_to_embed","") or r.get("objectif","") or r.get("metier_vise",""))
+    cand_ncf    = int(r["ncf_niveau_final"]) if pd.notna(r.get("ncf_niveau_final")) else None
+    cand_text   = " ".join([str(r.get("metier_vise","")), str(r.get("secteur_metier","")),
+                             str(r.get("filiere_specialite","")), str(r.get("objectif",""))])
 
-    guidance = {
-        "intent": "career_advice",
-        "target_role": target_role,
-        "target_domain": target_domain,
-        "local_evidence": local_evidence,
-        "priority_skills": priority_skills,
-        "esco_references": esco_skills,
-        "sources": [
-            "data/processed/offres_normalized.parquet",
-            "data/raw/esco/skills_fr.csv",
-        ],
-    }
-    trace = _trace(
-        "career_guidance",
-        "Orientation metier generee sans profil candidat force.",
-        target_role=target_role,
-        target_domain=target_domain,
-        n_local_offers=local_evidence["n_matching_offers"],
-    )
-    return guidance, trace
+    texts  = df_o["text_to_embed"].fillna("").astype(str).tolist()[:600]
+    q_vec  = _encode([query])[0]
+    o_vecs = _encode(texts)
+    sims   = o_vecs @ q_vec
+    pool_n = min(top_k * 6, len(df_o))
+    idx    = np.argsort(-sims)[:pool_n]
 
-
-def build_retrieval_context(
-    candidat_id: str,
-    candidate_profile: dict[str, Any],
-    *,
-    top_k: int = DEFAULT_TOP_K,
-    use_real_dbs: bool = USE_REAL_DBS,
-) -> tuple[dict[str, Any], list[dict[str, Any]]]:
-    """Run vector retrieval + graph enrichment through the existing builder."""
-
-    if not use_real_dbs:
-        raise RuntimeError("Le mode simulation est desactive: Agentic GraphRAG exige Neo4j et pgvector.")
-    neo4j_driver, pg_conn = _connect_required_databases()
-
-    builder = GraphRAGContextBuilder(
-        neo4j_driver=neo4j_driver,
-        pg_conn=pg_conn,
-        st_model=None,
-        top_k_pgvector=max(20, top_k * 4),
-        top_k_final=top_k,
-    )
-    context = builder.build_context(candidat_id, candidate_profile)
-    traces = [
-        _trace(
-            "retrieval_vector_graph",
-            "Recherche vectorielle et enrichissement graphe termines.",
-            n_candidates=context.get("n_candidats", 0),
-            n_top=len(context.get("top_offres", [])),
-            real_databases=True,
-        )
-    ]
-    _close_optional(pg_conn=pg_conn, neo4j_driver=neo4j_driver)
-    return context, traces
+    enriched = [_enrich_offer(df_o.iloc[i], float(sims[i]), cand_ncf, cand_text) for i in idx]
+    enriched.sort(key=lambda x: x["score_hybride"], reverse=True)
+    return json.dumps(enriched[:top_k], ensure_ascii=False, indent=2)
 
 
-def _infer_target_role(user_query: str) -> str:
-    text = user_query.lower()
-    if "data scientist" in text:
-        return "Data scientist"
-    if "data analyst" in text or "analyste" in text:
-        return "Data analyst"
-    if "statisticien" in text:
-        return "Statisticien data"
-    return "Professionnel data"
+@tool
+def get_skill_gap(candidat_id: str, offre_id: str) -> str:
+    """Analyse détaillée de l'écart de compétences entre un candidat et une offre précise.
+    Retourne les compétences acquises, manquantes, le taux de correspondance et la compatibilité NCF.
+
+    Args:
+        candidat_id: Identifiant du candidat.
+        offre_id: Identifiant de l'offre d'emploi.
+    """
+    df_c = _load_candidates()
+    df_o = _load_offers()
+    crow = df_c[df_c["candidat_id"].astype(str) == str(candidat_id)]
+    orow = df_o[df_o["offre_id"].astype(str) == str(offre_id)]
+    if crow.empty:
+        return json.dumps({"erreur": f"Candidat '{candidat_id}' introuvable."})
+    if orow.empty:
+        return json.dumps({"erreur": f"Offre '{offre_id}' introuvable."})
+
+    c = crow.iloc[0]
+    o = orow.iloc[0]
+    cand_text = " ".join([str(c.get("metier_vise","")), str(c.get("filiere_specialite","")),
+                          str(c.get("objectif","")), str(c.get("text_to_embed",""))]).lower()
+    acq, manq, taux = _skill_overlap(cand_text, str(o.get("skills_raw","")))
+    cand_ncf  = int(c["ncf_niveau_final"]) if pd.notna(c.get("ncf_niveau_final")) else None
+    offre_ncf = o.get("ncf_niveau_code")
+    ns, gap   = _ncf_score(cand_ncf, offre_ncf)
+
+    return json.dumps({
+        "candidat_id":           candidat_id,
+        "offre_id":              offre_id,
+        "titre_offre":           str(o.get("titre_poste","")),
+        "taux_correspondance":   taux,
+        "competences_acquises":  acq,
+        "competences_manquantes":manq,
+        "ncf_candidat":          cand_ncf,
+        "ncf_offre_requis":      str(offre_ncf) if offre_ncf else None,
+        "ncf_score":             round(ns, 3),
+        "ncf_gap":               gap,
+        "verdict":               _verdict(0.55 * taux + 0.20 * ns, gap, len(manq)),
+    }, ensure_ascii=False, indent=2)
 
 
-def _infer_target_domain(user_query: str) -> str:
-    text = user_query.lower()
-    if any(word in text for word in ("banque", "bancaire", "microfinance", "finance")):
-        return "banque/finance au Cameroun"
-    return "marche camerounais"
+@tool
+def generate_roadmap(candidat_id: str, offre_id: str) -> str:
+    """Génère un plan de formation structuré pour qu'un candidat comble ses lacunes et soit éligible à une offre.
+    Utilise cet outil en dernier, après avoir obtenu le skill gap.
 
+    Args:
+        candidat_id: Identifiant du candidat.
+        offre_id: Identifiant de l'offre cible.
+    """
+    from roadmap_generator import generate_roadmap as _gen
 
-def _summarize_local_offer_evidence(path: Path, target_role: str, target_domain: str) -> dict[str, Any]:
-    if not path.exists():
-        return {
-            "n_matching_offers": 0,
-            "sample_titles": [],
-            "keyword_counts": {},
-            "note": f"Fichier introuvable: {path.as_posix()}",
-        }
+    df_c = _load_candidates()
+    df_o = _load_offers()
+    crow = df_c[df_c["candidat_id"].astype(str) == str(candidat_id)]
+    orow = df_o[df_o["offre_id"].astype(str) == str(offre_id)]
+    if crow.empty or orow.empty:
+        return json.dumps({"erreur": "Candidat ou offre introuvable."})
 
-    df = pd.read_parquet(path)
-    text_cols = [col for col in ("titre_poste", "secteur_principal", "skills_raw", "details_clean", "text_to_embed") if col in df.columns]
-    combined = df[text_cols].fillna("").astype(str).agg(" ".join, axis=1).str.lower()
-
-    role_terms = ("data scientist", "data analyst", "analyste", "donnees", "données", "statisticien", "business intelligence", " bi ")
-    role_mask = combined.apply(lambda value: any(term in value for term in role_terms))
-    if "banque/finance" in target_domain:
-        domain_terms = ("banque", "bancaire", "microfinance", "finance", "financier", "assurance", "credit", "crédit")
-        domain_mask = combined.apply(lambda value: any(term in value for term in domain_terms))
-        filtered = df[role_mask & domain_mask].copy()
-        if filtered.empty:
-            filtered = df[role_mask].copy()
-    else:
-        filtered = df[role_mask].copy()
-
-    keyword_counts: Counter[str] = Counter()
-    filtered_text = filtered[text_cols].fillna("").astype(str).agg(" ".join, axis=1).str.lower()
-    for text in filtered_text:
-        for raw, label in CAREER_KEYWORDS.items():
-            if raw in text:
-                keyword_counts[label] += 1
-
-    title_col = "titre_poste" if "titre_poste" in filtered.columns else filtered.columns[0]
-    sample_titles = [str(value) for value in filtered[title_col].dropna().head(5).tolist()]
-    return {
-        "n_matching_offers": int(len(filtered)),
-        "sample_titles": sample_titles,
-        "keyword_counts": dict(keyword_counts.most_common(12)),
-        "note": "Filtre local sur offres data puis banque/finance quand disponible.",
-    }
-
-
-def _find_esco_skill_labels(path: Path) -> list[str]:
-    if not path.exists():
-        return []
-    labels = pd.read_csv(path, usecols=["preferredLabel"]).dropna()["preferredLabel"].astype(str)
-    wanted = (
-        "analyser des donnees",
-        "analyser des données",
-        "science des donnees",
-        "science des données",
-        "statistiques",
-        "apprentissage automatique",
-        "bases de donnees",
-        "bases de données",
-        "visualisation",
-        "risque",
-    )
-    matches = []
-    for label in labels:
-        low = label.lower()
-        if any(term in low for term in wanted):
-            matches.append(label)
-        if len(matches) >= 8:
-            break
-    return matches
-
-
-def _rank_priority_skills(keyword_counts: dict[str, int], target_domain: str) -> list[dict[str, Any]]:
-    baseline = [
-        ("SQL", "extraire, joindre et auditer les donnees bancaires"),
-        ("Python", "automatiser les analyses, modeliser et produire des pipelines reproductibles"),
-        ("Statistiques appliquees", "quantifier l'incertitude et eviter les conclusions fragiles"),
-        ("Machine learning", "scoring, segmentation, prevision et detection d'anomalies"),
-        ("Visualisation de donnees", "transformer les resultats en decisions lisibles"),
-        ("ETL", "nettoyer et fiabiliser les donnees operationnelles"),
-    ]
-    if "banque/finance" in target_domain:
-        baseline.extend(
-            [
-                ("Credit scoring", "relier les modeles aux decisions de credit"),
-                ("Gestion du risque", "parler le langage metier banque et portefeuille"),
-                ("Conformite", "tenir compte des contraintes de donnees sensibles et reporting"),
-            ]
-        )
-    rows = []
-    for label, reason in baseline:
-        rows.append(
-            {
-                "competence": label,
-                "priorite": "forte" if label in {"SQL", "Python", "Statistiques appliquees", "Machine learning"} else "moyenne",
-                "evidence_locale": int(keyword_counts.get(label, 0)),
-                "pourquoi": reason,
-            }
-        )
-    return rows
-
-
-def extract_skill_gaps(top_offers: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict]:
-    """Normalize skill-gap fields for the critic and UI."""
-
-    gaps: list[dict[str, Any]] = []
-    for offer in top_offers:
-        gaps.append(
-            {
-                "offre_id": offer.get("offre_id"),
-                "titre": offer.get("titre"),
-                "taux_match": offer.get("taux_match", 0),
-                "competences_acquises": offer.get("acquises", []),
-                "competences_manquantes": offer.get("manquantes", []),
-                "essentielles_manquantes": offer.get("ess_manq", []),
-                "nb_manquantes": len(offer.get("manquantes", [])),
-                "nb_essentielles_manquantes": len(offer.get("ess_manq", [])),
-            }
-        )
-    return gaps, _trace("skill_gap", "Skill gaps normalises.", n=len(gaps))
-
-
-def rank_hybrid_offers(top_offers: list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict]:
-    """Sort offers by the hybrid score computed by the GraphRAG builder."""
-
-    ranked = sorted(top_offers, key=lambda item: item.get("score_hybride", 0), reverse=True)
-    return ranked, _trace("hybrid_scoring", "Offres classees par score hybride.", n=len(ranked))
-
-
-def build_training_roadmap(
-    candidate_profile: dict[str, Any],
-    top_offer: dict[str, Any],
-) -> tuple[dict[str, Any], dict[str, Any]]:
-    """Generate a structured training roadmap for the best offer."""
-
-    priority_labels = top_offer.get("priorites_developpement", []) or top_offer.get("manquantes", [])
-    missing = [
-        {"label": label, "importance": "essential" if label in top_offer.get("ess_manq", []) else "optional"}
-        for label in priority_labels
-    ]
-    roadmap = generate_roadmap(
-        candidat=candidate_profile,
-        top_offre=top_offer,
-        competences_manquantes=missing,
-        score_actuel=float(top_offer.get("score_hybride", 0.0)),
-    )
-    return roadmap, _trace("roadmap", "Roadmap de formation generee.", n_missing=len(missing))
-
-
-def _connect_required_databases():
-    """Open and validate required Neo4j and PostgreSQL/pgvector connections."""
-
-    neo4j_driver = None
-    pg_conn = None
-    try:
-        from neo4j import GraphDatabase
-        from config_neo4j import NEO4J_DATABASE, NEO4J_PASSWORD, NEO4J_URI, NEO4J_USER
-
-        neo4j_driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
-        neo4j_driver.verify_connectivity()
-        with neo4j_driver.session(database=NEO4J_DATABASE) as session:
-            session.run("RETURN 1 AS ok").single()
-    except Exception as exc:
-        _close_optional(pg_conn=pg_conn, neo4j_driver=neo4j_driver)
-        raise RuntimeError(f"Connexion Neo4j impossible. Verifie NEO4J_URI/USER/PASSWORD: {exc}") from exc
-
-    try:
-        import psycopg
-        from config_pgvector import PG_CONN
-
-        pg_conn = psycopg.connect(**PG_CONN)
-        with pg_conn.cursor() as cur:
-            cur.execute("SELECT 1")
-            cur.fetchone()
-            cur.execute(
-                """
-                SELECT EXISTS (
-                    SELECT 1
-                    FROM information_schema.tables
-                    WHERE table_name = 'embeddings'
-                )
-                """
-            )
-            has_embeddings = bool(cur.fetchone()[0])
-        if not has_embeddings:
-            raise RuntimeError("table PostgreSQL 'embeddings' introuvable")
-    except Exception as exc:
-        _close_optional(pg_conn=pg_conn, neo4j_driver=neo4j_driver)
-        raise RuntimeError(f"Connexion pgvector impossible. Verifie PG_HOST/PG_DB/PG_USER/PG_PASSWORD: {exc}") from exc
-
-    return neo4j_driver, pg_conn
-
-
-def _close_optional(*, pg_conn=None, neo4j_driver=None) -> None:
-    for obj in (pg_conn, neo4j_driver):
-        if obj is not None:
-            try:
-                obj.close()
-            except Exception:
-                pass
+    c = crow.iloc[0].to_dict()
+    o = orow.iloc[0].to_dict()
+    cand_text = str(c.get("text_to_embed","") or "").lower()
+    skills    = [s.strip() for s in str(o.get("skills_raw","")).replace(",", " ").split() if len(s.strip()) >= 4]
+    manq      = [{"label": s, "importance": "essential"} for s in skills if s.lower() not in cand_text][:8]
+    roadmap   = _gen(candidat=c, top_offre=o, competences_manquantes=manq, score_actuel=0.5)
+    return json.dumps(roadmap, ensure_ascii=False, indent=2, default=str)

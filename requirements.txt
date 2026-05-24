@@ -30,6 +30,9 @@ openai>=1.40.0
 mistralai>=1.0.0
 python-dotenv>=1.0.0
 
+# Chatbot interface
+streamlit>=1.35.0
+
 # Agentic GraphRAG / LangGraph Studio
 langchain>=1.0.0
 langchain-core>=1.0.0

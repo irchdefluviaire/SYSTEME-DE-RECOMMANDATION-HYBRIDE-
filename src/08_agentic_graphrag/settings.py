@@ -17,13 +17,9 @@ MAX_REPLAN = int(os.getenv("AGENT_MAX_REPLAN", "1"))
 USE_REAL_DBS = True
 
 OLLAMA_BASE_URL = os.getenv("OLLAMA_BASE_URL", "http://localhost:11434")
-OLLAMA_MODEL = os.getenv("OLLAMA_MODEL", "llama3.1:latest")
+OLLAMA_MODEL = "llama3.1:latest"
 OLLAMA_TEMPERATURE = float(os.getenv("OLLAMA_TEMPERATURE", "0.1"))
-USE_OLLAMA = os.getenv("AGENT_USE_OLLAMA", "1").strip().lower() in {
-    "1",
-    "true",
-    "yes",
-}
+USE_OLLAMA = True
 
 LANGSMITH_TRACING = os.getenv(
     "LANGSMITH_TRACING",
