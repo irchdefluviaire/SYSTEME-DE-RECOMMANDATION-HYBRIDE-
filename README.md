@@ -6,10 +6,12 @@ emploi-competences au Cameroun. Le systeme combine:
 - des donnees locales d'offres, de demandeurs et de referentiels metiers;
 - une normalisation ETL vers des fichiers Parquet/JSONL;
 - un encodeur `SentenceTransformer` adapte au domaine;
-- un graphe de connaissances Neo4j;
+- un graphe de connaissances Neo4j avec relations ponderees;
 - une base vectorielle PostgreSQL avec `pgvector`;
-- un moteur GraphRAG et une API FastAPI;
-- une couche agentique LangGraph pour orchestrer le raisonnement.
+- une ingestion des PDFs reglementaires (NCF, MEPC) avec chunking structurel;
+- un moteur GraphRAG et une API FastAPI avec streaming SSE;
+- une couche agentique LangGraph orchestrant le raisonnement;
+- une interface chatbot Streamlit et une CLI interactive.
 
 Ce README decrit ce qui est present dans le code. Il ne remplace pas les
 resultats produits par les scripts: les metriques doivent etre lues dans les
@@ -30,6 +32,14 @@ Le modele produit des embeddings denses de dimension 384. Ces vecteurs servent
 ensuite a la recherche semantique dans `pgvector`. Le graphe Neo4j conserve les
 relations institutionnelles et metiers: candidats, offres, competences ESCO,
 metiers ESCO, niveaux NCF, groupes MEPC, secteurs, employeurs et localisations.
+Les relations cles portent une propriete `confidence` ou `weight` permettant
+un scoring pondere directement en Cypher.
+
+Les PDFs officiels des nomenclatures (NCF 2017, MEPC 2013, referentiel de
+diplomes) sont chunkes selon leur structure hierarchique, embeddes avec le
+meme modele fine-tune, indexes dans `pgvector` et relies aux noeuds Neo4j
+correspondants par des relations `:DEFINIT` et `:DECRIT`. L'agent peut ainsi
+citer les passages reglementaires officiels pour justifier ses recommandations.
 
 La recommandation finale est hybride: elle exploite la similarite vectorielle,
 les relations du graphe, des regles de niveau/competence et, selon le mode
@@ -40,32 +50,61 @@ niveau NCF et l'alignement metier/secteur, puis produit un verdict operationnel
 (`pret_a_postuler`, `postuler_avec_plan_de_montee_en_competence`,
 `vivier_a_developper` ou `hors_cible_actuel`).
 
+## Documents compagnons
+
+- `CLAUDE.md`: contexte du projet pour l'assistant Claude Code (architecture,
+  conventions, points d'attention).
+- `PLANNING.md`: feuille de route technique et decisions d'architecture.
+- `TASK.md`: backlog des taches en cours et terminees.
+
 ## Structure utile du depot
 
 ```text
 .
+|-- chatbot_app.py                        interface Streamlit (entry point UI)
+|-- cli.py                                CLI interactive avec tool visibility
+|-- config.py                             chemins centralises
+|-- langgraph.json                        declaration du graphe LangGraph
+|-- pyproject.toml / poetry.lock          dependances Poetry
+|-- CLAUDE.md / PLANNING.md / TASK.md     documents projet
+|
 |-- data/
-|   |-- raw/                         donnees sources locales et ESCO
-|   |-- processed/                   fichiers normalises Parquet/XLSX/CSV
-|   `-- finetune/                    pairs_train/val/test.jsonl
+|   |-- raw/                              donnees sources locales et ESCO
+|   |-- processed/                        fichiers normalises Parquet/XLSX/CSV
+|   |-- finetune/                         pairs_train/val/test.jsonl
+|   `-- pdf_chunks/                       cache JSONL des chunks PDF
+|
+|-- pdf/                                  sources reglementaires officielles
+|   |-- Nomenclature-Camerounaise-des-Formations-24.01.2017.pdf
+|   |-- Nomenclature-camerounaise-des-metiers-_2013.pdf
+|   `-- diplome_certificat.pdf
+|
 |-- models/
-|   `-- st_finetuned/                sorties du fine-tuning SentenceTransformer
-|-- notebooks/                       notebooks d'exploration et validation
+|   `-- st_finetuned/                     sorties du fine-tuning SentenceTransformer
+|
+|-- notebooks/                            notebooks d'exploration et validation
+|
 |-- scripts/
-|   `-- run_etl.py                   orchestration ETL
+|   |-- run_etl.py                        orchestration ETL
+|   |-- ingest_pdfs.py                    chunking + indexation des PDFs
+|   `-- materialize_similarity.py         calcul des relations :SIMILAIRE_A
+|
 |-- src/
-|   |-- 01_etl/                      normalisation et construction des paires
-|   |-- 02_finetune_st/              fine-tuning et evaluation ST
-|   |-- 03_knowledge_graph/          chargement Neo4j
-|   |-- 04_pgvector/                 schema, embeddings et recherche ANN
-|   |-- 05_graphrag/                 moteur GraphRAG
-|   |-- 06_api/                      API FastAPI
-|   |-- 07_evaluation/               evaluation systeme
-|   `-- 08_agentic_graphrag/         workflow LangGraph
-|-- langgraph.json                   declaration du graphe LangGraph
-|-- pyproject.toml                   dependances Poetry
-|-- poetry.lock                      versions resolues
-`-- README.md
+|   |-- 00_Social_media/                  signaux LinkedIn (collaboratif)
+|   |-- 01_etl/                           normalisation, paires, parsing PDF
+|   |-- 02_finetune_st/                   fine-tuning et evaluation ST
+|   |-- 03_knowledge_graph/               chargement Neo4j (relations ponderees)
+|   |-- 04_pgvector/                      schema, embeddings et recherche ANN
+|   |-- 05_graphrag/                      moteur GraphRAG (mode non-agentique)
+|   |-- 06_api/                           API FastAPI + endpoint /chat/stream
+|   |-- 07_evaluation/                    evaluation systeme + benchmark embeddings
+|   `-- 08_agentic_graphrag/              workflow LangGraph + tools agent
+|
+|-- outputs/
+|   |-- evaluation/                       rapports d'evaluation (JSON, CSV, PNG)
+|   `-- traces/                           exports LangSmith
+|
+`-- rapport/                              memoire LaTeX et figures
 ```
 
 ## Configuration
@@ -85,16 +124,23 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=...
 NEO4J_DATABASE=neo4j
 
-AGENT_USE_OLLAMA=0
-OLLAMA_MODEL=llama3.1:latest
-OLLAMA_BASE_URL=http://localhost:11434
+# Provider LLM (abstraction unifiee, voir src/08_agentic_graphrag/providers.py)
+LLM_PROVIDER=ollama
+LLM_BASE_URL=http://localhost:11434/v1
+LLM_API_KEY=ollama
+LLM_CHOICE=llama3.1:latest
+
+# Tracing optionnel (recommande pour la demonstration H4)
+LANGCHAIN_TRACING_V2=true
+LANGCHAIN_API_KEY=...
+LANGCHAIN_PROJECT=recommandation-emploi-cameroun
 ```
 
 Ne versionne pas ton vrai `.env`. Le fichier est ignore par Git.
 
 ## Installation avec Poetry
 
-Le projet demande Python `>=3.13` dans `pyproject.toml`.
+Le projet demande Python `>=3.12,<3.14` (voir `pyproject.toml`).
 
 ```powershell
 cd "D:\DATA SCIENCES\SYSTEME-DE-RECOMMANDATION-HYBRIDE-"
@@ -188,7 +234,7 @@ models/st_finetuned/evaluation_metrics.json
 models/st_finetuned/eval_test/
 ```
 
-### 3. Evaluer le modele d'embedding
+### 3. Evaluer le modele d'embedding (baseline vs fine-tune)
 
 Evaluation comparative baseline vs modele adapte:
 
@@ -213,12 +259,75 @@ requetes, les descriptions sont le corpus, et le document pertinent partage le
 meme `offre_id`. Les correlations Pearson/Spearman ne sont pas appropriees ici
 si les paires sont uniquement positives.
 
+### 3-bis. Benchmark multi-modeles d'embedding
+
+Pour valider l'hypothese H3, le systeme compare le SentenceTransformer
+fine-tune a un panel de modeles non adaptes couvrant trois familles:
+generalistes anglais, multilingues et francais, ainsi qu'a deux baselines
+lexicales (TF-IDF, BM25).
+
+Configuration de la liste de modeles:
+
+```text
+src/07_evaluation/models_to_benchmark.json
+```
+
+Lancement du benchmark complet:
+
+```powershell
+poetry run python src/07_evaluation/benchmark_embeddings.py
+```
+
+Options utiles:
+
+```powershell
+# Inclure les baselines lexicales (TF-IDF, BM25)
+poetry run python src/07_evaluation/benchmark_embeddings.py --include-lexical
+
+# Modeles specifiques
+poetry run python src/07_evaluation/benchmark_embeddings.py --models st_finetuned,multilingual-e5-base
+
+# Intervalles de confiance par bootstrap
+poetry run python src/07_evaluation/benchmark_embeddings.py --bootstrap 1000
+
+# Mode hors-ligne (utilise uniquement le cache local)
+poetry run python src/07_evaluation/benchmark_embeddings.py --offline
+```
+
+Sorties:
+
+```text
+outputs/evaluation/embedding_benchmark.csv      tableau exploitable LaTeX
+outputs/evaluation/embedding_benchmark.json     detail par modele
+outputs/evaluation/embedding_benchmark_plot.png graphique NDCG@10 x latence
+```
+
+Metriques calculees par modele:
+
+- NDCG@1/5/10, MRR@10, Recall@1/5/10, Precision@1/5;
+- latence d'encodage (ms/phrase), taille du modele (MB), dimension;
+- intervalles de confiance via bootstrap si l'option est activee.
+
+Pool de modeles compares par defaut:
+
+```text
+all-MiniLM-L6-v2                                 (EN, 384d)  baseline du fine-tune
+paraphrase-multilingual-MiniLM-L12-v2            (ML, 384d)  meme taille, multilingue
+distiluse-base-multilingual-cased-v2             (ML, 512d)
+intfloat/multilingual-e5-base                    (ML, 768d)  SOTA multilingue
+dangvantuan/sentence-camembert-base              (FR, 768d)  francais specifique
+models/st_finetuned/final                        (FR-EMPLOI, 384d)  modele du projet
+TF-IDF                                           (sparse)    baseline lexicale
+BM25                                             (sparse)    reference IR
+```
+
 ### 4. Charger le graphe Neo4j
 
 Le module Neo4j cree le schema, charge ESCO, MEPC, NCF, les offres, les
 candidats et les relations. Les chargements utilisent `MERGE`, donc ils sont
 prevus pour etre relances sans creer de doublons sur les cles gerees par le
-schema.
+schema. Les relations cles (`:POSSEDE`, `:REQUIERT`, `:ALIGNE_SUR`,
+`:CORRESPOND_A`) portent une propriete `confidence` exploitable en scoring.
 
 Validation sans ecriture:
 
@@ -286,12 +395,63 @@ Modele explicite:
 poetry run python src/04_pgvector/embed_all_entities.py --model models/st_finetuned/final --batch-size 64
 ```
 
-### 6. Tester le moteur GraphRAG
+### 5-bis. Ingestion des PDFs reglementaires
+
+Les PDFs officiels du dossier `pdf/` sont chunkes selon leur structure
+hierarchique (chapitres / domaines / groupes), embeddes avec le ST fine-tune,
+inseres dans la table `doc_chunks` de pgvector et relies aux noeuds Neo4j
+existants par des relations `:DEFINIT` et `:DECRIT`. L'agent peut alors
+citer un passage officiel pour justifier un verdict.
+
+Ingestion d'un PDF:
+
+```powershell
+poetry run python scripts/ingest_pdfs.py --pdf pdf/Nomenclature-Camerounaise-des-Formations-24.01.2017.pdf --source NCF_2017
+poetry run python scripts/ingest_pdfs.py --pdf pdf/Nomenclature-camerounaise-des-metiers-_2013.pdf --source MEPC_2013
+poetry run python scripts/ingest_pdfs.py --pdf pdf/diplome_certificat.pdf --source diplomes
+```
+
+Options utiles:
+
+```powershell
+# Forcer l'OCR si le PDF est un scan
+poetry run python scripts/ingest_pdfs.py --pdf pdf/diplome_certificat.pdf --source diplomes --ocr
+
+# Strategie de chunking (structurel par defaut, semantique optionnel)
+poetry run python scripts/ingest_pdfs.py --pdf ... --chunk-strategy structural
+poetry run python scripts/ingest_pdfs.py --pdf ... --chunk-strategy semantic --chunk-size 800
+
+# Validation sans insertion
+poetry run python scripts/ingest_pdfs.py --pdf ... --dry-run
+```
+
+Sorties:
+
+```text
+data/pdf_chunks/{source}.jsonl              chunks bruts + metadonnees
+pgvector: table doc_chunks                  embeddings indexes HNSW
+Neo4j: (:DocChunk)-[:EXTRAIT_DE]->(:DocumentReferentiel)
+       (:DocChunk)-[:DEFINIT]->(:NiveauFormationNCF | :DomaineDétailléNCF)
+       (:DocChunk)-[:DECRIT]->(:Métier | :GroupeBaseMEPC)
+```
+
+### 5-ter. Materialiser les relations de similarite dans Neo4j
+
+Calcule les relations `:SIMILAIRE_A` entre noeuds proches (cosinus > seuil)
+depuis pgvector, pour activer les requetes de chemin pondere (Dijkstra/A*)
+necessaires a la roadmap explicable.
+
+```powershell
+poetry run python scripts/materialize_similarity.py --entity skills --threshold 0.75
+poetry run python scripts/materialize_similarity.py --entity metiers --threshold 0.80
+```
+
+### 6. Tester le moteur GraphRAG (mode non-agentique)
 
 Le moteur `src/05_graphrag/recommendation_engine.py` charge un candidat,
 construit un contexte via pgvector et Neo4j, puis produit les recommandations,
-le skill gap et la roadmap. Le backend par defaut est `simulation`, ce qui
-permet un test sans LLM externe.
+le skill gap et la roadmap. Ce mode reste disponible pour la comparaison
+ablative avec le mode agentique. Le backend par defaut est `simulation`.
 
 ```powershell
 poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend simulation --top-k 5
@@ -326,16 +486,18 @@ poetry run uvicorn src.06_api.main:app --host 0.0.0.0 --port 8000 --reload
 Endpoints exposes par le code:
 
 ```text
-GET  /
-GET  /health
-POST /recommend
-GET  /recommend/candidat/{id}
-POST /skill-gap
-POST /embed
-GET  /offre/{id}
-GET  /offre
-GET  /docs
-GET  /redoc
+GET  /                        racine
+GET  /health                  etat des services (Neo4j, pgvector, modele)
+POST /recommend               top-k offres + skill gap + roadmap
+GET  /recommend/candidat/{id} version GET simplifiee
+POST /skill-gap               analyse detaillee d'une paire (candidat, offre)
+POST /embed                   encoder des textes en vecteurs 384d
+GET  /offre/{id}              details d'une offre
+GET  /offres                  recherche d'offres avec filtres
+POST /chat                    agent agentic GraphRAG (reponse non-streamee)
+POST /chat/stream             agent agentic GraphRAG (Server-Sent Events)
+GET  /docs                    Swagger UI
+GET  /redoc                   ReDoc
 ```
 
 Documentation locale apres lancement:
@@ -359,34 +521,103 @@ Le graphe LangGraph est declare dans `langgraph.json`:
 }
 ```
 
-Test CLI:
+Workflow documente dans `src/08_agentic_graphrag/README.md`:
+
+1. `analyse_request`              parse de la requete et de l'intent
+2. `load_profile`                 chargement du profil candidat (Neo4j)
+3. `retrieve_and_check_graph`     recherche graphe ponderee
+4. `retrieve_vector`              recherche pgvector ANN
+5. `compute_skill_gap`            ecart competences ESCO
+6. `score_and_rank`               score hybride explicable
+7. `critique_recommendations`     LLM-as-judge + replanification
+8. `create_roadmap`               chemin NCF pondere
+9. `generate_final_answer`        verdict + explication + citations PDFs
+
+Tools exposes a l'agent (`src/08_agentic_graphrag/tools.py`):
+
+```text
+vector_search_offres            recherche ANN dans pgvector
+graph_search_compatibles        Cypher avec contraintes NCF/secteur
+hybrid_search                   combine vecteur + graphe
+get_skill_neighbors             voisins ESCO d'une competence
+compute_skill_gap_esco          intersection POSSEDE / REQUIERT
+ncf_compatibility               compatibilite de niveaux
+find_formations_pour_gap        formations comblant un skill gap
+search_referentiel              recherche dans les PDFs (NCF, MEPC)
+cite_reference                  citation officielle d'un concept
+classify_verdict                regle deterministe vers les 4 verdicts
+```
+
+Test CLI direct:
 
 ```powershell
 poetry run python src/08_agentic_graphrag/run_agent.py --candidat PPKOU2501080016340 --top-k 5
 ```
 
-Lancement LangGraph Studio/API locale si `langgraph-cli[inmem]` est installe par
-Poetry:
+Lancement LangGraph Studio/API locale si `langgraph-cli[inmem]` est installe:
 
 ```powershell
 poetry run langgraph dev
 ```
 
-Workflow documente dans `src/08_agentic_graphrag/README.md`:
+Le mode declare par la CLI est `real`: le mode simulation est desactive dans
+ce workflow agentique.
 
-1. `analyse_request`
-2. `load_profile`
-3. `retrieve_and_check_graph`
-4. `compute_skill_gap`
-5. `score_and_rank`
-6. `critique_recommendations`
-7. `create_roadmap`
-8. `generate_final_answer`
+### 9. Interface chatbot Streamlit
 
-Le mode declare par la CLI est `real`: le mode simulation est desactive dans ce
-workflow agentique.
+L'application `chatbot_app.py` expose une interface conversationnelle avec
+visualisation des traces du workflow LangGraph.
 
-### 9. Evaluer le systeme
+```powershell
+poetry run streamlit run chatbot_app.py
+```
+
+L'interface permet:
+
+- la saisie d'un identifiant candidat (optionnel) et d'une question libre;
+- le reglage du `top-k` d'offres a analyser;
+- l'affichage optionnel des traces (suite des nodes et tools invoques);
+- des questions exemples pre-remplies pour la demonstration.
+
+### 10. CLI interactive de l'agent
+
+Une CLI inspiree du template Cole Medin permet de chatter avec l'agent
+en visualisant les outils invoques pour chaque reponse.
+
+```powershell
+# Demarrer l'API (terminal 1)
+poetry run uvicorn src.06_api.main:app --host 0.0.0.0 --port 8000
+
+# Demarrer la CLI (terminal 2)
+poetry run python cli.py
+
+# Connexion a une URL specifique
+poetry run python cli.py --url http://localhost:8000
+```
+
+Sortie type:
+
+```text
+You: Analyse PP001 pour un poste de data analyst a Douala
+Tools Used:
+  1. load_candidate_profile(id='PP001')
+  2. vector_search_offres(query='data analyst Douala', limit=10)
+  3. graph_search_compatibles(candidat_id='PP001', secteur='Banque')
+  4. compute_skill_gap(candidat_id='PP001', offre_id='OFF_42')
+  5. find_formations(skills_manquants=['SQL', 'PowerBI'])
+Verdict: postuler_avec_plan_de_montee_en_competence (score: 0.73)
+```
+
+Commandes:
+
+```text
+help    affiche les commandes
+health  verifie la connexion API
+clear   reinitialise la session
+exit    quitte la CLI
+```
+
+### 11. Evaluer le systeme (avec ablation H1-H4)
 
 Evaluation complete:
 
@@ -403,17 +634,31 @@ poetry run python src/07_evaluation/evaluate_system.py --module scores --n-candi
 poetry run python src/07_evaluation/evaluate_system.py --module latence --n-candidats 50
 ```
 
-Sortie principale:
+Etude d'ablation pour valider les hypotheses H1 a H4:
+
+```powershell
+# H2 : impact du graphe (vector seul vs +graphe)
+poetry run python src/07_evaluation/evaluate_system.py --agent-config vector_only
+poetry run python src/07_evaluation/evaluate_system.py --agent-config plus_graph
+
+# H4 : impact du score hybride et de la critique agentique
+poetry run python src/07_evaluation/evaluate_system.py --agent-config plus_hybrid
+poetry run python src/07_evaluation/evaluate_system.py --agent-config plus_critique
+```
+
+Sorties principales:
 
 ```text
 outputs/evaluation/evaluation_report.json
+outputs/evaluation/ablation_study.csv       tableau H1-H4 prêt pour LaTeX
+outputs/evaluation/embedding_benchmark.csv  tableau multi-modeles
 ```
 
 Point de vigilance: `evaluate_system.py` contient des chemins de secours qui
 retournent des metriques simulees si certains artefacts ou modeles ne sont pas
 disponibles. Pour une interpretation scientifique, utiliser en priorite les
-artefacts calcules par `evaluate_st.py`, les logs d'execution et le rapport JSON
-genere dans ton environnement.
+artefacts calcules par `evaluate_st.py`, `benchmark_embeddings.py`, les logs
+d'execution et le rapport JSON genere dans ton environnement.
 
 ## Ordre d'execution recommande
 
@@ -422,19 +667,35 @@ cd "D:\DATA SCIENCES\SYSTEME-DE-RECOMMANDATION-HYBRIDE-"
 poetry lock
 poetry install
 
+# 1. ETL et fine-tuning
 poetry run python scripts/run_etl.py
 poetry run python src/02_finetune_st/train_sentence_transformer.py
 poetry run python src/02_finetune_st/evaluate_st.py
+poetry run python src/07_evaluation/benchmark_embeddings.py --include-lexical --bootstrap 1000
 
+# 2. Graphe et vecteurs
 poetry run python src/03_knowledge_graph/load_neo4j.py --dry-run
 poetry run python src/03_knowledge_graph/load_neo4j.py
-
 poetry run python src/04_pgvector/embed_all_entities.py --dry-run
 poetry run python src/04_pgvector/embed_all_entities.py
 
+# 3. Enrichissement PDFs et similarites
+poetry run python scripts/ingest_pdfs.py --pdf pdf/Nomenclature-Camerounaise-des-Formations-24.01.2017.pdf --source NCF_2017
+poetry run python scripts/ingest_pdfs.py --pdf pdf/Nomenclature-camerounaise-des-metiers-_2013.pdf --source MEPC_2013
+poetry run python scripts/ingest_pdfs.py --pdf pdf/diplome_certificat.pdf --source diplomes
+poetry run python scripts/materialize_similarity.py --entity skills --threshold 0.75
+
+# 4. Test moteur classique
 poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend simulation --top-k 5
+
+# 5. API + agent + interfaces
 poetry run uvicorn src.06_api.main:app --host 0.0.0.0 --port 8000 --reload
 poetry run python src/08_agentic_graphrag/run_agent.py --candidat PPKOU2501080016340 --top-k 5
+poetry run streamlit run chatbot_app.py     # interface UI
+poetry run python cli.py                    # interface CLI
+
+# 6. Evaluation finale
+poetry run python src/07_evaluation/evaluate_system.py
 ```
 
 ## Sources techniques
@@ -444,5 +705,13 @@ poetry run python src/08_agentic_graphrag/run_agent.py --candidat PPKOU250108001
 - Sentence Transformers, `InformationRetrievalEvaluator`: https://www.sbert.net/docs/package_reference/sentence_transformer/evaluation.html
 - pgvector: https://github.com/pgvector/pgvector
 - Neo4j Python driver: https://neo4j.com/docs/python-manual/current/
+- Neo4j Vector Index: https://neo4j.com/docs/cypher-manual/current/indexes/semantic-indexes/vector-indexes/
+- Neo4j Graph Data Science (GDS): https://neo4j.com/docs/graph-data-science/current/
 - FastAPI, lancement avec serveur ASGI: https://fastapi.tiangolo.com/deployment/manually/
+- FastAPI Server-Sent Events: https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse
 - LangGraph: https://langchain-ai.github.io/langgraph/
+- LangSmith (tracing): https://docs.smith.langchain.com/
+- Streamlit: https://docs.streamlit.io/
+- pdfplumber (extraction PDF): https://github.com/jsvine/pdfplumber
+- E5 multilingual embeddings: https://huggingface.co/intfloat/multilingual-e5-base
+- Sentence-CamemBERT: https://huggingface.co/dangvantuan/sentence-camembert-base
