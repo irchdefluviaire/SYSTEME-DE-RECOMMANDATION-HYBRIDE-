@@ -8,7 +8,7 @@ Assemble le contexte structuré à partir de :
   2. Neo4j Cypher → skill gap + compatibilité + chemins NCF
   3. Score collaboratif → historique candidats similaires
 
-Le contexte produit est injecté dans le prompt du LLM 2 (Mistral-7B / GPT-4o)
+Le contexte produit est injecté dans le prompt du LLM 2 (LLMA3.1)
 pour la génération des recommandations et roadmaps en français.
 
 Architecture GraphRAG :
