@@ -476,7 +476,7 @@ def embed_chunks(
         texts,
         batch_size=batch_size,
         normalize_embeddings=True,
-        show_progress_bar=True,
+        show_progress_bar=False,
         convert_to_numpy=True,
     )
     for chunk, vec in zip(chunks, vecs):
