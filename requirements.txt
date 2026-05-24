@@ -40,3 +40,6 @@ langchain-ollama>=1.0.0
 langgraph>=1.0.0
 langgraph-cli[inmem]>=0.4.0
 langsmith>=0.4.0
+
+# Gestion pdf
+pdfplumber>=0.11.9

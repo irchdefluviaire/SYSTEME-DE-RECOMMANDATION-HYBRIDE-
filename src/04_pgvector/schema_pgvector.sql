@@ -206,6 +206,42 @@ WHERE r.rang <= 10
 ORDER BY r.candidat_id, r.rang;
 
 -- ═════════════════════════════════════════════════════════════
+-- TABLE DOCUMENTAIRE : doc_chunks
+-- Chunks des PDFs réglementaires indexés sémantiquement
+-- Sources : NCF 2017, MEPC 2013, référentiel diplômes
+-- ═════════════════════════════════════════════════════════════
+CREATE TABLE IF NOT EXISTS doc_chunks (
+    id               UUID        PRIMARY KEY DEFAULT uuid_generate_v4(),
+    chunk_id         TEXT        UNIQUE NOT NULL,   -- ex. NCF_2017_p012_c0003
+    source           TEXT        NOT NULL,           -- NCF_2017 | MEPC_2013 | diplomes
+    document_title   TEXT,
+    page_number      INT,
+    section_title    TEXT,                           -- titre du niveau hiérarchique parent
+    subsection_title TEXT,
+    chunk_text       TEXT        NOT NULL,
+    chunk_index      INT,
+    chunk_strategy   TEXT        NOT NULL
+        CHECK (chunk_strategy IN ('structural', 'semantic')),
+    ncf_code         TEXT,                           -- code NiveauFormationNCF / DomaineDétailléNCF
+    mepc_code        TEXT,                           -- code GroupeBaseMEPC / SousGroupeMEPC
+    neo4j_node_id    TEXT,                           -- ID du nœud DocChunk en Neo4j
+    embedding        VECTOR(384),
+    model_id         TEXT        DEFAULT 'all-MiniLM-L6-v2-ft-offres-cm',
+    created_at       TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Index HNSW pour la recherche sémantique dans les PDFs
+CREATE INDEX IF NOT EXISTS doc_chunks_hnsw
+    ON doc_chunks
+    USING hnsw (embedding vector_cosine_ops)
+    WITH (m = 16, ef_construction = 64);
+
+CREATE INDEX IF NOT EXISTS doc_chunks_source_idx ON doc_chunks (source);
+CREATE INDEX IF NOT EXISTS doc_chunks_ncf_idx    ON doc_chunks (ncf_code)  WHERE ncf_code  IS NOT NULL;
+CREATE INDEX IF NOT EXISTS doc_chunks_mepc_idx   ON doc_chunks (mepc_code) WHERE mepc_code IS NOT NULL;
+
+
+-- ═════════════════════════════════════════════════════════════
 -- REQUÊTES ANN TYPES (commentaires)
 -- ═════════════════════════════════════════════════════════════
 
