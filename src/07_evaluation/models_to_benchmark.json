@@ -1,0 +1,74 @@
+{
+  "_commentaire": "Configuration du benchmark multi-modèles d'embeddings — Module 07",
+  "_ref": "Section 3-bis du README — Hypothèse H3",
+  "defaults": {
+    "k_values":             [1, 5, 10],
+    "mrr_k":                10,
+    "batch_size":           64,
+    "max_seq_length":       256,
+    "n_latency_sentences":  200
+  },
+  "families": {
+    "generaliste_en": { "color": "#4e79a7", "marker": "o" },
+    "multilingue":    { "color": "#f28e2b", "marker": "s" },
+    "francais":       { "color": "#e15759", "marker": "^" },
+    "domaine":        { "color": "#59a14f", "marker": "D" },
+    "lexical":        { "color": "#9c755f", "marker": "x" }
+  },
+  "models": [
+    {
+      "name":   "all-MiniLM-L6-v2",
+      "label":  "MiniLM-L6 (EN, 384d)",
+      "family": "generaliste_en",
+      "hf_id":  "sentence-transformers/all-MiniLM-L6-v2",
+      "dim":    384,
+      "local":  false,
+      "prefix": ""
+    },
+    {
+      "name":   "paraphrase-multilingual-MiniLM-L12-v2",
+      "label":  "ML-MiniLM-L12 (ML, 384d)",
+      "family": "multilingue",
+      "hf_id":  "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "dim":    384,
+      "local":  false,
+      "prefix": ""
+    },
+    {
+      "name":   "distiluse-base-multilingual-cased-v2",
+      "label":  "DistilUSE (ML, 512d)",
+      "family": "multilingue",
+      "hf_id":  "sentence-transformers/distiluse-base-multilingual-cased-v2",
+      "dim":    512,
+      "local":  false,
+      "prefix": ""
+    },
+    {
+      "name":   "multilingual-e5-base",
+      "label":  "mE5-base (ML, 768d)",
+      "family": "multilingue",
+      "hf_id":  "intfloat/multilingual-e5-base",
+      "dim":    768,
+      "local":  false,
+      "prefix": "query: "
+    },
+    {
+      "name":   "sentence-camembert-base",
+      "label":  "CamemBERT (FR, 768d)",
+      "family": "francais",
+      "hf_id":  "dangvantuan/sentence-camembert-base",
+      "dim":    768,
+      "local":  false,
+      "prefix": ""
+    },
+    {
+      "name":   "st_finetuned",
+      "label":  "ST Fine-tuné (FR-EMPLOI, 384d)",
+      "family": "domaine",
+      "hf_id":  "models/st_finetuned/final",
+      "dim":    384,
+      "local":  true,
+      "prefix": ""
+    }
+  ]
+}
