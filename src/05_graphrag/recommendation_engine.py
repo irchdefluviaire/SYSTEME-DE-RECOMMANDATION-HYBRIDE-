@@ -75,7 +75,8 @@ class LLMCaller:
         self.base_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
         self.api_key = os.getenv("LLM_API_KEY", "ollama")
         self.model = os.getenv("LLM_CHOICE", "llama3.1:latest")
-        self.timeout_s = int(os.getenv("LLM_TIMEOUT_S", "180"))
+        self.timeout_s = int(os.getenv("LLM_TIMEOUT_S", "600"))
+        self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1200"))
 
     def _load_mistral(self):
         from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, BitsAndBytesConfig
@@ -145,7 +146,7 @@ class LLMCaller:
             "model": self.model,
             "messages": format_openai_messages(system, user),
             "temperature": 0.1,
-            "max_tokens": 2000,
+            "max_tokens": self.max_tokens,
             "stream": False,
         }
         request = urllib.request.Request(
@@ -158,8 +159,19 @@ class LLMCaller:
             method="POST",
         )
         try:
+            log.info(
+                "Appel llama local: model=%s timeout=%ss max_tokens=%s",
+                self.model,
+                self.timeout_s,
+                self.max_tokens,
+            )
             with urllib.request.urlopen(request, timeout=self.timeout_s) as response:
                 body = json.loads(response.read().decode("utf-8"))
+        except TimeoutError as exc:
+            raise RuntimeError(
+                f"Timeout Ollama apres {self.timeout_s}s sur {self.base_url}. "
+                "Augmenter LLM_TIMEOUT_S ou reduire --top-k / LLM_MAX_TOKENS."
+            ) from exc
         except urllib.error.URLError as exc:
             raise RuntimeError(
                 f"Backend llama indisponible sur {self.base_url}. "
