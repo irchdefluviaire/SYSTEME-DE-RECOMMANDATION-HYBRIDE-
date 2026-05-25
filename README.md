@@ -525,13 +525,24 @@ LIMIT 10;
 Le moteur `src/05_graphrag/recommendation_engine.py` charge un candidat,
 construit un contexte via pgvector et Neo4j, puis produit les recommandations,
 le skill gap et la roadmap. Ce mode reste disponible pour la comparaison
-ablative avec le mode agentique. Le backend par defaut est `simulation`.
+ablative avec le mode agentique. Le backend par defaut est `simulation`, ce qui
+permet de tester le pipeline sans generation LLM. Pour une generation locale,
+utiliser le backend `llama`, qui appelle `llama3.1:latest` via Ollama
+(`LLM_BASE_URL=http://localhost:11434/v1` dans `.env`).
+
+Test sans LLM:
 
 ```powershell
 poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend simulation --top-k 5
 ```
 
-Benchmark local sur un echantillon:
+Test avec `llama3.1` local:
+
+```powershell
+poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend llama --top-k 5
+```
+
+Benchmark local sur un echantillon, sans LLM:
 
 ```powershell
 poetry run python src/05_graphrag/recommendation_engine.py --benchmark --backend simulation
@@ -541,13 +552,12 @@ Backends declares dans le code:
 
 ```text
 simulation
-mistral
-openai
+llama
 ```
 
-Les backends `mistral` et `openai` exigent les dependances, modeles et cles
-necessaires dans l'environnement. Le mode `simulation` produit des JSON de test:
-il ne doit pas etre interprete comme une validation empirique du systeme.
+Le backend `llama` exige qu'Ollama soit lance localement et que le modele
+`llama3.1:latest` soit disponible. Le mode `simulation` produit des JSON de
+test: il ne doit pas etre interprete comme une validation empirique du systeme.
 
 ### 7. Lancer l'API FastAPI
 
@@ -758,9 +768,11 @@ poetry run python scripts/ingest_pdfs.py --pdf pdf/Nomenclature-Camerounaise-des
 poetry run python scripts/ingest_pdfs.py --pdf pdf/Nomenclature-camerounaise-des-metiers-_2013.pdf --source MEPC_2013
 poetry run python scripts/ingest_pdfs.py --pdf pdf/diplome_certificat.pdf --source diplomes
 poetry run python scripts/materialize_similarity.py --entity skills --threshold 0.75
+poetry run python scripts/materialize_similarity.py --entity metiers --threshold 0.80
 
 # 4. Test moteur classique
 poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend simulation --top-k 5
+poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend llama --top-k 5
 
 # 5. API + agent + interfaces
 poetry run uvicorn src.06_api.main:app --host 0.0.0.0 --port 8000 --reload

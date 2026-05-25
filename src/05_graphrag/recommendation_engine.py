@@ -5,7 +5,7 @@ Module 05 — Moteur de recommandation hybride (GraphRAG)
 
 Orchestre le pipeline complet :
   1. Context builder (pgvector ANN + Neo4j Cypher)
-  2. LLM 2 génératif (Mistral-7B local ou GPT-4o)
+  2. LLM 2 génératif (llama3.1 local via Ollama) ou simulation
   3. Sauvegarde des résultats (PostgreSQL)
 
 Usage :
@@ -18,17 +18,22 @@ Usage :
 import argparse
 import json
 import logging
+import os
 import re
 import sys
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 from typing import Optional
 
 import numpy as np
 import pandas as pd
+from dotenv import load_dotenv
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "src" / "05_graphrag"))
+load_dotenv(ROOT / ".env")
 
 from context_builder    import GraphRAGContextBuilder
 from prompt_templates   import (
@@ -54,20 +59,23 @@ logging.basicConfig(
 class LLMCaller:
     """
     Appelle le LLM 2 génératif.
-    Supporte : Mistral-7B local (transformers), GPT-4o (OpenAI API), simulation.
+    Supporte : llama3.1 local via Ollama ou simulation.
     """
 
     def __init__(self, backend: str = "simulation"):
         """
         backend :
-          "mistral"    → Mistral-7B-Instruct local (transformers + 4-bit)
-          "openai"     → GPT-4o via API OpenAI
-          "simulation" → Réponse JSON simulée (démo sans LLM)
+          "llama"      -> llama3.1 local via Ollama/OpenAI-compatible API
+          "simulation" -> Reponse JSON simulee (demo sans LLM)
         """
         self.backend = backend
         self._model  = None
         self._pipe   = None
         self._client = None
+        self.base_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
+        self.api_key = os.getenv("LLM_API_KEY", "ollama")
+        self.model = os.getenv("LLM_CHOICE", "llama3.1:latest")
+        self.timeout_s = int(os.getenv("LLM_TIMEOUT_S", "180"))
 
     def _load_mistral(self):
         from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, BitsAndBytesConfig
@@ -98,6 +106,12 @@ class LLMCaller:
     def generate(self, system: str, user: str) -> str:
         """Génère une réponse JSON à partir du system + user prompt."""
 
+        if self.backend == "llama":
+            return self._call_llama(system, user)
+
+        if self.backend in {"mistral", "openai"}:
+            raise ValueError("Backend retire: utiliser 'simulation' ou 'llama'.")
+
         if self.backend == "mistral":
             if self._pipe is None:
                 self._load_mistral()
@@ -120,12 +134,44 @@ class LLMCaller:
             )
             return completion.choices[0].message.content
 
-        else:  # simulation
+        elif self.backend == "simulation":
             return self._simulate_response(user)
+
+        raise ValueError(f"Backend LLM inconnu: {self.backend!r}")
+
+    def _call_llama(self, system: str, user: str) -> str:
+        """Appelle llama3.1 via Ollama en mode OpenAI-compatible."""
+        payload = {
+            "model": self.model,
+            "messages": format_openai_messages(system, user),
+            "temperature": 0.1,
+            "max_tokens": 2000,
+            "stream": False,
+        }
+        request = urllib.request.Request(
+            f"{self.base_url}/chat/completions",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {self.api_key}",
+            },
+            method="POST",
+        )
+        try:
+            with urllib.request.urlopen(request, timeout=self.timeout_s) as response:
+                body = json.loads(response.read().decode("utf-8"))
+        except urllib.error.URLError as exc:
+            raise RuntimeError(
+                f"Backend llama indisponible sur {self.base_url}. "
+                "Verifier que Ollama est lance et que llama3.1:latest est installe."
+            ) from exc
+
+        content = body["choices"][0]["message"]["content"]
+        return self._extract_json(content)
 
     @staticmethod
     def _extract_json(text: str) -> str:
-        """Extrait le JSON d'une réponse Mistral (peut contenir du texte parasite)."""
+        """Extrait le JSON d'une réponse LLM (peut contenir du texte parasite)."""
         # Chercher le premier '{' et le dernier '}'
         start = text.find("{")
         end   = text.rfind("}") + 1
@@ -438,7 +484,7 @@ class RecommendationEngine:
                 len(offre.get("ess_manq", [])),
                 rm if i == 1 else None,
                 expl if i == 1 else None,
-                "all-MiniLM-L6-v2-ft | Mistral-7B",
+                f"all-MiniLM-L6-v2-ft | {self.llm.backend}",
             ))
 
         with self.pg.cursor() as cur:
@@ -456,7 +502,7 @@ def main():
     parser.add_argument("--candidat",  type=str, default=None,
                         help="Matricule candidat ou 'all'")
     parser.add_argument("--backend",   type=str, default="simulation",
-                        choices=["simulation", "mistral", "openai"])
+                        choices=["simulation", "llama"])
     parser.add_argument("--top-k",     type=int, default=5)
     parser.add_argument("--benchmark", action="store_true",
                         help="Test sur 10 candidats aléatoires")
