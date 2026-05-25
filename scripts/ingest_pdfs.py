@@ -758,6 +758,12 @@ class IngestPipeline:
         log.info("=" * 65)
 
         t0 = time.time()
+        model = None
+        if not self.dry_run:
+            # On Windows, importing sentence-transformers after pdfplumber can
+            # crash in native pyarrow imports. Load the model before PDF parsing.
+            log.info("\n[0/5] Chargement du modèle d'embedding…")
+            model = load_model(self.online)
 
         # ── 1. Extraction ──────────────────────────────────────────────
         log.info("\n[1/5] Extraction du texte PDF…")
@@ -792,7 +798,6 @@ class IngestPipeline:
         # ── 3. Embedding ───────────────────────────────────────────────
         log.info("\n[3/5] Embedding des chunks…")
         if not self.dry_run:
-            model  = load_model(self.online)
             chunks = embed_chunks(chunks, model, self.batch_size)
         else:
             log.info("  [DRY-RUN] Embedding ignoré")
