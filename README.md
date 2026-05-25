@@ -399,12 +399,19 @@ poetry run python src/04_pgvector/embed_all_entities.py --model models/st_finetu
 
 Les PDFs officiels du dossier `pdf/` sont chunkes selon leur structure
 hierarchique (chapitres / domaines / groupes), embeddes avec le ST fine-tune,
-inseres dans la table `doc_chunks` de pgvector et relies aux noeuds Neo4j
-existants par des relations `:EXTRAIT_DE`, `:DEFINIT` et `:DECRIT`. Le script
-recupere aussi l'identifiant Neo4j du noeud `DocChunk` cree ou mis a jour
-(`elementId(d)`) et le synchronise dans `doc_chunks.neo4j_node_id` cote
-pgvector. L'agent peut alors retrouver le chunk vectoriel et citer le passage
-officiel associe au noeud du graphe.
+inseres dans la table `doc_chunks` de pgvector et relies a un noeud
+`DocumentReferentiel` dans Neo4j par `:EXTRAIT_DE`. Le script recupere aussi
+l'identifiant Neo4j du noeud `DocChunk` cree ou mis a jour (`elementId(d)`) et
+le synchronise dans `doc_chunks.neo4j_node_id` cote pgvector. L'agent peut
+alors retrouver le chunk vectoriel et citer le passage officiel associe au
+noeud du graphe.
+
+Les relations `:DEFINIT` et `:DECRIT` vers les noeuds NCF/MEPC sont des
+enrichissements optionnels. Elles dependent de la detection automatique des
+codes dans les PDFs et ne sont pas necessaires pour que la recherche
+referentielle fonctionne. Le minimum attendu pour cette etape est donc:
+chunks JSONL, embeddings dans `doc_chunks`, index HNSW, `neo4j_node_id` rempli
+et relations `(:DocChunk)-[:EXTRAIT_DE]->(:DocumentReferentiel)`.
 
 Avant de lancer cette etape, verifier que la bonne base Neo4j locale est
 demarree et que `.env` pointe vers cette base (`NEO4J_URI`,
@@ -440,6 +447,7 @@ Sorties:
 data/pdf_chunks/{source}.jsonl              chunks bruts + metadonnees
 pgvector: table doc_chunks                  embeddings indexes HNSW + neo4j_node_id
 Neo4j: (:DocChunk)-[:EXTRAIT_DE]->(:DocumentReferentiel)
+Optionnel selon les codes detectes:
        (:DocChunk)-[:DEFINIT]->(:NiveauFormationNCF | :DomaineDétailléNCF)
        (:DocChunk)-[:DECRIT]->(:Métier | :GroupeBaseMEPC)
 ```
