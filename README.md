@@ -400,8 +400,17 @@ poetry run python src/04_pgvector/embed_all_entities.py --model models/st_finetu
 Les PDFs officiels du dossier `pdf/` sont chunkes selon leur structure
 hierarchique (chapitres / domaines / groupes), embeddes avec le ST fine-tune,
 inseres dans la table `doc_chunks` de pgvector et relies aux noeuds Neo4j
-existants par des relations `:DEFINIT` et `:DECRIT`. L'agent peut alors
-citer un passage officiel pour justifier un verdict.
+existants par des relations `:EXTRAIT_DE`, `:DEFINIT` et `:DECRIT`. Le script
+recupere aussi l'identifiant Neo4j du noeud `DocChunk` cree ou mis a jour
+(`elementId(d)`) et le synchronise dans `doc_chunks.neo4j_node_id` cote
+pgvector. L'agent peut alors retrouver le chunk vectoriel et citer le passage
+officiel associe au noeud du graphe.
+
+Avant de lancer cette etape, verifier que la bonne base Neo4j locale est
+demarree et que `.env` pointe vers cette base (`NEO4J_URI`,
+`NEO4J_DATABASE`, `NEO4J_USER`, `NEO4J_PASSWORD`). Si une autre base Neo4j est
+active, les `DocChunk` seront crees dans cette base et `neo4j_node_id`
+referencera le mauvais graphe.
 
 Ingestion d'un PDF:
 
@@ -429,10 +438,20 @@ Sorties:
 
 ```text
 data/pdf_chunks/{source}.jsonl              chunks bruts + metadonnees
-pgvector: table doc_chunks                  embeddings indexes HNSW
+pgvector: table doc_chunks                  embeddings indexes HNSW + neo4j_node_id
 Neo4j: (:DocChunk)-[:EXTRAIT_DE]->(:DocumentReferentiel)
        (:DocChunk)-[:DEFINIT]->(:NiveauFormationNCF | :DomaineDétailléNCF)
        (:DocChunk)-[:DECRIT]->(:Métier | :GroupeBaseMEPC)
+```
+
+Verification apres ingestion:
+
+```powershell
+# pgvector : les trois sources doivent avoir neo4j_node_id rempli
+poetry run python -c "import sys; sys.path.insert(0,'src/04_pgvector'); import psycopg; from config_pgvector import PG_CONN; conn=psycopg.connect(**PG_CONN); cur=conn.cursor(); cur.execute('select source, count(1), count(neo4j_node_id) from doc_chunks group by source order by source'); print(cur.fetchall()); cur.close(); conn.close()"
+
+# Neo4j : verifier les DocChunk et les relations creees
+poetry run python -c "import sys; sys.path.insert(0,'src/03_knowledge_graph'); from neo4j import GraphDatabase; from config_neo4j import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, NEO4J_DATABASE; driver=GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD)); s=driver.session(database=NEO4J_DATABASE); print([(r['source'], r['n']) for r in s.run('MATCH (d:DocChunk) RETURN d.source AS source, count(d) AS n ORDER BY source')]); print([(r['type'], r['n']) for r in s.run('MATCH (:DocChunk)-[rel]->() RETURN type(rel) AS type, count(rel) AS n ORDER BY type')]); s.close(); driver.close()"
 ```
 
 ### 5-ter. Materialiser les relations de similarite dans Neo4j
