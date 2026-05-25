@@ -577,6 +577,24 @@ def upsert_to_pgvector(
 # Neo4j — nœuds DocChunk et relations
 # ─────────────────────────────────────────────────────────────────────────
 
+def update_pgvector_neo4j_ids(conn, node_ids: dict[str, str]) -> int:
+    """Synchronise les elementId Neo4j des DocChunk dans pgvector."""
+    if not node_ids:
+        return 0
+
+    sql = """
+        UPDATE doc_chunks
+        SET neo4j_node_id = %s
+        WHERE chunk_id = %s
+    """
+    rows = [(neo4j_id, chunk_id) for chunk_id, neo4j_id in node_ids.items()]
+    with conn.cursor() as cur:
+        cur.executemany(sql, rows)
+        count = cur.rowcount
+    conn.commit()
+    return count
+
+
 _NEO4J_CONSTRAINTS = [
     "CREATE CONSTRAINT doc_chunk_id IF NOT EXISTS FOR (d:DocChunk) REQUIRE d.chunk_id IS UNIQUE",
     "CREATE CONSTRAINT doc_ref_source IF NOT EXISTS FOR (r:DocumentReferentiel) REQUIRE r.source IS UNIQUE",
@@ -604,6 +622,7 @@ MERGE (d:DocChunk {chunk_id: $chunk_id})
 WITH d
 MATCH (r:DocumentReferentiel {source: $source})
 MERGE (d)-[:EXTRAIT_DE]->(r)
+RETURN elementId(d) AS neo4j_node_id
 """
 
 _CYPHER_LINK_NCF_NIVEAU = """
@@ -654,7 +673,7 @@ def upsert_to_neo4j(
     source:         str,
     database:       str = "neo4j",
     batch_size:     int = 100,
-) -> int:
+) -> tuple[int, dict[str, str]]:
     """
     Crée les nœuds DocChunk dans Neo4j et établit les relations vers
     DocumentReferentiel, NiveauFormationNCF, DomaineDétailléNCF, GroupeBaseMEPC.
@@ -663,6 +682,7 @@ def upsert_to_neo4j(
         Nombre de nœuds créés ou mis à jour.
     """
     count = 0
+    node_ids: dict[str, str] = {}
     with driver.session(database=database) as session:
         # DocumentReferentiel
         session.run(_CYPHER_DOC_REF, source=source, title=document_title)
@@ -681,7 +701,9 @@ def upsert_to_neo4j(
                     "ncf_code":           c.ncf_code or None,
                     "mepc_code":          c.mepc_code or None,
                 }
-                session.run(_CYPHER_CHUNK, **params)
+                record = session.run(_CYPHER_CHUNK, **params).single()
+                if record and record.get("neo4j_node_id"):
+                    node_ids[c.chunk_id] = record["neo4j_node_id"]
 
                 # Relations NCF
                 if c.ncf_code:
@@ -715,7 +737,7 @@ def upsert_to_neo4j(
 
                 count += 1
 
-    return count
+    return count, node_ids
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -831,19 +853,30 @@ class IngestPipeline:
         # ── 5b. Neo4j ──────────────────────────────────────────────────
         log.info("\n[5b/5] Insertion dans Neo4j (DocChunk)…")
         n_neo = 0
+        neo4j_node_ids: dict[str, str] = {}
         try:
             from neo4j import GraphDatabase
             from config_neo4j import NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD, NEO4J_DATABASE
             driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
             with driver:
                 setup_neo4j_schema(driver, NEO4J_DATABASE)
-                n_neo = upsert_to_neo4j(
+                n_neo, neo4j_node_ids = upsert_to_neo4j(
                     chunks, driver, self.doc_title, self.source,
                     NEO4J_DATABASE, self.batch_size,
                 )
             log.info(f"  Neo4j : {n_neo} nœuds DocChunk créés/mis à jour")
         except Exception as exc:
             log.error(f"  Neo4j indisponible : {exc}")
+
+        if neo4j_node_ids:
+            try:
+                import psycopg
+                from config_pgvector import PG_CONN
+                with psycopg.connect(**PG_CONN) as conn:
+                    n_sync = update_pgvector_neo4j_ids(conn, neo4j_node_ids)
+                log.info(f"  pgvector.neo4j_node_id : {n_sync} lignes synchronisées")
+            except Exception as exc:
+                log.error(f"  Synchronisation neo4j_node_id impossible : {exc}")
 
         elapsed = time.time() - t0
         log.info("\n" + "=" * 65)
