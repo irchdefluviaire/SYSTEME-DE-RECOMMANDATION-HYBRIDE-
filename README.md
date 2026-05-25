@@ -473,6 +473,53 @@ poetry run python scripts/materialize_similarity.py --entity skills --threshold 
 poetry run python scripts/materialize_similarity.py --entity metiers --threshold 0.80
 ```
 
+Par defaut, le script prend les `10` voisins les plus proches par entite
+avant filtrage par seuil, afin d'eviter une materialisation quadratique de
+toutes les paires. Chaque relation creee porte:
+
+```text
+weight      similarite cosinus
+similarity  meme valeur que weight
+metric      cosine
+source      pgvector
+updated_at  date de materialisation
+```
+
+Options utiles:
+
+```powershell
+# Tester sans ecrire dans Neo4j
+poetry run python scripts/materialize_similarity.py --entity skills --threshold 0.75 --dry-run
+
+# Augmenter ou reduire le voisinage candidat
+poetry run python scripts/materialize_similarity.py --entity skills --threshold 0.75 --top-k 20
+
+# Diagnostic rapide sur un sous-ensemble
+poetry run python scripts/materialize_similarity.py --entity metiers --threshold 0.80 --limit-entities 100 --dry-run
+```
+
+Verification Neo4j:
+
+```cypher
+MATCH (a:`Compétence`)-[r:SIMILAIRE_A]-(b:`Compétence`)
+WHERE elementId(a) < elementId(b)
+RETURN count(r) AS relations_competences;
+
+MATCH (a:`Métier`)-[r:SIMILAIRE_A]-(b:`Métier`)
+WHERE elementId(a) < elementId(b)
+RETURN count(r) AS relations_metiers;
+
+MATCH (a)-[r:SIMILAIRE_A]-(b)
+WHERE elementId(a) < elementId(b)
+RETURN labels(a)[0] AS type_noeud,
+       coalesce(a.preferredLabel, a.label) AS source,
+       coalesce(b.preferredLabel, b.label) AS cible,
+       r.weight AS poids,
+       r.metric AS metrique
+ORDER BY r.weight DESC
+LIMIT 10;
+```
+
 ### 6. Tester le moteur GraphRAG (mode non-agentique)
 
 Le moteur `src/05_graphrag/recommendation_engine.py` charge un candidat,
