@@ -384,6 +384,12 @@ class RecommendationEngine:
         Pipeline complet pour un candidat.
         Retourne le résultat structuré : offres + skill_gap + roadmap.
         """
+        if self.pg:
+            try:
+                self.pg.rollback()
+            except Exception:
+                pass
+
         t0 = time.time()
         log.info(f"=== Recommandation pour {candidat_id} ===")
 
@@ -499,10 +505,17 @@ class RecommendationEngine:
                 f"all-MiniLM-L6-v2-ft | {self.llm.backend}",
             ))
 
-        with self.pg.cursor() as cur:
-            cur.executemany(sql, rows)
-        self.pg.commit()
-        log.info(f"  {len(rows)} recommandations sauvegardées dans PostgreSQL")
+        try:
+            with self.pg.cursor() as cur:
+                cur.executemany(sql, rows)
+            self.pg.commit()
+            log.info(f"  {len(rows)} recommandations sauvegardées dans PostgreSQL")
+        except Exception as exc:
+            try:
+                self.pg.rollback()
+            except Exception:
+                pass
+            log.warning(f"  Sauvegarde recommandations ignorée : {exc}")
 
 
 # ─────────────────────────────────────────────────────────────────────────

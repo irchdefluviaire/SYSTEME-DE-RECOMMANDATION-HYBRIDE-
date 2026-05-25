@@ -13,7 +13,7 @@ from schemas import OffreDetail
 log    = logging.getLogger(__name__)
 router = APIRouter()
 
-ROOT  = Path(__file__).resolve().parent.parent.parent.parent
+ROOT  = Path(__file__).resolve().parents[2]
 _df_offres: Optional[pd.DataFrame] = None
 
 

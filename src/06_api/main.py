@@ -37,9 +37,11 @@ from pathlib import Path
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from dotenv import load_dotenv
 
 # Assurer que les modules projet sont accessibles
 ROOT = Path(__file__).resolve().parent.parent.parent
+load_dotenv(ROOT / ".env")
 sys.path.insert(0, str(ROOT / "src" / "05_graphrag"))
 sys.path.insert(0, str(Path(__file__).parent))
 
@@ -48,7 +50,8 @@ from dependencies import (
     init_engine, close_all, get_services_status,
 )
 from schemas import HealthResponse, ErrorResponse
-from routers import recommend, skill_gap, embed, offre
+from routers import recommend, skill_gap, embed
+import offre
 
 logging.basicConfig(
     level=logging.INFO,
@@ -56,6 +59,17 @@ logging.basicConfig(
     datefmt="%H:%M:%S",
 )
 log = logging.getLogger("api")
+
+
+def _pg_dsn_from_env() -> str:
+    if os.getenv("PG_DSN"):
+        return os.getenv("PG_DSN")
+    host = os.getenv("PG_HOST", "localhost")
+    port = os.getenv("PG_PORT", "5432")
+    db = os.getenv("PG_DB", "recommandation")
+    user = os.getenv("PG_USER", "postgres")
+    password = os.getenv("PG_PASSWORD", "password")
+    return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 
 # ─────────────────────────────────────────────────────────────────────────
@@ -90,10 +104,7 @@ async def lifespan(app: FastAPI):
     log.info(f"  Neo4j    : {'OK' if neo4j_ok else 'indisponible (mode dégradé)'}")
 
     # 3. Connexion pgvector (mode dégradé si absent)
-    pg_ok = init_pgvector(
-        dsn=os.getenv("PG_DSN",
-                      "postgresql://postgres:password@localhost:5432/recommandation"),
-    )
+    pg_ok = init_pgvector(dsn=_pg_dsn_from_env())
     log.info(f"  pgvector : {'OK' if pg_ok else 'indisponible (mode dégradé)'}")
 
     # 4. Instancier le moteur de recommandation

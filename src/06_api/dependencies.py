@@ -98,8 +98,8 @@ def init_pgvector(
 ) -> bool:
     global _pg_conn
     try:
-        import psycopg2
-        _pg_conn = psycopg2.connect(dsn)
+        import psycopg
+        _pg_conn = psycopg.connect(dsn)
         _pg_conn.autocommit = False
         log.info("pgvector connecté")
         return True
