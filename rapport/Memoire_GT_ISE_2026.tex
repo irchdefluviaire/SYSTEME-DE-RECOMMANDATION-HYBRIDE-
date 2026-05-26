@@ -1151,38 +1151,61 @@ Cette distinction est importante. Elle évite de confondre l'architecture concep
   \source{Auteur}
 \end{figure}
 
-La figure~\ref{fig:approche_methodologique} synthétise le positionnement méthodologique du mémoire. Elle montre que la solution n'est pas un simple moteur de recherche par mots-clés, ni un modèle de langage utilisé directement comme oracle. Le système est conçu comme une chaîne hybride où chaque brique a une fonction contrôlable : les données locales alimentent l'ETL, les textes normalisés alimentent l'encodeur sémantique, le graphe conserve les relations métiers et institutionnelles, la base vectorielle permet la recherche rapide de similarité, les documents réglementaires apportent des preuves textuelles, puis le moteur de raisonnement combine ces signaux avant l'exposition dans des interfaces opérationnelles.
+La figure~\ref{fig:approche_methodologique} résume la logique du projet. La solution part des données locales et des référentiels, les transforme en données propres, produit des représentations vectorielles, construit un graphe de connaissances, puis combine ces éléments pour générer des recommandations explicables. Chaque brique joue donc un rôle précis dans le système.
 
-\subsection*{Déclinaison des briques de la solution}
+\subsection{Sources de données}
 
-\paragraph{Sources de données.}
-La première brique correspond aux données brutes mobilisées pour représenter le marché du travail. Elle comprend les offres d'emploi locales, les profils de demandeurs, les référentiels \ESCO{}, \NCF{} et \MEPC{}, les informations sur les employeurs, les secteurs et les localisations, ainsi que certains signaux sociaux. Son rôle méthodologique est de couvrir simultanément la demande de travail, l'offre de travail et les nomenclatures nécessaires à leur comparaison. Le point critique est la qualité de ces sources : si les compétences sont mal renseignées ou si les intitulés de métiers sont trop ambigus, aucun modèle avancé ne pourra corriger entièrement cette faiblesse en aval.
+La première brique correspond aux données utilisées au départ du projet. Elle regroupe les offres d'emploi locales, les profils de demandeurs, les référentiels \ESCO{}, \NCF{} et \MEPC{}, ainsi que les informations utiles sur les employeurs, les secteurs et les localisations. Ces sources permettent de représenter les deux côtés du marché du travail : d'un côté les besoins exprimés dans les offres, de l'autre les profils disponibles chez les candidats.
 
-\paragraph{ETL et normalisation.}
-La deuxième brique transforme les sources hétérogènes en tables exploitables. Elle nettoie les champs textuels, harmonise les formats, déduplique les annonces, extrait les listes de compétences, rapproche les niveaux de formation de la \NCF{} et produit des fichiers structurés en Parquet, CSV ou JSONL. Cette étape est méthodologiquement décisive, car elle fixe l'unité d'observation du système : offre, candidat, compétence, métier, formation, secteur, employeur ou localisation. Une recommandation fiable suppose donc que ces unités soient stables, identifiables et comparables.
+Cette brique est importante parce que le système ne peut recommander correctement que ce qu'il connaît correctement. Une offre mal renseignée, une compétence absente ou un niveau de formation ambigu deviennent ensuite des limites pour le graphe, les embeddings et le score final. Le projet commence donc par organiser ces données au lieu de lancer directement un modèle sur des textes bruts.
 
-\paragraph{Fine-tuning du modèle Sentence Transformer.}
-La troisième brique adapte un encodeur sémantique au domaine emploi-compétences. Le projet part d'un modèle Sentence Transformer pré-entraîné, puis l'ajuste par apprentissage contrastif sur des paires construites à partir des offres locales. L'objectif n'est pas de pré-entraîner un \LLM{} depuis zéro, mais d'obtenir des embeddings plus sensibles au vocabulaire des annonces, des métiers, des compétences et des niveaux de qualification. Les vecteurs produits servent ensuite à mesurer la proximité sémantique entre candidats, offres, compétences et référentiels \cite{reimers2019sbert}.
+\subsection{ETL et normalisation}
 
-\paragraph{Construction du graphe de connaissances.}
-La quatrième brique organise les entités et leurs relations dans Neo4j. Les nœuds représentent notamment les candidats, les offres, les compétences \ESCO{}, les métiers \ESCO{}, les niveaux \NCF{}, les groupes \MEPC{}, les secteurs, les employeurs et les localisations. Les relations expriment des liens interprétables : un candidat \textit{possède} une compétence, une offre \textit{requiert} une compétence, un métier est \textit{aligné} sur un référentiel, un document \textit{décrit} ou \textit{définit} un élément réglementaire. Cette brique donne au système une capacité d'explication que la seule similarité vectorielle ne fournit pas : elle permet de justifier le résultat par des chemins, des relations et des contraintes métiers \cite{hogan2021knowledge}.
+La deuxième brique correspond au traitement réalisé par le pipeline ETL, notamment à travers le script \texttt{scripts/run\_etl.py}. Son rôle est de transformer des données hétérogènes en fichiers exploitables par les modules suivants. Le pipeline normalise les offres, normalise les candidats, aligne les référentiels \MEPC{}, \NCF{} et \ESCO{}, puis construit les paires utilisées pour le fine-tuning.
 
-\paragraph{Base vectorielle PostgreSQL et pgvector.}
-La cinquième brique stocke les embeddings dans PostgreSQL à travers l'extension pgvector. Elle permet de retrouver rapidement les entités les plus proches dans l'espace sémantique, par exemple les offres les plus proches d'un profil ou les compétences proches d'un besoin exprimé librement. Le rôle de cette brique est la scalabilité de la recherche. Le graphe est fort pour raisonner sur les relations ; la base vectorielle est forte pour retrouver rapidement des contenus proches dans un grand volume de textes.
+Concrètement, cette étape nettoie les textes, harmonise les libellés, structure les champs importants, extrait ou organise les compétences, rapproche les niveaux de formation et produit des fichiers de sortie dans \texttt{data/processed} et \texttt{data/finetune}. C'est la base technique du mémoire : si cette étape est faible, tout le reste devient fragile, car le modèle et le graphe travailleront sur des données mal stabilisées.
 
-\paragraph{Ingestion des PDF réglementaires.}
-La sixième brique traite les documents officiels, notamment la \NCF{}, la \MEPC{} et les référentiels de diplômes. Ces PDF sont découpés en segments structurés, transformés en embeddings, indexés dans pgvector et reliés au graphe. Cette étape évite que le système se contente d'une réponse plausible : lorsqu'une recommandation mobilise un niveau de formation, un domaine ou un métier réglementé, elle peut être reliée à un passage documentaire exploitable. C'est une condition importante pour une recommandation explicable et vérifiable.
+\subsection{Fine-tuning du Sentence Transformer}
 
-\paragraph{Moteur de raisonnement hybride.}
-La septième brique combine les signaux au lieu d'en privilégier un seul. La recherche sémantique propose des candidats proches ; le graphe vérifie les relations et les contraintes ; les règles métier contrôlent les niveaux de formation, les compétences et les secteurs ; les contenus réglementaires apportent des citations ; le \LLM{} intervient pour formuler une réponse structurée lorsque le mode génératif est activé. Le résultat attendu est un score interprétable, une explication, un \emph{skill gap} et une feuille de route de montée en compétence. C'est précisément ici que se situe le caractère hybride du système \cite{burke2002hybrid,ricci2011recommender}.
+La troisième brique correspond à l'adaptation du modèle d'embeddings. Le projet utilise un modèle Sentence Transformer, puis l'adapte au vocabulaire des offres locales à partir de paires construites pendant l'ETL. Cette étape est portée par le module \texttt{src/02\_finetune\_st}. L'objectif n'est pas de créer un grand modèle de langage depuis zéro, mais d'améliorer la représentation vectorielle des textes du domaine emploi-compétences.
 
-\paragraph{Infrastructure, orchestration et interfaces.}
-La huitième brique correspond à l'environnement d'exécution : Python et Poetry pour la reproductibilité, PostgreSQL/pgvector et Neo4j pour les bases de données, LangSmith pour le traçage, FastAPI pour l'exposition des endpoints, Streamlit pour le chatbot et LangGraph pour l'orchestration agentique. Cette couche ne doit pas être confondue avec le cœur scientifique du modèle, mais elle conditionne son usage réel. Un système de recommandation qui ne peut pas être interrogé, tracé et testé reste un prototype fragile.
+Après cette adaptation, chaque offre, candidat, compétence ou élément de référentiel peut être représenté par un vecteur dense. Deux textes proches par le sens doivent alors avoir des vecteurs proches, même s'ils n'utilisent pas exactement les mêmes mots. C'est ce qui permet au système de dépasser une recherche purement lexicale et de retrouver des correspondances sémantiques plus pertinentes \cite{reimers2019sbert}.
 
-\paragraph{Sorties et évaluation.}
-La dernière brique transforme le raisonnement en résultats contrôlables : recommandations d'offres, matching candidats--emplois, analyse du \emph{skill gap}, roadmap de formation, rapports d'évaluation, métriques de recherche d'information et traces d'exécution. Cette brique ferme la boucle méthodologique. Elle permet de juger le système sur des sorties observables plutôt que sur une intention de conception. Elle impose aussi une discipline : une recommandation n'est acceptable que si son score, ses preuves, ses limites et ses écarts de compétences peuvent être inspectés.
+\subsection{Construction du graphe de connaissances Neo4j}
 
-Ainsi, l'approche méthodologique retenue est défendable parce qu'elle sépare clairement les responsabilités. Le modèle d'embeddings sert à la proximité sémantique ; Neo4j sert à la structure relationnelle ; pgvector sert à l'indexation vectorielle ; les référentiels servent à l'ancrage institutionnel ; les règles métier servent au contrôle ; le \LLM{} sert à la génération explicative ; l'orchestration agentique sert à coordonner ces opérations. Cette séparation réduit le risque de construire une boîte noire où une réponse générée serait acceptée sans preuve. Elle rend au contraire possible un système de recommandation plus auditable, plus localisé et plus utile pour l'orientation, le recrutement et la montée en compétences.
+La quatrième brique correspond au chargement du graphe de connaissances dans Neo4j avec le module \texttt{src/03\_knowledge\_graph/load\_neo4j.py}. Le graphe représente les entités utiles au raisonnement : candidats, offres, compétences, métiers, niveaux \NCF{}, groupes \MEPC{}, secteurs, employeurs et localisations.
+
+Son intérêt est de conserver les relations explicites entre ces entités. Par exemple, une offre peut requérir des compétences, un candidat peut posséder certaines compétences, un métier peut être relié à un référentiel, et un document peut définir ou décrire un élément réglementaire. Cette représentation est plus interprétable qu'une simple liste de scores, car elle permet de retracer les liens qui justifient une recommandation \cite{hogan2021knowledge}.
+
+\subsection{Base vectorielle PostgreSQL et pgvector}
+
+La cinquième brique correspond à l'indexation vectorielle dans PostgreSQL avec l'extension pgvector. Le module \texttt{src/04\_pgvector/embed\_all\_entities.py} encode les entités du projet avec le modèle d'embeddings, puis stocke les vecteurs dans la base. Cette brique permet d'effectuer une recherche rapide par similarité sémantique.
+
+Son rôle est complémentaire à celui du graphe. pgvector retrouve rapidement les éléments proches dans l'espace des embeddings ; Neo4j vérifie ensuite les relations, les contraintes et les chemins explicables. La recommandation ne repose donc pas uniquement sur la proximité textuelle : elle peut être enrichie par la structure métier du graphe.
+
+\subsection{Ingestion des PDF réglementaires}
+
+La sixième brique concerne les documents officiels utilisés dans le projet, notamment les PDF liés à la \NCF{}, à la \MEPC{} et aux diplômes. Le script \texttt{scripts/ingest\_pdfs.py} découpe ces documents en chunks, produit leurs embeddings, les indexe dans pgvector et les relie au graphe lorsque les informations correspondantes sont détectées.
+
+Cette étape donne une base documentaire au système. Au lieu de produire seulement une recommandation, le système peut s'appuyer sur des passages issus des référentiels pour expliquer certains niveaux de formation, métiers ou domaines. Cela renforce l'explicabilité, surtout dans un contexte où les nomenclatures officielles doivent rester traçables.
+
+\subsection{Moteur de recommandation hybride}
+
+La septième brique correspond au moteur GraphRAG du projet. Ce moteur charge un candidat, construit un contexte à partir de pgvector et de Neo4j, puis produit des recommandations, un \emph{skill gap} et une roadmap.
+
+Le caractère hybride vient du fait que plusieurs signaux sont combinés : la similarité vectorielle, les relations du graphe, les compétences possédées et requises, les contraintes de niveau ou de secteur, et les éléments documentaires disponibles. Le résultat attendu n'est donc pas seulement une liste d'offres, mais une recommandation accompagnée d'une explication lisible \cite{burke2002hybrid,ricci2011recommender}.
+
+\subsection{Orchestration, API et interfaces}
+
+La huitième brique rend le système exploitable. Le projet contient une API FastAPI dans \path{src/06_api}, un workflow agentique LangGraph dans \path{src/08_agentic_graphrag}, une interface Streamlit avec \path{chatbot_app.py} et une CLI interactive. Ces éléments servent à interroger le système, afficher les traces du raisonnement et rendre les recommandations accessibles à un utilisateur.
+
+Cette couche ne remplace pas le moteur de recommandation ; elle l'expose. Elle permet de passer d'un traitement technique exécuté en scripts à une interaction plus opérationnelle : recherche d'offres, analyse de profil, conversation avec le chatbot, ou consultation des étapes du workflow.
+
+\subsection{Sorties et évaluation}
+
+La dernière brique correspond aux résultats produits et à leur contrôle. Le projet prévoit des recommandations d'offres, du matching candidat--emploi, une analyse du \emph{skill gap}, une roadmap de formation, ainsi que des rapports et fichiers d'évaluation dans \texttt{outputs/evaluation}. Le module \texttt{src/07\_evaluation} sert à évaluer différents aspects du système, comme les embeddings, le GraphRAG, les scores et la latence.
+
+Cette étape est nécessaire pour ne pas juger le système uniquement sur son architecture. Une méthodologie sérieuse doit observer les sorties : quelles offres sont recommandées, pourquoi elles le sont, quelles compétences manquent, quelles sources sont mobilisées et quelles limites apparaissent dans les métriques. C'est cette brique qui permet de passer d'une démonstration technique à une analyse défendable dans le mémoire.
 
 \section{Sources de données mobilisées}
 
