@@ -475,10 +475,10 @@ class RecommendationEngine:
         sql = """
         INSERT INTO recommandations
           (candidat_id, offre_id, rang, score_hybride,
-           score_semantique, score_graphe, score_collab,
-           nb_acquises, nb_manquantes, nb_essentielles_manquantes,
+           score_semantique, score_graph, score_collab,
+           nb_acquises, nb_manquantes,
            roadmap, explanation, model_version)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (candidat_id, offre_id) DO UPDATE SET
           score_hybride = EXCLUDED.score_hybride,
           roadmap       = EXCLUDED.roadmap,
@@ -499,7 +499,6 @@ class RecommendationEngine:
                 offre.get("score_collab", 0.5),
                 len(offre.get("acquises", [])),
                 len(offre.get("manquantes", [])),
-                len(offre.get("ess_manq", [])),
                 rm if i == 1 else None,
                 expl if i == 1 else None,
                 f"all-MiniLM-L6-v2-ft | {self.llm.backend}",

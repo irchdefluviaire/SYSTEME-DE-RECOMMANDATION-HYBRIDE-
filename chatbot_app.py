@@ -138,8 +138,11 @@ if user_input:
 
             # Format d'entrée ReAct agent : messages list
             agent_input_fmt = {
-                "messages": [("user", user_input)]
+                "messages": [("user", user_input)],
+                "top_k": top_k,
             }
+            if candidat_id_input.strip():
+                agent_input_fmt["candidat_id"] = candidat_id_input.strip()
 
             result = g.invoke(agent_input_fmt)
             elapsed = round(time.time() - t0, 1)

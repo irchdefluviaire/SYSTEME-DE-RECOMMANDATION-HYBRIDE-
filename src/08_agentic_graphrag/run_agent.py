@@ -2,7 +2,8 @@
 CLI de test du workflow Agentic GraphRAG.
 
 Usage:
-  poetry run python src/08_agentic_graphrag/run_agent.py --candidat PPKOU2501080016340 --top-k 5
+  poetry run python src/08_agentic_graphrag/run_agent.py --query "Montre-moi les offres pour PPKOU2501080016340"
+  poetry run python src/08_agentic_graphrag/run_agent.py --query "Je veux devenir data analyst"
 """
 
 from __future__ import annotations
@@ -26,7 +27,8 @@ from graph import graph  # noqa: E402
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Test Agentic GraphRAG")
-    parser.add_argument("--candidat", required=True, help="Identifiant candidat")
+    parser.add_argument("--query", default=None, help="Question en langage naturel")
+    parser.add_argument("--candidat", default=None, help="Identifiant candidat")
     parser.add_argument("--top-k", type=int, default=5, help="Nombre d'offres")
     parser.add_argument(
         "--backend",
@@ -44,14 +46,20 @@ def parse_args() -> argparse.Namespace:
 
 def main() -> None:
     args = parse_args()
+    query = args.query
+    if not query:
+        if args.candidat:
+            query = f"Analyse le candidat {args.candidat} et propose les meilleures offres."
+        else:
+            raise SystemExit("Fournir --query ou --candidat.")
+
     state = {
-        "messages": [
-            ("user", f"Analyse le candidat {args.candidat} et propose les meilleures offres.")
-        ],
-        "candidat_id": args.candidat,
+        "messages": [("user", query)],
         "top_k": args.top_k,
         "backend": args.backend,
     }
+    if args.candidat:
+        state["candidat_id"] = args.candidat
     result = graph.invoke(state)
 
     if args.json:
