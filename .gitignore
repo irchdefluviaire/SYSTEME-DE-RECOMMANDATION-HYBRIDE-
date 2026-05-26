@@ -233,3 +233,4 @@ __marimo__/
 rapport/Memoire_GT_ISE_2026.tex
 .claude/settings.local.json
 .langgraph_api/.langgraph_ops.pckl
+scripts/generate_brique_figures.ps1
