@@ -2429,9 +2429,13 @@
     <bcf:citekey order="39" intorder="4">burke2002hybrid</bcf:citekey>
     <bcf:citekey order="39" intorder="5">ricci2011recommender</bcf:citekey>
     <bcf:citekey order="40" intorder="1">reimers2019sbert</bcf:citekey>
-    <bcf:citekey order="41" intorder="1">burke2002hybrid</bcf:citekey>
-    <bcf:citekey order="41" intorder="2">ricci2011recommender</bcf:citekey>
-    <bcf:citekey order="42" intorder="1">lewis2020rag</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">hogan2021knowledge</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">burke2002hybrid</bcf:citekey>
+    <bcf:citekey order="42" intorder="2">ricci2011recommender</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">reimers2019sbert</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">burke2002hybrid</bcf:citekey>
+    <bcf:citekey order="44" intorder="2">ricci2011recommender</bcf:citekey>
+    <bcf:citekey order="45" intorder="1">lewis2020rag</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">

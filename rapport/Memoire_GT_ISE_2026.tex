@@ -1143,6 +1143,47 @@ L'étude adopte une architecture cible de type GraphRAG, dans laquelle un encode
 
 Cette distinction est importante. Elle évite de confondre l'architecture conceptuelle du système avec son état d'implémentation. La méthodologie ci-dessous décrit donc factuellement ce qui a été réalisé, puis précise les extensions prévues pour aboutir à un système de recommandation hybride complet \cite{reimers2019sbert,hogan2021knowledge,lewis2020rag,burke2002hybrid,ricci2011recommender}.
 
+\begin{figure}[H]
+  \centering
+  \caption{Vue d'ensemble de l'approche méthodologique du système hybride emploi-compétences}
+  \label{fig:approche_methodologique}
+  \includegraphics[width=0.98\textwidth]{figures/approche.png}
+  \source{Auteur}
+\end{figure}
+
+La figure~\ref{fig:approche_methodologique} synthétise le positionnement méthodologique du mémoire. Elle montre que la solution n'est pas un simple moteur de recherche par mots-clés, ni un modèle de langage utilisé directement comme oracle. Le système est conçu comme une chaîne hybride où chaque brique a une fonction contrôlable : les données locales alimentent l'ETL, les textes normalisés alimentent l'encodeur sémantique, le graphe conserve les relations métiers et institutionnelles, la base vectorielle permet la recherche rapide de similarité, les documents réglementaires apportent des preuves textuelles, puis le moteur de raisonnement combine ces signaux avant l'exposition dans des interfaces opérationnelles.
+
+\subsection*{Déclinaison des briques de la solution}
+
+\paragraph{Sources de données.}
+La première brique correspond aux données brutes mobilisées pour représenter le marché du travail. Elle comprend les offres d'emploi locales, les profils de demandeurs, les référentiels \ESCO{}, \NCF{} et \MEPC{}, les informations sur les employeurs, les secteurs et les localisations, ainsi que certains signaux sociaux. Son rôle méthodologique est de couvrir simultanément la demande de travail, l'offre de travail et les nomenclatures nécessaires à leur comparaison. Le point critique est la qualité de ces sources : si les compétences sont mal renseignées ou si les intitulés de métiers sont trop ambigus, aucun modèle avancé ne pourra corriger entièrement cette faiblesse en aval.
+
+\paragraph{ETL et normalisation.}
+La deuxième brique transforme les sources hétérogènes en tables exploitables. Elle nettoie les champs textuels, harmonise les formats, déduplique les annonces, extrait les listes de compétences, rapproche les niveaux de formation de la \NCF{} et produit des fichiers structurés en Parquet, CSV ou JSONL. Cette étape est méthodologiquement décisive, car elle fixe l'unité d'observation du système : offre, candidat, compétence, métier, formation, secteur, employeur ou localisation. Une recommandation fiable suppose donc que ces unités soient stables, identifiables et comparables.
+
+\paragraph{Fine-tuning du modèle Sentence Transformer.}
+La troisième brique adapte un encodeur sémantique au domaine emploi-compétences. Le projet part d'un modèle Sentence Transformer pré-entraîné, puis l'ajuste par apprentissage contrastif sur des paires construites à partir des offres locales. L'objectif n'est pas de pré-entraîner un \LLM{} depuis zéro, mais d'obtenir des embeddings plus sensibles au vocabulaire des annonces, des métiers, des compétences et des niveaux de qualification. Les vecteurs produits servent ensuite à mesurer la proximité sémantique entre candidats, offres, compétences et référentiels \cite{reimers2019sbert}.
+
+\paragraph{Construction du graphe de connaissances.}
+La quatrième brique organise les entités et leurs relations dans Neo4j. Les nœuds représentent notamment les candidats, les offres, les compétences \ESCO{}, les métiers \ESCO{}, les niveaux \NCF{}, les groupes \MEPC{}, les secteurs, les employeurs et les localisations. Les relations expriment des liens interprétables : un candidat \textit{possède} une compétence, une offre \textit{requiert} une compétence, un métier est \textit{aligné} sur un référentiel, un document \textit{décrit} ou \textit{définit} un élément réglementaire. Cette brique donne au système une capacité d'explication que la seule similarité vectorielle ne fournit pas : elle permet de justifier le résultat par des chemins, des relations et des contraintes métiers \cite{hogan2021knowledge}.
+
+\paragraph{Base vectorielle PostgreSQL et pgvector.}
+La cinquième brique stocke les embeddings dans PostgreSQL à travers l'extension pgvector. Elle permet de retrouver rapidement les entités les plus proches dans l'espace sémantique, par exemple les offres les plus proches d'un profil ou les compétences proches d'un besoin exprimé librement. Le rôle de cette brique est la scalabilité de la recherche. Le graphe est fort pour raisonner sur les relations ; la base vectorielle est forte pour retrouver rapidement des contenus proches dans un grand volume de textes.
+
+\paragraph{Ingestion des PDF réglementaires.}
+La sixième brique traite les documents officiels, notamment la \NCF{}, la \MEPC{} et les référentiels de diplômes. Ces PDF sont découpés en segments structurés, transformés en embeddings, indexés dans pgvector et reliés au graphe. Cette étape évite que le système se contente d'une réponse plausible : lorsqu'une recommandation mobilise un niveau de formation, un domaine ou un métier réglementé, elle peut être reliée à un passage documentaire exploitable. C'est une condition importante pour une recommandation explicable et vérifiable.
+
+\paragraph{Moteur de raisonnement hybride.}
+La septième brique combine les signaux au lieu d'en privilégier un seul. La recherche sémantique propose des candidats proches ; le graphe vérifie les relations et les contraintes ; les règles métier contrôlent les niveaux de formation, les compétences et les secteurs ; les contenus réglementaires apportent des citations ; le \LLM{} intervient pour formuler une réponse structurée lorsque le mode génératif est activé. Le résultat attendu est un score interprétable, une explication, un \emph{skill gap} et une feuille de route de montée en compétence. C'est précisément ici que se situe le caractère hybride du système \cite{burke2002hybrid,ricci2011recommender}.
+
+\paragraph{Infrastructure, orchestration et interfaces.}
+La huitième brique correspond à l'environnement d'exécution : Python et Poetry pour la reproductibilité, PostgreSQL/pgvector et Neo4j pour les bases de données, LangSmith pour le traçage, FastAPI pour l'exposition des endpoints, Streamlit pour le chatbot et LangGraph pour l'orchestration agentique. Cette couche ne doit pas être confondue avec le cœur scientifique du modèle, mais elle conditionne son usage réel. Un système de recommandation qui ne peut pas être interrogé, tracé et testé reste un prototype fragile.
+
+\paragraph{Sorties et évaluation.}
+La dernière brique transforme le raisonnement en résultats contrôlables : recommandations d'offres, matching candidats--emplois, analyse du \emph{skill gap}, roadmap de formation, rapports d'évaluation, métriques de recherche d'information et traces d'exécution. Cette brique ferme la boucle méthodologique. Elle permet de juger le système sur des sorties observables plutôt que sur une intention de conception. Elle impose aussi une discipline : une recommandation n'est acceptable que si son score, ses preuves, ses limites et ses écarts de compétences peuvent être inspectés.
+
+Ainsi, l'approche méthodologique retenue est défendable parce qu'elle sépare clairement les responsabilités. Le modèle d'embeddings sert à la proximité sémantique ; Neo4j sert à la structure relationnelle ; pgvector sert à l'indexation vectorielle ; les référentiels servent à l'ancrage institutionnel ; les règles métier servent au contrôle ; le \LLM{} sert à la génération explicative ; l'orchestration agentique sert à coordonner ces opérations. Cette séparation réduit le risque de construire une boîte noire où une réponse générée serait acceptée sans preuve. Elle rend au contraire possible un système de recommandation plus auditable, plus localisé et plus utile pour l'orientation, le recrutement et la montée en compétences.
+
 \section{Sources de données mobilisées}
 
 Le projet s'appuie sur deux familles de données. La première correspond aux données opérationnelles du marché du travail : offres d'emploi et profils de demandeurs. Les offres d'emploi ont été collectées par KmerAI à partir d'un dispositif de scraping mis en place sur des sites partenaires de diffusion d'annonces. Cette collecte a permis de constituer une base décrivant la demande de travail à travers les intitulés de poste, les secteurs d'activité, les localisations, les employeurs, les niveaux d'étude attendus, les compétences mentionnées et les descriptions textuelles des annonces. Les données de demandeurs décrivent, quant à elles, l'offre de travail disponible : profil, niveau de formation, diplôme, spécialité, expérience, mobilité et objectif professionnel.
