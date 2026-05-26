@@ -46,6 +46,18 @@
   \par\vspace{0.2\baselineskip}
   {\centering\footnotesize\itshape Source : #1\par}
 }
+\newcommand{\filevar}[1]{\texttt{\textcolor{darkblue}{#1}}}
+\newcommand{\tabheader}[1]{\textcolor{white}{\textbf{#1}}}
+\newcommand{\tableStyleStart}{%
+  \small
+  \renewcommand{\arraystretch}{1.22}%
+  \setlength{\tabcolsep}{4pt}%
+  \rowcolors{2}{lightblue!12}{white}%
+}
+\newcommand{\tableStyleEnd}{%
+  \rowcolors{2}{}{}%
+  \renewcommand{\arraystretch}{1}%
+}
 
 \setlist[itemize]{leftmargin=1.5em, itemsep=2pt, parsep=0pt}
 \setlist[enumerate]{leftmargin=1.8em, itemsep=2pt, parsep=0pt}
@@ -730,26 +742,21 @@ la similarité sémantique. L'objectif d'un modèle d'embedding est de produire 
   \centering
   \caption{Comparaison des embeddings statiques et contextuels.}
   \label{tab:embeddings}
-  \small
+  \tableStyleStart
   \begin{tabularx}{\linewidth}{>{\bfseries}lXX}
-    \toprule
-    \rowcolor{kmeraiteal!90}
-    \textcolor{white}{\textbf{Propriété}}
-    & \textcolor{white}{\textbf{Statiques (Word2Vec, GloVe)}}
-    & \textcolor{white}{\textbf{Contextuels (\BERT{}, GPT)}} \\
+    \rowcolor{darkblue}
+    \tabheader{Propriété}
+    & \tabheader{Statiques (Word2Vec, GloVe)}
+    & \tabheader{Contextuels (\BERT{}, GPT)} \\
     \midrule
-    \rowcolor{kmeraiteal!12}
     Dépendance au contexte & Non - un mot $=$ un vecteur unique & Oui - vecteur différent selon le contexte \\
-    \rowcolor{kmeraigreen!8}
     Capture de polysémie & Limitée & Excellente \\
-    \rowcolor{kmeraiteal!12}
     Exemple & \og Bank\fg{} $=$ même vecteur (banque/rive) & \og Bank\fg{} varie selon la phrase \\
-    \rowcolor{kmeraigreen!8}
     Usage en NLP moderne & Rare (benchmarks historiques) & Dominant \\
-    \rowcolor{kmeraiteal!12}
     Coût computationnel & Faible & Élevé (GPU requis) \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur}
 \end{table}
 
@@ -874,23 +881,20 @@ de compétences différentes (par exemple, entre la \NCM{} camerounaise et le r�
   \centering
   \caption{Variantes architecturales des \LLM{}s et leurs applications au matching emploi-compétences.}
   \label{tab:llm_variants}
-  \small
+  \tableStyleStart
   \begin{tabularx}{\linewidth}{lllX}
-    \toprule
-    \rowcolor{kmeraiteal!90}
-    \textcolor{white}{\textbf{Architecture}}
-    & \textcolor{white}{\textbf{Exemples}}
-    & \textcolor{white}{\textbf{Points forts}}
-    & \textcolor{white}{\textbf{Application au matching}} \\
+    \rowcolor{darkblue}
+    \tabheader{Architecture}
+    & \tabheader{Exemples}
+    & \tabheader{Points forts}
+    & \tabheader{Application au matching} \\
     \midrule
-    \rowcolor{kmeraiteal!12}
     Encodeur seul & \BERT{}, RoBERTa & Classification, extraction & Extraction de compétences CV/offres \\
-    \rowcolor{kmeraigreen!8}
     Décodeur seul & GPT-4, LLaMA & Génération, zero-shot & Enrichissement de profils, recommandations \\
-    \rowcolor{kmeraiteal!12}
     Encodeur-Décodeur & T5, BART & Traduction, résumé & Alignement inter-référentiels \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur}
 \end{table}
 
@@ -1157,18 +1161,40 @@ La seconde famille de données correspond aux référentiels de structuration. L
   \centering
   \caption{Sources de données utilisées dans le projet}
   \label{tab:sources_methodologie}
-  \footnotesize
-  \begin{tabularx}{\textwidth}{p{3.2cm}X p{3.2cm}}
-    \toprule
-    \textbf{Source} & \textbf{Rôle méthodologique} & \textbf{Utilisation dans le projet} \\
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash\bfseries}p{2.7cm}
+                                  >{\raggedright\arraybackslash}p{3.1cm}
+                                  >{\raggedright\arraybackslash}X
+                                  >{\raggedright\arraybackslash}p{3.3cm}}
+    \rowcolor{darkblue}
+    \tabheader{Donnée} &
+    \tabheader{Source} &
+    \tabheader{Rôle méthodologique} &
+    \tabheader{Utilisation dans le projet} \\
     \midrule
-    Offres d'emploi scrapées par KmerAI & Décrire la demande de travail : intitulé, secteur, localisation, employeur, niveau d'étude, compétences et contenu textuel de l'annonce. & Normalisation, génération du texte d'embedding, construction des paires de fine-tuning et création des nœuds d'offres. \\
-    Demandeurs d'emploi & Décrire l'offre de travail : profil, diplôme, niveau d'étude, expérience, compétences et mobilité. & Normalisation des profils et rattachement aux niveaux de formation. \\
-    \ESCO{} & Fournir une nomenclature internationale de métiers, compétences et relations métier--compétence. & Chargement des occupations, compétences, groupes ISCO et relations occupation--compétence. \\
-    \MEPC{} -- INS Cameroun & Fournir une classification nationale des métiers, emplois et professions du Cameroun. & Organisation du PDF en grands groupes, sous-groupes et groupes de base, puis alignement avec les métiers \ESCO{}. \\
-    \NCF{} -- INS Cameroun & Fournir une nomenclature nationale des niveaux, domaines et spécialités de formation. & Organisation du PDF en niveaux, grands domaines, domaines spécialisés et domaines détaillés, puis rattachement aux profils et aux offres. \\
+    Offres d'emploi &
+    Collecte KmerAI sur sites d'annonces &
+    Décrire la demande de travail : intitulé, secteur, localisation, employeur, niveau d'étude, compétences et contenu textuel de l'annonce. &
+    Normalisation, génération de \filevar{text\_to\_embed}, construction des paires de fine-tuning et création des nœuds d'offres. \\
+    Demandeurs d'emploi &
+    Base locale de profils candidats &
+    Décrire l'offre de travail : profil, diplôme, niveau d'étude, expérience, compétences et mobilité. &
+    Normalisation des profils, production de \filevar{text\_to\_embed} et rattachement aux niveaux de formation. \\
+    \ESCO{} &
+    Référentiel européen métiers--compétences &
+    Fournir une nomenclature internationale de métiers, compétences et relations métier--compétence. &
+    Chargement des occupations, compétences, groupes ISCO et relations occupation--compétence. \\
+    \MEPC{} &
+    INS Cameroun, nomenclature des métiers 2013 &
+    Fournir une classification nationale des métiers, emplois et professions du Cameroun. &
+    Structuration en grands groupes, sous-groupes et groupes de base, puis alignement avec les métiers \ESCO{}. \\
+    \NCF{} &
+    INS Cameroun, nomenclature des formations 2017 &
+    Fournir une nomenclature nationale des niveaux, domaines et spécialités de formation. &
+    Structuration en niveaux, grands domaines, domaines spécialisés et domaines détaillés, puis rattachement aux profils et aux offres. \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur}
 \end{table}
 La méthodologie tient compte de l'hétérogénéité terminologique du marché du travail camerounais, notamment les variations d'intitulés de postes, les écarts entre libellés de compétences et les différences de granularité entre référentiels. Cette difficulté est traitée par une standardisation progressive : nettoyage des textes, construction de champs normalisés, alignement partiel des référentiels et représentation du résultat dans un graphe de connaissances.
@@ -1211,16 +1237,17 @@ La transformation des PDF \MEPC{} et \NCF{} n'a pas consisté à produire une si
   \centering
   \caption{Structure finale des tables \MEPC{} issues du PDF de l'INS Cameroun}
   \label{tab:structure_mepc_finale}
-  \footnotesize
+  \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.4cm}p{4.1cm}X}
-    \toprule
-    \textbf{Table finale} & \textbf{Unité statistique} & \textbf{Champs structurants} \\
+    \rowcolor{darkblue}
+    \tabheader{Table finale} & \tabheader{Unité statistique} & \tabheader{Champs structurants} \\
     \midrule
-    \textit{mepc\_grands\_groupes} & Grand groupe de métiers & \textit{code}, \textit{intitule}, \textit{notes\_explicatives}, \textit{codes\_citp}, \textit{text\_to\_embed}. \\
-    \textit{mepc\_sous\_groupes} & Sous-groupe rattaché à un grand groupe & \textit{code}, \textit{intitule}, \textit{notes\_explicatives}, \textit{codes\_citp}, \textit{code\_grand\_groupe}, \textit{text\_to\_embed}. \\
-    \textit{mepc\_groupes\_base} & Groupe de base, niveau le plus fin retenu pour le matching métier & \textit{code}, \textit{intitule}, \textit{notes\_explicatives}, \textit{codes\_citp}, \textit{code\_sous\_groupe}, \textit{code\_grand\_groupe}, \textit{text\_to\_embed}. \\
+    \filevar{mepc\_grands\_groupes} & Grand groupe de métiers & \filevar{code}, \filevar{intitule}, \filevar{notes\_explicatives}, \filevar{codes\_citp}, \filevar{text\_to\_embed}. \\
+    \filevar{mepc\_sous\_groupes} & Sous-groupe rattaché à un grand groupe & \filevar{code}, \filevar{intitule}, \filevar{notes\_explicatives}, \filevar{codes\_citp}, \filevar{code\_grand\_groupe}, \filevar{text\_to\_embed}. \\
+    \filevar{mepc\_groupes\_base} & Groupe de base, niveau le plus fin retenu pour le matching métier & \filevar{code}, \filevar{intitule}, \filevar{notes\_explicatives}, \filevar{codes\_citp}, \filevar{code\_sous\_groupe}, \filevar{code\_grand\_groupe}, \filevar{text\_to\_embed}. \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur, à partir de la \MEPC{} de l'INS Cameroun}
 \end{table}
 
@@ -1230,17 +1257,18 @@ Dans cette structure, le champ \textit{code} sert d'identifiant de référence. 
   \centering
   \caption{Structure finale des tables \NCF{} issues du PDF de l'INS Cameroun}
   \label{tab:structure_ncf_finale}
-  \footnotesize
+  \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.5cm}p{4cm}X}
-    \toprule
-    \textbf{Table finale} & \textbf{Unité statistique} & \textbf{Champs structurants} \\
+    \rowcolor{darkblue}
+    \tabheader{Table finale} & \tabheader{Unité statistique} & \tabheader{Champs structurants} \\
     \midrule
-    \textit{ncf\_niveaux} & Niveau de formation & \textit{code}, \textit{intitule}, \textit{explication}, \textit{text\_to\_embed}. \\
-    \textit{ncf\_grands\_domaines} & Grand domaine de formation & \textit{code}, \textit{intitule}, \textit{explication}, \textit{text\_to\_embed}. \\
-    \textit{ncf\_dom\_specialises} & Domaine spécialisé rattaché à un grand domaine & \textit{code}, \textit{intitule}, \textit{explication}, \textit{code\_grand\_domaine}, \textit{text\_to\_embed}. \\
-    \textit{ncf\_dom\_detailles} & Domaine détaillé, niveau le plus fin retenu pour rattacher les formations & \textit{code}, \textit{intitule}, \textit{explication}, \textit{code\_dom\_specialise}, \textit{code\_grand\_domaine}, \textit{text\_to\_embed}. \\
+    \filevar{ncf\_niveaux} & Niveau de formation & \filevar{code}, \filevar{intitule}, \filevar{explication}, \filevar{text\_to\_embed}. \\
+    \filevar{ncf\_grands\_domaines} & Grand domaine de formation & \filevar{code}, \filevar{intitule}, \filevar{explication}, \filevar{text\_to\_embed}. \\
+    \filevar{ncf\_dom\_specialises} & Domaine spécialisé rattaché à un grand domaine & \filevar{code}, \filevar{intitule}, \filevar{explication}, \filevar{code\_grand\_domaine}, \filevar{text\_to\_embed}. \\
+    \filevar{ncf\_dom\_detailles} & Domaine détaillé, niveau le plus fin retenu pour rattacher les formations & \filevar{code}, \filevar{intitule}, \filevar{explication}, \filevar{code\_dom\_specialise}, \filevar{code\_grand\_domaine}, \filevar{text\_to\_embed}. \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur, à partir de la \NCF{} de l'INS Cameroun}
 \end{table}
 
@@ -1305,14 +1333,14 @@ La logique d'optimisation peut être résumée par l'idée suivante : pour une r
   \centering
   \caption{Paramètres du fine-tuning sémantique}
   \label{tab:parametres_finetuning}
-  \footnotesize
+  \tableStyleStart
   \begin{tabularx}{\textwidth}{p{4.2cm}X}
-    \toprule
-    \textbf{Paramètre} & \textbf{Valeur utilisée} \\
+    \rowcolor{darkblue}
+    \tabheader{Paramètre} & \tabheader{Valeur utilisée} \\
     \midrule
-    Modèle de base & \texttt{all-MiniLM-L6-v2} \\
+    Modèle de base & \filevar{all-MiniLM-L6-v2} \\
     Dimension des embeddings & 384 \\
-    Fonction de perte & \texttt{MultipleNegativesRankingLoss} \\
+    Fonction de perte & \filevar{MultipleNegativesRankingLoss} \\
     Nombre d'époques & 5 \\
     Taille de batch & 32 \\
     Taux d'apprentissage & $2 \times 10^{-5}$ \\
@@ -1320,9 +1348,10 @@ La logique d'optimisation peut être résumée par l'idée suivante : pour une r
     Données d'entraînement & 2\,321 paires \\
     Données de validation & 508 paires \\
     Données de test & 473 paires \\
-    Critère de sélection & \texttt{val-information-retrieval\_cosine\_ndcg@10} \\
+    Critère de sélection & \filevar{val-information-retrieval\_cosine\_ndcg@10} \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur}
 \end{table}
 
@@ -1457,10 +1486,10 @@ Dans le projet, les tables \MEPC{} et \NCF{} organisées à partir des PDF sont 
   \centering
   \caption{Principales entités représentées dans le graphe}
   \label{tab:entites_graphe}
-  \footnotesize
+  \tableStyleStart
   \begin{tabularx}{\textwidth}{p{4cm}X}
-    \toprule
-    \textbf{Famille d'entités} & \textbf{Exemples représentés} \\
+    \rowcolor{darkblue}
+    \tabheader{Famille d'entités} & \tabheader{Exemples représentés} \\
     \midrule
     Marché du travail & Candidats, offres d'emploi, employeurs, secteurs, localisations. \\
     Compétences et métiers & Compétences \ESCO{}, métiers, groupes ISCO, relations métier--compétence. \\
@@ -1469,6 +1498,7 @@ Dans le projet, les tables \MEPC{} et \NCF{} organisées à partir des PDF sont 
     Relations de recommandation & Compétences possédées, compétences requises, niveau exigé, formation du candidat, métier visé et trajectoires de formation. \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur}
 \end{table}
 
@@ -1476,18 +1506,19 @@ Dans le projet, les tables \MEPC{} et \NCF{} organisées à partir des PDF sont 
   \centering
   \caption{Labels de nœuds et relations structurantes du graphe}
   \label{tab:labels_relations_graphe}
-  \footnotesize
+  \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.6cm}p{4.2cm}X}
-    \toprule
-    \textbf{Bloc} & \textbf{Labels de nœuds} & \textbf{Relations principales et interprétation} \\
+    \rowcolor{darkblue}
+    \tabheader{Bloc} & \tabheader{Labels de nœuds} & \tabheader{Relations principales et interprétation} \\
     \midrule
-    Données d'emploi & \textit{OffreEmploi}, \textit{Candidat}, \textit{Employeur}, \textit{Secteur}, \textit{Localisation} & \textit{PUBLIEE\_PAR} relie une offre à son employeur ; \textit{DANS\_SECTEUR} la rattache à un secteur ; \textit{LOCALISEE\_A} indique la ville ou zone d'exercice ; \textit{A\_NIVEAU} relie le candidat à son niveau de formation. \\
-    Compétences et métiers & \textit{Compétence}, \textit{Métier}, \textit{GroupeCompétences}, \textit{GroupeISCO} & \textit{NECESSITE} relie un métier aux compétences attendues ; \textit{PARTIE\_DE} rattache une compétence à son groupe ; \textit{CLASSIFIE\_DANS} relie un métier à un groupe ISCO ; \textit{PLUS\_LARGE\_QUE} représente les relations hiérarchiques entre compétences. \\
-    Référentiel \MEPC{} & \textit{GrandGroupeMEPC}, \textit{SousGroupeMEPC}, \textit{GroupeBaseMEPC} & \textit{CONTIENT} représente la hiérarchie interne de la nomenclature ; \textit{ALIGNE\_AVEC} rapproche les groupes \MEPC{} des groupes ISCO ; \textit{CORRESPOND\_MEPC} rattache un métier \ESCO{} à un groupe de base \MEPC{}. \\
-    Référentiel \NCF{} & \textit{NiveauFormationNCF}, \textit{GrandDomaineNCF}, \textit{DomaineSpécialiséNCF}, \textit{DomaineDétailléNCF} & \textit{CONTIENT} représente la hiérarchie formation ; \textit{REQUIERT\_NIVEAU\_NCF} relie une offre au niveau demandé ; \textit{A\_FORMATION} rattache un candidat à son domaine de formation ; \textit{PREPARE\_POUR} relie un domaine de formation aux métiers visés. \\
-    Recommandation & \textit{OffreEmploi}, \textit{Candidat}, \textit{Compétence}, \textit{Métier}, \textit{DomaineDétailléNCF} & Les chemins candidat--compétence--offre permettent d'identifier les compétences acquises et manquantes ; les chemins offre--niveau--formation servent à contrôler la compatibilité de qualification ; les chemins formation--métier soutiennent la proposition de montée en compétences. \\
+    Données d'emploi & \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Employeur}, \filevar{Secteur}, \filevar{Localisation} & \filevar{PUBLIEE\_PAR} relie une offre à son employeur ; \filevar{DANS\_SECTEUR} la rattache à un secteur ; \filevar{LOCALISEE\_A} indique la ville ou zone d'exercice ; \filevar{A\_NIVEAU} relie le candidat à son niveau de formation. \\
+    Compétences et métiers & \filevar{Compétence}, \filevar{Métier}, \filevar{GroupeCompétences}, \filevar{GroupeISCO} & \filevar{NECESSITE} relie un métier aux compétences attendues ; \filevar{PARTIE\_DE} rattache une compétence à son groupe ; \filevar{CLASSIFIE\_DANS} relie un métier à un groupe ISCO ; \filevar{PLUS\_LARGE\_QUE} représente les relations hiérarchiques entre compétences. \\
+    Référentiel \MEPC{} & \filevar{GrandGroupeMEPC}, \filevar{SousGroupeMEPC}, \filevar{GroupeBaseMEPC} & \filevar{CONTIENT} représente la hiérarchie interne de la nomenclature ; \filevar{ALIGNE\_AVEC} rapproche les groupes \MEPC{} des groupes ISCO ; \filevar{CORRESPOND\_MEPC} rattache un métier \ESCO{} à un groupe de base \MEPC{}. \\
+    Référentiel \NCF{} & \filevar{NiveauFormationNCF}, \filevar{GrandDomaineNCF}, \filevar{DomaineSpécialiséNCF}, \filevar{DomaineDétailléNCF} & \filevar{CONTIENT} représente la hiérarchie formation ; \filevar{REQUIERT\_NIVEAU\_NCF} relie une offre au niveau demandé ; \filevar{A\_FORMATION} rattache un candidat à son domaine de formation ; \filevar{PREPARE\_POUR} relie un domaine de formation aux métiers visés. \\
+    Recommandation & \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Compétence}, \filevar{Métier}, \filevar{DomaineDétailléNCF} & Les chemins candidat--compétence--offre permettent d'identifier les compétences acquises et manquantes ; les chemins offre--niveau--formation servent à contrôler la compatibilité de qualification ; les chemins formation--métier soutiennent la proposition de montée en compétences. \\
     \bottomrule
   \end{tabularx}
+  \tableStyleEnd
   \source{Auteur}
 \end{table}
 
