@@ -256,26 +256,3 @@ CREATE INDEX IF NOT EXISTS doc_chunks_fulltext_fr_idx
                             coalesce(subsection_title, '') || ' ' ||
                             coalesce(chunk_text, ''))
     );
-
-
--- ═════════════════════════════════════════════════════════════
--- REQUÊTES ANN TYPES (commentaires)
--- ═════════════════════════════════════════════════════════════
-
--- Top-K offres pour un candidat (ANN cosine) :
---   SELECT o.entity_id, o.label_fr,
---          1 - (c.embedding <=> o.embedding) AS cosine_sim
---   FROM   embeddings c, embeddings o
---   WHERE  c.entity_kind = 'CANDIDAT' AND c.entity_id = $candidat_id
---   AND    o.entity_kind = 'OFFRE_EMPLOI'
---   ORDER  BY c.embedding <=> o.embedding
---   LIMIT  20;
-
--- Compétences proches d'une compétence manquante :
---   SELECT s2.entity_id, s2.label_fr,
---          1 - (s1.embedding <=> s2.embedding) AS sim
---   FROM   embeddings s1, embeddings s2
---   WHERE  s1.entity_kind = 'COMPETENCE' AND s1.entity_id = $uri
---   AND    s2.entity_kind = 'COMPETENCE' AND s2.entity_id <> $uri
---   ORDER  BY s1.embedding <=> s2.embedding
---   LIMIT  10;
