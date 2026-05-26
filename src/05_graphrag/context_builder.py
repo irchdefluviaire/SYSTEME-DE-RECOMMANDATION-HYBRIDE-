@@ -30,6 +30,11 @@ ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(ROOT / "src" / "03_knowledge_graph"))
 sys.path.insert(0, str(ROOT / "src" / "04_pgvector"))
 
+try:
+    from hybrid_search import candidate_offer_hybrid_search
+except Exception:  # pragma: no cover
+    candidate_offer_hybrid_search = None
+
 
 # ─────────────────────────────────────────────────────────────────────────
 # REQUÊTES CYPHER INTÉGRÉES
@@ -140,6 +145,35 @@ class GraphRAGContextBuilder:
         if self.pg is None:
             # Mode simulation
             return self._simulate_ann(candidat_id)
+
+        if self.model is not None and candidate_offer_hybrid_search is not None:
+            try:
+                rows = candidate_offer_hybrid_search(
+                    self.pg,
+                    self.model,
+                    candidat_id,
+                    top_k=self.top_k_pgv,
+                )
+                if rows:
+                    return [
+                        {
+                            "offre_id": r["offre_id"],
+                            "titre": r.get("titre"),
+                            "neo4j_id": r.get("neo4j_id"),
+                            "score_sem": r.get("score_sem", 0.0),
+                            "score_dense": r.get("score_dense", 0.0),
+                            "score_lexical": r.get("score_lexical", 0.0),
+                            "rrf_score": r.get("rrf_score", 0.0),
+                            "retriever": "hybrid_rrf",
+                        }
+                        for r in rows
+                    ]
+            except Exception as exc:
+                try:
+                    self.pg.rollback()
+                except Exception:
+                    pass
+                log.warning("Recherche hybride indisponible, fallback ANN dense: %s", exc)
 
         sql = """
         SELECT o.entity_id, o.label_fr, o.neo4j_node_id,

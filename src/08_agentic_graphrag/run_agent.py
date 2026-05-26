@@ -68,6 +68,7 @@ def main() -> None:
             "top_k": result.get("top_k"),
             "backend": result.get("backend"),
             "traces": result.get("traces", []),
+            "critic": result.get("critic", {}),
             "result": result.get("result", {}),
             "answer": result["messages"][-1].content if result.get("messages") else "",
         }

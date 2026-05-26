@@ -32,7 +32,10 @@ if str(SRC_03) not in sys.path:
 load_dotenv(ROOT / ".env")
 
 from recommendation_engine import RecommendationEngine  # noqa: E402
-from ann_search import ann_from_text  # noqa: E402
+from answer_critic import critique_answer  # noqa: E402
+from document_retriever import ParentDocumentRetriever  # noqa: E402
+from hybrid_search import hybrid_entity_search  # noqa: E402
+from text2cypher import run_text2cypher  # noqa: E402
 
 DEFAULT_CANDIDAT_ID = "PPKOU2501080016340"
 _PG_CONN = None
@@ -47,6 +50,7 @@ class AgentState(MessagesState, total=False):
     use_case: str
     user_query: str
     result: dict[str, Any]
+    critic: dict[str, Any]
     traces: list[str]
 
 
@@ -82,6 +86,8 @@ def _infer_use_case(text: str, candidat_id: str | None) -> str:
         return "diagnostic"
     if any(w in q for w in ["ncf", "mepc", "diplome", "diplome", "referentiel", "classification"]):
         return "referentiel"
+    if any(w in q for w in ["cypher", "relation", "relations", "graphe", "neo4j", "relie", "lier"]):
+        return "text2cypher"
     if candidat_id:
         if any(w in q for w in ["competence", "competences", "skill", "gap", "manquant", "roadmap", "formation"]):
             return "skill_gap_roadmap"
@@ -203,36 +209,14 @@ def _search_entities(query: str, kinds: list[str], top_k: int) -> dict[str, list
     model = _get_st_model()
     results = {}
     for kind in kinds:
-        results[kind] = ann_from_text(conn, model, query, kind, top_k)
+        results[kind] = hybrid_entity_search(conn, model, query, kind, top_k)
     return results
 
 
 def _search_docs(query: str, top_k: int) -> list[dict]:
     conn = _get_pg_conn()
     model = _get_st_model()
-    vec = model.encode([query], normalize_embeddings=True, convert_to_numpy=True)[0]
-    emb = "[" + ",".join(f"{v:.6f}" for v in vec) + "]"
-    sql = """
-        SELECT source, document_title, page_number, section_title, chunk_text,
-               1 - (embedding <=> %s::vector) AS sim
-        FROM doc_chunks
-        ORDER BY embedding <=> %s::vector
-        LIMIT %s
-    """
-    with conn.cursor() as cur:
-        cur.execute(sql, (emb, emb, top_k))
-        rows = cur.fetchall()
-    return [
-        {
-            "source": r[0],
-            "document_title": r[1],
-            "page_number": r[2],
-            "section_title": r[3],
-            "chunk_text": str(r[4])[:700],
-            "cosine_sim": round(float(r[5]), 4),
-        }
-        for r in rows
-    ]
+    return ParentDocumentRetriever(conn, model, child_k=top_k).retrieve(query, top_k=top_k)
 
 
 def analyse_request(state: AgentState) -> AgentState:
@@ -268,6 +252,12 @@ def run_graphrag(state: AgentState) -> AgentState:
         result = engine.recommend(str(candidat_id))
     elif use_case == "referentiel":
         result = {"documents": _search_docs(query, top_k)}
+    elif use_case == "text2cypher":
+        result = run_text2cypher(
+            _get_neo4j_driver(),
+            query,
+            database=os.getenv("NEO4J_DATABASE", "neo4j"),
+        )
     elif use_case == "orientation_metier":
         result = {
             "semantic_results": _search_entities(query, ["METIER", "COMPETENCE", "OFFRE_EMPLOI"], top_k),
@@ -304,13 +294,34 @@ def generate_final_answer(state: AgentState) -> AgentState:
                 f"{i}. {doc.get('source')} p.{doc.get('page_number')} "
                 f"- sim={doc.get('cosine_sim', 0):.3f}"
             )
-            snippet = str(doc.get("chunk_text", "")).replace("\n", " ")
+            snippet = str(doc.get("parent_context") or doc.get("chunk_text", "")).replace("\n", " ")
             lines.append(f"   {snippet[:260]}")
         answer = "\n".join(lines)
-        traces = [*state.get("traces", []), "generate_final_answer"]
+        critic = critique_answer(answer, docs)
+        traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
         return {
             **state,
             "traces": traces,
+            "critic": critic,
+            "messages": [*state.get("messages", []), AIMessage(content=answer)],
+        }
+
+    if use_case == "text2cypher":
+        rows = result.get("rows", [])
+        plan = result.get("plan", {})
+        lines = [f"Requete graphe executee ({plan.get('intent', 'intent_non_precise')}):", ""]
+        for i, row in enumerate(rows[: int(state.get("top_k", 5))], 1):
+            rendered = " | ".join(f"{k}={v}" for k, v in row.items())
+            lines.append(f"{i}. {rendered}")
+        if not rows:
+            lines.append("Aucun resultat trouve dans Neo4j pour cette question.")
+        answer = "\n".join(lines)
+        critic = critique_answer(answer, rows)
+        traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
+        return {
+            **state,
+            "traces": traces,
+            "critic": critic,
             "messages": [*state.get("messages", []), AIMessage(content=answer)],
         }
 
@@ -322,8 +333,12 @@ def generate_final_answer(state: AgentState) -> AgentState:
             for i, row in enumerate(rows[: int(state.get("top_k", 5))], 1):
                 label = row.get("label", "")
                 entity_id = row.get("entity_id", "")
-                sim = row.get("cosine_sim", 0)
-                lines.append(f"  {i}. {label} [{entity_id}] - sim={sim:.3f}")
+                score = row.get("dense_score", row.get("cosine_sim", row.get("rrf_score", 0)))
+                lexical = row.get("lexical_score", 0)
+                lines.append(
+                    f"  {i}. {label} [{entity_id}] "
+                    f"- dense={float(score or 0):.3f} lexical={float(lexical or 0):.3f}"
+                )
             lines.append("")
         docs = result.get("documents") or []
         if docs:
@@ -334,10 +349,12 @@ def generate_final_answer(state: AgentState) -> AgentState:
                     f"{str(doc.get('chunk_text', '')).replace(chr(10), ' ')[:180]}"
                 )
         answer = "\n".join(lines).strip()
-        traces = [*state.get("traces", []), "generate_final_answer"]
+        critic = critique_answer(answer, result)
+        traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
         return {
             **state,
             "traces": traces,
+            "critic": critic,
             "messages": [*state.get("messages", []), AIMessage(content=answer)],
         }
 
@@ -373,11 +390,14 @@ def generate_final_answer(state: AgentState) -> AgentState:
                 f"({step.get('delai_acquisition', 'delai non precise')})"
             )
 
-    traces = [*state.get("traces", []), "generate_final_answer"]
+    answer = "\n".join(lines)
+    critic = critique_answer(answer, result)
+    traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
     return {
         **state,
         "traces": traces,
-        "messages": [*state.get("messages", []), AIMessage(content="\n".join(lines))],
+        "critic": critic,
+        "messages": [*state.get("messages", []), AIMessage(content=answer)],
     }
 
 

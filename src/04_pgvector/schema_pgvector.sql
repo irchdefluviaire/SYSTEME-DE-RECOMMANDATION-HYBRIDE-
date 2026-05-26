@@ -97,6 +97,15 @@ CREATE INDEX IF NOT EXISTS emb_neo4j_idx
     ON embeddings (neo4j_node_id)
     WHERE neo4j_node_id IS NOT NULL;
 
+-- Index lexical optionnel pour le retrieval hybride dense + full-text.
+-- Les fonctions du module hybrid_search.py restent executables sans cet index,
+-- mais l'index GIN reduit fortement la latence des recherches lexicales.
+CREATE INDEX IF NOT EXISTS emb_fulltext_fr_idx
+    ON embeddings
+    USING GIN (
+        to_tsvector('french', coalesce(label_fr, '') || ' ' || coalesce(text_to_embed, ''))
+    );
+
 -- ── TRIGGER : mise à jour automatique de updated_at ──────────
 CREATE OR REPLACE FUNCTION update_updated_at()
 RETURNS TRIGGER AS $$
@@ -239,6 +248,14 @@ CREATE INDEX IF NOT EXISTS doc_chunks_hnsw
 CREATE INDEX IF NOT EXISTS doc_chunks_source_idx ON doc_chunks (source);
 CREATE INDEX IF NOT EXISTS doc_chunks_ncf_idx    ON doc_chunks (ncf_code)  WHERE ncf_code  IS NOT NULL;
 CREATE INDEX IF NOT EXISTS doc_chunks_mepc_idx   ON doc_chunks (mepc_code) WHERE mepc_code IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS doc_chunks_fulltext_fr_idx
+    ON doc_chunks
+    USING GIN (
+        to_tsvector('french', coalesce(section_title, '') || ' ' ||
+                            coalesce(subsection_title, '') || ' ' ||
+                            coalesce(chunk_text, ''))
+    );
 
 
 -- ═════════════════════════════════════════════════════════════
