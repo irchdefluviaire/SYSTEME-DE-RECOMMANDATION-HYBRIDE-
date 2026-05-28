@@ -702,7 +702,6 @@ Cependant, une nomenclature tabulaire reste insuffisante si elle ne représente 
 Ce passage de la nomenclature vers le graphe est essentiel pour le présent mémoire. La nomenclature apporte le vocabulaire contrôlé ; le graphe apporte la structure relationnelle ; les embeddings et les LLMs apportent la capacité à traiter les formulations non structurées. L'enjeu méthodologique consiste donc à articuler ces trois niveaux : normaliser les métiers et compétences, représenter leurs relations dans Neo4j, puis exploiter ces relations pour calculer un \emph{skill gap} et recommander des formations adaptées. Sans cette couche de standardisation, le système risque de produire des correspondances superficielles ; sans la couche graphe, il risque de perdre l'information relationnelle nécessaire à une recommandation explicable.
 \section{Les fondements des LLMs}
 L'avènement des LLMs a profondément redéfini le champ de l'IA appliquée au langage. \textbf{Alammar et Grootendorst} (2024) qualifient l'année 2023 d'« année de l'IA générative », soulignant qu'en l'espace de quelques mois, ces modèles ont transformé en profondeur des tâches aussi variées que la traduction automatique, la génération de texte, la synthèse documentaire et la recommandation. Pour comprendre cette rupture technologique, il est nécessaire d'en restituer les fondements théoriques. Cette section retrace d'abord l'évolution historique du NLP jusqu'aux LLMs, présente ensuite l'architecture Transformer et le mécanisme d'attention qui en constitue le cœur, explicite la notion d'embedding et de représentation vectorielle, avant de comparer les principales variantes architecturales des LLMs.
-
 \subsection{Définition et évolution historique des LLMs en NLP}
 Le NLP, désigne le sous-domaine de l'IA dédié au développement de technologies capables de comprendre, traiter et générer le langage humain (Alammar \& Grootendorst, 2024, chap. 1). Les deux termes sont aujourd'hui employés de manière largement interchangeable, en raison du succès continu des méthodes d'apprentissage automatique dans le traitement des problèmes linguistiques.
 
@@ -737,28 +736,28 @@ Le langage humain est une donnée non structurée que les ordinateurs ne peuvent
 d'un objet (mot, phrase, document, compétence) dans un espace vectoriel continu de
 dimension $d$, typiquement $d \in [128,\; 4096]$, où la proximité géométrique reflète
 la similarité sémantique. L'objectif d'un modèle d'embedding est de produire des représentations qui restituent, dans un espace mathématique, le sens des unités linguistiques de la manière la plus précise possible. Autrement dit, l'embedding constitue le pont entre le langage humain discret, symbolique et fortement ambigu et les opérations algébriques que les réseaux de neurones sont en mesure d'effectuer.
-\subsubsection{Embeddings statiques vs. contextuels}
-\begin{table}[H]
-  \centering
-  \caption{Comparaison des embeddings statiques et contextuels.}
-  \label{tab:embeddings}
-  \tableStyleStart
-  \begin{tabularx}{\linewidth}{>{\bfseries}lXX}
-    \rowcolor{darkblue}
-    \tabheader{Propriété}
-    & \tabheader{Statiques (Word2Vec, GloVe)}
-    & \tabheader{Contextuels (\BERT{}, GPT)} \\
-    \midrule
-    Dépendance au contexte & Non - un mot $=$ un vecteur unique & Oui - vecteur différent selon le contexte \\
-    Capture de polysémie & Limitée & Excellente \\
-    Exemple & \og Bank\fg{} $=$ même vecteur (banque/rive) & \og Bank\fg{} varie selon la phrase \\
-    Usage en NLP moderne & Rare (benchmarks historiques) & Dominant \\
-    Coût computationnel & Faible & Élevé (GPU requis) \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Auteur}
-\end{table}
+%\subsubsection{Embeddings statiques vs. contextuels}
+%\begin{table}[H]
+%  \centering
+%  \caption{Comparaison des embeddings statiques et contextuels.}
+%  \label{tab:embeddings}
+%  \tableStyleStart
+%  \begin{tabularx}{\linewidth}{>{\bfseries}lXX}
+ %   \rowcolor{darkblue}
+ %   \tabheader{Propriété}
+ %   & \tabheader{Statiques (Word2Vec, GloVe)}
+ %   & \tabheader{Contextuels (\BERT{}, GPT)} \\
+%    \midrule
+%    Dépendance au contexte & Non - un mot $=$ un vecteur unique & Oui - vecteur différent selon le contexte \\
+%    Capture de polysémie & Limitée & Excellente \\
+ %   Exemple & \og Bank\fg{} $=$ même vecteur (banque/rive) & \og Bank\fg{} varie selon la phrase \\
+ %   Usage en NLP moderne & Rare (benchmarks historiques) & Dominant \\
+ %   Coût computationnel & Faible & Élevé (GPU requis) \\
+ %   \bottomrule
+ % \end{tabularx}
+ % \tableStyleEnd
+ % \source{Auteur}
+%\end{table}
 
 \subsubsection{Le rôle des embeddings dans l'architecture Transformer}
 Dans un modèle Transformer, les embeddings constituent la première étape du traitement. Le pipeline d'entrée se déroule selon les étapes suivantes :
@@ -849,55 +848,54 @@ L'enchaînement de ces éléments self-attention, normalisation, FFN, connexions
  %   \item \textbf{L'attention croisée (Cross-Attention).} Dans l'architecture encodeur-décodeur originale, le décodeur intègre, en plus de son auto-attention masquée, une couche d'attention croisée qui établit le lien avec l'encodeur. Dans cette couche, les vecteurs Requête proviennent de la séquence en cours de génération (côté décodeur), tandis que les vecteurs Clé et Valeur proviennent de la représentation produite par l'encodeur. Ce mécanisme permet au décodeur d'aligner sa production sur les informations contenues dans la séquence d'entrée propriété fondamentale dans les tâches de type séquence-vers-séquence telles que la traduction automatique ou la synthèse de documents.
 %\end{itemize}
 % ────────────────────────────────────────────────────────────
-\subsection{Variantes architecturales des \LLM{}s}
+%\subsection{Variantes architecturales des \LLM{}s}
 % ────────────────────────────────────────────────────────────
  
-Selon leur architecture, les \LLM{}s se distinguent principalement en trois familles,
-chacune présentant des avantages spécifiques pour les sous-tâches du système de recommandation.
+%Selon leur architecture, les \LLM{}s se distinguent principalement en trois familles,
+%chacune présentant des avantages spécifiques pour les sous-tâches du système de recommandation.
  
-\subsubsection{Modèles à encodeur seul (\textit{Encoder-only})}
+%\subsubsection{Modèles à encodeur seul (\textit{Encoder-only})}
  
-\BERT{} \cite{devlin2018bert} et ses variantes (RoBERTa, CamemBERT, XLM-R) sont optimisés
-pour la compréhension et la classification de texte. Leur mécanisme bidirectionnel leur permet
-de traiter le contexte gauche \textbf{et} droit simultanément, ce qui est idéal pour
-l'extraction d'entités (compétences, diplômes, expériences) à partir de CV ou d'offres
-d'emploi, ainsi que pour la classification de niveau de qualification.
+%\BERT{} \cite{devlin2018bert} et ses variantes (RoBERTa, CamemBERT, XLM-R) sont optimisés
+%pour la compréhension et la classification de texte. Leur mécanisme bidirectionnel leur permet
+%de traiter le contexte gauche \textbf{et} droit simultanément, ce qui est idéal pour
+%l'extraction d'entités (compétences, diplômes, expériences) à partir de CV ou d'offres
+%d'emploi, ainsi que pour la classification de niveau de qualification.
  
-\subsubsection{Modèles à décodeur seul (\textit{Decoder-only})}
+%\subsubsection{Modèles à décodeur seul (\textit{Decoder-only})}
  
-GPT \cite{radford2018gpt}, LLaMA \cite{touvron2023llama} et leurs successeurs sont spécialisés
-dans la génération de texte. \citeauthor{muennighoff2022sgpt} (\citeyear{muennighoff2022sgpt})
-propose SGPT, qui utilise des modèles GPT comme bi-encodeurs pour la recherche sémantique
-asymétrique, produisant des sentence embeddings sémantiquement riches par
-\textit{contrastive fine-tuning}.
+%GPT \cite{radford2018gpt}, LLaMA \cite{touvron2023llama} et leurs successeurs sont spécialisés
+%dans la génération de texte. \citeauthor{muennighoff2022sgpt} (\citeyear{muennighoff2022sgpt})
+%propose SGPT, qui utilise des modèles GPT comme bi-encodeurs pour la recherche sémantique
+%asymétrique, produisant des sentence embeddings sémantiquement riches par
+%\textit{contrastive fine-tuning}.
  
-\subsubsection{Modèles encodeur-décodeur (\textit{Seq2Seq})}
+%\subsubsection{Modèles encodeur-décodeur (\textit{Seq2Seq})}
  
-T5 \cite{raffel2020t5} et BART reformulent toutes les tâches NLP comme des problèmes de
-séquence à séquence. Leur flexibilité les rend utiles pour la traduction entre nomenclatures
-de compétences différentes (par exemple, entre la \NCM{} camerounaise et le référentiel \ESCO{}).
+%T5 \cite{raffel2020t5} et BART reformulent toutes les tâches NLP comme des problèmes de
+%séquence à séquence. Leur flexibilité les rend utiles pour la traduction entre nomenclatures
+%de compétences différentes (par exemple, entre la \NCM{} camerounaise et le référentiel \ESCO{}).
  
-\begin{table}[H]
-  \centering
-  \caption{Variantes architecturales des \LLM{}s et leurs applications au matching emploi-compétences.}
-  \label{tab:llm_variants}
-  \tableStyleStart
-  \begin{tabularx}{\linewidth}{lllX}
-    \rowcolor{darkblue}
-    \tabheader{Architecture}
-    & \tabheader{Exemples}
-    & \tabheader{Points forts}
-    & \tabheader{Application au matching} \\
-    \midrule
-    Encodeur seul & \BERT{}, RoBERTa & Classification, extraction & Extraction de compétences CV/offres \\
-    Décodeur seul & GPT-4, LLaMA & Génération, zero-shot & Enrichissement de profils, recommandations \\
-    Encodeur-Décodeur & T5, BART & Traduction, résumé & Alignement inter-référentiels \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Auteur}
-\end{table}
-
+%\begin{table}[H]
+%  \centering
+%  \caption{Variantes architecturales des \LLM{}s et leurs %applications au matching emploi-compétences.}
+%  \label{tab:llm_variants}
+ % \tableStyleStart
+ % \begin{tabularx}{\linewidth}{lllX}
+ %   \rowcolor{darkblue}
+ %   \tabheader{Architecture}
+ %   & \tabheader{Exemples}
+ %   & \tabheader{Points forts}
+ %   & \tabheader{Application au matching} \\
+ %   \midrule
+  %  Encodeur seul & \BERT{}, RoBERTa & Classification, %extraction & Extraction de compétences CV/offres \\
+ %   Décodeur seul & GPT-4, LLaMA & Génération, zero-shot & %Enrichissement de profils, recommandations \\
+ %   Encodeur-Décodeur & T5, BART & Traduction, résumé & %Alignement inter-référentiels \\
+%    \bottomrule
+%  \end{tabularx}
+%  \tableStyleEnd
+%  \source{Auteur}
+%\end{table}
 \section{Généralité sur le fine-tuning des modèles de \LLM{}s}
 Le \emph{fine-tuning}, ou ajustement fin, désigne l'adaptation d'un modèle pré-entraîné à une tâche, un domaine ou un style de réponse spécifique. Dans le cas des \LLM{}s, le modèle dispose déjà de connaissances linguistiques et statistiques acquises lors d'un pré-entraînement massif sur de grands corpus. Le fine-tuning ne repart donc pas de zéro : il modifie une partie ou la totalité des paramètres du modèle afin d'améliorer ses performances sur un corpus plus spécialisé \cite{devlin2018bert,raffel2020t5}. Cette logique est particulièrement pertinente lorsque le domaine cible possède un vocabulaire, des relations sémantiques ou des critères de décision qui diffèrent des usages généraux du langage.
 
@@ -1079,11 +1077,8 @@ Ainsi, la revue de littérature oriente directement l'architecture retenue dans 
 %L'intérêt d'une telle architecture est double. D'abord, elle améliore la robustesse du système : si les interactions collaboratives sont faibles, le contenu et le graphe restent exploitables ; si les descriptions textuelles sont ambiguës, le graphe fournit une structure de contrôle. Ensuite, elle améliore l'explicabilité : le système peut indiquer qu'une offre est recommandée parce que le profil est sémantiquement proche, que plusieurs compétences clés sont déjà acquises, que le métier appartient à une trajectoire proche, et que deux formations permettent de combler les compétences manquantes.
 
 %La recommandation hybride est donc cohérente avec l'objectif général du mémoire. Elle permet de dépasser une logique naïve de mots-clés pour construire un système capable de raisonner sur les compétences, les relations entre métiers et les parcours de montée en qualification \cite{burke2002hybrid,ricci2011recommender}.
-
-
-
 % ============================================================
-\section{Recherche sémantique et Génération Augmentée par Récupération (\RAG{}) et GraphRAG}
+\section{Génération Augmentée par Récupération (\RAG{}) et GraphRAG}
 % ============================================================
 
 La recherche sémantique consiste à représenter une requête et un ensemble de documents dans un même espace vectoriel, puis à classer les documents selon leur proximité avec la requête. Contrairement à une recherche par mots-clés, elle ne dépend pas uniquement de la présence des mêmes termes. Elle cherche plutôt à capturer la proximité de sens entre deux formulations. Dans le cadre de ce mémoire, cette propriété est essentielle : un profil mentionnant \og analyse statistique, tableaux de bord et SQL \fg{} doit pouvoir être rapproché d'une offre de \og data analyst \fg{}, même lorsque les formulations exactes ne se recouvrent pas.
@@ -1145,18 +1140,21 @@ L'approche méthodologique retenue est une démarche de conception d'artefact ap
 
 %Cette distinction est importante. Elle évite de confondre l'architecture conceptuelle du système avec son état d'implémentation. La méthodologie ci-dessous décrit donc factuellement ce qui a été réalisé, puis précise les extensions prévues pour aboutir à un système de recommandation hybride complet \cite{reimers2019sbert,hogan2021knowledge,lewis2020rag,burke2002hybrid,ricci2011recommender}.
 
-\begin{figure}[H]
-  \centering
-  \caption{Vue d'ensemble de l'approche méthodologique du système hybride emploi-compétences}
-  \label{fig:approche_methodologique}
-  \includegraphics[width=0.75\textwidth]{figures/approche.png}
-  \source{Auteur}
-\end{figure}
+%\begin{figure}[H]
+%  \centering
+ % \caption{Vue d'ensemble de l'approche méthodologique du système hybride emploi-compétences}
+%  \label{fig:approche_methodologique}
+ % \includegraphics[width=0.75\textwidth]{figures/approche.png}
+%  \source{Auteur}
+%\end{figure}
 \section{Sources et traitements de données mobilisées}
 Les sources de données constituent le point de départ de la solution. 
 Le projet s'appuie sur deux familles de données. La première correspond aux données opérationnelles du marché du travail : offres d'emploi et profils de demandeurs. Les offres d'emploi ont été collectées par KmerAI à partir d'un dispositif de scraping mis en place sur des sites partenaires de diffusion d'annonces. Cette collecte a permis de constituer une base décrivant la demande de travail à travers les intitulés de poste, les secteurs d'activité, les localisations, les employeurs, les niveaux d'étude attendus, les compétences mentionnées et les descriptions textuelles des annonces. Les données de demandeurs décrivent, quant à elles, l'offre de travail disponible : profil, niveau de formation, diplôme, spécialité, expérience, mobilité et objectif professionnel.
 
 La seconde famille de données correspond aux référentiels de structuration. Le référentiel \ESCO{} apporte une nomenclature internationale de métiers, de compétences et de relations métier--compétence. La \MEPC{} et la \NCF{}, produites par l'INS Cameroun, permettent d'ancrer l'analyse dans le contexte institutionnel camerounais. Dans le projet, ces deux nomenclatures nationales étaient initialement disponibles sous forme de documents PDF.
+
+La méthodologie tient compte de l'hétérogénéité terminologique du marché du travail camerounais, notamment les variations d'intitulés de postes, les écarts entre libellés de compétences et les différences de granularité entre référentiels. Cette difficulté est traitée par une standardisation progressive : nettoyage des textes, construction de champs normalisés, alignement partiel des référentiels et représentation du résultat dans un graphe de connaissances.
+\subsection{Pipeline de préparation des données de l'étude}
 \begin{table}[H]
   \centering
   \caption{Sources de données utilisées dans le projet}
@@ -1197,9 +1195,6 @@ La seconde famille de données correspond aux référentiels de structuration. L
   \tableStyleEnd
   \source{Auteur}
 \end{table}
-La méthodologie tient compte de l'hétérogénéité terminologique du marché du travail camerounais, notamment les variations d'intitulés de postes, les écarts entre libellés de compétences et les différences de granularité entre référentiels. Cette difficulté est traitée par une standardisation progressive : nettoyage des textes, construction de champs normalisés, alignement partiel des référentiels et représentation du résultat dans un graphe de connaissances.
-\subsection{Pipeline de préparation des données de l'étude}
-
 La préparation des données est organisée autour de quatre étapes principales : la normalisation des offres, la normalisation des candidats, l'organisation des référentiels et la construction des paires d'entraînement. Cette organisation permet de transformer des données initialement hétérogènes en informations exploitables par le modèle sémantique, la base vectorielle et le graphe de connaissances.
 
 Concrètement, la chaîne de traitement part de fichiers bruts de nature différente : annonces d'emploi collectées par scraping, fichier de demandeurs, fichiers \ESCO{} en format tabulaire et documents PDF issus de l'INS Cameroun pour la \MEPC{} et la \NCF{}. Ces sources ne sont pas directement comparables. Les annonces utilisent des libellés libres ; les profils candidats contiennent des diplômes et objectifs parfois incomplets ; les référentiels nationaux ont une structure hiérarchique mais initialement non exploitable automatiquement. Le travail de préparation consiste donc à produire une couche intermédiaire standardisée : identifiants stables, libellés nettoyés, listes de compétences, niveaux \NCF{}, tables hiérarchiques de nomenclature, textes d'embedding et tables de correspondance.
@@ -1291,17 +1286,17 @@ Les paires de fine-tuning sont construites à partir des offres jugées exploita
 
 Chaque paire associe une requête structurée, composée de métadonnées, à un texte cible composé des compétences et des détails nettoyés de l'offre. Le côté requête correspond à \textit{metadata\_str} : poste, secteur, contrat, niveau d'étude, expérience et ville. Le côté corpus correspond à \textit{text\_to\_embed} : compétences requises et description nettoyée de l'annonce. Le système ne conserve que les paires dont les deux côtés ont une longueur minimale suffisante, afin d'éviter d'entraîner le modèle sur des observations trop pauvres.
 
-Le corpus obtenu comprend 3\,302 paires au total, réparties en 2\,321 paires d'entraînement, 508 paires de validation et 473 paires de test, selon une partition 70/15/15 avec une graine aléatoire fixée à 42. La séparation est effectuée en tenant compte du secteur principal afin de limiter le risque d'avoir un jeu d'entraînement dominé par quelques secteurs seulement. Cette précaution est importante dans un marché où les annonces peuvent être plus nombreuses dans la distribution, les TIC, la banque ou le marketing que dans d'autres domaines.
+%Le corpus obtenu comprend 3\,302 paires au total, réparties en 2\,321 paires d'entraînement, 508 paires de validation et 473 paires de test, selon une partition 70/15/15 avec une graine aléatoire fixée à 42. La séparation est effectuée en tenant compte du secteur principal afin de limiter le risque d'avoir un jeu d'entraînement dominé par quelques secteurs seulement. Cette précaution est importante dans un marché où les annonces peuvent être plus nombreuses dans la distribution, les TIC, la banque ou le marketing que dans d'autres domaines.
 
-\subsection{Fine-tuning du SentenceTransformer}
+%\subsection{Fine-tuning du SentenceTransformer}
 
-La deuxième phase du projet correspond à l'adaptation d'un modèle d'embeddings au vocabulaire des offres d'emploi. L'objectif n'est pas de fine-tuner un modèle génératif pour produire du texte, mais d'améliorer un modèle de représentation sémantique afin qu'il place, dans un même espace vectoriel, les requêtes d'emploi et les descriptions d'offres qui se correspondent réellement. Cette distinction est importante : le modèle n'apprend pas à rédiger une annonce ; il apprend à mieux rapprocher une intention de recherche, un profil ou une fiche synthétique d'offre avec le contenu détaillé d'une annonce.
+%La deuxième phase du projet correspond à l'adaptation d'un modèle d'embeddings au vocabulaire des offres d'emploi. L'objectif n'est pas de fine-tuner un modèle génératif pour produire du texte, mais d'améliorer un modèle de représentation sémantique afin qu'il place, dans un même espace vectoriel, les requêtes d'emploi et les descriptions d'offres qui se correspondent réellement. Cette distinction est importante : le modèle n'apprend pas à rédiger une annonce ; il apprend à mieux rapprocher une intention de recherche, un profil ou une fiche synthétique d'offre avec le contenu détaillé d'une annonce.
 
-La composante sémantique repose sur le modèle \texttt{all-MiniLM-L6-v2}, un SentenceTransformer produisant des embeddings de dimension 384. Ce modèle a été retenu parce qu'il offre un compromis raisonnable entre qualité de représentation, coût de calcul et vitesse d'indexation. Dans le cadre du mémoire, il sert de bi-encodeur : une première phrase est encodée côté requête, une seconde phrase est encodée côté document, puis la proximité est mesurée par similarité cosinus. Cette logique est cohérente avec les modèles de type Sentence-BERT, conçus pour comparer efficacement des phrases ou documents dans un espace vectoriel commun \cite{reimers2019sbert}.
+%La composante sémantique repose sur le modèle \texttt{all-MiniLM-L6-v2}, un SentenceTransformer produisant des embeddings de dimension 384. Ce modèle a été retenu parce qu'il offre un compromis raisonnable entre qualité de représentation, coût de calcul et vitesse d'indexation. Dans le cadre du mémoire, il sert de bi-encodeur : une première phrase est encodée côté requête, une seconde phrase est encodée côté document, puis la proximité est mesurée par similarité cosinus. Cette logique est cohérente avec les modèles de type Sentence-BERT, conçus pour comparer efficacement des phrases ou documents dans un espace vectoriel commun \cite{reimers2019sbert}.
 
 \subsection{Problème d'apprentissage retenu}
 
-Le fine-tuning est formulé comme un problème de recherche d'information. Pour chaque offre d'emploi, le système construit une paire positive composée de deux vues complémentaires de la même annonce. La première vue, appelée \textit{sentence1}, correspond aux métadonnées structurées : titre du poste, secteur, type de contrat, niveau d'étude, expérience et ville. La seconde vue, appelée \textit{sentence2}, correspond au contenu textuel plus riche : compétences requises et détails nettoyés de l'annonce.
+Le fine-tuning est formulé comme un problème de recherche d'information. Pour chaque offre d'emploi, le système construit une paire positive composée de deux vues complémentaires de la même annonce d'emploi. La première vue, appelée \textit{sentence1}, correspond aux métadonnées structurées : titre du poste, secteur, type de contrat, niveau d'étude, expérience et ville. La seconde vue, appelée \textit{sentence2}, correspond au contenu textuel plus riche : compétences requises et détails nettoyés de l'annonce.
 
 Ce choix méthodologique répond à une contrainte réelle du système. Au moment de la recommandation, une requête candidat ou une fiche de besoin n'a pas toujours la même forme qu'une annonce complète. Elle ressemble davantage à une description courte et structurée. Le modèle doit donc apprendre qu'une requête telle que \og poste data analyst, secteur TIC, niveau licence, ville Douala \fg{} peut être proche d'une annonce longue mentionnant Python, SQL, reporting, tableaux de bord et analyse statistique, même si les formulations ne sont pas identiques.
 
@@ -1313,102 +1308,75 @@ Ainsi, chaque paire positive peut être interprétée comme suit :
 
 La stratégie n'utilise donc pas des labels manuels de pertinence profil--offre. Elle exploite une supervision faible mais cohérente : les deux textes proviennent de la même annonce et doivent être proches dans l'espace vectoriel. Cette approche est adaptée lorsque les données annotées par experts sont rares, mais que l'on dispose d'un volume suffisant d'annonces normalisées.
 
-\subsection{Préparation du corpus de fine-tuning}
+%\subsection{Préparation du corpus de fine-tuning}
 
-Les paires ne sont pas construites sur toutes les offres brutes. Une offre est retenue uniquement si elle contient assez d'information des deux côtés : des métadonnées suffisamment renseignées et une description exploitable. Le filtre \textit{ft\_eligible} vérifie donc la longueur minimale de \textit{metadata\_str} et de \textit{text\_to\_embed}. Ce filtre n'est pas un jugement sur la qualité économique de l'offre ; il indique seulement que l'observation est utilisable pour l'apprentissage contrastif.
+%Les paires ne sont pas construites sur toutes les offres brutes. Une offre est retenue uniquement si elle contient assez d'information des deux côtés : des métadonnées suffisamment renseignées et une description exploitable. Le filtre \textit{ft\_eligible} vérifie donc la longueur minimale de \textit{metadata\_str} et de \textit{text\_to\_embed}. Ce filtre n'est pas un jugement sur la qualité économique de l'offre ; il indique seulement que l'observation est utilisable pour l'apprentissage contrastif.
 
-Le corpus final comprend 3\,302 paires. Les métadonnées structurées ont une longueur moyenne d'environ 159 caractères, tandis que les textes riches ont une longueur moyenne d'environ 559 caractères. Cette asymétrie est volontaire : le modèle apprend à rapprocher une requête courte d'un document plus détaillé. Les paires sont réparties en 2\,321 observations d'entraînement, 508 de validation et 473 de test, selon une partition 70/15/15 avec une graine aléatoire fixée à 42. La partition tient compte du secteur principal afin de limiter une concentration excessive des mêmes familles d'offres dans un seul sous-ensemble.
+%Le corpus final comprend 3\,302 paires. Les métadonnées structurées ont une longueur moyenne d'environ 159 caractères, tandis que les textes riches ont une longueur moyenne d'environ 559 caractères. Cette asymétrie est volontaire : le modèle apprend à rapprocher une requête courte d'un document plus détaillé. Les paires sont réparties en 2\,321 observations d'entraînement, 508 de validation et 473 de test, selon une partition 70/15/15 avec une graine aléatoire fixée à 42. La partition tient compte du secteur principal afin de limiter une concentration excessive des mêmes familles d'offres dans un seul sous-ensemble.
 
 \subsection{Fonction de perte et logique contrastive}
 
 L'entraînement repose sur une fonction de perte contrastive de type \texttt{MultipleNegativesRankingLoss}. Cette perte est adaptée aux tâches de recherche sémantique : pour une paire positive, les autres éléments du batch jouent le rôle de négatifs implicites. Le modèle apprend ainsi à donner un score élevé à la paire correcte et un score plus faible aux associations non pertinentes.
 
-Plus précisément, dans un batch de taille 32, chaque paire $(q_i,d_i)$ est considérée comme positive, où $q_i$ représente la requête structurée et $d_i$ le texte détaillé correspondant. Les documents $d_j$ des autres paires du même batch, avec $j \neq i$, sont utilisés comme négatifs implicites. Le modèle doit donc maximiser la similarité cosinus entre $q_i$ et $d_i$, tout en réduisant la similarité entre $q_i$ et les autres documents du batch. Cette stratégie est efficace parce qu'elle évite de construire manuellement des exemples négatifs, opération coûteuse et souvent ambiguë dans le domaine emploi-compétences.
+%Plus précisément, dans un batch de taille 32, chaque paire $(q_i,d_i)$ est considérée comme positive, où $q_i$ représente la requête structurée et $d_i$ le texte détaillé correspondant. Les documents $d_j$ des autres paires du même batch, avec $j \neq i$, sont utilisés comme négatifs implicites. 
+Le modèle doit donc maximiser la similarité cosinus entre les paires, tout en réduisant la similarité entre une requête et les autres documents du batch. Cette stratégie est efficace parce qu'elle évite de construire manuellement des exemples négatifs, opération coûteuse et souvent ambiguë dans le domaine emploi-compétences.
 
 La logique d'optimisation peut être résumée par l'idée suivante : pour une requête donnée, le bon document doit être mieux classé que les documents concurrents présents dans le batch. Le fine-tuning agit donc directement sur le comportement de ranking du modèle, et non sur une simple classification binaire.
 
-\subsection{Paramètres d'entraînement}
+%\subsection{Paramètres d'entraînement}
 
-\begin{table}[H]
-  \centering
-  \caption{Paramètres du fine-tuning sémantique}
-  \label{tab:parametres_finetuning}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{4.2cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Paramètre} & \tabheader{Valeur utilisée} \\
-    \midrule
-    Modèle de base & \filevar{all-MiniLM-L6-v2} \\
-    Dimension des embeddings & 384 \\
-    Fonction de perte & \filevar{MultipleNegativesRankingLoss} \\
-    Nombre d'époques & 5 \\
-    Taille de batch & 32 \\
-    Taux d'apprentissage & $2 \times 10^{-5}$ \\
-    Temps d'entraînement & 6\,630,9 secondes \\
-    Données d'entraînement & 2\,321 paires \\
-    Données de validation & 508 paires \\
-    Données de test & 473 paires \\
-    Critère de sélection & \filevar{val-information-retrieval\_cosine\_ndcg@10} \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Auteur}
-\end{table}
+%\begin{table}[H]
+%  \centering
+%  \caption{Paramètres du fine-tuning sémantique}
+%  \label{tab:parametres_finetuning}
+%  \tableStyleStart
+%  \begin{tabularx}{\textwidth}{p{4.2cm}X}
+%    \rowcolor{darkblue}
+%    \tabheader{Paramètre} & \tabheader{Valeur utilisée} \\
+%    \midrule
+%    Modèle de base & \filevar{all-MiniLM-L6-v2} \\
+%    Dimension des embeddings & 384 \\
+%    Fonction de perte & \filevar{MultipleNegativesRankingLoss} \\
+%    Nombre d'époques & 5 \\
+%    Taille de batch & 32 \\
+%    Taux d'apprentissage & $2 \times 10^{-5}$ \\
+%    Temps d'entraînement & 6\,630,9 secondes \\
+ %   Données d'entraînement & 2\,321 paires \\
+ %   Données de validation & 508 paires \\
+ %   Données de test & 473 paires \\
+ %   Critère de sélection & \filevar{val-information-retrieval\_cosine\_ndcg@10} \\
+  %  \bottomrule
+ % \end{tabularx}
+ % \tableStyleEnd
+  %\source{Auteur}
+%\end{table}
 
-Le taux d'apprentissage de $2 \times 10^{-5}$ est volontairement modéré. Dans un fine-tuning de modèle pré-entraîné, l'objectif n'est pas de réapprendre toute la langue, mais d'ajuster l'espace vectoriel au domaine des offres d'emploi. Un taux trop élevé aurait pu dégrader les représentations générales déjà acquises par le modèle. Les cinq époques permettent d'observer la progression du modèle tout en gardant un risque de sur-apprentissage contrôlé par le suivi des métriques de validation.
+%Le taux d'apprentissage de $2 \times 10^{-5}$ est volontairement modéré. Dans un fine-tuning de modèle pré-entraîné, l'objectif n'est pas de réapprendre toute la langue, mais d'ajuster l'espace vectoriel au domaine des offres d'emploi. Un taux trop élevé aurait pu dégrader les représentations générales déjà acquises par le modèle. Les cinq époques permettent d'observer la progression du modèle tout en gardant un risque de sur-apprentissage contrôlé par le suivi des métriques de validation.
 
-\subsection{Validation et choix du modèle}
+\subsection{Validation et choix du modèle d'embeddings}
 
-L'évaluation du modèle est réalisée comme une tâche de retrieval. Pour chaque requête de validation ou de test, le système classe les textes candidats selon la similarité cosinus et vérifie si le texte associé à la bonne offre apparaît dans les premiers résultats. Les métriques utilisées sont Recall@K, NDCG@K, MRR@K et MAP@K. Elles sont plus adaptées qu'une simple précision globale, car l'enjeu opérationnel est de produire une liste courte d'offres pertinentes.
+L'évaluation du modèle est réalisée comme une tâche de retrieval. Pour chaque requête de validation ou de test, le système classe les textes candidats selon la similarité cosinus et vérifie si le texte associé à la bonne offre apparaît dans les premiers résultats. Les métriques utilisées sont Recall@K, NDCG@K, MRR@K et MAP@K. 
 
-Le critère principal de sélection est \texttt{val-information-retrieval\_cosine\_ndcg@10}. Ce choix est défendable, car le NDCG@10 tient compte à la fois de la présence du bon résultat dans le top 10 et de sa position dans le classement. Il pénalise donc un modèle qui retrouve la bonne offre trop bas dans la liste. Dans les logs d'entraînement, la validation progresse jusqu'à l'époque 4, où le NDCG@10 atteint 0,6721 et le Recall@10 atteint 0,8839. À l'époque 5, ces indicateurs diminuent légèrement, avec un NDCG@10 de 0,6672 et un Recall@10 de 0,8799. Cette évolution suggère que l'époque 4 constitue le meilleur compromis entre apprentissage du domaine et début de sur-ajustement.
 
-Sur le jeu de test, le modèle atteint un Recall@1 de 0,4355, un Recall@5 de 0,7421, un Recall@10 de 0,8541, un NDCG@10 de 0,6326, un MRR@10 de 0,5632 et un MAP@100 de 0,5707. Ces résultats indiquent que le modèle retrouve fréquemment la bonne offre dans les dix premiers résultats, mais qu'il ne garantit pas encore un classement parfait au premier rang.
 
-\section{Construction du graphe de connaissances Neo4j}
 
-Le graphe de connaissances organise les entités utiles au raisonnement dans Neo4j : candidats, offres, compétences, métiers, niveaux \NCF{}, groupes \MEPC{}, secteurs, employeurs et localisations.
 
-Son intérêt est de conserver les relations explicites entre ces entités. Par exemple, une offre peut requérir des compétences, un candidat peut posséder certaines compétences, un métier peut être relié à un référentiel, et un document peut définir ou décrire un élément réglementaire. Cette représentation est plus interprétable qu'une simple liste de scores, car elle permet de retracer les liens qui justifient une recommandation \cite{hogan2021knowledge}.
 
-\section{Base vectorielle PostgreSQL et pgvector}
 
-La base vectorielle stocke les embeddings dans PostgreSQL avec l'extension pgvector. Les entités du projet sont encodées avec le modèle d'embeddings, puis leurs vecteurs sont indexés pour permettre une recherche rapide par similarité sémantique.
 
-Son rôle est complémentaire à celui du graphe. pgvector retrouve rapidement les éléments proches dans l'espace des embeddings ; Neo4j vérifie ensuite les relations, les contraintes et les chemins explicables. La recommandation ne repose donc pas uniquement sur la proximité textuelle : elle peut être enrichie par la structure métier du graphe.
 
-\section{Ingestion des PDF réglementaires}
 
-L'ingestion documentaire concerne les documents officiels utilisés dans le projet, notamment les PDF liés à la \NCF{}, à la \MEPC{} et aux diplômes. Ces documents sont découpés en chunks, transformés en embeddings, indexés dans pgvector et reliés au graphe lorsque les informations correspondantes sont détectées.
 
-Cette étape donne une base documentaire au système. Au lieu de produire seulement une recommandation, le système peut s'appuyer sur des passages issus des référentiels pour expliquer certains niveaux de formation, métiers ou domaines. Cela renforce l'explicabilité, surtout dans un contexte où les nomenclatures officielles doivent rester traçables.
 
-\section{Moteur de recommandation hybride}
 
-Le moteur GraphRAG combine les informations issues de la base vectorielle et du graphe. Il charge un candidat, construit un contexte à partir de pgvector et de Neo4j, puis produit des recommandations, un \emph{skill gap} et une roadmap.
 
-Le caractère hybride vient du fait que plusieurs signaux sont combinés : la similarité vectorielle, les relations du graphe, les compétences possédées et requises, les contraintes de niveau ou de secteur, et les éléments documentaires disponibles. Le résultat attendu n'est donc pas seulement une liste d'offres, mais une recommandation accompagnée d'une explication lisible \cite{burke2002hybrid,ricci2011recommender}.
+%Elles sont plus adaptées qu'une simple précision globale, car l'enjeu opérationnel est de produire une liste courte d'offres pertinentes.
 
-\section{Orchestration, API et interfaces}
+%Le critère principal de sélection est \texttt{val-information-retrieval\_cosine\_ndcg@10}. Ce choix est défendable, car le NDCG@10 tient compte à la fois de la présence du bon résultat dans le top 10 et de sa position dans le classement. Il pénalise donc un modèle qui retrouve la bonne offre trop bas dans la liste. Dans les logs d'entraînement, la validation progresse jusqu'à l'époque 4, où le NDCG@10 atteint 0,6721 et le Recall@10 atteint 0,8839. À l'époque 5, ces indicateurs diminuent légèrement, avec un NDCG@10 de 0,6672 et un Recall@10 de 0,8799. Cette évolution suggère que l'époque 4 constitue le meilleur compromis entre apprentissage du domaine et début de sur-ajustement.
 
-L'orchestration et les interfaces rendent le système exploitable. Le projet contient une API FastAPI, un workflow agentique LangGraph, une interface Streamlit et une CLI interactive. Ces éléments servent à interroger le système, afficher les traces du raisonnement et rendre les recommandations accessibles à un utilisateur.
+%Sur le jeu de test, le modèle atteint un Recall@1 de 0,4355, un Recall@5 de 0,7421, un Recall@10 de 0,8541, un NDCG@10 de 0,6326, un MRR@10 de 0,5632 et un MAP@100 de 0,5707. Ces résultats indiquent que le modèle retrouve fréquemment la bonne offre dans les dix premiers résultats, mais qu'il ne garantit pas encore un classement parfait au premier rang.
 
-Cette couche ne remplace pas le moteur de recommandation ; elle l'expose. Elle permet de passer d'un traitement technique exécuté en scripts à une interaction plus opérationnelle : recherche d'offres, analyse de profil, conversation avec le chatbot, ou consultation des étapes du workflow.
-
-\section{Sorties et évaluation}
-
-Les sorties et l'évaluation permettent de contrôler ce que produit réellement le système. Le projet prévoit des recommandations d'offres, du matching candidat--emploi, une analyse du \emph{skill gap}, une roadmap de formation, ainsi que des rapports et fichiers d'évaluation. L'évaluation porte notamment sur les embeddings, le GraphRAG, les scores et la latence.
-
-Cette étape est nécessaire pour ne pas juger le système uniquement sur son architecture. Une méthodologie sérieuse doit observer les sorties : quelles offres sont recommandées, pourquoi elles le sont, quelles compétences manquent, quelles sources sont mobilisées et quelles limites apparaissent dans les métriques. C'est ce contrôle qui permet de passer d'une démonstration technique à une analyse défendable dans le mémoire.
-\subsection{Interprétation statistique et opérationnelle}
-
-Cette lecture est méthodologiquement importante. Le fine-tuning améliore la capacité de retrieval sémantique, mais il ne suffit pas à lui seul à produire une recommandation fiable. Deux offres peuvent être proches dans l'espace vectoriel tout en différant par le niveau de formation requis, le secteur, la localisation ou les compétences obligatoires. C'est précisément pour traiter ces contraintes que le graphe de connaissances est introduit.
-
-L'interprétation correcte des résultats est donc la suivante : le modèle fine-tuné constitue un bon générateur de candidats pour une recherche top-$K$. Il est capable de réduire l'espace de recherche en ramenant les offres les plus proches sémantiquement, mais il ne doit pas être utilisé seul comme décision finale de recommandation. Le Recall@10 de 0,8541 signifie que, dans une grande majorité de cas, la bonne offre est présente dans les dix premiers résultats. En revanche, le Recall@1 de 0,4355 montre que le premier résultat n'est pas suffisamment fiable pour automatiser une décision sans contrôle complémentaire.
-
-Dans l'architecture globale, ce modèle joue donc un rôle précis : produire une première liste d'offres candidates par similarité sémantique. Cette liste est ensuite enrichie et contrôlée par le graphe de connaissances, qui vérifie les relations entre compétences, métiers, niveaux \NCF{}, domaines de formation, secteurs et référentiels \MEPC{}--\ESCO{}. Le fine-tuning est ainsi une brique de retrieval, pas une preuve complète de compatibilité professionnelle.
-
-\section{Construction du graphe de connaissances Neo4j}
+\section{Construction du graphe de connaissances avec Neo4j}
 
 Le graphe de connaissances permet de représenter les entités du marché du travail et leurs relations : offres, candidats, compétences, métiers, formations, secteurs, employeurs, localisations et référentiels. Cette représentation est plus explicable qu'une simple base vectorielle, car elle permet de retracer les chemins qui justifient une recommandation.
 
@@ -1417,6 +1385,32 @@ La construction du graphe suit une logique progressive. Elle commence par la dé
 Le modèle conceptuel distingue trois blocs. Le premier bloc correspond aux entités opérationnelles : \textit{Candidat}, \textit{OffreEmploi}, \textit{Employeur}, \textit{Secteur} et \textit{Localisation}. Le deuxième bloc correspond aux connaissances métiers : \textit{Compétence}, \textit{Métier}, \textit{GroupeISCO} et \textit{GroupeCompétences}. Le troisième bloc correspond aux référentiels camerounais : \textit{GrandGroupeMEPC}, \textit{SousGroupeMEPC}, \textit{GroupeBaseMEPC}, \textit{NiveauFormationNCF}, \textit{GrandDomaineNCF}, \textit{DomaineSpécialiséNCF} et \textit{DomaineDétailléNCF}. Cette séparation rend le graphe plus lisible et évite de mélanger les données observées avec les référentiels normatifs.
 
 Dans le projet, les tables \MEPC{} et \NCF{} organisées à partir des PDF sont chargées comme des nœuds de référence. Les offres normalisées deviennent des nœuds \textit{OffreEmploi}, enrichis par leur secteur, leur employeur, leur localisation, leur niveau \NCF{} requis et leur texte d'embedding. Les candidats normalisés deviennent des nœuds \textit{Candidat}, rattachés à leur niveau de formation, à leur domaine de formation lorsque celui-ci est identifiable, et aux informations utiles pour la recommandation. Les fichiers \ESCO{} alimentent les nœuds \textit{Compétence}, \textit{Métier}, \textit{GroupeISCO} et \textit{GroupeCompétences}. La base vectorielle complète ce dispositif en stockant les embeddings des entités principales avec leur type, leur identifiant, leur source, leur libellé et leur texte d'origine.
+
+Dans l'état actuel du projet, le graphe Neo4j contient \textbf{43\,008 nœuds} répartis sur \textbf{18 types de labels}. Le tableau~\ref{tab:volume_neo4j} détaille les volumes par famille d'entités.
+
+\begin{table}[H]
+  \centering
+  \caption{Volume de nœuds dans le graphe Neo4j}
+  \label{tab:volume_neo4j}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{5.5cm}rX}
+    \rowcolor{darkblue}
+    \tabheader{Label(s) de nœud} & \tabheader{Volume} & \tabheader{Bloc} \\
+    \midrule
+    \filevar{OffreEmploi} & 15\,722 & Données d'emploi \\
+    \filevar{Compétence} & 13\,939 & Compétences \ESCO{} \\
+    \filevar{Métier} & 3\,039 & Métiers \ESCO{} \\
+    \filevar{Candidat} & 1\,105 & Données d'emploi \\
+    \filevar{GroupeBaseMEPC} & 209 & Référentiel \MEPC{} \\
+    \filevar{DomaineDétailléNCF} & 201 & Référentiel \NCF{} \\
+    Autres nœuds référentiels, contextuels et documentaires & $\sim$8\,793 & NCF, MEPC, ISCO, Secteur, Localisation, Employeur, DocChunk… \\
+    \midrule
+    \textbf{Total} & \textbf{43\,008} & 18 types de labels \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur, extrait via \texttt{MATCH (n) RETURN labels(n), count(n)}}
+\end{table}
 
 \begin{figure}[H]
   \centering
@@ -1501,61 +1495,275 @@ Dans le projet, les tables \MEPC{} et \NCF{} organisées à partir des PDF sont 
   \tableStyleEnd
   \source{Auteur}
 \end{table}
+L'exploitation du graphe couvre plusieurs usages méthodologiques. D'abord, il permet de contrôler la cohérence des données : une offre sans secteur, sans localisation ou sans niveau de formation peut être identifiée plus facilement ; un métier non relié à des compétences ou à une nomenclature devient visible. Ensuite, il permet de calculer les écarts de compétences en comparant les compétences possédées par un candidat, les compétences requises par une offre et les compétences généralement associées au métier visé. Enfin, il fournit une base d'explication : une recommandation peut être justifiée par un chemin du type candidat--compétence acquise--offre, candidat--niveau \NCF{}--niveau requis, ou formation--métier--compétences manquantes.
+
+Il faut toutefois éviter une erreur méthodologique fréquente : un graphe n'est pas automatiquement vrai parce qu'il est structuré. La qualité des chemins dépend de la qualité des libellés d'origine, du scraping, de la normalisation des PDF, de l'alignement \MEPC{}--\ESCO{} et des règles de rapprochement utilisées. Le graphe doit donc être interprété comme un instrument d'aide à la décision et d'explicabilité, non comme une vérité administrative définitive.
+
+% -------------------------------------------------------
+% §2.7  Base vectorielle pgvector
+% -------------------------------------------------------
+\section{Base vectorielle PostgreSQL et pgvector}
+\label{sec:pgvector}
+
+La base vectorielle constitue le second composant de stockage du système. Elle repose sur PostgreSQL~16 et l'extension \texttt{pgvector}, qui ajoute un type de colonne \texttt{vector(384)} et des opérateurs de similarité cosinus, permettant des recherches approximatives par plus proches voisins directement dans la base relationnelle. Ce choix maintient la cohérence avec l'infrastructure PostgreSQL existante et évite d'introduire une base vectorielle tierce.
+
+\subsection{Schéma de la table d'embeddings}
+
+Toutes les entités du projet partagent une table unique \texttt{entity\_embeddings}. Cette centralisation simplifie les requêtes multi-types et l'accès uniforme depuis le workflow général :
 
 \begin{table}[H]
   \centering
-  \caption{Labels de nœuds et relations structurantes du graphe}
-  \label{tab:labels_relations_graphe}
+  \caption{Structure de la table \filevar{entity\_embeddings} dans pgvector}
+  \label{tab:structure_pgvector}
   \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.6cm}p{4.2cm}X}
+  \begin{tabularx}{\textwidth}{p{3.2cm}p{2.8cm}X}
     \rowcolor{darkblue}
-    \tabheader{Bloc} & \tabheader{Labels de nœuds} & \tabheader{Relations principales et interprétation} \\
+    \tabheader{Colonne} & \tabheader{Type SQL} & \tabheader{Rôle} \\
     \midrule
-    Données d'emploi & \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Employeur}, \filevar{Secteur}, \filevar{Localisation} & \filevar{PUBLIEE\_PAR} relie une offre à son employeur ; \filevar{DANS\_SECTEUR} la rattache à un secteur ; \filevar{LOCALISEE\_A} indique la ville ou zone d'exercice ; \filevar{A\_NIVEAU} relie le candidat à son niveau de formation. \\
-    Compétences et métiers & \filevar{Compétence}, \filevar{Métier}, \filevar{GroupeCompétences}, \filevar{GroupeISCO} & \filevar{NECESSITE} relie un métier aux compétences attendues ; \filevar{PARTIE\_DE} rattache une compétence à son groupe ; \filevar{CLASSIFIE\_DANS} relie un métier à un groupe ISCO ; \filevar{PLUS\_LARGE\_QUE} représente les relations hiérarchiques entre compétences. \\
-    Référentiel \MEPC{} & \filevar{GrandGroupeMEPC}, \filevar{SousGroupeMEPC}, \filevar{GroupeBaseMEPC} & \filevar{CONTIENT} représente la hiérarchie interne de la nomenclature ; \filevar{ALIGNE\_AVEC} rapproche les groupes \MEPC{} des groupes ISCO ; \filevar{CORRESPOND\_MEPC} rattache un métier \ESCO{} à un groupe de base \MEPC{}. \\
-    Référentiel \NCF{} & \filevar{NiveauFormationNCF}, \filevar{GrandDomaineNCF}, \filevar{DomaineSpécialiséNCF}, \filevar{DomaineDétailléNCF} & \filevar{CONTIENT} représente la hiérarchie formation ; \filevar{REQUIERT\_NIVEAU\_NCF} relie une offre au niveau demandé ; \filevar{A\_FORMATION} rattache un candidat à son domaine de formation ; \filevar{PREPARE\_POUR} relie un domaine de formation aux métiers visés. \\
-    Recommandation & \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Compétence}, \filevar{Métier}, \filevar{DomaineDétailléNCF} & Les chemins candidat--compétence--offre permettent d'identifier les compétences acquises et manquantes ; les chemins offre--niveau--formation servent à contrôler la compatibilité de qualification ; les chemins formation--métier soutiennent la proposition de montée en compétences. \\
+    \filevar{entity\_id} & \filevar{VARCHAR} & Identifiant de l'entité source (\filevar{offre\_id}, \filevar{candidat\_id}, URI \ESCO{}, code NCF…). \\
+    \filevar{entity\_type} & \filevar{VARCHAR} & Type sémantique : \filevar{OFFRE\_EMPLOI}, \filevar{CANDIDAT}, \filevar{COMPETENCE}, \filevar{METIER}, \filevar{DOMAINE\_DETAILLE\_NCF}, \filevar{GROUPE\_BASE\_MEPC}. \\
+    \filevar{source} & \filevar{VARCHAR} & Origine de la donnée (KmerAI, ESCO, INS-NCF, INS-MEPC). \\
+    \filevar{label} & \filevar{TEXT} & Libellé court utilisé dans les réponses du système. \\
+    \filevar{text\_origin} & \filevar{TEXT} & Texte brut ayant servi à produire l'embedding (\filevar{text\_to\_embed}). \\
+    \filevar{embedding} & \filevar{vector(384)} & Vecteur dense de dimension 384, produit par le SentenceTransformer fine-tuné. \\
+    \filevar{created\_at} & \filevar{TIMESTAMP} & Horodatage d'indexation. \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
   \source{Auteur}
 \end{table}
 
-L'exploitation du graphe couvre plusieurs usages méthodologiques. D'abord, il permet de contrôler la cohérence des données : une offre sans secteur, sans localisation ou sans niveau de formation peut être identifiée plus facilement ; un métier non relié à des compétences ou à une nomenclature devient visible. Ensuite, il permet de calculer les écarts de compétences en comparant les compétences possédées par un candidat, les compétences requises par une offre et les compétences généralement associées au métier visé. Enfin, il fournit une base d'explication : une recommandation peut être justifiée par un chemin du type candidat--compétence acquise--offre, candidat--niveau \NCF{}--niveau requis, ou formation--métier--compétences manquantes.
+\subsection{Indexation HNSW et requête de similarité}
 
-Il faut toutefois éviter une erreur méthodologique fréquente : un graphe n'est pas automatiquement vrai parce qu'il est structuré. La qualité des chemins dépend de la qualité des libellés d'origine, du scraping, de la normalisation des PDF, de l'alignement \MEPC{}--\ESCO{} et des règles de rapprochement utilisées. Le graphe doit donc être interprété comme un instrument d'aide à la décision et d'explicabilité, non comme une vérité administrative définitive.
+Pour garantir des temps de réponse compatibles avec un usage interactif, un index HNSW (\textit{Hierarchical Navigable Small World}) est construit sur la colonne \texttt{embedding}, avec $m = 16$ connexions par nœud et $ef\_construction = 64$. La recherche utilise l'opérateur de distance cosinus \texttt{<=>} de pgvector. La requête top-$K$ se formule :
 
-\section{Logique de recommandation et architecture GraphRAG cible}
+\begin{equation}
+\text{top-}K = \underset{d \in \mathcal{D}}{\text{argmin}^{K}}\; \bigl(1 - \cos(\mathbf{q}, \mathbf{d})\bigr)
+\label{eq:topk_pgvector}
+\end{equation}
 
-L'architecture visée est hybride. Elle combine un score sémantique issu des embeddings, un score graphique issu des relations dans Neo4j, et une couche d'explication fondée sur les chemins du graphe. Cette logique rejoint les systèmes de recommandation hybrides, qui cherchent à combiner plusieurs sources de signal pour limiter les faiblesses d'une approche unique \cite{burke2002hybrid,ricci2011recommender}.
+où $\mathbf{q}$ est l'embedding de la requête encodé par le SentenceTransformer fine-tuné et $\mathcal{D}$ est l'ensemble des vecteurs indexés du type cible. Le résultat est converti en score sémantique $S_{sem} \in [0, 1]$ par $S_{sem} = \tfrac{1 + \cos(\mathbf{q}, \mathbf{d})}{2}$, puis transmis au moteur de fusion.
 
-La logique de score peut être résumée ainsi. La composante sémantique mesure la proximité textuelle entre un profil, une offre, un métier ou une compétence. La composante graphe vérifie la cohérence relationnelle : compétences requises, niveau de formation, secteur, métier visé, domaine \NCF{} et rattachement \MEPC{}. La composante d'explication transforme ces éléments en justification lisible : pourquoi l'offre est pertinente, quelles compétences sont déjà couvertes, quelles compétences manquent et quel type de formation pourrait combler l'écart. Cette structure empêche de réduire la recommandation à un simple score opaque.
+% -------------------------------------------------------
+% §2.8  Ingestion des PDF réglementaires
+% -------------------------------------------------------
+\section{Ingestion des PDF réglementaires}
+\label{sec:pdf_ingestion}
 
-Dans cette étude, la logique GraphRAG consiste à enrichir la génération de recommandations par des informations récupérées dans un graphe de connaissances. Le \LLM{} ne doit pas inventer les raisons de la recommandation ; il doit verbaliser des éléments vérifiables : compétences déjà possédées, compétences exigées par l'offre, compétences manquantes, niveau de formation requis, formations pertinentes et proximité métier. Cette approche est cohérente avec le principe général de la \RAG{}, qui ajoute une récupération d'information externe à la génération de texte \cite{lewis2020rag}.
+Outre les données structurées, le système intègre le contenu textuel des référentiels officiels sous forme de fragments documentaires (\textit{DocChunks}). Cette couche documentaire permet au moteur agentique de citer des passages précis des nomenclatures \NCF{} et \MEPC{} en réponse à une question portant sur les formations, les métiers ou les niveaux de qualification.
 
-Dans le périmètre actuel de l'étude, la couche GraphRAG générative doit être considérée comme une extension cible. Les fondations nécessaires sont présentes : données normalisées, modèle d'embeddings entraîné, graphe Neo4j structuré et mécanismes d'analyse relationnelle. En revanche, l'orchestration complète entre recherche vectorielle, interrogation du graphe, génération par \LLM{} et exposition applicative reste à finaliser.
+\subsection{Stratégie de découpage et identifiant de chunk}
 
-\section{Évaluation et limites méthodologiques}
+Les documents PDF (\NCF{} 2017, \MEPC{} 2013) sont découpés en segments de longueur contrôlée. Chaque segment est identifié par un \texttt{chunk\_id} structuré selon le schéma :
 
-L'évaluation effectivement disponible porte principalement sur le modèle sémantique. Les métriques calculées mesurent la capacité du SentenceTransformer fine-tuné à retrouver le bon élément dans une tâche de retrieval. Elles ne mesurent pas encore la qualité finale d'une recommandation complète intégrant toutes les contraintes métier, la validation par un expert ou la satisfaction d'un utilisateur.
+\begin{equation}
+\texttt{chunk\_id} = \texttt{<SOURCE>\_<ANNEE>\_p<PAGE>\_c<INDEX>}
+\label{eq:chunk_id}
+\end{equation}
 
-Le graphe apporte une seconde forme de contrôle : il permet de vérifier les relations et d'expliquer les écarts entre un profil et une offre. Toutefois, l'alignement entre référentiels reste partiellement approximatif, surtout lorsque la correspondance repose sur des préfixes de codes métiers. Cette limite n'invalide pas la démarche, mais elle impose de traiter les résultats comme une aide à la décision et non comme une vérité administrative définitive.
+Par exemple, \texttt{NCF\_2017\_p008\_c0001} désigne le premier chunk de la page~8 du document \NCF{} 2017. Ce schéma d'identifiant permet de reconstruire la localisation exacte du passage dans le document source et de le citer de façon traçable dans les réponses générées.
 
-La méthodologie comporte donc trois limites principales. Premièrement, la qualité du système dépend de la complétude des champs textuels et de la qualité des libellés d'origine. Deuxièmement, la correspondance entre \ESCO{}, \MEPC{} et \NCF{} nécessite encore une validation métier plus fine. Troisièmement, la recommandation hybride complète, incluant l'orchestration GraphRAG et l'API applicative, reste à évaluer sur des scénarios utilisateurs réels.
+\subsection{Stockage hybride et liaison au graphe}
 
-\section{Synthèse de l'approche}
+Chaque chunk est stocké dans la table \texttt{doc\_chunks} avec son texte, son identifiant et ses métadonnées de page. Il reçoit un embedding vectoriel indexé dans \texttt{entity\_embeddings} pour la recherche sémantique. En parallèle, il est représenté comme un nœud \texttt{DocChunk} dans Neo4j, relié au nœud \texttt{DocumentReferentiel} parent par la relation fonctionnelle \texttt{EXTRAIT\_DE} :
 
-En synthèse, le projet adopte une méthodologie progressive. Il commence par nettoyer et normaliser les données locales, puis construit des paires de fine-tuning pour adapter un SentenceTransformer au vocabulaire des offres d'emploi. Il intègre ensuite les référentiels \ESCO{}, \MEPC{} et \NCF{} dans un graphe Neo4j afin de rendre les recommandations plus structurées et plus explicables. Enfin, il prépare une architecture GraphRAG dans laquelle la recherche sémantique fournit les candidats pertinents, le graphe vérifie les contraintes métier et le \LLM{} produit une explication contrôlée.
+\begin{table}[H]
+  \centering
+  \caption{Résumé de l'ingestion documentaire}
+  \label{tab:ingestion_pdf}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4cm}p{2.8cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Document} & \tabheader{Chunks indexés} & \tabheader{Relation Neo4j} \\
+    \midrule
+    \NCF{} 2017 (INS Cameroun) & 142 & \filevar{(:DocChunk)-[:EXTRAIT\_DE]->(:DocumentReferentiel)} \\
+    \MEPC{} 2013 (INS Cameroun) & En cours & \filevar{(:DocChunk)-[:EXTRAIT\_DE]->(:DocumentReferentiel)} \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur}
+\end{table}
 
-Cette approche est cohérente avec l'objectif du mémoire : dépasser une recommandation par mots-clés pour construire un système capable de prendre en compte les compétences, les métiers, les niveaux de formation et les trajectoires de montée en qualification. Elle reste cependant une méthodologie en construction : les résultats actuels valident surtout la composante sémantique et la structuration du graphe, tandis que l'évaluation complète de la recommandation hybride devra être conduite dans la suite du travail.
+Lors de la génération d'une réponse, le \LLM{} cite le chunk mobilisé sous la forme \texttt{[Source: NCF\_2017, chunk: NCF\_2017\_p008\_c0001, p.8]}, assurant la traçabilité documentaire de chaque élément produit par le système.
+
+% -------------------------------------------------------
+% §2.9  Moteur de recommandation hybride
+% -------------------------------------------------------
+\section{Moteur de recommandation hybride}
+\label{sec:moteur_hybride}
+
+Le moteur de recommandation hybride combine les résultats de pgvector et de Neo4j pour produire une liste d'offres classées, un diagnostic de compétences et une roadmap de formation. Son caractère hybride repose sur la fusion de plusieurs signaux complémentaires : la similarité sémantique, la couverture de compétences, la compatibilité de niveau et l'alignement sectoriel.
+
+\subsection{Architecture de récupération à deux passes}
+
+La récupération s'effectue en deux passes parallèles. La première passe interroge \texttt{pgvector} par similarité cosinus pour identifier les $K$ entités les plus proches de la requête dans l'espace sémantique. La seconde passe interroge Neo4j par des requêtes Cypher pour extraire les relations de compétences, les niveaux \NCF{} et les alignements \MEPC{}.
+
+Les résultats des deux passes sont fusionnés dans une fenêtre de contexte structurée transmise au \LLM{} pour la génération de la réponse. La recommandation n'est donc pas une simple liste de scores : c'est une synthèse argumentée appuyée sur des faits vérifiables dans les deux bases, conformément aux principes de la \RAG{} appliquée aux graphes \cite{lewis2020rag,hogan2021knowledge}.
+
+\subsection{Score de compatibilité composite}
+
+Pour le classement des candidats en mode \textit{matching}, un score composite est calculé :
+
+\begin{equation}
+S_{hyb}(c, o) = \alpha\, S_{sem}(c, o)
+              + \beta\, S_{graph}(c, o)
+              + \gamma\, C_{ncf}(c, o)
+              + \delta\, A_{sect}(c, o)
+\label{eq:score_hybride}
+\end{equation}
+
+où $c$ désigne un candidat et $o$ une offre d'emploi. Les composantes sont définies dans le tableau suivant :
+
+\begin{table}[H]
+  \centering
+  \caption{Composantes du score hybride de recommandation $S_{hyb}$}
+  \label{tab:composantes_score_hybride}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{1.0cm}p{3.5cm}lX}
+    \rowcolor{darkblue}
+    \tabheader{Terme} & \tabheader{Composante} & \tabheader{Poids} & \tabheader{Définition et calcul} \\
+    \midrule
+    $S_{sem}$ & Similarité sémantique & $\alpha = 0{,}5$ & Cosinus pgvector entre l'embedding candidat et l'embedding offre. \\
+    $S_{graph}$ & Couverture graphe & $\beta = 0{,}3$ & Part des compétences requises par l'offre que le candidat possède selon Neo4j. \\
+    $C_{ncf}$ & Compatibilité \NCF{} & $\gamma = 0{,}1$ & Indicateur gradué : niveau de formation du candidat $\geq$ niveau requis par l'offre. \\
+    $A_{sect}$ & Alignement sectoriel & $\delta = 0{,}1$ & Correspondance secteur de l'offre -- secteur de formation/expérience du candidat via codes \MEPC{}. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur}
+\end{table}
+
+La prédominance de $S_{sem}$ ($\alpha = 0{,}5$) reflète la fiabilité du SentenceTransformer fine-tuné comme premier filtre. Les composantes $C_{ncf}$ et $A_{sect}$ apportent les contraintes institutionnelles qui ne sont pas capturables par la seule proximité vectorielle \cite{burke2002hybrid,ricci2011recommender}.
+
+\subsection{Pipeline Text2Cypher pour l'interrogation du graphe}
+
+L'interrogation du graphe en langage naturel est réalisée par un pipeline Text2Cypher à trois niveaux de dégradation progressive :
+
+\begin{enumerate}
+  \item \textbf{Modèle GGUF local} (\texttt{llama3.1-8b-text2cypher-Q4\_K\_M.gguf}) : traduit directement la question en requête Cypher sans dépendance réseau.
+  \item \textbf{LLM via OpenRouter} : si le modèle local est absent ou échoue, la question est transmise à un \LLM{} externe pour la génération de la requête Cypher.
+  \item \textbf{Templates paramétrés} : en dernier recours, sept intentions prédéfinies (\filevar{competence\_lookup}, \filevar{referentiel\_lookup}, \filevar{candidat\_lookup}, \filevar{offre\_lookup}, \filevar{metier\_lookup}, \filevar{ncf\_metier\_lookup}, \filevar{default}) produisent des requêtes Cypher éprouvées utilisant uniquement les relations fonctionnelles du graphe.
+\end{enumerate}
+
+Cette architecture dégradée garantit qu'une réponse graphe est toujours produite quelle que soit la disponibilité des ressources externes.
+
+% -------------------------------------------------------
+% §2.10  Workflow agentique LangGraph
+% -------------------------------------------------------
+\section{Workflow agentique LangGraph}
+\label{sec:langgraph}
+
+Le workflow agentique orchestre l'ensemble du raisonnement, depuis l'analyse de la requête utilisateur jusqu'à la génération de la réponse finale. Il est implémenté avec LangGraph, une bibliothèque de construction de graphes d'agents permettant de définir un graphe orienté acyclique (DAG) de nœuds de traitement avec un état partagé entre les nœuds.
+
+\subsection{Architecture en cinq nœuds}
+
+Le graphe de traitement comprend cinq nœuds exécutés séquentiellement, chaque nœud enrichissant un état partagé :
+
+\begin{figure}[H]
+  \centering
+  \caption{Graphe d'exécution du workflow agentique LangGraph}
+  \label{fig:langgraph_workflow}
+  \resizebox{0.85\textwidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=0.80cm and 3.5cm,
+    wnode/.style={rectangle, rounded corners=4pt, draw=kmeraiteal, very thick,
+                  fill=kmeraiteal!10, align=center, minimum width=4.0cm,
+                  minimum height=0.88cm, font=\small\bfseries},
+    tool/.style={rectangle, rounded corners=2pt, draw=kmeraiorange, thick,
+                 fill=kmeraiorange!10, align=center, minimum width=3.0cm,
+                 minimum height=0.68cm, font=\scriptsize},
+    arr/.style={-{Stealth[length=2.5mm]}, thick, draw=kmeraigray},
+    darr/.style={-{Stealth[length=2mm]}, thick, dashed, draw=kmeraiorange!80!black},
+    lab/.style={font=\scriptsize, fill=white, inner sep=1.5pt}
+  ]
+    \node[wnode] (n1) {1.\ \texttt{analyse\_request}};
+    \node[wnode, below=of n1] (n2) {2.\ \texttt{plan\_tools}};
+    \node[wnode, below=of n2] (n3) {3.\ \texttt{execute\_tools}};
+    \node[wnode, below=of n3] (n4) {4.\ \texttt{build\_context}};
+    \node[wnode, below=of n4] (n5) {5.\ \texttt{generate\_final\_answer}};
+
+    \node[tool, right=3.0cm of n3, yshift= 0.75cm] (t2) {Neo4j\\(Text2Cypher)};
+    \node[tool, right=3.0cm of n3]                 (t1) {pgvector\\(HNSW top-$K$)};
+    \node[tool, right=3.0cm of n3, yshift=-0.75cm] (t3) {DocChunks\\(référentiels PDF)};
+
+    \draw[arr] (n1) -- (n2);
+    \draw[arr] (n2) -- (n3);
+    \draw[arr] (n3) -- (n4);
+    \draw[arr] (n4) -- (n5);
+
+    \draw[darr] (n3.east) to[out=0,in=180] (t2.west);
+    \draw[darr] (n3.east)                -- (t1.west);
+    \draw[darr] (n3.east) to[out=0,in=180] (t3.west);
+  \end{tikzpicture}}
+  \source{Auteur}
+\end{figure}
+
+Le nœud \texttt{analyse\_request} détecte l'intention de l'utilisateur et extrait les entités pertinentes (identifiant candidat, type de use-case, paramètres). Le nœud \texttt{plan\_tools} sélectionne les outils à appeler selon le use-case. Le nœud \texttt{execute\_tools} appelle pgvector, Neo4j et les DocChunks selon le plan. Le nœud \texttt{build\_context} agrège et formate les résultats dans une fenêtre de contexte structurée. Le nœud \texttt{generate\_final\_answer} génère la réponse en langage naturel via le \LLM{}, en citant les sources mobilisées.
+
+\subsection{Routage par use-case du systeme de recommandation}
+
+À l'étape \texttt{analyse\_request}, le système identifie l'intention parmi sept use-cases, qui déterminent quels outils seront activés :
+
+\begin{table}[H]
+  \centering
+  \caption{Use-cases supportés par le workflow agentique}
+  \label{tab:usecases_langgraph}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4.0cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Use-case} & \tabheader{Description et outils activés} \\
+    \midrule
+    \filevar{diagnostic} & Analyse du profil candidat : compétences, niveau \NCF{}, secteur, lacunes. Outils : Neo4j + pgvector. \\
+    \filevar{recommendation\_candidat} & Recommandation d'offres compatibles. Outils : pgvector (top-$K$), Neo4j (contraintes), score $S_{hyb}$. \\
+    \filevar{skill\_gap\_roadmap} & Compétences manquantes et roadmap de formation. Outils : Neo4j (compétences), pgvector (formations proches). \\
+    \filevar{referentiel} & Questions sur les nomenclatures \NCF{} et \MEPC{}. Outils : DocChunks + Neo4j. \\
+    \filevar{graph\_query} & Requête libre sur le graphe via Text2Cypher. Outil : Neo4j (3 niveaux). \\
+    \filevar{orientation\_metier} & Métiers et trajectoires compatibles avec un profil. Outils : pgvector (métiers), Neo4j (domaines \NCF{}). \\
+    \filevar{recherche\_generale} & Questions générales sur le marché du travail. Outils : pgvector + DocChunks si pertinent. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur}
+\end{table}
+
+\subsection{Intégration LLM et traçabilité des sources}
+
+Le nœud \texttt{generate\_final\_answer} appelle un \LLM{} via l'API OpenRouter. La configuration retient \texttt{openai/gpt-oss-20b:free} comme modèle principal, avec une chaîne de secours de quatre modèles alternatifs gratuits : \texttt{meta-llama/llama-3.3-70b-instruct:free}, \texttt{deepseek/deepseek-v4-flash:free}, \texttt{google/gemma-4-31b-it:free} et \texttt{meta-llama/llama-3.2-3b-instruct:free}.
+
+Le \LLM{} est instruit de citer explicitement chaque information mobilisée : \texttt{[Compétence: "libellé", uri: esco:...]} pour les compétences \ESCO{}, \texttt{[Source: NCF\_2017, chunk: NCF\_2017\_p008\_c0001, p.8]} pour les passages documentaires, et \texttt{[pgvector: "libellé", id: offre\_id]} pour les offres retrouvées par similarité. Cette instrumentation garantit la traçabilité de chaque élément de la réponse jusqu'à sa source dans la base de données.
+
+% -------------------------------------------------------
+% §2.11  API, orchestration et interfaces
+% -------------------------------------------------------
+\section{API, orchestration et interfaces}
+\label{sec:api_interfaces}
+
+L'exposition du système repose sur trois composants complémentaires. L'API FastAPI expose les fonctionnalités du moteur hybride sous forme d'endpoints REST : recommandation par candidat, matching offre--candidat, recherche sémantique et interrogation du graphe. L'interface Streamlit offre une interface conversationnelle interactive permettant de dialoguer avec le système via le workflow LangGraph. La CLI interactive permet de tester les différents use-cases en ligne de commande, utile pour le développement et la validation des réponses.
+
+Ces composants ne modifient pas la logique de recommandation : ils l'exposent à des utilisateurs finaux ou à des systèmes tiers, rendant le système opérationnel au-delà du prototypage.
+
+\section{Évaluation de la generation du système}
 
 
 
 
-\part{Presentation des resultats}
 
-\chapter{Présentation et analyse des résultats}
+\section{Synthèse de l'approche méthodologique}
+
+
+
+
+
+\part{Présentation des résultats}
+
+\chapter{Implémentation du système de recommandation}
+% 10 à 15 pages.
+\vspace{-1.4cm}
+
+
+
+
+\chapter{Évaluation de la performance du système}
 % 10 à 15 pages.
 \vspace{-1.4cm}
 
@@ -1589,7 +1797,47 @@ Cette approche est cohérente avec l'objectif du mémoire : dépasser une recomm
 
 \chapter{Annexes}
 % Questionnaires, codes, tableaux volumineux.
-
+\begin{table}[H]
+	\centering
+	\caption{Labels de nœuds et relations structurantes du graphe}
+	\label{tab:labels_relations_graphe}
+	\tableStyleStart
+	\begin{tabularx}{\textwidth}{p{3.6cm}p{4.2cm}X}
+		\rowcolor{darkblue}
+		\tabheader{Bloc} & \tabheader{Labels de nœuds} & \tabheader{Relations principales et interprétation} \\
+		\midrule
+		Données d'emploi & \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Employeur}, \filevar{Secteur}, \filevar{Localisation} & \filevar{PUBLIEE\_PAR} relie une offre à son employeur ; \filevar{DANS\_SECTEUR} la rattache à un secteur ; \filevar{LOCALISEE\_A} indique la ville ou zone d'exercice ; \filevar{A\_NIVEAU} relie le candidat à son niveau de formation. \\
+		Compétences et métiers & \filevar{Compétence}, \filevar{Métier}, \filevar{GroupeCompétences}, \filevar{GroupeISCO} & \filevar{NECESSITE} relie un métier aux compétences attendues ; \filevar{PARTIE\_DE} rattache une compétence à son groupe ; \filevar{CLASSIFIE\_DANS} relie un métier à un groupe ISCO ; \filevar{PLUS\_LARGE\_QUE} représente les relations hiérarchiques entre compétences. \\
+		Référentiel \MEPC{} & \filevar{GrandGroupeMEPC}, \filevar{SousGroupeMEPC}, \filevar{GroupeBaseMEPC} & \filevar{CONTIENT} représente la hiérarchie interne de la nomenclature ; \filevar{ALIGNE\_AVEC} rapproche les groupes \MEPC{} des groupes ISCO ; \filevar{CORRESPOND\_MEPC} rattache un métier \ESCO{} à un groupe de base \MEPC{}. \\
+		Référentiel \NCF{} & \filevar{NiveauFormationNCF}, \filevar{GrandDomaineNCF}, \filevar{DomaineSpécialiséNCF}, \filevar{DomaineDétailléNCF} & \filevar{CONTIENT} représente la hiérarchie formation ; \filevar{REQUIERT\_NIVEAU\_NCF} relie une offre au niveau demandé ; \filevar{A\_FORMATION} rattache un candidat à son domaine de formation ; \filevar{PREPARE\_POUR} relie un domaine de formation aux métiers visés. \\
+		Recommandation & \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Compétence}, \filevar{Métier}, \filevar{DomaineDétailléNCF} & Les chemins candidat--compétence--offre permettent d'identifier les compétences acquises et manquantes ; les chemins offre--niveau--formation servent à contrôler la compatibilité de qualification ; les chemins formation--métier soutiennent la proposition de montée en compétences. \\
+		\bottomrule
+	\end{tabularx}
+	\tableStyleEnd
+	\source{Auteur}
+\end{table}
+\begin{table}[H]
+	\centering
+	\caption{Volume d'entités indexées dans la base vectorielle pgvector}
+	\label{tab:volume_pgvector}
+	\tableStyleStart
+	\begin{tabularx}{\textwidth}{p{4.8cm}rX}
+		\rowcolor{darkblue}
+		\tabheader{Type d'entité} & \tabheader{Nombre} & \tabheader{Source principale} \\
+		\midrule
+		\filevar{OFFRE\_EMPLOI} & 15\,722 & Scraping KmerAI \\
+		\filevar{COMPETENCE} & 13\,939 & Référentiel \ESCO{} v1.1 \\
+		\filevar{METIER} & 3\,039 & Référentiel \ESCO{} v1.1 \\
+		\filevar{CANDIDAT} & 1\,105 & Base locale de profils demandeurs \\
+		\filevar{GROUPE\_BASE\_MEPC} & 209 & INS Cameroun - \MEPC{} 2013 \\
+		\filevar{DOMAINE\_DETAILLE\_NCF} & 201 & INS Cameroun - \NCF{} 2017 \\
+		\midrule
+		\textbf{Total} & \textbf{34\,215} & \\
+		\bottomrule
+	\end{tabularx}
+	\tableStyleEnd
+	\source{Auteur}
+\end{table}
 \markboth{Table des matières}{Table des matières}
 \tableofcontents % Table des matières détaillée à la fin (Optionnel si sommaire au début)
 \end{document}
