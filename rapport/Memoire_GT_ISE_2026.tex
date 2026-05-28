@@ -1355,26 +1355,35 @@ La logique d'optimisation peut être résumée par l'idée suivante : pour une r
 
 \subsection{Validation et choix du modèle d'embeddings}
 
-L'évaluation du modèle est réalisée comme une tâche de retrieval. Pour chaque requête de validation ou de test, le système classe les textes candidats selon la similarité cosinus et vérifie si le texte associé à la bonne offre apparaît dans les premiers résultats. Les métriques utilisées sont Recall@K, NDCG@K, MRR@K et MAP@K. 
+Le choix du modèle d'embeddings ne peut pas reposer sur une impression qualitative tirée de quelques requêtes. Dans ce projet, l'embedding est le premier filtre du système : il transforme une requête courte, issue des métadonnées d'une offre ou d'un candidat, en une liste top-$K$ de textes candidats à examiner ensuite par le graphe, les règles de compétences et le module \RAG{}. Le modèle est donc validé comme un \textit{retriever} sémantique, conformément à l'usage des SentenceTransformers pour la recherche par similarité \cite{reimers2019sbert} et aux pratiques de benchmark de recherche d'information \cite{thakur2021beir,muennighoff2022mteb}.
 
+Formellement, soit une requête $q_i$ et un ensemble de documents candidats $\mathcal{D}=\{d_1,\ldots,d_n\}$. Le modèle encode la requête et chaque document dans un même espace vectoriel :
+\[
+\vec{z}_{q_i}=f_\theta(q_i), \qquad \vec{z}_{d_j}=f_\theta(d_j).
+\]
+Le score de classement est la similarité cosinus :
+\[
+s(q_i,d_j)=\cos(\vec{z}_{q_i},\vec{z}_{d_j})
+=\frac{\vec{z}_{q_i}^{\top}\vec{z}_{d_j}}{\|\vec{z}_{q_i}\|\,\|\vec{z}_{d_j}\|}.
+\]
+Les documents sont triés par ordre décroissant de $s(q_i,d_j)$. La question de validation devient alors : le document attendu $d_i^+$ apparaît-il suffisamment haut dans la liste retournée ?
 
+Les métriques retenues mesurent ce comportement de classement. Le \textit{Recall@K} indique si le document pertinent est présent dans les $K$ premiers résultats :
+\[
+\operatorname{Recall@K}(q_i)=\frac{|\mathcal{R}_i \cap \mathcal{T}_{i,K}|}{|\mathcal{R}_i|},
+\]
+où $\mathcal{R}_i$ désigne l'ensemble des documents pertinents et $\mathcal{T}_{i,K}$ les $K$ premiers documents retournés. Lorsque chaque requête possède un seul document positif, cette quantité vaut 1 si le bon document est dans le top-$K$, et 0 sinon. Le \textit{MRR@K} pénalise davantage un document pertinent placé trop bas :
+\[
+\operatorname{MRR@K}=\frac{1}{Q}\sum_{i=1}^{Q}\frac{1}{\operatorname{rang}_i},
+\]
+avec $\operatorname{rang}_i$ le rang du premier document pertinent, à condition qu'il apparaisse dans le top-$K$. Le \textit{NDCG@K} évalue la qualité globale du classement en appliquant une décote logarithmique aux positions tardives :
+\[
+\operatorname{DCG@K}=\sum_{r=1}^{K}\frac{2^{rel_r}-1}{\log_2(r+1)}, \qquad
+\operatorname{NDCG@K}=\frac{\operatorname{DCG@K}}{\operatorname{IDCG@K}},
+\]
+où $rel_r$ est la pertinence du document placé au rang $r$ et $\operatorname{IDCG@K}$ le score obtenu par le classement idéal. Enfin, la \textit{MAP@K} synthétise la précision moyenne observée aux rangs où des documents pertinents apparaissent.
 
-
-
-
-
-
-
-
-
-
-
-
-%Elles sont plus adaptées qu'une simple précision globale, car l'enjeu opérationnel est de produire une liste courte d'offres pertinentes.
-
-%Le critère principal de sélection est \texttt{val-information-retrieval\_cosine\_ndcg@10}. Ce choix est défendable, car le NDCG@10 tient compte à la fois de la présence du bon résultat dans le top 10 et de sa position dans le classement. Il pénalise donc un modèle qui retrouve la bonne offre trop bas dans la liste. Dans les logs d'entraînement, la validation progresse jusqu'à l'époque 4, où le NDCG@10 atteint 0,6721 et le Recall@10 atteint 0,8839. À l'époque 5, ces indicateurs diminuent légèrement, avec un NDCG@10 de 0,6672 et un Recall@10 de 0,8799. Cette évolution suggère que l'époque 4 constitue le meilleur compromis entre apprentissage du domaine et début de sur-ajustement.
-
-%Sur le jeu de test, le modèle atteint un Recall@1 de 0,4355, un Recall@5 de 0,7421, un Recall@10 de 0,8541, un NDCG@10 de 0,6326, un MRR@10 de 0,5632 et un MAP@100 de 0,5707. Ces résultats indiquent que le modèle retrouve fréquemment la bonne offre dans les dix premiers résultats, mais qu'il ne garantit pas encore un classement parfait au premier rang.
+Un exemple simple montre pourquoi ces métriques sont plus informatives qu'une précision globale. Supposons une requête correspondant à une offre de \og développeur Python junior \fg{} et cinq documents retournés : $[d_3,d_1,d_8,d_5,d_2]$. Si le document attendu est $d_1$, alors $\operatorname{Recall@1}=0$, $\operatorname{Recall@5}=1$ et $\operatorname{MRR@5}=1/2$. Le modèle n'a pas échoué à retrouver l'information, mais il l'a placée au deuxième rang. Dans un moteur de recommandation, cette nuance est essentielle : un bon générateur de shortlist peut être utile même s'il ne classe pas toujours le meilleur candidat en première position.
 
 \section{Construction du graphe de connaissances avec Neo4j}
 
@@ -1742,10 +1751,77 @@ L'exposition du système repose sur trois composants complémentaires. L'API Fas
 
 Ces composants ne modifient pas la logique de recommandation : ils l'exposent à des utilisateurs finaux ou à des systèmes tiers, rendant le système opérationnel au-delà du prototypage.
 
-\section{Évaluation de la generation du système}
+\section{Évaluation de la génération du système}
 
+L'évaluation d'un système \RAG{} ne peut pas se réduire à un \og vibe check \fg{}, c'est-à-dire à lire quelques réponses et à les trouver convaincantes. Cette pratique est insuffisante pour un système destiné à orienter des demandeurs d'emploi, des formations ou des offres : une réponse fluide peut être fausse, une réponse correcte peut être mal sourcée, et une réponse pertinente peut cacher une récupération documentaire médiocre. L'évaluation doit donc séparer deux étages : la récupération des preuves et la génération de la réponse. Cette séparation reprend l'intuition centrale du \RAG{} : le modèle génératif ne doit pas seulement produire un texte plausible, il doit produire un texte contraint par des sources retrouvées \cite{lewis2020rag,es2024ragas}.
 
+\subsection{Évaluation de la récupération documentaire}
 
+La première question est : le système retrouve-t-il les bonnes informations avant de générer ? Pour une requête $q_i$, le module de recherche retourne une liste ordonnée $\mathcal{T}_{i,K}$ de chunks, d'offres, de compétences ou de nœuds du graphe. Si $\mathcal{R}_i$ désigne les éléments réellement pertinents, cinq mesures sont retenues.
+
+La précision top-$K$ mesure la pureté des résultats retournés :
+\[
+\operatorname{Precision@K}(q_i)=\frac{|\mathcal{R}_i \cap \mathcal{T}_{i,K}|}{K}.
+\]
+Le rappel top-$K$ mesure la couverture des preuves attendues :
+\[
+\operatorname{Recall@K}(q_i)=\frac{|\mathcal{R}_i \cap \mathcal{T}_{i,K}|}{|\mathcal{R}_i|}.
+\]
+Le \textit{Hit Rate@K} indique si au moins une preuve pertinente apparaît dans les premiers résultats :
+\[
+\operatorname{HitRate@K}(q_i)=\mathbb{1}\{|\mathcal{R}_i \cap \mathcal{T}_{i,K}|>0\}.
+\]
+Le \textit{MRR@K} récompense les systèmes qui placent la première preuve utile très haut :
+\[
+\operatorname{MRR@K}=\frac{1}{Q}\sum_{i=1}^{Q}\frac{1}{\operatorname{rang}_i}.
+\]
+Le \textit{NDCG@K} complète ces métriques lorsque plusieurs preuves ont des degrés de pertinence différents :
+\[
+\operatorname{NDCG@K}=\frac{1}{\operatorname{IDCG@K}}\sum_{r=1}^{K}\frac{2^{rel_r}-1}{\log_2(r+1)}.
+\]
+Ces métriques sont adaptées au projet parce que la récupération n'est pas seulement vectorielle : elle combine similarité dense dans pgvector, signaux lexicaux, chemins du graphe Neo4j et relations de compétences. Une réponse générée ne doit donc pas être jugée avant d'avoir vérifié que ses preuves d'entrée sont pertinentes.
+
+\subsection{Évaluation de la réponse générée}
+
+La deuxième question est : une fois les preuves récupérées, le système produit-il une réponse fiable ? Trois critères sont utilisés. La \textit{fidélité} vérifie que la réponse ne contient pas d'information absente du contexte récupéré. Si $A_i$ est la réponse générée et $C_i$ le contexte fourni au \LLM{}, on peut représenter la fidélité comme une fonction de couverture des assertions :
+\[
+\operatorname{Faithfulness}(A_i,C_i)=\frac{\#\{\text{assertions de } A_i \text{ supportées par } C_i\}}{\#\{\text{assertions vérifiables de } A_i\}}.
+\]
+Une réponse qui invente un diplôme, une compétence ou une relation \MEPC{}--\ESCO{} non présente dans les sources doit être pénalisée, même si elle est bien rédigée.
+
+La \textit{pertinence de la réponse} mesure si le texte répond directement à la question :
+\[
+\operatorname{Rel}(A_i,q_i)=g(q_i,A_i),
+\]
+où $g$ peut être une grille humaine, un score lexical sémantique ou un juge \LLM{} contrôlé par une consigne stricte. Une réponse peut être fidèle aux sources mais hors sujet ; par exemple, citer correctement des compétences \ESCO{} alors que l'utilisateur demandait surtout les formations \NCF{} nécessaires.
+
+L'\textit{exactitude} compare la réponse à une vérité de terrain lorsque celle-ci existe :
+\[
+\operatorname{Correctness}(A_i,Y_i)=h(A_i,Y_i),
+\]
+avec $Y_i$ la réponse attendue. Cette métrique est plus exigeante que la fidélité : une réponse peut être sourcée mais incomplète par rapport à la réponse experte. Dans ce mémoire, l'exactitude doit donc être mobilisée lorsque des cas de test annotés sont disponibles : offre connue, candidat connu, compétences acquises, compétences manquantes et recommandations attendues.
+
+Un exemple illustre la différence. À la question \og Pourquoi le candidat C est-il recommandé pour l'offre O ? \fg{}, une réponse acceptable doit citer les compétences communes, signaler les compétences manquantes et rattacher l'explication aux sources. Si le contexte récupéré contient \og Python \fg{}, \og analyse de données \fg{} et \og licence en statistique \fg{}, mais pas \og maîtrise de Spark \fg{}, alors toute affirmation sur Spark baisse la fidélité. Si la réponse parle longuement du marché du travail sans expliquer le cas C--O, elle baisse en pertinence. Si la vérité de terrain indique trois compétences manquantes et que la réponse n'en mentionne qu'une, elle baisse en exactitude.
+
+\subsection{Juge \LLM{}, garde-fou local et évaluation humaine}
+
+Pour automatiser une partie de l'évaluation, un \LLM{} peut être utilisé comme juge. Cette approche est utile pour noter la fidélité, la pertinence ou la préférence entre deux réponses, mais elle ne doit pas être acceptée naïvement. Les travaux sur l'évaluation par \LLM{} recommandent des grilles explicites, un raisonnement justifié avant le score et une comparaison structurée des sorties \cite{liu2023geval}. La comparaison par paires est souvent plus robuste qu'une note isolée : le juge reçoit deux réponses $A$ et $B$ à la même question, l'ordre est randomisé pour limiter le biais de position, et l'option \og ex aequo \fg{} reste possible lorsque les deux réponses sont équivalentes.
+
+Dans l'implémentation actuelle, le module \filevar{answer\_critic.py} joue un rôle plus modeste et plus transparent : c'est un garde-fou lexical local. Il calcule notamment une fidélité approximative, une couverture des preuves, un proxy d'exactitude et une liste de termes non supportés. Ce choix est pragmatique pour le débogage local, car il permet de repérer rapidement une réponse qui s'éloigne du contexte, mais il ne remplace pas un jugement humain ni un vrai protocole \LLM{}-as-a-judge. Il faut donc l'interpréter comme un signal d'alerte, pas comme une certification scientifique.
+
+L'évaluation humaine demeure l'étalon le plus exigeant pour juger la fluidité, l'utilité et la valeur opérationnelle des réponses. Dans le domaine emploi-compétences, elle doit idéalement impliquer des profils capables de repérer les erreurs de nomenclature, les confusions entre compétence et diplôme, les recommandations irréalistes et les explications trop générales. La grille minimale comprend quatre notes : fidélité aux sources, réponse à la question, utilité pour l'utilisateur et risque d'orientation trompeuse.
+
+\subsection{Construction du jeu de test et optimisation orientée utilisateur}
+
+Un protocole robuste nécessite un jeu d'évaluation stable. Deux sources sont complémentaires. La première est experte : des cas offre--candidat sont annotés manuellement avec les compétences attendues, les compétences acquises, les manques et les justifications acceptables. La seconde est synthétique : des questions sont générées à partir des propres données du projet, puis contrôlées avant usage. Les questions synthétiques ne doivent pas être traitées comme une vérité automatique ; elles servent à élargir la couverture des scénarios, mais doivent être filtrées pour éviter les questions triviales ou mal posées.
+
+L'évaluation doit aussi exploiter les logs réels. Les requêtes utilisateurs peuvent être regroupées par thèmes à l'aide d'un clustering d'embeddings :
+\[
+\mathcal{C}_1,\ldots,\mathcal{C}_m = \operatorname{Cluster}\big(f_\theta(q_1),\ldots,f_\theta(q_N)\big).
+\]
+Cette étape permet d'identifier les familles de demandes dominantes : recherche d'offres, explication d'un score, compétences manquantes, formation recommandée, interrogation d'un référentiel. L'optimisation doit ensuite cibler les familles qui concentrent le plus de volume et de risque. Améliorer un cas spectaculaire mais rare ne suffit pas ; un système de production doit d'abord sécuriser les requêtes fréquentes.
+
+Des bibliothèques comme RAGAS proposent des métriques automatisées pour les pipelines \RAG{}, notamment la fidélité, la pertinence de la réponse, la précision du contexte et le rappel du contexte \cite{es2024ragas}. Leur intérêt est de rendre les itérations comparables : après une modification du chunking, du retriever hybride, du prompt ou du modèle génératif, les scores doivent être recalculés sur le même jeu de test. Une amélioration n'est crédible que si elle augmente les scores sur les cas importants sans dégrader les cas sensibles.
 
 
 \section{Synthèse de l'approche méthodologique}
