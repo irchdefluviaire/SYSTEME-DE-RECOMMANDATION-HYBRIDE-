@@ -50,7 +50,7 @@ def main() -> None:
     state = {
         "messages": [("user", query)],
         "top_k": args.top_k,
-        "backend": "ollama",
+        "backend": "openrouter",
     }
     if args.candidat:
         state["candidat_id"] = args.candidat
@@ -60,7 +60,7 @@ def main() -> None:
         printable = {
             "candidat_id": result.get("candidat_id"),
             "top_k": result.get("top_k"),
-            "backend": "ollama",
+            "backend": result.get("backend", "openrouter"),
             "traces": result.get("traces", []),
             "critic": result.get("critic", {}),
             "result": result.get("result", {}),

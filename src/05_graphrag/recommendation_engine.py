@@ -57,18 +57,35 @@ logging.basicConfig(
 # ─────────────────────────────────────────────────────────────────────────
 
 class LLMCaller:
-    """Appelle uniquement qwen2:1.5b via Ollama."""
+    """Appelle un LLM pour générer du JSON structuré.
 
-    def __init__(self, backend: str = "ollama"):
-        self.backend = "ollama"
-        self.base_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
-        self.api_key = os.getenv("LLM_API_KEY", "ollama")
-        self.model = "qwen2:1.5b"
+    Priorité de backend :
+      1. OpenRouter (si API_KEY_OPEN_ROUTEUR est définie dans .env)
+      2. Ollama local (fallback — nécessite que qwen2:1.5b soit installé)
+    """
+
+    _OPENROUTER_BASE = "https://openrouter.ai/api/v1"
+    _OPENROUTER_DEFAULT_MODEL = "meta-llama/llama-3.1-8b-instruct:free"
+
+    def __init__(self, backend: str = "auto"):
+        or_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
+
+        if backend == "openrouter" or (backend == "auto" and or_key):
+            self.backend = "openrouter"
+            self.base_url = os.getenv("OPENROUTER_BASE_URL", self._OPENROUTER_BASE).rstrip("/")
+            self.api_key = or_key
+            self.model = os.getenv("OPENROUTER_MODEL", self._OPENROUTER_DEFAULT_MODEL)
+        else:
+            self.backend = "ollama"
+            self.base_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
+            self.api_key = os.getenv("LLM_API_KEY", "ollama")
+            self.model = os.getenv("OLLAMA_MODEL", "qwen2:1.5b")
+
         self.timeout_s = int(os.getenv("LLM_TIMEOUT_S", "600"))
         self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1200"))
 
     def generate(self, system: str, user: str) -> str:
-        """Genere une reponse JSON avec qwen2:1.5b via Ollama."""
+        """Génère une réponse JSON via le backend configuré (OpenRouter ou Ollama)."""
         payload = {
             "model": self.model,
             "messages": format_openai_messages(system, user),
@@ -76,18 +93,24 @@ class LLMCaller:
             "max_tokens": self.max_tokens,
             "stream": False,
         }
+        headers: dict[str, str] = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.api_key}",
+        }
+        if self.backend == "openrouter":
+            headers["HTTP-Referer"] = "https://github.com/irchdefluviaire"
+            headers["X-Title"] = "Conseiller Emploi-Competences Cameroun"
+
         request = urllib.request.Request(
             f"{self.base_url}/chat/completions",
             data=json.dumps(payload).encode("utf-8"),
-            headers={
-                "Content-Type": "application/json",
-                "Authorization": f"Bearer {self.api_key}",
-            },
+            headers=headers,
             method="POST",
         )
         try:
             log.info(
-                "Appel Ollama local: model=%s timeout=%ss max_tokens=%s",
+                "Appel LLM [%s]: model=%s timeout=%ss max_tokens=%s",
+                self.backend,
                 self.model,
                 self.timeout_s,
                 self.max_tokens,
@@ -96,14 +119,19 @@ class LLMCaller:
                 body = json.loads(response.read().decode("utf-8"))
         except TimeoutError as exc:
             raise RuntimeError(
-                f"Timeout Ollama apres {self.timeout_s}s sur {self.base_url}. "
-                "Reduire --top-k / LLM_MAX_TOKENS ou augmenter LLM_TIMEOUT_S."
+                f"Timeout LLM après {self.timeout_s}s sur {self.base_url}. "
+                "Augmenter LLM_TIMEOUT_S ou réduire LLM_MAX_TOKENS."
             ) from exc
+        except urllib.error.HTTPError as exc:
+            detail = exc.read().decode("utf-8", errors="replace")
+            raise RuntimeError(f"LLM HTTP {exc.code} [{self.backend}]: {detail}") from exc
         except urllib.error.URLError as exc:
-            raise RuntimeError(
-                f"Ollama indisponible sur {self.base_url}. "
-                "Verifier que Ollama est lance et que qwen2:1.5b est installe."
-            ) from exc
+            if self.backend == "ollama":
+                raise RuntimeError(
+                    f"Ollama indisponible sur {self.base_url}. "
+                    "Vérifier qu'Ollama est lancé et que le modèle est installé."
+                ) from exc
+            raise RuntimeError(f"LLM inaccessible [{self.backend}]: {exc.reason}") from exc
 
         return self._extract_json(body["choices"][0]["message"]["content"])
 

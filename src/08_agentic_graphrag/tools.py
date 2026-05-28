@@ -117,7 +117,12 @@ def tool_service_status(_: dict[str, Any] | None = None) -> dict[str, Any]:
     else:
         status["st_model"] = "configured: sentence-transformers/all-MiniLM-L6-v2 fallback"
 
-    status["llm_backend"] = "ollama:qwen2:1.5b"
+    or_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
+    if or_key:
+        or_model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
+        status["llm_backend"] = f"openrouter:{or_model}"
+    else:
+        status["llm_backend"] = "ollama:" + os.getenv("OLLAMA_MODEL", "qwen2:1.5b") + " (OpenRouter key manquante)"
     return {"tool": "service_status", "status": status}
 
 
@@ -163,7 +168,8 @@ def tool_hybrid_candidate_recommendation(args: dict[str, Any]) -> dict[str, Any]
 
     candidat_id = str(args.get("candidat_id", "")).strip()
     top_k = int(args.get("top_k") or 5)
-    backend = "ollama"
+    or_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
+    backend = args.get("backend") or ("openrouter" if or_key else "ollama")
     engine = RecommendationEngine(
         neo4j_driver=get_neo4j_driver(),
         pg_conn=get_pg_conn(),
