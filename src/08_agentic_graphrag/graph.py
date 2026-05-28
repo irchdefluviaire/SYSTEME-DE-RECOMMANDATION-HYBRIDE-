@@ -1,9 +1,9 @@
 """
-Graphe LangGraph minimal pour orchestrer le moteur GraphRAG non-agentique.
+LangGraph orchestration for the Agentic GraphRAG workflow.
 
-Cette couche fournit une interface agentique stable pour LangGraph Studio,
-Streamlit et la CLI `run_agent.py`. Elle encapsule le moteur existant du module
-05 au lieu de dupliquer la logique de recherche pgvector/Neo4j.
+The workflow follows the image supplied by the user:
+query -> agent/planner -> tools -> context -> agent/synthesis -> final answer.
+Neo4j and PostgreSQL/pgvector are exposed as tools in tools.py.
 """
 
 from __future__ import annotations
@@ -11,36 +11,24 @@ from __future__ import annotations
 import os
 import re
 import sys
-from pathlib import Path
 from typing import Any
 
 from dotenv import load_dotenv
 from langchain_core.messages import AIMessage
 from langgraph.graph import END, START, MessagesState, StateGraph
 
+from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[2]
 SRC_05 = ROOT / "src" / "05_graphrag"
-SRC_04 = ROOT / "src" / "04_pgvector"
-SRC_03 = ROOT / "src" / "03_knowledge_graph"
 if str(SRC_05) not in sys.path:
     sys.path.insert(0, str(SRC_05))
-if str(SRC_04) not in sys.path:
-    sys.path.insert(0, str(SRC_04))
-if str(SRC_03) not in sys.path:
-    sys.path.insert(0, str(SRC_03))
-
 load_dotenv(ROOT / ".env")
 
-from recommendation_engine import RecommendationEngine  # noqa: E402
 from answer_critic import critique_answer  # noqa: E402
-from document_retriever import ParentDocumentRetriever  # noqa: E402
-from hybrid_search import hybrid_entity_search  # noqa: E402
-from text2cypher import run_text2cypher  # noqa: E402
+from tools import TOOL_REGISTRY  # noqa: E402
 
 DEFAULT_CANDIDAT_ID = "PPKOU2501080016340"
-_PG_CONN = None
-_NEO4J_DRIVER = None
-_ST_MODEL = None
 
 
 class AgentState(MessagesState, total=False):
@@ -49,23 +37,12 @@ class AgentState(MessagesState, total=False):
     backend: str
     use_case: str
     user_query: str
+    tool_calls: list[dict[str, Any]]
+    tool_results: list[dict[str, Any]]
+    context: dict[str, Any]
     result: dict[str, Any]
     critic: dict[str, Any]
     traces: list[str]
-
-
-def _extract_candidat_id(state: AgentState) -> str:
-    if state.get("candidat_id"):
-        return str(state["candidat_id"])
-
-    messages = state.get("messages", [])
-    if messages:
-        content = str(getattr(messages[-1], "content", messages[-1]))
-        match = re.search(r"\b[A-Z]{2,}[A-Z0-9]{8,}\b", content)
-        if match:
-            return match.group(0)
-
-    return DEFAULT_CANDIDAT_ID
 
 
 def _message_text(state: AgentState) -> str:
@@ -84,287 +61,262 @@ def _infer_use_case(text: str, candidat_id: str | None) -> str:
     q = text.lower()
     if any(w in q for w in ["status", "health", "etat", "diagnostic", "connect"]):
         return "diagnostic"
-    if any(w in q for w in ["ncf", "mepc", "diplome", "diplome", "referentiel", "classification"]):
+    if any(w in q for w in ["ncf", "mepc", "diplome", "referentiel", "classification"]):
         return "referentiel"
     if any(w in q for w in ["cypher", "relation", "relations", "graphe", "neo4j", "relie", "lier"]):
-        return "text2cypher"
+        return "graph_query"
     if candidat_id:
         if any(w in q for w in ["competence", "competences", "skill", "gap", "manquant", "roadmap", "formation"]):
             return "skill_gap_roadmap"
         return "recommendation_candidat"
-    if any(w in q for w in ["offre", "poste", "emploi", "recrute", "recrutement"]):
-        return "recherche_offres"
     if any(w in q for w in ["devenir", "orientation", "metier", "carriere", "competence", "competences"]):
         return "orientation_metier"
     return "recherche_generale"
 
 
-def _pg_dsn_from_env() -> str:
-    if os.getenv("PG_DSN"):
-        return str(os.getenv("PG_DSN"))
-    host = os.getenv("PG_HOST", "localhost")
-    port = os.getenv("PG_PORT", "5432")
-    db = os.getenv("PG_DB", "test_kmer")
-    user = os.getenv("PG_USER", "postgres")
-    password = os.getenv("PG_PASSWORD", "")
-    return f"postgresql://{user}:{password}@{host}:{port}/{db}"
-
-
-def _get_pg_conn():
-    global _PG_CONN
-    if _PG_CONN is not None:
-        try:
-            if not _PG_CONN.closed:
-                _PG_CONN.rollback()
-                return _PG_CONN
-        except Exception:
-            _PG_CONN = None
-    import psycopg
-
-    _PG_CONN = psycopg.connect(_pg_dsn_from_env())
-    _PG_CONN.autocommit = False
-    return _PG_CONN
-
-
-def _get_neo4j_driver():
-    global _NEO4J_DRIVER
-    if _NEO4J_DRIVER is not None:
-        return _NEO4J_DRIVER
-    from neo4j import GraphDatabase
-
-    _NEO4J_DRIVER = GraphDatabase.driver(
-        os.getenv("NEO4J_URI", "bolt://localhost:7687"),
-        auth=(os.getenv("NEO4J_USER", "neo4j"), os.getenv("NEO4J_PASSWORD", "")),
-    )
-    _NEO4J_DRIVER.verify_connectivity()
-    return _NEO4J_DRIVER
-
-
-def _get_st_model():
-    global _ST_MODEL
-    if _ST_MODEL is not None:
-        return _ST_MODEL
-    from sentence_transformers import SentenceTransformer
-
-    model_path = Path(os.getenv("MODEL_PATH", str(ROOT / "models" / "st_finetuned" / "final")))
-    if model_path.exists() and (model_path / "modules.json").exists():
-        _ST_MODEL = SentenceTransformer(str(model_path))
-    else:
-        _ST_MODEL = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-    return _ST_MODEL
-
-
-def _service_status() -> dict[str, str]:
-    status = {}
-    try:
-        with _get_pg_conn().cursor() as cur:
-            cur.execute("SELECT entity_kind::text, count(*) FROM embeddings GROUP BY entity_kind ORDER BY entity_kind")
-            rows = cur.fetchall()
-        status["pgvector"] = "connected: " + ", ".join(f"{k}={n}" for k, n in rows)
-    except Exception as exc:
-        status["pgvector"] = f"unavailable: {exc}"
-    try:
-        with _get_neo4j_driver().session(database=os.getenv("NEO4J_DATABASE", "neo4j")) as session:
-            n_nodes = session.run("MATCH (n) RETURN count(n) AS n").single()["n"]
-        status["neo4j"] = f"connected: nodes={n_nodes}"
-    except Exception as exc:
-        status["neo4j"] = f"unavailable: {exc}"
-    try:
-        model = _get_st_model()
-        get_dim = getattr(model, "get_embedding_dimension", model.get_sentence_embedding_dimension)
-        status["st_model"] = f"loaded: {get_dim()}d"
-    except Exception as exc:
-        status["st_model"] = f"unavailable: {exc}"
-    status["llm_backend"] = os.getenv("AGENT_LLM_BACKEND", os.getenv("LLM_BACKEND", "simulation"))
-    return status
-
-
-def _build_engine(backend: str, top_k: int) -> RecommendationEngine:
-    pg = None
-    neo4j = None
-    st_model = None
-    try:
-        pg = _get_pg_conn()
-    except Exception:
-        pg = None
-    try:
-        neo4j = _get_neo4j_driver()
-    except Exception:
-        neo4j = None
-    try:
-        st_model = _get_st_model()
-    except Exception:
-        st_model = None
-    return RecommendationEngine(
-        neo4j_driver=neo4j,
-        pg_conn=pg,
-        st_model=st_model,
-        llm_backend=backend,
-        top_k=top_k,
-    )
-
-
-def _search_entities(query: str, kinds: list[str], top_k: int) -> dict[str, list[dict]]:
-    conn = _get_pg_conn()
-    model = _get_st_model()
-    results = {}
-    for kind in kinds:
-        results[kind] = hybrid_entity_search(conn, model, query, kind, top_k)
-    return results
-
-
-def _search_docs(query: str, top_k: int) -> list[dict]:
-    conn = _get_pg_conn()
-    model = _get_st_model()
-    return ParentDocumentRetriever(conn, model, child_k=top_k).retrieve(query, top_k=top_k)
+def _tool_call(name: str, **args: Any) -> dict[str, Any]:
+    return {"name": name, "args": args}
 
 
 def analyse_request(state: AgentState) -> AgentState:
-    text = _message_text(state)
-    explicit_candidat_id = _find_candidat_id(text)
-    candidat_id = state.get("candidat_id") or explicit_candidat_id
+    query = _message_text(state)
+    explicit_candidat_id = _find_candidat_id(query)
+    candidat_id = state.get("candidat_id") or explicit_candidat_id or ""
     top_k = int(state.get("top_k") or os.getenv("AGENT_TOP_K", "5"))
-    backend = str(state.get("backend") or os.getenv("AGENT_LLM_BACKEND", "simulation"))
-    use_case = _infer_use_case(text, str(candidat_id) if candidat_id else None)
+    backend = "ollama"
+    use_case = _infer_use_case(query, candidat_id or None)
 
     return {
         **state,
-        "candidat_id": candidat_id or "",
+        "candidat_id": candidat_id,
         "top_k": top_k,
         "backend": backend,
         "use_case": use_case,
-        "user_query": text,
+        "user_query": query,
         "traces": [f"analyse_request:{use_case}"],
     }
 
 
-def run_graphrag(state: AgentState) -> AgentState:
-    use_case = state.get("use_case", "recherche_generale")
+def plan_tools(state: AgentState) -> AgentState:
+    """Select the database tools needed for the request."""
+
     query = state.get("user_query", "")
-    top_k = int(state["top_k"])
-    backend = str(state["backend"])
+    top_k = int(state.get("top_k", 5))
+    use_case = state.get("use_case", "recherche_generale")
+    candidat_id = state.get("candidat_id") or DEFAULT_CANDIDAT_ID
 
     if use_case == "diagnostic":
-        result = {"status": _service_status()}
+        tool_calls = [_tool_call("service_status")]
     elif use_case in {"recommendation_candidat", "skill_gap_roadmap"}:
-        candidat_id = state.get("candidat_id") or _extract_candidat_id(state)
-        engine = _build_engine(backend=backend, top_k=top_k)
-        result = engine.recommend(str(candidat_id))
+        tool_calls = [
+            _tool_call(
+                "hybrid_candidate_recommendation",
+                candidat_id=candidat_id,
+                top_k=top_k,
+                backend="ollama",
+            )
+        ]
     elif use_case == "referentiel":
-        result = {"documents": _search_docs(query, top_k)}
-    elif use_case == "text2cypher":
-        result = run_text2cypher(
-            _get_neo4j_driver(),
-            query,
-            database=os.getenv("NEO4J_DATABASE", "neo4j"),
-        )
+        tool_calls = [_tool_call("pgvector_document_search", query=query, top_k=top_k)]
+    elif use_case == "graph_query":
+        tool_calls = [_tool_call("neo4j_graph_query", query=query, top_k=top_k)]
     elif use_case == "orientation_metier":
-        result = {
-            "semantic_results": _search_entities(query, ["METIER", "COMPETENCE", "OFFRE_EMPLOI"], top_k),
-            "documents": _search_docs(query, min(top_k, 5)),
-        }
+        tool_calls = [
+            _tool_call(
+                "pgvector_semantic_search",
+                query=query,
+                kinds=["METIER", "COMPETENCE", "OFFRE_EMPLOI"],
+                top_k=top_k,
+            ),
+            _tool_call("pgvector_document_search", query=query, top_k=min(top_k, 5)),
+            _tool_call("neo4j_graph_query", query=query, top_k=top_k),
+        ]
     else:
-        result = {"semantic_results": _search_entities(query, ["OFFRE_EMPLOI", "METIER", "COMPETENCE"], top_k)}
+        tool_calls = [
+            _tool_call(
+                "pgvector_semantic_search",
+                query=query,
+                kinds=["OFFRE_EMPLOI", "METIER", "COMPETENCE"],
+                top_k=top_k,
+            )
+        ]
 
-    traces = [*state.get("traces", []), "recommendation_engine"]
-    return {**state, "result": result, "traces": traces}
+    traces = [*state.get("traces", []), "plan_tools:" + ",".join(t["name"] for t in tool_calls)]
+    return {**state, "tool_calls": tool_calls, "traces": traces}
+
+
+def execute_tools(state: AgentState) -> AgentState:
+    """Invoke selected tools and keep failures visible in the state."""
+
+    tool_results: list[dict[str, Any]] = []
+    traces = [*state.get("traces", [])]
+    for call in state.get("tool_calls", []):
+        name = call["name"]
+        args = call.get("args", {})
+        tool = TOOL_REGISTRY[name]
+        try:
+            result = tool(args)
+            tool_results.append(result)
+            traces.append(f"tool:{name}:ok")
+        except Exception as exc:
+            tool_results.append({"tool": name, "error": str(exc)})
+            traces.append(f"tool:{name}:error")
+
+    return {**state, "tool_results": tool_results, "traces": traces}
+
+
+def build_context(state: AgentState) -> AgentState:
+    """Normalize raw tool outputs into one context object for synthesis."""
+
+    context: dict[str, Any] = {
+        "query": state.get("user_query", ""),
+        "use_case": state.get("use_case", ""),
+        "tools": state.get("tool_results", []),
+    }
+    result: dict[str, Any] = {}
+    for item in state.get("tool_results", []):
+        tool_name = item.get("tool")
+        if item.get("error"):
+            result.setdefault("errors", []).append(item)
+            continue
+        if tool_name == "service_status":
+            result["status"] = item.get("status", {})
+        elif tool_name == "pgvector_semantic_search":
+            result["semantic_results"] = item.get("results", {})
+        elif tool_name == "pgvector_document_search":
+            result["documents"] = item.get("documents", [])
+        elif tool_name == "neo4j_graph_query":
+            result["graph"] = {"plan": item.get("plan", {}), "rows": item.get("rows", [])}
+        elif tool_name == "hybrid_candidate_recommendation":
+            result.update(item)
+
+    traces = [*state.get("traces", []), "build_context"]
+    return {**state, "context": context, "result": result, "traces": traces}
 
 
 def generate_final_answer(state: AgentState) -> AgentState:
     result = state.get("result", {})
     use_case = state.get("use_case", "recherche_generale")
 
-    if use_case == "diagnostic":
-        lines = ["Diagnostic de l'instance connectee:", ""]
-        for key, value in result.get("status", {}).items():
-            lines.append(f"- {key}: {value}")
-        answer = "\n".join(lines)
-        traces = [*state.get("traces", []), "generate_final_answer"]
-        return {
-            **state,
-            "traces": traces,
-            "messages": [*state.get("messages", []), AIMessage(content=answer)],
-        }
+    if result.get("errors") and len(result) == 1:
+        answer = _render_errors(result["errors"])
+        critic = {"decision": "revise", "reason": "all_tools_failed"}
+    elif use_case == "diagnostic":
+        answer = _render_diagnostic(result)
+        critic = {"decision": "accept"}
+    elif use_case == "referentiel":
+        answer = _render_documents(result.get("documents", []))
+        critic = critique_answer(answer, result.get("documents", []))
+    elif use_case == "graph_query":
+        graph_result = result.get("graph", {})
+        answer = _render_graph_rows(graph_result)
+        critic = critique_answer(answer, graph_result)
+    elif use_case in {"orientation_metier", "recherche_generale"}:
+        answer = _render_semantic_and_graph(result, int(state.get("top_k", 5)))
+        critic = critique_answer(answer, result)
+    else:
+        answer = _render_candidate_recommendation(state, result)
+        critic = critique_answer(answer, result)
 
-    if use_case == "referentiel":
-        docs = result.get("documents", [])
-        lines = ["Elements trouves dans les referentiels indexes:", ""]
-        for i, doc in enumerate(docs, 1):
-            lines.append(
-                f"{i}. {doc.get('source')} p.{doc.get('page_number')} "
-                f"- sim={doc.get('cosine_sim', 0):.3f}"
-            )
-            snippet = str(doc.get("parent_context") or doc.get("chunk_text", "")).replace("\n", " ")
-            lines.append(f"   {snippet[:260]}")
-        answer = "\n".join(lines)
-        critic = critique_answer(answer, docs)
-        traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
-        return {
-            **state,
-            "traces": traces,
-            "critic": critic,
-            "messages": [*state.get("messages", []), AIMessage(content=answer)],
-        }
+    traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
+    return {
+        **state,
+        "critic": critic,
+        "traces": traces,
+        "messages": [*state.get("messages", []), AIMessage(content=answer)],
+    }
 
-    if use_case == "text2cypher":
-        rows = result.get("rows", [])
-        plan = result.get("plan", {})
-        lines = [f"Requete graphe executee ({plan.get('intent', 'intent_non_precise')}):", ""]
-        for i, row in enumerate(rows[: int(state.get("top_k", 5))], 1):
-            rendered = " | ".join(f"{k}={v}" for k, v in row.items())
-            lines.append(f"{i}. {rendered}")
-        if not rows:
-            lines.append("Aucun resultat trouve dans Neo4j pour cette question.")
-        answer = "\n".join(lines)
-        critic = critique_answer(answer, rows)
-        traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
-        return {
-            **state,
-            "traces": traces,
-            "critic": critic,
-            "messages": [*state.get("messages", []), AIMessage(content=answer)],
-        }
 
-    if use_case in {"orientation_metier", "recherche_offres", "recherche_generale"}:
-        semantic_results = result.get("semantic_results", {})
-        lines = ["Resultats semantiques pgvector pour la requete:", ""]
+def _render_errors(errors: list[dict[str, Any]]) -> str:
+    lines = ["Aucun outil n'a pu retourner de contexte exploitable.", ""]
+    for err in errors:
+        lines.append(f"- {err.get('tool')}: {err.get('error')}")
+    return "\n".join(lines)
+
+
+def _render_diagnostic(result: dict[str, Any]) -> str:
+    lines = ["Diagnostic de l'instance connectee:", ""]
+    for key, value in result.get("status", {}).items():
+        lines.append(f"- {key}: {value}")
+    return "\n".join(lines)
+
+
+def _render_documents(docs: list[dict[str, Any]]) -> str:
+    lines = ["Elements trouves dans les referentiels indexes:", ""]
+    for i, doc in enumerate(docs, 1):
+        lines.append(
+            f"{i}. {doc.get('source')} p.{doc.get('page_number')} "
+            f"- sim={doc.get('cosine_sim', 0):.3f}"
+        )
+        snippet = str(doc.get("parent_context") or doc.get("chunk_text", "")).replace("\n", " ")
+        lines.append(f"   {snippet[:260]}")
+    if not docs:
+        lines.append("Aucun document pertinent trouve dans pgvector.")
+    return "\n".join(lines)
+
+
+def _render_graph_rows(graph_result: dict[str, Any]) -> str:
+    rows = graph_result.get("rows", [])
+    plan = graph_result.get("plan", {})
+    lines = [f"Requete graphe Neo4j executee ({plan.get('intent', 'intent_non_precise')}):", ""]
+    for i, row in enumerate(rows, 1):
+        rendered = " | ".join(f"{k}={v}" for k, v in row.items())
+        lines.append(f"{i}. {rendered}")
+    if not rows:
+        lines.append("Aucun resultat trouve dans Neo4j pour cette question.")
+    return "\n".join(lines)
+
+
+def _render_semantic_and_graph(result: dict[str, Any], top_k: int) -> str:
+    lines = ["Contexte recupere par les tools:", ""]
+
+    semantic_results = result.get("semantic_results", {})
+    if semantic_results:
+        lines.append("pgvector - recherche semantique hybride:")
         for kind, rows in semantic_results.items():
             lines.append(f"{kind}:")
-            for i, row in enumerate(rows[: int(state.get("top_k", 5))], 1):
-                label = row.get("label", "")
-                entity_id = row.get("entity_id", "")
+            for i, row in enumerate(rows[:top_k], 1):
                 score = row.get("dense_score", row.get("cosine_sim", row.get("rrf_score", 0)))
                 lexical = row.get("lexical_score", 0)
                 lines.append(
-                    f"  {i}. {label} [{entity_id}] "
+                    f"  {i}. {row.get('label', '')} [{row.get('entity_id', '')}] "
                     f"- dense={float(score or 0):.3f} lexical={float(lexical or 0):.3f}"
                 )
-            lines.append("")
-        docs = result.get("documents") or []
-        if docs:
-            lines.append("Appuis referentiels:")
-            for doc in docs[:3]:
-                lines.append(
-                    f"- {doc.get('source')} p.{doc.get('page_number')}: "
-                    f"{str(doc.get('chunk_text', '')).replace(chr(10), ' ')[:180]}"
-                )
-        answer = "\n".join(lines).strip()
-        critic = critique_answer(answer, result)
-        traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
-        return {
-            **state,
-            "traces": traces,
-            "critic": critic,
-            "messages": [*state.get("messages", []), AIMessage(content=answer)],
-        }
 
-    top_offres = result.get("top_offres", [])
+    graph_result = result.get("graph")
+    if graph_result:
+        lines.extend(["", "Neo4j - relations graphe:"])
+        rows = graph_result.get("rows", [])
+        for i, row in enumerate(rows[:top_k], 1):
+            rendered = " | ".join(f"{k}={v}" for k, v in row.items())
+            lines.append(f"  {i}. {rendered}")
+        if not rows:
+            lines.append("  Aucun lien graphe retourne.")
+
+    docs = result.get("documents") or []
+    if docs:
+        lines.extend(["", "pgvector - appuis referentiels:"])
+        for doc in docs[:3]:
+            lines.append(
+                f"- {doc.get('source')} p.{doc.get('page_number')}: "
+                f"{str(doc.get('chunk_text', '')).replace(chr(10), ' ')[:180]}"
+            )
+
+    if result.get("errors"):
+        lines.extend(["", "Outils en erreur:"])
+        for err in result["errors"]:
+            lines.append(f"- {err.get('tool')}: {err.get('error')}")
+
+    return "\n".join(lines).strip()
+
+
+def _render_candidate_recommendation(state: AgentState, result: dict[str, Any]) -> str:
     candidat = result.get("candidat", {})
-
+    top_offres = result.get("top_offres", [])
     lines = [
         f"Analyse du candidat {state.get('candidat_id')} - {candidat.get('metier_vise', '')}",
         "",
-        "Top offres recommandees:",
+        "Top offres recommandees par le tool hybride Neo4j + pgvector:",
     ]
     for i, offre in enumerate(top_offres[: int(state.get("top_k", 5))], 1):
         lines.append(
@@ -375,14 +327,16 @@ def generate_final_answer(state: AgentState) -> AgentState:
 
     skill_gap = result.get("skill_gap") or {}
     if skill_gap:
-        lines.extend([
-            "",
-            f"Skill gap: {skill_gap.get('niveau_gap', 'non precise')} "
-            f"(taux={skill_gap.get('taux_matching', 0)})",
-        ])
+        lines.extend(
+            [
+                "",
+                f"Skill gap: {skill_gap.get('niveau_gap', 'non precise')} "
+                f"(taux={skill_gap.get('taux_matching', 0)})",
+            ]
+        )
 
     roadmap = result.get("roadmap") or {}
-    if use_case == "skill_gap_roadmap" and roadmap:
+    if state.get("use_case") == "skill_gap_roadmap" and roadmap:
         lines.extend(["", "Roadmap:"])
         for step in roadmap.get("etapes", [])[:5]:
             lines.append(
@@ -390,24 +344,25 @@ def generate_final_answer(state: AgentState) -> AgentState:
                 f"({step.get('delai_acquisition', 'delai non precise')})"
             )
 
-    answer = "\n".join(lines)
-    critic = critique_answer(answer, result)
-    traces = [*state.get("traces", []), "generate_final_answer", "answer_critic"]
-    return {
-        **state,
-        "traces": traces,
-        "critic": critic,
-        "messages": [*state.get("messages", []), AIMessage(content=answer)],
-    }
+    if result.get("errors"):
+        lines.extend(["", "Outils en erreur:"])
+        for err in result["errors"]:
+            lines.append(f"- {err.get('tool')}: {err.get('error')}")
+
+    return "\n".join(lines)
 
 
 workflow = StateGraph(AgentState)
 workflow.add_node("analyse_request", analyse_request)
-workflow.add_node("run_graphrag", run_graphrag)
+workflow.add_node("plan_tools", plan_tools)
+workflow.add_node("execute_tools", execute_tools)
+workflow.add_node("build_context", build_context)
 workflow.add_node("generate_final_answer", generate_final_answer)
 workflow.add_edge(START, "analyse_request")
-workflow.add_edge("analyse_request", "run_graphrag")
-workflow.add_edge("run_graphrag", "generate_final_answer")
+workflow.add_edge("analyse_request", "plan_tools")
+workflow.add_edge("plan_tools", "execute_tools")
+workflow.add_edge("execute_tools", "build_context")
+workflow.add_edge("build_context", "generate_final_answer")
 workflow.add_edge("generate_final_answer", END)
 
 graph = workflow.compile()

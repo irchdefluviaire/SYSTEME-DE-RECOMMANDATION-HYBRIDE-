@@ -1,7 +1,11 @@
 """
-Interface Streamlit — Chatbot Agentic GraphRAG Emploi-Compétences Cameroun
-Lancement : streamlit run chatbot_app.py
+Interface Streamlit - Chatbot Agentic GraphRAG Emploi-Competences Cameroun.
+
+Lancement:
+    poetry run streamlit run chatbot_app.py --server.port=8501 --server.address=127.0.0.1
 """
+
+from __future__ import annotations
 
 import sys
 import time
@@ -9,189 +13,158 @@ from pathlib import Path
 
 import streamlit as st
 
-# ─── Chemins ──────────────────────────────────────────────────────────────────
+
 ROOT = Path(__file__).resolve().parent
-SRC  = ROOT / "src"
-for _p in [
+SRC = ROOT / "src"
+for module_path in [
     SRC / "08_agentic_graphrag",
     SRC / "05_graphrag",
     SRC / "04_pgvector",
     SRC / "03_knowledge_graph",
 ]:
-    _s = str(_p)
-    if _s not in sys.path:
-        sys.path.insert(0, _s)
+    module_path_str = str(module_path)
+    if module_path_str not in sys.path:
+        sys.path.insert(0, module_path_str)
 
-# ─── Page ─────────────────────────────────────────────────────────────────────
+
 st.set_page_config(
-    page_title="Conseiller Emploi-Compétences",
-    page_icon="🇨🇲",
+    page_title="Conseiller Emploi-Competences",
+    page_icon="CM",
     layout="wide",
     initial_sidebar_state="expanded",
 )
 
-# ─── Chargement du graph (mis en cache) ───────────────────────────────────────
-@st.cache_resource(show_spinner="Chargement du moteur GraphRAG…")
+
+@st.cache_resource(show_spinner="Chargement du moteur GraphRAG...")
 def load_graph():
-    from graph import graph as lg  # noqa: PLC0415
-    return lg
+    from graph import graph as langgraph_app  # noqa: PLC0415
+
+    return langgraph_app
 
 
-# ─── CSS minimal ──────────────────────────────────────────────────────────────
-st.markdown(
-    """
-    <style>
-    .stChatMessage { border-radius: 12px; }
-    .st-emotion-cache-1c7y2kd { background: #f0f4ff; }
-    .trace-box { font-size: 0.78rem; color: #555; background: #fafafa;
-                 border-left: 3px solid #6c8ebf; padding: 8px 12px;
-                 border-radius: 4px; margin-top: 4px; }
-    </style>
-    """,
-    unsafe_allow_html=True,
-)
+def render_trace_items(traces: list[str]) -> None:
+    for trace in traces:
+        st.code(str(trace), language="text")
 
-# ─── Sidebar ──────────────────────────────────────────────────────────────────
+
 with st.sidebar:
-    st.image("https://img.icons8.com/color/96/cameroon.png", width=64)
-    st.title("Paramètres")
+    st.title("Parametres")
     st.divider()
 
     candidat_id_input = st.text_input(
-        "ID Candidat (optionnel)",
-        placeholder="ex : PP001, CAND_042",
-        help="Laissez vide pour une question d'orientation générale.",
+        "ID candidat (optionnel)",
+        placeholder="ex : PPKOU2501080016340",
+        help="Laissez vide pour une question d'orientation generale.",
     )
 
-    top_k = st.slider("Nombre d'offres à analyser (top-k)", 3, 20, 5)
-
+    top_k = st.slider("Nombre de resultats", 1, 20, 5)
     show_traces = st.toggle("Afficher les traces du workflow", value=False)
 
     st.divider()
     st.markdown("**Exemples de questions**")
     examples = [
-        "Montre-moi les meilleures offres pour PP001",
-        "Quelles compétences dois-je développer pour travailler en data science dans une banque ?",
-        "Analyse le profil CAND_010 et propose une roadmap",
-        "Je veux devenir data analyst, que faire ?",
+        "diagnostic connexion pgvector neo4j",
+        "Montre-moi les meilleures offres pour PPKOU2501080016340",
+        "Analyse le skill gap du candidat PPKOU2501080016340 et propose une roadmap de formation",
+        "Je veux devenir data analyst dans une banque",
+        "Explique la classification NCF pour informatique",
+        "dans le graphe quelles competences sont liees a transit",
     ]
-    for ex in examples:
-        if st.button(ex, use_container_width=True, key=ex):
-            st.session_state["_prefill"] = ex
+    for idx, example in enumerate(examples):
+        if st.button(example, use_container_width=True, key=f"example_{idx}"):
+            st.session_state["pending_input"] = example
+            st.rerun()
 
     st.divider()
-    if st.button("🗑️ Effacer la conversation", use_container_width=True):
+    if st.button("Effacer la conversation", use_container_width=True):
         st.session_state["messages"] = []
+        st.session_state.pop("pending_input", None)
         st.rerun()
 
-    st.caption("GraphRAG · pgvector · Neo4j · LangGraph")
+    st.caption("GraphRAG | pgvector | Neo4j | LangGraph")
 
-# ─── En-tête principal ────────────────────────────────────────────────────────
-st.markdown("## 🤖 Conseiller Emploi-Compétences — Cameroun")
+
+st.markdown("## Conseiller Emploi-Competences - Cameroun")
 st.caption(
-    "Posez vos questions en langage naturel. "
-    "Le système interroge pgvector + Neo4j et génère une réponse via Llama 3.1."
+    "Posez une question en langage naturel. Le systeme interroge pgvector, "
+    "Neo4j, les referentiels indexes et le workflow LangGraph."
 )
 st.divider()
 
-# ─── Historique ───────────────────────────────────────────────────────────────
 if "messages" not in st.session_state:
     st.session_state["messages"] = []
 
-for msg in st.session_state["messages"]:
-    with st.chat_message(msg["role"], avatar="🧑" if msg["role"] == "user" else "🤖"):
-        st.markdown(msg["content"])
-        if show_traces and msg.get("traces"):
-            with st.expander("Outils appelés", expanded=False):
-                for tool_name in msg["traces"]:
-                    st.markdown(
-                        f'<div class="trace-box">🔧 <b>{tool_name}</b></div>',
-                        unsafe_allow_html=True,
-                    )
+for stored_msg in st.session_state["messages"]:
+    with st.chat_message(stored_msg["role"]):
+        st.markdown(stored_msg["content"])
+        if show_traces and stored_msg.get("traces"):
+            with st.expander("Traces du workflow", expanded=False):
+                render_trace_items(stored_msg["traces"])
+        if show_traces and stored_msg.get("critic"):
+            with st.expander("Critique de fidelite", expanded=False):
+                st.json(stored_msg["critic"])
 
-# ─── Zone de saisie ───────────────────────────────────────────────────────────
-prefill = st.session_state.pop("_prefill", "")
-user_input = st.chat_input(
-    "Posez votre question… (ex : Montre-moi les offres pour PP001)",
-    key="chat_input",
-) or prefill
+
+pending_input = st.session_state.pop("pending_input", "")
+typed_input = st.chat_input(
+    "Posez votre question... ex : Montre-moi les offres pour PPKOU2501080016340"
+)
+user_input = typed_input or pending_input
 
 if user_input:
-    # Affiche le message utilisateur
-    with st.chat_message("user", avatar="🧑"):
+    with st.chat_message("user"):
         st.markdown(user_input)
     st.session_state["messages"].append({"role": "user", "content": user_input})
 
-    # Prépare l'input du workflow
-    agent_input: dict = {"message": user_input, "top_k": top_k}
-    if candidat_id_input.strip():
-        agent_input["candidat_id"] = candidat_id_input.strip()
-
-    # Lance le workflow LangGraph (ReAct agent)
-    with st.chat_message("assistant", avatar="🤖"):
-        placeholder = st.empty()
-        placeholder.markdown("_Analyse en cours…_ ⏳")
-
+    with st.chat_message("assistant"):
+        answer = ""
+        traces: list[str] = []
+        critic = {}
         try:
-            g = load_graph()
-            t0 = time.time()
+            with st.spinner("Analyse en cours..."):
+                graph = load_graph()
+                t0 = time.time()
+                agent_input = {
+                    "messages": [("user", user_input)],
+                    "top_k": top_k,
+                }
+                if candidat_id_input.strip():
+                    agent_input["candidat_id"] = candidat_id_input.strip()
 
-            # Format d'entrée ReAct agent : messages list
-            agent_input_fmt = {
-                "messages": [("user", user_input)],
-                "top_k": top_k,
-            }
-            if candidat_id_input.strip():
-                agent_input_fmt["candidat_id"] = candidat_id_input.strip()
+                result = graph.invoke(agent_input)
+                elapsed = round(time.time() - t0, 1)
 
-            result = g.invoke(agent_input_fmt)
-            elapsed = round(time.time() - t0, 1)
+            for message in reversed(result.get("messages", [])):
+                if hasattr(message, "content") and message.content and getattr(message, "type", "") == "ai":
+                    answer = str(message.content)
+                    break
 
-            # Extraire la dernière réponse AI
-            messages = result.get("messages", [])
-            answer = ""
-            tool_calls_used = []
-            for msg in reversed(messages):
-                # Réponse finale de l'agent
-                if hasattr(msg, "content") and msg.content and getattr(msg, "type", "") == "ai":
-                    if not getattr(msg, "tool_calls", None):
-                        answer = str(msg.content)
-                        break
             if not answer:
-                answer = "Aucune réponse générée."
+                answer = "Aucune reponse generee."
 
-            # Collecter les outils appelés pour les traces
-            for msg in messages:
-                if hasattr(msg, "tool_calls") and msg.tool_calls:
-                    for tc in msg.tool_calls:
-                        tool_calls_used.append(tc.get("name", "?"))
+            traces = [str(trace) for trace in result.get("traces", [])]
+            critic = result.get("critic", {}) or {}
 
-            placeholder.markdown(answer)
-            tools_str = " → ".join(tool_calls_used) if tool_calls_used else "aucun outil"
-            st.caption(f"_{elapsed}s · outils : {tools_str}_")
+            st.markdown(answer)
+            trace_label = " -> ".join(traces) if traces else "aucune trace"
+            st.caption(f"{elapsed}s | workflow : {trace_label}")
 
-            if show_traces and tool_calls_used:
-                with st.expander("Outils appelés par l'agent", expanded=False):
-                    for i, msg in enumerate(messages):
-                        if hasattr(msg, "tool_calls") and msg.tool_calls:
-                            for tc in msg.tool_calls:
-                                st.markdown(
-                                    f'<div class="trace-box">🔧 <b>{tc.get("name","?")}</b> '
-                                    f'— args: {tc.get("args", {})}</div>',
-                                    unsafe_allow_html=True,
-                                )
-                        if getattr(msg, "type", "") == "tool":
-                            content_preview = str(getattr(msg, "content", ""))[:300]
-                            st.markdown(
-                                f'<div class="trace-box">📦 Résultat outil : {content_preview}…</div>',
-                                unsafe_allow_html=True,
-                            )
+            if show_traces and traces:
+                with st.expander("Traces du workflow", expanded=False):
+                    render_trace_items(traces)
+            if show_traces and critic:
+                with st.expander("Critique de fidelite", expanded=False):
+                    st.json(critic)
 
         except Exception as exc:
-            answer = f"⚠️ Erreur : `{exc}`"
-            tool_calls_used = []
-            placeholder.error(answer)
+            answer = f"Erreur : `{exc}`"
+            st.error(answer)
 
     st.session_state["messages"].append(
-        {"role": "assistant", "content": answer, "traces": tool_calls_used}
+        {
+            "role": "assistant",
+            "content": answer,
+            "traces": traces,
+            "critic": critic,
+        }
     )

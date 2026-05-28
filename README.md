@@ -605,31 +605,22 @@ Le graphe LangGraph est declare dans `langgraph.json`:
 }
 ```
 
-Workflow documente dans `src/08_agentic_graphrag/README.md`:
+Workflow implemente dans `src/08_agentic_graphrag/graph.py`:
 
-1. `analyse_request`              parse de la requete et de l'intent
-2. `load_profile`                 chargement du profil candidat (Neo4j)
-3. `retrieve_and_check_graph`     recherche graphe ponderee
-4. `retrieve_vector`              recherche pgvector ANN
-5. `compute_skill_gap`            ecart competences ESCO
-6. `score_and_rank`               score hybride explicable
-7. `critique_recommendations`     LLM-as-judge + replanification
-8. `create_roadmap`               chemin NCF pondere
-9. `generate_final_answer`        verdict + explication + citations PDFs
+1. `analyse_request`              parse de la requete, du candidat et de l'intent
+2. `plan_tools`                   selection des tools utiles
+3. `execute_tools`                appel des tools pgvector et/ou Neo4j
+4. `build_context`                normalisation du contexte recupere
+5. `generate_final_answer`        synthese finale + critique de fidelite
 
 Tools exposes a l'agent (`src/08_agentic_graphrag/tools.py`):
 
 ```text
-vector_search_offres            recherche ANN dans pgvector
-graph_search_compatibles        Cypher avec contraintes NCF/secteur
-hybrid_search                   combine vecteur + graphe
-get_skill_neighbors             voisins ESCO d'une competence
-compute_skill_gap_esco          intersection POSSEDE / REQUIERT
-ncf_compatibility               compatibilite de niveaux
-find_formations_pour_gap        formations comblant un skill gap
-search_referentiel              recherche dans les PDFs (NCF, MEPC)
-cite_reference                  citation officielle d'un concept
-classify_verdict                regle deterministe vers les 4 verdicts
+service_status                    diagnostic pgvector, Neo4j et modele embeddings
+pgvector_semantic_search          recherche dense + lexicale sur les entites metier
+pgvector_document_search          recherche vectorielle dans les referentiels indexes
+neo4j_graph_query                 Text2Cypher read-only vers Neo4j
+hybrid_candidate_recommendation   recommandation candidat via moteur Neo4j + pgvector
 ```
 
 Test CLI direct:

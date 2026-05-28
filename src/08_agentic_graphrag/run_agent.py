@@ -31,12 +31,6 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--candidat", default=None, help="Identifiant candidat")
     parser.add_argument("--top-k", type=int, default=5, help="Nombre d'offres")
     parser.add_argument(
-        "--backend",
-        choices=["simulation", "llama"],
-        default="simulation",
-        help="Backend LLM du moteur GraphRAG",
-    )
-    parser.add_argument(
         "--json",
         action="store_true",
         help="Afficher l'etat final complet en JSON compact",
@@ -56,7 +50,7 @@ def main() -> None:
     state = {
         "messages": [("user", query)],
         "top_k": args.top_k,
-        "backend": args.backend,
+        "backend": "ollama",
     }
     if args.candidat:
         state["candidat_id"] = args.candidat
@@ -66,7 +60,7 @@ def main() -> None:
         printable = {
             "candidat_id": result.get("candidat_id"),
             "top_k": result.get("top_k"),
-            "backend": result.get("backend"),
+            "backend": "ollama",
             "traces": result.get("traces", []),
             "critic": result.get("critic", {}),
             "result": result.get("result", {}),

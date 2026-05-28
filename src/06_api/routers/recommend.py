@@ -112,9 +112,6 @@ async def recommend(
     try:
         # Changer le top_k et le backend à la volée si demandé
         engine.top_k = request.top_k
-        if hasattr(engine, "llm"):
-            engine.llm.backend = request.llm_backend
-
         result = engine.recommend(request.profil.candidat_id)
 
     except ValueError as e:
@@ -147,7 +144,7 @@ async def recommend(
         roadmap=_parse_roadmap(result.get("roadmap", {}))
             if request.include_roadmap else None,
         latence_ms=latence_ms,
-        llm_backend=request.llm_backend,
+        llm_backend="ollama:qwen2:1.5b",
     )
 
 
@@ -186,5 +183,5 @@ async def recommend_by_id(
         prochaine_action=rec_data.get("prochaine_action"),
         roadmap=_parse_roadmap(result.get("roadmap", {})) if include_roadmap else None,
         latence_ms=latence_ms,
-        llm_backend="simulation",
+        llm_backend="ollama:qwen2:1.5b",
     )

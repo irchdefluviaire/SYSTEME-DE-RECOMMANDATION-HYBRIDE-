@@ -117,7 +117,7 @@ def get_pg():
 # MOTEUR DE RECOMMANDATION
 # ─────────────────────────────────────────────────────────────────────────
 
-def init_engine(llm_backend: str = "simulation") -> None:
+def init_engine(llm_backend: str = "ollama") -> None:
     """Instancie le moteur GraphRAG avec les connexions disponibles."""
     global _recommendation_engine
     import sys
@@ -158,8 +158,8 @@ def get_services_status() -> dict:
         ),
         "llm": (
             getattr(_recommendation_engine, "llm", None)
-            and getattr(_recommendation_engine.llm, "backend", "simulation")
-            or "simulation"
+            and f"{getattr(_recommendation_engine.llm, 'backend', 'ollama')}:{getattr(_recommendation_engine.llm, 'model', 'qwen2:1.5b')}"
+            or "ollama:qwen2:1.5b"
         ),
     }
 

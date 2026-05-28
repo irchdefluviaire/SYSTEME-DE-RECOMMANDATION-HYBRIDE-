@@ -19,7 +19,7 @@ Lancement :
   uvicorn main:app --workers 4   # production
 
 Variables d'environnement :
-  LLM_BACKEND=simulation|mistral|openai
+  LLM local unique: Ollama qwen2:1.5b
   NEO4J_URI=bolt://localhost:7687
   NEO4J_PASSWORD=password
   PG_DSN=postgresql://postgres:password@localhost:5432/recommandation
@@ -108,7 +108,7 @@ async def lifespan(app: FastAPI):
     log.info(f"  pgvector : {'OK' if pg_ok else 'indisponible (mode dégradé)'}")
 
     # 4. Instancier le moteur de recommandation
-    llm_backend = os.getenv("LLM_BACKEND", "simulation")
+    llm_backend = "ollama"
     init_engine(llm_backend=llm_backend)
     log.info(f"  LLM 2    : {llm_backend}")
 
@@ -251,7 +251,7 @@ Vérifie la disponibilité de tous les services :
 - SentenceTransformer fine-tuné (LLM 1)
 - Neo4j (graphe de connaissances)
 - PostgreSQL / pgvector (embeddings HNSW)
-- Backend LLM 2 (simulation / mistral / openai)
+- Backend LLM 2 local (Ollama qwen2:1.5b)
 """,
 )
 async def health():

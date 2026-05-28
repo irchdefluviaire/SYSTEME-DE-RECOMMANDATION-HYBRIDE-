@@ -5,7 +5,7 @@ Module 05 — Moteur de recommandation hybride (GraphRAG)
 
 Orchestre le pipeline complet :
   1. Context builder (pgvector ANN + Neo4j Cypher)
-  2. LLM 2 génératif (llama3.1 local via Ollama) ou simulation
+  2. LLM 2 local qwen2:1.5b via Ollama
   3. Sauvegarde des résultats (PostgreSQL)
 
 Usage :
@@ -40,7 +40,7 @@ from prompt_templates   import (
     SYSTEM_RECOMMANDATION, USER_RECOMMANDATION,
     SYSTEM_SKILL_GAP,      USER_SKILL_GAP,
     SYSTEM_ROADMAP,        USER_ROADMAP,
-    format_chatml, format_openai_messages,
+    format_openai_messages,
     get_formations,
 )
 
@@ -57,91 +57,18 @@ logging.basicConfig(
 # ─────────────────────────────────────────────────────────────────────────
 
 class LLMCaller:
-    """
-    Appelle le LLM 2 génératif.
-    Supporte : llama3.1 local via Ollama ou simulation.
-    """
+    """Appelle uniquement qwen2:1.5b via Ollama."""
 
-    def __init__(self, backend: str = "simulation"):
-        """
-        backend :
-          "llama"      -> llama3.1 local via Ollama/OpenAI-compatible API
-          "simulation" -> Reponse JSON simulee (demo sans LLM)
-        """
-        self.backend = backend
-        self._model  = None
-        self._pipe   = None
-        self._client = None
+    def __init__(self, backend: str = "ollama"):
+        self.backend = "ollama"
         self.base_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
         self.api_key = os.getenv("LLM_API_KEY", "ollama")
-        self.model = os.getenv("LLM_CHOICE", "llama3.1:latest")
+        self.model = "qwen2:1.5b"
         self.timeout_s = int(os.getenv("LLM_TIMEOUT_S", "600"))
         self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1200"))
 
-    def _load_mistral(self):
-        from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, BitsAndBytesConfig
-        import torch
-
-        bnb_config = BitsAndBytesConfig(
-            load_in_4bit=True,
-            bnb_4bit_quant_type="nf4",
-            bnb_4bit_compute_dtype=torch.bfloat16,
-            bnb_4bit_use_double_quant=True,
-        )
-        model_id = "mistralai/Mistral-7B-Instruct-v0.3"
-        tokenizer = AutoTokenizer.from_pretrained(model_id)
-        model = AutoModelForCausalLM.from_pretrained(
-            model_id, quantization_config=bnb_config, device_map="auto"
-        )
-        self._pipe = pipeline(
-            "text-generation", model=model, tokenizer=tokenizer,
-            max_new_tokens=1024, temperature=0.1, do_sample=False,
-        )
-        log.info("Mistral-7B-Instruct chargé (4-bit NF4)")
-
-    def _load_openai(self):
-        import openai
-        self._client = openai.OpenAI()
-        log.info("Client OpenAI initialisé")
-
     def generate(self, system: str, user: str) -> str:
-        """Génère une réponse JSON à partir du system + user prompt."""
-
-        if self.backend == "llama":
-            return self._call_llama(system, user)
-
-        if self.backend in {"mistral", "openai"}:
-            raise ValueError("Backend retire: utiliser 'simulation' ou 'llama'.")
-
-        if self.backend == "mistral":
-            if self._pipe is None:
-                self._load_mistral()
-            prompt = format_chatml(system, user)
-            output = self._pipe(prompt)[0]["generated_text"]
-            # Extraire la partie après [/INST]
-            response = output.split("[/INST]")[-1].strip()
-            return self._extract_json(response)
-
-        elif self.backend == "openai":
-            if self._client is None:
-                self._load_openai()
-            messages = format_openai_messages(system, user)
-            completion = self._client.chat.completions.create(
-                model="gpt-4o",
-                messages=messages,
-                response_format={"type": "json_object"},
-                temperature=0.1,
-                max_tokens=2000,
-            )
-            return completion.choices[0].message.content
-
-        elif self.backend == "simulation":
-            return self._simulate_response(user)
-
-        raise ValueError(f"Backend LLM inconnu: {self.backend!r}")
-
-    def _call_llama(self, system: str, user: str) -> str:
-        """Appelle llama3.1 via Ollama en mode OpenAI-compatible."""
+        """Genere une reponse JSON avec qwen2:1.5b via Ollama."""
         payload = {
             "model": self.model,
             "messages": format_openai_messages(system, user),
@@ -160,7 +87,7 @@ class LLMCaller:
         )
         try:
             log.info(
-                "Appel llama local: model=%s timeout=%ss max_tokens=%s",
+                "Appel Ollama local: model=%s timeout=%ss max_tokens=%s",
                 self.model,
                 self.timeout_s,
                 self.max_tokens,
@@ -170,143 +97,23 @@ class LLMCaller:
         except TimeoutError as exc:
             raise RuntimeError(
                 f"Timeout Ollama apres {self.timeout_s}s sur {self.base_url}. "
-                "Augmenter LLM_TIMEOUT_S ou reduire --top-k / LLM_MAX_TOKENS."
+                "Reduire --top-k / LLM_MAX_TOKENS ou augmenter LLM_TIMEOUT_S."
             ) from exc
         except urllib.error.URLError as exc:
             raise RuntimeError(
-                f"Backend llama indisponible sur {self.base_url}. "
-                "Verifier que Ollama est lance et que llama3.1:latest est installe."
+                f"Ollama indisponible sur {self.base_url}. "
+                "Verifier que Ollama est lance et que qwen2:1.5b est installe."
             ) from exc
 
-        content = body["choices"][0]["message"]["content"]
-        return self._extract_json(content)
+        return self._extract_json(body["choices"][0]["message"]["content"])
 
     @staticmethod
     def _extract_json(text: str) -> str:
-        """Extrait le JSON d'une réponse LLM (peut contenir du texte parasite)."""
-        # Chercher le premier '{' et le dernier '}'
         start = text.find("{")
-        end   = text.rfind("}") + 1
+        end = text.rfind("}") + 1
         if start >= 0 and end > start:
             return text[start:end]
         return text
-
-    @staticmethod
-    def _simulate_response(user_text: str) -> str:
-        """Génère une réponse JSON simulée réaliste."""
-        import random
-        rng = random.Random(hash(user_text[:50]) % 10000)
-
-        if "roadmap" in user_text.lower() or "étapes" in user_text.lower():
-            return json.dumps({
-                "poste_cible": "Poste extrait du contexte",
-                "score_matching_actuel": round(rng.uniform(0.35, 0.65), 2),
-                "score_matching_projete": round(rng.uniform(0.70, 0.90), 2),
-                "duree_totale_estimee": f"{rng.randint(3, 12)} mois",
-                "etapes": [
-                    {
-                        "priorite": 1,
-                        "competence_cible": "Compétence identifiée par le système",
-                        "type": "technique",
-                        "importance": "essentielle",
-                        "formation": {
-                            "nom": "Formation recommandée",
-                            "etablissement": "MOOC AUF ou IUT local",
-                            "duree": f"{rng.randint(1, 4)} mois",
-                            "cout_estimatif": "Gratuit à 50 000 FCFA",
-                            "modalite": "en ligne",
-                            "lien_info": "https://mooc.auf.org",
-                        },
-                        "impact_score": round(rng.uniform(0.05, 0.15), 2),
-                        "delai_acquisition": "2-3 mois",
-                    }
-                ],
-                "ressources_gratuites": [
-                    "MOOC AUF (mooc.auf.org)",
-                    "Coursera avec aide financière",
-                    "YouTube EDU en français",
-                ],
-                "certifications_utiles": ["Certification Google Digital Skills for Africa"],
-                "conseil_candidature_immediate": (
-                    "Postulez dès maintenant en mettant en avant vos compétences "
-                    "actuelles et votre plan de formation."
-                ),
-                "message_motivation": (
-                    "Votre profil est prometteur. Avec quelques mois de formation ciblée, "
-                    "vous serez pleinement qualifié pour ce poste."
-                ),
-            }, ensure_ascii=False, indent=2)
-
-        elif "skill_gap" in user_text.lower() or "manquantes" in user_text.lower():
-            taux = round(rng.uniform(0.35, 0.75), 2)
-            return json.dumps({
-                "taux_matching": taux,
-                "niveau_gap": "modéré" if taux > 0.5 else "important",
-                "competences_critiques": [
-                    {
-                        "label": "Compétence technique identifiée",
-                        "importance": "essentielle",
-                        "impact_score": 0.12,
-                        "formation_recommandee": "Formation spécialisée disponible au Cameroun",
-                        "delai_acquisition": "2-3 mois",
-                        "ressource": "MOOC AUF ou formation professionnelle locale",
-                    }
-                ],
-                "competences_acquises_valeur": (
-                    "Le candidat dispose de compétences de base solides "
-                    "qui facilitent l'apprentissage des compétences manquantes."
-                ),
-                "score_projete_apres_formation": round(min(taux + 0.25, 0.95), 2),
-                "eligible_maintenant": taux >= 0.55,
-                "message_candidat": (
-                    "Votre profil présente un potentiel réel pour ce poste. "
-                    "Un plan de formation ciblé vous permettra d'atteindre le niveau requis."
-                ),
-            }, ensure_ascii=False, indent=2)
-
-        else:  # recommandation
-            score = round(rng.uniform(0.55, 0.82), 3)
-            return json.dumps({
-                "analyse_globale": (
-                    "Le candidat présente un profil compatible avec plusieurs offres "
-                    "du marché camerounais. Les recommandations ci-dessous sont classées "
-                    "par score de matching hybride."
-                ),
-                "score_employabilite_global": score,
-                "recommandations": [
-                    {
-                        "rang": 1,
-                        "offre_id": "offre-simulée-001",
-                        "titre_poste": "Poste recommandé par le système",
-                        "score_hybride": score,
-                        "pourquoi_recommandee": (
-                            "Cette offre correspond bien à votre profil "
-                            "en termes de secteur et de niveau d'études requis."
-                        ),
-                        "points_forts": [
-                            "Niveau d'études compatible",
-                            "Secteur aligné avec votre expérience",
-                        ],
-                        "points_attention": [
-                            "Quelques compétences techniques à renforcer",
-                        ],
-                        "verdict": "Recommandation forte" if score > 0.7 else "Recommandation modérée",
-                    }
-                ],
-                "conseil_global": (
-                    "Mettez en avant vos atouts lors de la candidature et "
-                    "préparez-vous à démontrer votre capacité d'adaptation rapide."
-                ),
-                "prochaine_action": (
-                    "Postulez en ligne cette semaine et préparez un CV adapté "
-                    "au secteur de l'offre."
-                ),
-            }, ensure_ascii=False, indent=2)
-
-
-# ─────────────────────────────────────────────────────────────────────────
-# MOTEUR DE RECOMMANDATION
-# ─────────────────────────────────────────────────────────────────────────
 
 class RecommendationEngine:
     """
@@ -326,7 +133,7 @@ class RecommendationEngine:
         neo4j_driver=None,
         pg_conn=None,
         st_model=None,
-        llm_backend: str = "simulation",
+        llm_backend: str = "ollama",
         top_k: int = 5,
     ):
         self.builder = GraphRAGContextBuilder(
@@ -525,14 +332,12 @@ def main():
     parser = argparse.ArgumentParser(description="Module 05 — GraphRAG Recommandation")
     parser.add_argument("--candidat",  type=str, default=None,
                         help="Matricule candidat ou 'all'")
-    parser.add_argument("--backend",   type=str, default="simulation",
-                        choices=["simulation", "llama"])
     parser.add_argument("--top-k",     type=int, default=5)
     parser.add_argument("--benchmark", action="store_true",
                         help="Test sur 10 candidats aléatoires")
     args = parser.parse_args()
 
-    engine = RecommendationEngine(llm_backend=args.backend, top_k=args.top_k)
+    engine = RecommendationEngine(top_k=args.top_k)
 
     if args.benchmark:
         df = pd.read_parquet(ROOT / "data" / "processed" / "candidats_normalized.parquet")

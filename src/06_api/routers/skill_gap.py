@@ -73,9 +73,6 @@ async def skill_gap_analysis(
         taux_match=offre.get("taux_match", 0.5),
     )
 
-    if hasattr(engine, "llm"):
-        engine.llm.backend = request.llm_backend
-
     raw_sg  = engine.llm.generate(SYSTEM_SKILL_GAP, user_sg)
     sg_data = engine._safe_parse_json(raw_sg) or {}
 

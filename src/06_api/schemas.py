@@ -68,9 +68,9 @@ class RecommendRequest(BaseModel):
     profil: CandidatProfile
     top_k: int = Field(5, description="Nombre d'offres à retourner", ge=1, le=20)
     llm_backend: str = Field(
-        "simulation",
-        description="Backend LLM : 'simulation' | 'mistral' | 'openai'",
-        pattern="^(simulation|mistral|openai)$",
+        "qwen2:1.5b",
+        description="Modele LLM local unique via Ollama",
+        pattern="^qwen2:1\\.5b$",
     )
     include_roadmap: bool = Field(True, description="Inclure la roadmap de formation")
     include_skill_gap: bool = Field(True, description="Inclure l'analyse skill gap")
@@ -80,7 +80,7 @@ class SkillGapRequest(BaseModel):
     """Corps de la requête POST /skill-gap"""
     candidat_id: str = Field(..., description="Matricule du candidat")
     offre_id: str = Field(..., description="UUID de l'offre d'emploi")
-    llm_backend: str = Field("simulation", pattern="^(simulation|mistral|openai)$")
+    llm_backend: str = Field("qwen2:1.5b", pattern="^qwen2:1\\.5b$")
 
 
 class EmbedRequest(BaseModel):
@@ -218,7 +218,7 @@ class HealthResponse(BaseModel):
             "neo4j":     "unknown",
             "pgvector":  "unknown",
             "st_model":  "unknown",
-            "llm":       "simulation",
+            "llm":       "ollama:qwen2:1.5b",
         }
     )
 
