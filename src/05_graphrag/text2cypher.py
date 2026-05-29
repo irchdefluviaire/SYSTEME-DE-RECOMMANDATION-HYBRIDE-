@@ -84,6 +84,12 @@ class CypherPlan:
         return asdict(self)
 
 
+def get_neo4j_schema_context() -> str:
+    """Return the schema exposed to Text2Cypher and answer synthesis."""
+
+    return _NEO4J_SCHEMA.strip()
+
+
 def validate_readonly_cypher(cypher: str) -> str:
     upper = " ".join(str(cypher).upper().split())
     if any(token in upper for token in FORBIDDEN):

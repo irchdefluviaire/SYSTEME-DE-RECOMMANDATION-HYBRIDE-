@@ -1,4 +1,4 @@
-"""
+﻿"""
 LangGraph orchestration for the Agentic GraphRAG workflow.
 
 The workflow follows the image supplied by the user:
@@ -22,33 +22,37 @@ from langgraph.graph import END, START, MessagesState, StateGraph
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
+AGENT_DIR = Path(__file__).resolve().parent
 SRC_05 = ROOT / "src" / "05_graphrag"
-if str(SRC_05) not in sys.path:
-    sys.path.insert(0, str(SRC_05))
+for module_path in (AGENT_DIR, SRC_05):
+    module_path_str = str(module_path)
+    if module_path_str not in sys.path:
+        sys.path.insert(0, module_path_str)
 load_dotenv(ROOT / ".env")
 
 from answer_critic import critique_answer  # noqa: E402
+from text2cypher import get_neo4j_schema_context  # noqa: E402
 from tools import TOOL_REGISTRY  # noqa: E402
 
 log = logging.getLogger(__name__)
 
 DEFAULT_CANDIDAT_ID = "PPKOU2501080016340"
 
-_SYSTEM_CONSEILLER = """Tu es un conseiller emploi-compétences expert pour le marché du travail camerounais.
-Tu reçois des données extraites de deux bases de données :
-- Neo4j (graphe de connaissances) : offres, compétences, métiers, candidats, référentiels NCF/MEPC
-- PostgreSQL/pgvector (recherche sémantique) : entités et chunks de documents indexés
+_SYSTEM_CONSEILLER = """Tu es un conseiller emploi-compÃ©tences expert pour le marchÃ© du travail camerounais.
+Tu reÃ§ois des donnÃ©es extraites de deux bases de donnÃ©es :
+- Neo4j (graphe de connaissances) : offres, compÃ©tences, mÃ©tiers, candidats, rÃ©fÃ©rentiels NCF/MEPC
+- PostgreSQL/pgvector (recherche sÃ©mantique) : entitÃ©s et chunks de documents indexÃ©s
 
-RÈGLES ABSOLUES :
-1. Base-toi uniquement sur les données fournies dans le contexte — n'invente aucune information.
-2. Cite systématiquement les sources que tu utilises selon ce format :
-   - Compétence du graphe → [Compétence: "preferredLabel", uri: conceptUri]
-   - Offre d'emploi → [Offre: "titre_poste" @ employeur, source: source_id]
-   - Métier → [Métier: "preferredLabel", ISCO: code_isco]
-   - Document référentiel → [Source: document_title, chunk: chunk_id, p.page_number]
-   - Résultat sémantique → [pgvector: "label", score: dense_score]
-3. Si les données sont insuffisantes, dis-le explicitement.
-4. Réponds en français, avec des titres (##) et des listes à puces pour structurer."""
+RÃˆGLES ABSOLUES :
+1. Base-toi uniquement sur les donnÃ©es fournies dans le contexte â€” n'invente aucune information.
+2. Cite systÃ©matiquement les sources que tu utilises selon ce format :
+   - CompÃ©tence du graphe â†’ [CompÃ©tence: "preferredLabel", uri: conceptUri]
+   - Offre d'emploi â†’ [Offre: "titre_poste" @ employeur, source: source_id]
+   - MÃ©tier â†’ [MÃ©tier: "preferredLabel", ISCO: code_isco]
+   - Document rÃ©fÃ©rentiel â†’ [Source: document_title, chunk: chunk_id, p.page_number]
+   - RÃ©sultat sÃ©mantique â†’ [pgvector: "label", score: dense_score]
+3. Si les donnÃ©es sont insuffisantes, dis-le explicitement.
+4. RÃ©ponds en franÃ§ais, avec des titres (##) et des listes Ã  puces pour structurer."""
 
 
 class AgentState(MessagesState, total=False):
@@ -82,7 +86,7 @@ def _infer_use_case(text: str, candidat_id: str | None) -> str:
     q = text.lower()
     if any(w in q for w in ["status", "health", "etat", "diagnostic", "connect"]):
         return "diagnostic"
-    if any(w in q for w in ["global", "globale", "vue d'ensemble", "tendance", "tendances", "macro", "resume", "résumé", "synthese", "synthèse"]):
+    if any(w in q for w in ["global", "globale", "vue d'ensemble", "tendance", "tendances", "macro", "resume", "rÃ©sumÃ©", "synthese", "synthÃ¨se"]):
         return "question_globale"
     if any(w in q for w in ["ncf", "mepc", "diplome", "referentiel", "classification"]):
         return "referentiel"
@@ -121,7 +125,7 @@ def analyse_request(state: AgentState) -> AgentState:
 
 
 def plan_tools(state: AgentState) -> AgentState:
-    """Sélectionne les outils base de données nécessaires pour la requête."""
+    """SÃ©lectionne les outils base de donnÃ©es nÃ©cessaires pour la requÃªte."""
 
     query = state.get("user_query", "")
     top_k = int(state.get("top_k", 5))
@@ -166,7 +170,8 @@ def plan_tools(state: AgentState) -> AgentState:
                 query=query,
                 kinds=["OFFRE_EMPLOI", "METIER", "COMPETENCE"],
                 top_k=top_k,
-            )
+            ),
+            _tool_call("neo4j_graph_query", query=query, top_k=top_k),
         ]
 
     traces = [*state.get("traces", []), "plan_tools:" + ",".join(t["name"] for t in tool_calls)]
@@ -174,7 +179,7 @@ def plan_tools(state: AgentState) -> AgentState:
 
 
 def execute_tools(state: AgentState) -> AgentState:
-    """Invoque les outils sélectionnés et conserve les erreurs dans l'état."""
+    """Invoque les outils sÃ©lectionnÃ©s et conserve les erreurs dans l'Ã©tat."""
 
     tool_results: list[dict[str, Any]] = list(state.get("tool_results", []))
     traces = [*state.get("traces", [])]
@@ -194,7 +199,7 @@ def execute_tools(state: AgentState) -> AgentState:
 
 
 def build_context(state: AgentState) -> AgentState:
-    """Normalise les sorties brutes des outils en un objet contexte pour la synthèse."""
+    """Normalise les sorties brutes des outils en un objet contexte pour la synthÃ¨se."""
 
     context: dict[str, Any] = {
         "query": state.get("user_query", ""),
@@ -224,21 +229,33 @@ def build_context(state: AgentState) -> AgentState:
     return {**state, "context": context, "result": result, "traces": traces}
 
 
-# ── Synthèse finale avec LLM OpenRouter ─────────────────────────────────────
+# â”€â”€ SynthÃ¨se finale avec LLM OpenRouter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _build_context_text(result: dict[str, Any], use_case: str, top_k: int, state: AgentState) -> str:
-    """Construit un texte de contexte structuré à passer au LLM."""
+    """Construit un texte de contexte structurÃ© Ã  passer au LLM."""
+    include_schema = use_case in {"graph_query", "recherche_generale"}
     if use_case == "referentiel":
         return _render_documents(result.get("documents", []))
     if use_case == "question_globale":
         return _render_global_summary(result.get("global_summary", {}), result.get("documents", []))
     if use_case == "graph_query":
-        return _render_graph_rows(result.get("graph", {}))
+        return _with_neo4j_schema(_render_graph_rows(result.get("graph", {})), include_schema)
     if use_case in {"orientation_metier", "recherche_generale"}:
-        return _render_semantic_and_graph(result, top_k)
+        return _with_neo4j_schema(_render_semantic_and_graph(result, top_k), include_schema)
     if use_case in {"recommendation_candidat", "skill_gap_roadmap"}:
         return _render_candidate_recommendation(state, result)
     return str(result)
+
+
+def _with_neo4j_schema(context_text: str, include_schema: bool) -> str:
+    if not include_schema:
+        return context_text
+    return (
+        "Schema Neo4j disponible pour interpreter les resultats graphe:\n"
+        f"{get_neo4j_schema_context()}\n\n"
+        "Contexte recupere:\n"
+        f"{context_text}"
+    )
 
 
 def generate_final_answer(state: AgentState) -> AgentState:
@@ -247,7 +264,7 @@ def generate_final_answer(state: AgentState) -> AgentState:
     query = state.get("user_query", "")
     top_k = int(state.get("top_k", 5))
 
-    # Cas erreur totale — pas besoin de LLM
+    # Cas erreur totale â€” pas besoin de LLM
     if result.get("errors") and len(result) == 1:
         answer = _render_errors(result["errors"])
         critic = {"decision": "revise", "reason": "all_tools_failed"}
@@ -259,7 +276,7 @@ def generate_final_answer(state: AgentState) -> AgentState:
             "messages": [*state.get("messages", []), AIMessage(content=answer)],
         }
 
-    # Diagnostic — réponse structurée sans LLM
+    # Diagnostic â€” rÃ©ponse structurÃ©e sans LLM
     if use_case == "diagnostic":
         answer = _render_diagnostic(result)
         critic = {"decision": "accept", "source": "template"}
@@ -271,7 +288,7 @@ def generate_final_answer(state: AgentState) -> AgentState:
             "messages": [*state.get("messages", []), AIMessage(content=answer)],
         }
 
-    # Tous les autres cas — synthèse LLM avec fallback template
+    # Tous les autres cas â€” synthÃ¨se LLM avec fallback template
     context_text = _build_context_text(result, use_case, top_k, state)
 
     try:
@@ -279,24 +296,24 @@ def generate_final_answer(state: AgentState) -> AgentState:
         llm = get_llm_client()
         user_prompt = (
             f"Question de l'utilisateur : {query}\n\n"
-            "=== DONNÉES EXTRAITES DES BASES DE DONNÉES ===\n"
+            "=== DONNÃ‰ES EXTRAITES DES BASES DE DONNÃ‰ES ===\n"
             f"{context_text}\n"
-            "=== FIN DES DONNÉES ===\n\n"
-            "Rédige une réponse en langage naturel, en français, structurée avec ## titres et listes à puces.\n"
-            "Pour chaque information clé utilisée, cite sa source entre crochets (chunk_id, source_uri, id pgvector, etc.).\n"
-            "Ne mentionne que ce qui est présent dans les données ci-dessus."
+            "=== FIN DES DONNÃ‰ES ===\n\n"
+            "RÃ©dige une rÃ©ponse en langage naturel, en franÃ§ais, structurÃ©e avec ## titres et listes Ã  puces.\n"
+            "Pour chaque information clÃ© utilisÃ©e, cite sa source entre crochets (chunk_id, source_uri, id pgvector, etc.).\n"
+            "Ne mentionne que ce qui est prÃ©sent dans les donnÃ©es ci-dessus."
         )
         answer = llm.chat(_SYSTEM_CONSEILLER, user_prompt)
         critic = critique_answer(answer, context_text)
         critic["source"] = "openrouter"
         critic["model"] = llm.model
-        log.info("Réponse générée via OpenRouter (model=%s)", llm.model)
+        log.info("RÃ©ponse gÃ©nÃ©rÃ©e via OpenRouter (model=%s)", llm.model)
     except Exception as exc:
-        log.error("LLM OpenRouter indisponible (%s) — données brutes affichées", exc)
-        # Fallback lisible : encadre les données brutes avec un message d'avertissement
+        log.error("LLM OpenRouter indisponible (%s) â€” donnÃ©es brutes affichÃ©es", exc)
+        # Fallback lisible : encadre les donnÃ©es brutes avec un message d'avertissement
         answer = (
-            f"⚠️ *Le service LLM est temporairement indisponible ({exc.__class__.__name__}).*\n\n"
-            "Voici les données brutes récupérées :\n\n"
+            f"âš ï¸ *Le service LLM est temporairement indisponible ({exc.__class__.__name__}).*\n\n"
+            "Voici les donnÃ©es brutes rÃ©cupÃ©rÃ©es :\n\n"
             f"{context_text}"
         )
         critic = critique_answer(context_text, result)
@@ -312,13 +329,13 @@ def generate_final_answer(state: AgentState) -> AgentState:
     }
 
 
-# ── Renderers (utilisés comme contexte pour le LLM ou en fallback) ───────────
+# â”€â”€ Renderers (utilisÃ©s comme contexte pour le LLM ou en fallback) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def route_after_critic(state: AgentState) -> str:
     critic = state.get("critic", {}) or {}
     if critic.get("decision") == "revise" and int(state.get("revision_count", 0) or 0) < 1:
-        return "expand_context"
-    return END
+        return "revise"
+    return "accept"
 
 
 def expand_context(state: AgentState) -> AgentState:
@@ -361,14 +378,14 @@ def _render_errors(errors: list[dict[str, Any]]) -> str:
 
 
 def _render_diagnostic(result: dict[str, Any]) -> str:
-    lines = ["Diagnostic de l'instance connectée:", ""]
+    lines = ["Diagnostic de l'instance connectÃ©e:", ""]
     for key, value in result.get("status", {}).items():
         lines.append(f"- {key}: {value}")
     return "\n".join(lines)
 
 
 def _render_documents(docs: list[dict[str, Any]]) -> str:
-    lines = ["Chunks de référentiels trouvés dans pgvector:", ""]
+    lines = ["Chunks de rÃ©fÃ©rentiels trouvÃ©s dans pgvector:", ""]
     for i, doc in enumerate(docs, 1):
         chunk_id = doc.get("chunk_id", f"chunk_{i}")
         source = doc.get("source", "?")
@@ -377,13 +394,13 @@ def _render_documents(docs: list[dict[str, Any]]) -> str:
         section = doc.get("section_title") or doc.get("subsection_title", "")
         lines.append(
             f"{i}. [Source: \"{source}\", chunk: {chunk_id}, p.{page}]"
-            + (f" — {section}" if section else "")
+            + (f" â€” {section}" if section else "")
             + f" (sim={float(sim):.3f})"
         )
         snippet = str(doc.get("parent_context") or doc.get("chunk_text", "")).replace("\n", " ")
         lines.append(f"   Extrait: {snippet[:300]}")
     if not docs:
-        lines.append("Aucun document pertinent trouvé dans pgvector.")
+        lines.append("Aucun document pertinent trouvÃ© dans pgvector.")
     return "\n".join(lines)
 
 
@@ -391,9 +408,9 @@ def _render_graph_rows(graph_result: dict[str, Any]) -> str:
     rows = graph_result.get("rows", [])
     plan = graph_result.get("plan", {})
     source = graph_result.get("source", "template")
-    intent = plan.get("intent", "non_précisé")
+    intent = plan.get("intent", "non_prÃ©cisÃ©")
     lines = [
-        f"Résultats Neo4j (intent={intent}, source={source}):",
+        f"RÃ©sultats Neo4j (intent={intent}, source={source}):",
         "",
     ]
     for i, row in enumerate(rows, 1):
@@ -409,18 +426,18 @@ def _render_graph_rows(graph_result: dict[str, Any]) -> str:
             if k not in ("source_uri", "chunk_id", "source_id") and v not in (None, "", [])
         )
         ref = f" [{', '.join(citable)}]" if citable else ""
-        lines.append(f"{i}. {label or ''}{ref} — {rest}")
+        lines.append(f"{i}. {label or ''}{ref} â€” {rest}")
     if not rows:
-        lines.append("Aucun résultat trouvé dans Neo4j pour cette question.")
+        lines.append("Aucun rÃ©sultat trouvÃ© dans Neo4j pour cette question.")
     return "\n".join(lines)
 
 
 def _render_semantic_and_graph(result: dict[str, Any], top_k: int) -> str:
-    lines = ["Contexte récupéré par les outils:", ""]
+    lines = ["Contexte rÃ©cupÃ©rÃ© par les outils:", ""]
 
     semantic_results = result.get("semantic_results", {})
     if semantic_results:
-        lines.append("pgvector — recherche sémantique hybride:")
+        lines.append("pgvector â€” recherche sÃ©mantique hybride:")
         for kind, rows in semantic_results.items():
             lines.append(f"  {kind}:")
             for i, row in enumerate(rows[:top_k], 1):
@@ -435,17 +452,17 @@ def _render_semantic_and_graph(result: dict[str, Any], top_k: int) -> str:
 
     graph_result = result.get("graph")
     if graph_result:
-        lines.extend(["", "Neo4j — relations graphe:"])
+        lines.extend(["", "Neo4j â€” relations graphe:"])
         rows = graph_result.get("rows", [])
         for i, row in enumerate(rows[:top_k], 1):
             rendered = " | ".join(f"{k}={v}" for k, v in row.items())
             lines.append(f"  {i}. {rendered}")
         if not rows:
-            lines.append("  Aucun lien graphe retourné.")
+            lines.append("  Aucun lien graphe retournÃ©.")
 
     docs = result.get("documents") or []
     if docs:
-        lines.extend(["", "pgvector — appuis référentiels:"])
+        lines.extend(["", "pgvector â€” appuis rÃ©fÃ©rentiels:"])
         for doc in docs[:3]:
             lines.append(
                 f"- {doc.get('source')} p.{doc.get('page_number')}: "
@@ -514,15 +531,15 @@ def _render_candidate_recommendation(state: AgentState, result: dict[str, Any]) 
     candidat = result.get("candidat", {})
     top_offres = result.get("top_offres", [])
     lines = [
-        f"Analyse du candidat {state.get('candidat_id')} — {candidat.get('metier_vise', '')}",
+        f"Analyse du candidat {state.get('candidat_id')} â€” {candidat.get('metier_vise', '')}",
         "",
-        "Top offres recommandées (hybride Neo4j + pgvector):",
+        "Top offres recommandÃ©es (hybride Neo4j + pgvector):",
     ]
     for i, offre in enumerate(top_offres[: int(state.get("top_k", 5))], 1):
         lines.append(
             f"{i}. {offre.get('titre', offre.get('titre_poste', 'Offre'))} "
             f"- score={offre.get('score_hybride', 0):.3f} "
-            f"- verdict={offre.get('verdict_recrutement', 'non précisé')}"
+            f"- verdict={offre.get('verdict_recrutement', 'non prÃ©cisÃ©')}"
         )
 
     skill_gap = result.get("skill_gap") or {}
@@ -530,7 +547,7 @@ def _render_candidate_recommendation(state: AgentState, result: dict[str, Any]) 
         lines.extend(
             [
                 "",
-                f"Skill gap: {skill_gap.get('niveau_gap', 'non précisé')} "
+                f"Skill gap: {skill_gap.get('niveau_gap', 'non prÃ©cisÃ©')} "
                 f"(taux={skill_gap.get('taux_matching', 0)})",
             ]
         )
@@ -541,7 +558,7 @@ def _render_candidate_recommendation(state: AgentState, result: dict[str, Any]) 
         for step in roadmap.get("etapes", [])[:5]:
             lines.append(
                 f"- P{step.get('priorite', '?')}: {step.get('competence_cible', '')} "
-                f"({step.get('delai_acquisition', 'délai non précisé')})"
+                f"({step.get('delai_acquisition', 'dÃ©lai non prÃ©cisÃ©')})"
             )
 
     if result.get("errors"):
@@ -552,7 +569,7 @@ def _render_candidate_recommendation(state: AgentState, result: dict[str, Any]) 
     return "\n".join(lines)
 
 
-# ── Graphe LangGraph ─────────────────────────────────────────────────────────
+# â”€â”€ Graphe LangGraph â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 workflow = StateGraph(AgentState)
 workflow.add_node("analyse_request", analyse_request)
@@ -566,7 +583,15 @@ workflow.add_edge("analyse_request", "plan_tools")
 workflow.add_edge("plan_tools", "execute_tools")
 workflow.add_edge("execute_tools", "build_context")
 workflow.add_edge("build_context", "generate_final_answer")
-workflow.add_conditional_edges("generate_final_answer", route_after_critic)
+workflow.add_conditional_edges(
+    "generate_final_answer",
+    route_after_critic,
+    {
+        "revise": "expand_context",
+        "accept": END,
+    },
+)
 workflow.add_edge("expand_context", "execute_tools")
 
 graph = workflow.compile()
+

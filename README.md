@@ -131,6 +131,7 @@ OPENROUTER_MODEL=openai/gpt-oss-20b:free
 
 # Text2Cypher local Hugging Face
 TEXT2CYPHER_MODEL=neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1
+HF_TOKEN=<votre_token_huggingface>
 TEXT2CYPHER_DEVICE_MAP=auto
 TEXT2CYPHER_TORCH_DTYPE=auto
 TEXT2CYPHER_MAX_NEW_TOKENS=256
