@@ -62,6 +62,7 @@ class AgentState(MessagesState, total=False):
     context: dict[str, Any]
     result: dict[str, Any]
     critic: dict[str, Any]
+    revision_count: int
     traces: list[str]
 
 
@@ -81,6 +82,8 @@ def _infer_use_case(text: str, candidat_id: str | None) -> str:
     q = text.lower()
     if any(w in q for w in ["status", "health", "etat", "diagnostic", "connect"]):
         return "diagnostic"
+    if any(w in q for w in ["global", "globale", "vue d'ensemble", "tendance", "tendances", "macro", "resume", "résumé", "synthese", "synthèse"]):
+        return "question_globale"
     if any(w in q for w in ["ncf", "mepc", "diplome", "referentiel", "classification"]):
         return "referentiel"
     if any(w in q for w in ["cypher", "relation", "relations", "graphe", "neo4j", "relie", "lier"]):
@@ -112,6 +115,7 @@ def analyse_request(state: AgentState) -> AgentState:
         "backend": "openrouter",
         "use_case": use_case,
         "user_query": query,
+        "revision_count": int(state.get("revision_count", 0) or 0),
         "traces": [f"analyse_request:{use_case}"],
     }
 
@@ -126,6 +130,11 @@ def plan_tools(state: AgentState) -> AgentState:
 
     if use_case == "diagnostic":
         tool_calls = [_tool_call("service_status")]
+    elif use_case == "question_globale":
+        tool_calls = [
+            _tool_call("global_graph_summary", top_k=top_k),
+            _tool_call("pgvector_document_search", query=query, top_k=min(top_k, 5)),
+        ]
     elif use_case in {"recommendation_candidat", "skill_gap_roadmap"}:
         tool_calls = [
             _tool_call(
@@ -167,7 +176,7 @@ def plan_tools(state: AgentState) -> AgentState:
 def execute_tools(state: AgentState) -> AgentState:
     """Invoque les outils sélectionnés et conserve les erreurs dans l'état."""
 
-    tool_results: list[dict[str, Any]] = []
+    tool_results: list[dict[str, Any]] = list(state.get("tool_results", []))
     traces = [*state.get("traces", [])]
     for call in state.get("tool_calls", []):
         name = call["name"]
@@ -208,6 +217,8 @@ def build_context(state: AgentState) -> AgentState:
             result["graph"] = {"plan": item.get("plan", {}), "rows": item.get("rows", [])}
         elif tool_name == "hybrid_candidate_recommendation":
             result.update(item)
+        elif tool_name == "global_graph_summary":
+            result["global_summary"] = item.get("summary", {})
 
     traces = [*state.get("traces", []), "build_context"]
     return {**state, "context": context, "result": result, "traces": traces}
@@ -219,6 +230,8 @@ def _build_context_text(result: dict[str, Any], use_case: str, top_k: int, state
     """Construit un texte de contexte structuré à passer au LLM."""
     if use_case == "referentiel":
         return _render_documents(result.get("documents", []))
+    if use_case == "question_globale":
+        return _render_global_summary(result.get("global_summary", {}), result.get("documents", []))
     if use_case == "graph_query":
         return _render_graph_rows(result.get("graph", {}))
     if use_case in {"orientation_metier", "recherche_generale"}:
@@ -274,7 +287,9 @@ def generate_final_answer(state: AgentState) -> AgentState:
             "Ne mentionne que ce qui est présent dans les données ci-dessus."
         )
         answer = llm.chat(_SYSTEM_CONSEILLER, user_prompt)
-        critic = {"decision": "accept", "source": "openrouter", "model": llm.model}
+        critic = critique_answer(answer, context_text)
+        critic["source"] = "openrouter"
+        critic["model"] = llm.model
         log.info("Réponse générée via OpenRouter (model=%s)", llm.model)
     except Exception as exc:
         log.error("LLM OpenRouter indisponible (%s) — données brutes affichées", exc)
@@ -298,6 +313,45 @@ def generate_final_answer(state: AgentState) -> AgentState:
 
 
 # ── Renderers (utilisés comme contexte pour le LLM ou en fallback) ───────────
+
+def route_after_critic(state: AgentState) -> str:
+    critic = state.get("critic", {}) or {}
+    if critic.get("decision") == "revise" and int(state.get("revision_count", 0) or 0) < 1:
+        return "expand_context"
+    return END
+
+
+def expand_context(state: AgentState) -> AgentState:
+    """Add one extra retrieval pass when grounding is too weak."""
+
+    query = state.get("user_query", "")
+    top_k = min(int(state.get("top_k", 5)) + 3, 10)
+    existing = [call.get("name") for call in state.get("tool_calls", [])]
+    extra_calls: list[dict[str, Any]] = []
+
+    if "pgvector_document_search" not in existing:
+        extra_calls.append(_tool_call("pgvector_document_search", query=query, top_k=top_k))
+    if "pgvector_semantic_search" not in existing:
+        extra_calls.append(
+            _tool_call(
+                "pgvector_semantic_search",
+                query=query,
+                kinds=["OFFRE_EMPLOI", "METIER", "COMPETENCE"],
+                top_k=top_k,
+            )
+        )
+    if "neo4j_graph_query" not in existing and state.get("use_case") != "diagnostic":
+        extra_calls.append(_tool_call("neo4j_graph_query", query=query, top_k=top_k))
+
+    traces = [*state.get("traces", []), "answer_critic:revise", "expand_context"]
+    return {
+        **state,
+        "top_k": top_k,
+        "revision_count": int(state.get("revision_count", 0) or 0) + 1,
+        "tool_calls": extra_calls or state.get("tool_calls", []),
+        "traces": traces,
+    }
+
 
 def _render_errors(errors: list[dict[str, Any]]) -> str:
     lines = ["Aucun outil n'a pu retourner de contexte exploitable.", ""]
@@ -406,6 +460,56 @@ def _render_semantic_and_graph(result: dict[str, Any], top_k: int) -> str:
     return "\n".join(lines).strip()
 
 
+def _render_global_summary(summary: dict[str, Any], docs: list[dict[str, Any]]) -> str:
+    lines = ["Synthese globale des stockages et du graphe:", ""]
+
+    status = summary.get("status") or {}
+    if status:
+        lines.append("Etat des services:")
+        for key, value in status.items():
+            lines.append(f"- {key}: {value}")
+        lines.append("")
+
+    sections = [
+        ("Noeuds Neo4j", "graph_counts", "label"),
+        ("Secteurs les plus representes", "top_secteurs", "secteur"),
+        ("Exemples de metiers", "top_metiers", "metier"),
+        ("Exemples de competences", "top_competences", "competence"),
+        ("Entites pgvector", "pgvector_counts", "entity_kind"),
+        ("Sources documentaires indexees", "document_sources", "source"),
+    ]
+    for title, key, label_key in sections:
+        rows = summary.get(key) or []
+        if not rows:
+            continue
+        lines.append(title + ":")
+        for row in rows[:10]:
+            label = row.get(label_key, "")
+            count = row.get("n", row.get("n_chunks", ""))
+            suffix = f" ({count})" if count != "" else ""
+            details = " | ".join(
+                f"{k}={v}"
+                for k, v in row.items()
+                if k not in {label_key, "n", "n_chunks"} and v not in (None, "")
+            )
+            lines.append(f"- {label}{suffix}" + (f" | {details}" if details else ""))
+        lines.append("")
+
+    if docs:
+        lines.append("Appuis documentaires recuperes:")
+        for doc in docs[:5]:
+            snippet = str(doc.get("chunk_text", "")).replace("\n", " ")[:220]
+            lines.append(
+                f"- [Source: {doc.get('source')}, chunk: {doc.get('chunk_id')}, "
+                f"p.{doc.get('page_number')}] {snippet}"
+            )
+
+    for err_key in ("neo4j_error", "pgvector_error"):
+        if summary.get(err_key):
+            lines.append(f"{err_key}: {summary[err_key]}")
+    return "\n".join(lines).strip()
+
+
 def _render_candidate_recommendation(state: AgentState, result: dict[str, Any]) -> str:
     candidat = result.get("candidat", {})
     top_offres = result.get("top_offres", [])
@@ -456,11 +560,13 @@ workflow.add_node("plan_tools", plan_tools)
 workflow.add_node("execute_tools", execute_tools)
 workflow.add_node("build_context", build_context)
 workflow.add_node("generate_final_answer", generate_final_answer)
+workflow.add_node("expand_context", expand_context)
 workflow.add_edge(START, "analyse_request")
 workflow.add_edge("analyse_request", "plan_tools")
 workflow.add_edge("plan_tools", "execute_tools")
 workflow.add_edge("execute_tools", "build_context")
 workflow.add_edge("build_context", "generate_final_answer")
-workflow.add_edge("generate_final_answer", END)
+workflow.add_conditional_edges("generate_final_answer", route_after_critic)
+workflow.add_edge("expand_context", "execute_tools")
 
 graph = workflow.compile()

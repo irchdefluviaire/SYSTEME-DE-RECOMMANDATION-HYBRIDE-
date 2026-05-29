@@ -20,6 +20,11 @@ if str(ROOT) not in sys.path:
 if str(Path(__file__).resolve().parent) not in sys.path:
     sys.path.insert(0, str(Path(__file__).resolve().parent))
 
+try:
+    sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 os.environ["LANGCHAIN_TRACING_V2"] = os.getenv("AGENT_LANGSMITH_TRACING", "false")
 
 from graph import graph  # noqa: E402

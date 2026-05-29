@@ -118,11 +118,8 @@ def tool_service_status(_: dict[str, Any] | None = None) -> dict[str, Any]:
         status["st_model"] = "configured: sentence-transformers/all-MiniLM-L6-v2 fallback"
 
     or_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
-    if or_key:
-        or_model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
-        status["llm_backend"] = f"openrouter:{or_model}"
-    else:
-        status["llm_backend"] = "ollama:" + os.getenv("OLLAMA_MODEL", "qwen2:1.5b") + " (OpenRouter key manquante)"
+    or_model = os.getenv("OPENROUTER_MODEL", "openai/gpt-oss-20b:free")
+    status["llm_backend"] = f"openrouter:{or_model}" if or_key else "openrouter:missing_api_key"
     return {"tool": "service_status", "status": status}
 
 
@@ -169,7 +166,7 @@ def tool_hybrid_candidate_recommendation(args: dict[str, Any]) -> dict[str, Any]
     candidat_id = str(args.get("candidat_id", "")).strip()
     top_k = int(args.get("top_k") or 5)
     or_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
-    backend = args.get("backend") or ("openrouter" if or_key else "ollama")
+    backend = args.get("backend") or "openrouter"
     engine = RecommendationEngine(
         neo4j_driver=get_neo4j_driver(),
         pg_conn=get_pg_conn(),
@@ -180,10 +177,106 @@ def tool_hybrid_candidate_recommendation(args: dict[str, Any]) -> dict[str, Any]
     return {"tool": "hybrid_candidate_recommendation", **engine.recommend(candidat_id)}
 
 
+def tool_global_graph_summary(args: dict[str, Any]) -> dict[str, Any]:
+    """Return macro indicators from Neo4j plus pgvector/doc storage counts."""
+
+    top_k = int(args.get("top_k") or 8)
+    status = tool_service_status({}).get("status", {})
+    summary: dict[str, Any] = {"status": status}
+
+    try:
+        with get_neo4j_driver().session(database=os.getenv("NEO4J_DATABASE", "neo4j")) as session:
+            summary["graph_counts"] = [
+                dict(row)
+                for row in session.run(
+                    """
+                    MATCH (n)
+                    RETURN labels(n)[0] AS label, count(n) AS n
+                    ORDER BY n DESC
+                    LIMIT 20
+                    """
+                )
+            ]
+            summary["top_secteurs"] = [
+                dict(row)
+                for row in session.run(
+                    """
+                    MATCH (o:OffreEmploi)
+                    WITH coalesce(o.secteur_principal, o.secteur, 'non renseigne') AS secteur, count(o) AS n
+                    RETURN secteur, n
+                    ORDER BY n DESC
+                    LIMIT $top_k
+                    """,
+                    top_k=top_k,
+                )
+            ]
+            summary["top_metiers"] = [
+                dict(row)
+                for row in session.run(
+                    """
+                    MATCH (m:Métier)
+                    RETURN coalesce(m.preferredLabel, m.label, m.name) AS metier,
+                           coalesce(m.iscoCode, m.code_isco, '') AS code_isco
+                    ORDER BY metier
+                    LIMIT $top_k
+                    """,
+                    top_k=top_k,
+                )
+            ]
+            summary["top_competences"] = [
+                dict(row)
+                for row in session.run(
+                    """
+                    MATCH (c:Compétence)
+                    RETURN coalesce(c.preferredLabel, c.label, c.name) AS competence,
+                           coalesce(c.conceptUri, '') AS source_uri,
+                           coalesce(c.skillType, '') AS type_skill
+                    ORDER BY competence
+                    LIMIT $top_k
+                    """,
+                    top_k=top_k,
+                )
+            ]
+    except Exception as exc:
+        summary["neo4j_error"] = str(exc)
+
+    try:
+        with get_pg_conn().cursor() as cur:
+            cur.execute(
+                """
+                SELECT entity_kind::text, count(*)
+                FROM embeddings
+                GROUP BY entity_kind
+                ORDER BY entity_kind
+                """
+            )
+            summary["pgvector_counts"] = [{"entity_kind": r[0], "n": r[1]} for r in cur.fetchall()]
+            cur.execute(
+                """
+                SELECT source, count(*) AS n_chunks
+                FROM doc_chunks
+                GROUP BY source
+                ORDER BY n_chunks DESC
+                LIMIT %s
+                """,
+                (top_k,),
+            )
+            summary["document_sources"] = [{"source": r[0], "n_chunks": r[1]} for r in cur.fetchall()]
+    except Exception as exc:
+        try:
+            get_pg_conn().rollback()
+        except Exception:
+            pass
+        summary["pgvector_error"] = str(exc)
+
+    return {"tool": "global_graph_summary", "summary": summary}
+
+
 TOOL_REGISTRY = {
     "service_status": tool_service_status,
     "pgvector_semantic_search": tool_pgvector_semantic_search,
     "pgvector_document_search": tool_pgvector_document_search,
     "neo4j_graph_query": tool_neo4j_graph_query,
     "hybrid_candidate_recommendation": tool_hybrid_candidate_recommendation,
+    "global_graph_summary": tool_global_graph_summary,
 }

@@ -1,9 +1,9 @@
-"""
-dependencies.py — Dépendances FastAPI (singletons partagés)
+﻿"""
+dependencies.py â€” DÃ©pendances FastAPI (singletons partagÃ©s)
 Module 06
 
-Gère le cycle de vie des connexions :
-  - SentenceTransformer fine-tuné (chargé une seule fois au démarrage)
+GÃ¨re le cycle de vie des connexions :
+  - SentenceTransformer fine-tunÃ© (chargÃ© une seule fois au dÃ©marrage)
   - Connexion Neo4j (pool de sessions)
   - Connexion PostgreSQL/pgvector (pool de connexions)
   - Moteur de recommandation
@@ -19,22 +19,22 @@ log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parent.parent.parent
 
-# ─── État des singletons ────────────────────────────────────────────────
+# â”€â”€â”€ Ã‰tat des singletons â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 _st_model          = None
 _neo4j_driver      = None
 _pg_conn           = None
 _recommendation_engine = None
 
 
-# ─────────────────────────────────────────────────────────────────────────
-# SENTENCETRANSFORMER — chargé une seule fois (lifespan)
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# SENTENCETRANSFORMER â€” chargÃ© une seule fois (lifespan)
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def init_st_model(model_path: Optional[str] = None) -> bool:
     """
-    Charge le SentenceTransformer fine-tuné au démarrage de l'API.
-    Pattern singleton : appel unique via lifespan, partagé entre toutes les routes.
-    Retourne True si chargé depuis le modèle fine-tuné, False si fallback baseline.
+    Charge le SentenceTransformer fine-tunÃ© au dÃ©marrage de l'API.
+    Pattern singleton : appel unique via lifespan, partagÃ© entre toutes les routes.
+    Retourne True si chargÃ© depuis le modÃ¨le fine-tunÃ©, False si fallback baseline.
     """
     global _st_model
 
@@ -45,12 +45,12 @@ def init_st_model(model_path: Optional[str] = None) -> bool:
         from sentence_transformers import SentenceTransformer
         if Path(ft_path).exists() and any(Path(ft_path).iterdir()):
             _st_model = SentenceTransformer(ft_path)
-            log.info(f"ST fine-tuné chargé : {ft_path}")
+            log.info(f"ST fine-tunÃ© chargÃ© : {ft_path}")
             return True
         else:
             log.warning(f"Fine-tuned model absent ({ft_path}), chargement baseline...")
             _st_model = SentenceTransformer(base_model)
-            log.info(f"ST baseline chargé : {base_model}")
+            log.info(f"ST baseline chargÃ© : {base_model}")
             return False
     except Exception as e:
         log.error(f"Impossible de charger le ST model : {e}")
@@ -59,13 +59,13 @@ def init_st_model(model_path: Optional[str] = None) -> bool:
 
 
 def get_st_model():
-    """Dépendance FastAPI → injecte le ST model dans les routes."""
+    """DÃ©pendance FastAPI â†’ injecte le ST model dans les routes."""
     return _st_model
 
 
-# ─────────────────────────────────────────────────────────────────────────
-# NEO4J — pool de sessions
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# NEO4J â€” pool de sessions
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def init_neo4j(
     uri: str = "bolt://localhost:7687",
@@ -77,10 +77,10 @@ def init_neo4j(
         from neo4j import GraphDatabase
         _neo4j_driver = GraphDatabase.driver(uri, auth=(user, password))
         _neo4j_driver.verify_connectivity()
-        log.info(f"Neo4j connecté : {uri}")
+        log.info(f"Neo4j connectÃ© : {uri}")
         return True
     except Exception as e:
-        log.warning(f"Neo4j indisponible ({e}) — mode dégradé sans graphe")
+        log.warning(f"Neo4j indisponible ({e}) â€” mode dÃ©gradÃ© sans graphe")
         _neo4j_driver = None
         return False
 
@@ -89,9 +89,9 @@ def get_neo4j():
     return _neo4j_driver
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # POSTGRESQL / PGVECTOR
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def init_pgvector(
     dsn: str = "postgresql://postgres:password@localhost:5432/recommandation",
@@ -101,10 +101,10 @@ def init_pgvector(
         import psycopg
         _pg_conn = psycopg.connect(dsn)
         _pg_conn.autocommit = False
-        log.info("pgvector connecté")
+        log.info("pgvector connectÃ©")
         return True
     except Exception as e:
-        log.warning(f"pgvector indisponible ({e}) — mode dégradé sans ANN")
+        log.warning(f"pgvector indisponible ({e}) â€” mode dÃ©gradÃ© sans ANN")
         _pg_conn = None
         return False
 
@@ -113,11 +113,11 @@ def get_pg():
     return _pg_conn
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # MOTEUR DE RECOMMANDATION
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
-def init_engine(llm_backend: str = "ollama") -> None:
+def init_engine(llm_backend: str = "openrouter") -> None:
     """Instancie le moteur GraphRAG avec les connexions disponibles."""
     global _recommendation_engine
     import sys
@@ -131,24 +131,24 @@ def init_engine(llm_backend: str = "ollama") -> None:
         llm_backend=llm_backend,
         top_k=10,
     )
-    log.info(f"Moteur de recommandation initialisé (backend={llm_backend})")
+    log.info(f"Moteur de recommandation initialisÃ© (backend={llm_backend})")
 
 
 def get_engine():
-    """Dépendance FastAPI → injecte le moteur dans les routes."""
+    """DÃ©pendance FastAPI â†’ injecte le moteur dans les routes."""
     if _recommendation_engine is None:
         raise RuntimeError(
-            "Moteur non initialisé — vérifier le démarrage de l'API (lifespan)"
+            "Moteur non initialisÃ© â€” vÃ©rifier le dÃ©marrage de l'API (lifespan)"
         )
     return _recommendation_engine
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # HEALTH CHECK
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def get_services_status() -> dict:
-    """Retourne l'état de chaque service pour le health check."""
+    """Retourne l'Ã©tat de chaque service pour le health check."""
     return {
         "neo4j":    "connected" if _neo4j_driver else "unavailable",
         "pgvector": "connected" if _pg_conn else "unavailable",
@@ -158,21 +158,22 @@ def get_services_status() -> dict:
         ),
         "llm": (
             getattr(_recommendation_engine, "llm", None)
-            and f"{getattr(_recommendation_engine.llm, 'backend', 'ollama')}:{getattr(_recommendation_engine.llm, 'model', 'qwen2:1.5b')}"
-            or "ollama:qwen2:1.5b"
+            and f"{getattr(_recommendation_engine.llm, 'backend', 'openrouter')}:{getattr(_recommendation_engine.llm, 'model', 'openai/gpt-oss-20b:free')}"
+            or "openrouter:openai/gpt-oss-20b:free"
         ),
     }
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # FERMETURE DES CONNEXIONS (lifespan shutdown)
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def close_all():
-    """Ferme proprement toutes les connexions lors de l'arrêt de l'API."""
+    """Ferme proprement toutes les connexions lors de l'arrÃªt de l'API."""
     if _neo4j_driver:
         _neo4j_driver.close()
-        log.info("Neo4j fermé")
+        log.info("Neo4j fermÃ©")
     if _pg_conn and not _pg_conn.closed:
         _pg_conn.close()
-        log.info("pgvector fermé")
+        log.info("pgvector fermÃ©")
+

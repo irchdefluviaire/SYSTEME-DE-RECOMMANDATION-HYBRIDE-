@@ -1,19 +1,19 @@
-"""
+﻿"""
 llm_as_judge.py
-Module 07 — Juge LLM pour l'évaluation des recommandations
+Module 07 â€” Juge LLM pour l'Ã©valuation des recommandations
 
-Évalue la qualité des sorties du système de recommandation hybride selon
-5 critères définis dans la méthodologie :
+Ã‰value la qualitÃ© des sorties du systÃ¨me de recommandation hybride selon
+5 critÃ¨res dÃ©finis dans la mÃ©thodologie :
 
-  - pertinence     : le match candidat-offre est-il justifié par les compétences ?
-  - coherence      : skill gap et roadmap sont-ils logiques et cohérents ?
-  - fidelite       : citations réglementaires (NCF, MEPC) correctes ?
-  - completude     : tous les champs requis de la sortie sont-ils présents ?
-  - actionnabilite : la roadmap propose-t-elle des étapes concrètes ?
+  - pertinence     : le match candidat-offre est-il justifiÃ© par les compÃ©tences ?
+  - coherence      : skill gap et roadmap sont-ils logiques et cohÃ©rents ?
+  - fidelite       : citations rÃ©glementaires (NCF, MEPC) correctes ?
+  - completude     : tous les champs requis de la sortie sont-ils prÃ©sents ?
+  - actionnabilite : la roadmap propose-t-elle des Ã©tapes concrÃ¨tes ?
 
-Modes supportés :
-  - simulation   : scores heuristiques déterministes (toujours disponible)
-  - ollama       : LLM local via OpenAI-compatible API (LLM_BASE_URL dans .env)
+Modes supportÃ©s :
+  - simulation   : scores heuristiques dÃ©terministes (toujours disponible)
+  - openrouter   : LLM via OpenRouter (API_KEY_OPEN_ROUTEUR dans .env)
   - openai       : API OpenAI (OPENAI_API_KEY dans .env)
 """
 import json
@@ -30,37 +30,37 @@ log = logging.getLogger(__name__)
 ROOT = Path(__file__).resolve().parent.parent.parent
 sys.path.insert(0, str(Path(__file__).parent))
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Prompts
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 _JUDGE_SYSTEM = """\
-Tu es un expert en recrutement au Cameroun et en intelligence artificielle appliquée aux RH.
-Évalue la qualité d'une recommandation emploi-compétences générée par un système d'IA.
+Tu es un expert en recrutement au Cameroun et en intelligence artificielle appliquÃ©e aux RH.
+Ã‰value la qualitÃ© d'une recommandation emploi-compÃ©tences gÃ©nÃ©rÃ©e par un systÃ¨me d'IA.
 
-Critères (0.0 à 1.0 chacun) :
-1. pertinence     : le match candidat-offre est justifié par les compétences et le profil
-2. coherence      : skill gap et roadmap sont logiques et cohérents entre eux
-3. fidelite       : références réglementaires (NCF, MEPC) citées sont correctes
-4. completude     : tous les champs requis (offres, skill gap, roadmap, verdict) sont présents
-5. actionnabilite : la roadmap propose des étapes concrètes et réalistes
+CritÃ¨res (0.0 Ã  1.0 chacun) :
+1. pertinence     : le match candidat-offre est justifiÃ© par les compÃ©tences et le profil
+2. coherence      : skill gap et roadmap sont logiques et cohÃ©rents entre eux
+3. fidelite       : rÃ©fÃ©rences rÃ©glementaires (NCF, MEPC) citÃ©es sont correctes
+4. completude     : tous les champs requis (offres, skill gap, roadmap, verdict) sont prÃ©sents
+5. actionnabilite : la roadmap propose des Ã©tapes concrÃ¨tes et rÃ©alistes
 
-Réponds UNIQUEMENT en JSON valide :
+RÃ©ponds UNIQUEMENT en JSON valide :
 {"pertinence":<float>,"coherence":<float>,"fidelite":<float>,"completude":<float>,"actionnabilite":<float>,"justification":"<1-2 phrases>"}"""
 
 _JUDGE_USER = """\
 PROFIL CANDIDAT : {candidat}
-OFFRE RECOMMANDÉE (top-1) : {offre}
+OFFRE RECOMMANDÃ‰E (top-1) : {offre}
 SKILL GAP : {skill_gap}
 ROADMAP : {roadmap}
 VERDICT : {verdict}
 
-Évalue la qualité de cette recommandation."""
+Ã‰value la qualitÃ© de cette recommandation."""
 
 
-# ─────────────────────────────────────────────────────────────────────────
-# Résultat
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# RÃ©sultat
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @dataclass
 class JudgeScore:
@@ -98,16 +98,16 @@ class JudgeScore:
         return {k: v for k, v in asdict(self).items() if not k.startswith("_")}
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Heuristique de simulation
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def _heuristic_score(
     offre:     dict,
     skill_gap: dict,
     roadmap:   dict,
 ) -> JudgeScore:
-    """Score heuristique déterministe basé sur les métadonnées structurées."""
+    """Score heuristique dÃ©terministe basÃ© sur les mÃ©tadonnÃ©es structurÃ©es."""
     from eval_faithfulness import score_roadmap_quality
 
     score_hybride = float(offre.get("score_hybride", 0.5))
@@ -117,21 +117,21 @@ def _heuristic_score(
     # Pertinence : score hybride de l'offre top-1
     pertinence = min(1.0, score_hybride * 1.1)
 
-    # Cohérence : écart taux_match vs score_hybride + progression cohérente
+    # CohÃ©rence : Ã©cart taux_match vs score_hybride + progression cohÃ©rente
     coherence = 1.0 - abs(taux_match - score_hybride) * 0.5
     if score_proj > taux_match:
         coherence = min(1.0, coherence + 0.1)
 
-    # Fidélité : présence de références réglementaires dans la roadmap
+    # FidÃ©litÃ© : prÃ©sence de rÃ©fÃ©rences rÃ©glementaires dans la roadmap
     roadmap_str = json.dumps(roadmap, ensure_ascii=False).lower()
     has_ncf     = any(kw in roadmap_str for kw in ("ncf", "niveau", "formation"))
-    has_mepc    = any(kw in roadmap_str for kw in ("mepc", "métier", "groupe"))
+    has_mepc    = any(kw in roadmap_str for kw in ("mepc", "mÃ©tier", "groupe"))
     fidelite    = 0.5 + 0.25 * int(has_ncf) + 0.25 * int(has_mepc)
 
-    # Complétude : champs requis de la roadmap
+    # ComplÃ©tude : champs requis de la roadmap
     completude = score_roadmap_quality(roadmap)
 
-    # Actionnabilité : nombre d'étapes dans la roadmap
+    # ActionnabilitÃ© : nombre d'Ã©tapes dans la roadmap
     etapes         = roadmap.get("etapes", [])
     n_etapes       = len(etapes) if isinstance(etapes, list) else 0
     actionnabilite = min(1.0, 0.4 + 0.12 * n_etapes)
@@ -143,27 +143,27 @@ def _heuristic_score(
         d=completude,
         a=actionnabilite,
         mode="simulation",
-        justification="Score heuristique basé sur les métadonnées structurées.",
+        justification="Score heuristique basÃ© sur les mÃ©tadonnÃ©es structurÃ©es.",
     )
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # Juge principal
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class LLMJudge:
     """
-    Juge LLM évaluant la qualité des recommandations du système hybride.
+    Juge LLM Ã©valuant la qualitÃ© des recommandations du systÃ¨me hybride.
 
-    En mode simulation (défaut), utilise une heuristique déterministe sans LLM.
-    En mode ollama/openai, appelle le LLM configuré dans .env.
+    En mode simulation (dÃ©faut), utilise une heuristique dÃ©terministe sans LLM.
+    En mode openrouter/openai, appelle le LLM configurÃ© dans .env.
     """
 
     def __init__(self, mode: str = "simulation", model: str | None = None) -> None:
         """
         Args:
-            mode  : "simulation" | "ollama" | "openai"
-            model : identifiant du modèle LLM (ex. "llama3.1:latest")
+            mode  : "simulation" | "openrouter" | "openai"
+            model : identifiant du modÃ¨le LLM (ex. "openai/gpt-oss-20b:free")
         """
         self.mode  = mode
         self.model = model
@@ -171,21 +171,21 @@ class LLMJudge:
     @staticmethod
     def _truncate(data: dict, max_chars: int = 400) -> str:
         s = json.dumps(data, ensure_ascii=False)
-        return s[:max_chars] + "…" if len(s) > max_chars else s
+        return s[:max_chars] + "â€¦" if len(s) > max_chars else s
 
     def _call_llm(self, user_prompt: str) -> str:
-        """Appelle le LLM configuré et retourne le texte brut."""
+        """Appelle le LLM configurÃ© et retourne le texte brut."""
         import os
         from dotenv import load_dotenv
         load_dotenv(ROOT / ".env")
 
-        if self.mode == "ollama":
+        if self.mode == "openrouter":
             import openai
             client = openai.OpenAI(
-                base_url=os.getenv("LLM_BASE_URL", "http://localhost:11434/v1"),
-                api_key=os.getenv("LLM_API_KEY", "ollama"),
+                base_url=os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1"),
+                api_key=os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY"),
             )
-            model = self.model or os.getenv("LLM_CHOICE", "llama3.1:latest")
+            model = self.model or os.getenv("OPENROUTER_MODEL", "openai/gpt-oss-20b:free")
         elif self.mode == "openai":
             import openai
             client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -223,10 +223,10 @@ class LLMJudge:
         verdict:   str = "",
     ) -> JudgeScore:
         """
-        Évalue une recommandation complète (candidat + offre + skill gap + roadmap).
+        Ã‰value une recommandation complÃ¨te (candidat + offre + skill gap + roadmap).
 
         Returns:
-            JudgeScore avec les 5 critères, le score global et la justification.
+            JudgeScore avec les 5 critÃ¨res, le score global et la justification.
         """
         if self.mode == "simulation":
             return _heuristic_score(offre, skill_gap, roadmap)
@@ -256,19 +256,19 @@ class LLMJudge:
             )
 
         except Exception as exc:
-            log.warning(f"Erreur juge LLM ({exc}) — fallback heuristique")
+            log.warning(f"Erreur juge LLM ({exc}) â€” fallback heuristique")
             res      = _heuristic_score(offre, skill_gap, roadmap)
             res.mode = f"simulation_fallback ({self.mode})"
             return res
 
     def score_batch(self, samples: list[dict]) -> dict[str, float]:
         """
-        Évalue un lot de recommandations.
+        Ã‰value un lot de recommandations.
 
         Chaque sample doit contenir : candidat, offre, skill_gap, roadmap, verdict (opt.)
 
         Returns:
-            Métriques moyennées sur le lot.
+            MÃ©triques moyennÃ©es sur le lot.
         """
         scores = [
             self.score_recommendation(
@@ -293,3 +293,4 @@ class LLMJudge:
             "actionnabilite": round(float(np.mean([s.actionnabilite  for s in scores])), 4),
             "global_score":   round(float(np.mean([s.global_score    for s in scores])), 4),
         }
+

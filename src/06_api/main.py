@@ -1,25 +1,25 @@
-"""
-main.py — Application FastAPI principale
+﻿"""
+main.py â€” Application FastAPI principale
 ===========================================================================
-Module 06 — Exposition du système de recommandation via API REST
+Module 06 â€” Exposition du systÃ¨me de recommandation via API REST
 
 Endpoints :
-  POST  /recommend             → top-k offres + skill gap + roadmap
-  GET   /recommend/candidat/{id} → version GET simplifiée
-  POST  /skill-gap             → analyse détaillée d'une paire (candidat, offre)
-  POST  /embed                 → encoder des textes en vecteurs 384d
-  GET   /offre/{id}            → détails d'une offre
-  GET   /offres                → recherche d'offres avec filtres
-  GET   /health                → état de tous les services
-  GET   /docs                  → Swagger UI (auto-générée)
-  GET   /redoc                 → ReDoc (auto-générée)
+  POST  /recommend             â†’ top-k offres + skill gap + roadmap
+  GET   /recommend/candidat/{id} â†’ version GET simplifiÃ©e
+  POST  /skill-gap             â†’ analyse dÃ©taillÃ©e d'une paire (candidat, offre)
+  POST  /embed                 â†’ encoder des textes en vecteurs 384d
+  GET   /offre/{id}            â†’ dÃ©tails d'une offre
+  GET   /offres                â†’ recherche d'offres avec filtres
+  GET   /health                â†’ Ã©tat de tous les services
+  GET   /docs                  â†’ Swagger UI (auto-gÃ©nÃ©rÃ©e)
+  GET   /redoc                 â†’ ReDoc (auto-gÃ©nÃ©rÃ©e)
 
 Lancement :
   uvicorn main:app --host 0.0.0.0 --port 8000 --reload
   uvicorn main:app --workers 4   # production
 
 Variables d'environnement :
-  LLM local unique: Ollama qwen2:1.5b
+  LLM unique: OpenRouter openai/gpt-oss-20b:free
   NEO4J_URI=bolt://localhost:7687
   NEO4J_PASSWORD=password
   PG_DSN=postgresql://postgres:password@localhost:5432/recommandation
@@ -50,7 +50,7 @@ from dependencies import (
     init_engine, close_all, get_services_status,
 )
 from schemas import HealthResponse, ErrorResponse
-from routers import recommend, skill_gap, embed
+from routers import recommend, skill_gap, embed, chat
 import offre
 
 logging.basicConfig(
@@ -72,116 +72,116 @@ def _pg_dsn_from_env() -> str:
     return f"postgresql://{user}:{password}@{host}:{port}/{db}"
 
 
-# ─────────────────────────────────────────────────────────────────────────
-# LIFESPAN — démarrage et arrêt
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# LIFESPAN â€” dÃ©marrage et arrÃªt
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
     Cycle de vie de l'application.
-    Tout ce qui est avant `yield` s'exécute au démarrage.
-    Tout ce qui est après `yield` s'exécute à l'arrêt.
+    Tout ce qui est avant `yield` s'exÃ©cute au dÃ©marrage.
+    Tout ce qui est aprÃ¨s `yield` s'exÃ©cute Ã  l'arrÃªt.
 
-    Pattern singleton : les connexions sont initialisées une seule fois
-    et partagées entre toutes les routes via les dépendances (Depends).
+    Pattern singleton : les connexions sont initialisÃ©es une seule fois
+    et partagÃ©es entre toutes les routes via les dÃ©pendances (Depends).
     """
     log.info("=" * 60)
-    log.info("DÉMARRAGE API — Système de Recommandation Emploi-Compétences")
+    log.info("DÃ‰MARRAGE API â€” SystÃ¨me de Recommandation Emploi-CompÃ©tences")
     log.info("=" * 60)
 
-    # 1. Charger le SentenceTransformer fine-tuné
+    # 1. Charger le SentenceTransformer fine-tunÃ©
     model_path = os.getenv("MODEL_PATH")
     ft_loaded  = init_st_model(model_path)
-    log.info(f"  ST model : {'fine-tuné' if ft_loaded else 'baseline (fallback)'}")
+    log.info(f"  ST model : {'fine-tunÃ©' if ft_loaded else 'baseline (fallback)'}")
 
-    # 2. Connexion Neo4j (mode dégradé si absent)
+    # 2. Connexion Neo4j (mode dÃ©gradÃ© si absent)
     neo4j_ok = init_neo4j(
         uri=os.getenv("NEO4J_URI",      "bolt://localhost:7687"),
         user=os.getenv("NEO4J_USER",    "neo4j"),
         password=os.getenv("NEO4J_PASSWORD", "password"),
     )
-    log.info(f"  Neo4j    : {'OK' if neo4j_ok else 'indisponible (mode dégradé)'}")
+    log.info(f"  Neo4j    : {'OK' if neo4j_ok else 'indisponible (mode dÃ©gradÃ©)'}")
 
-    # 3. Connexion pgvector (mode dégradé si absent)
+    # 3. Connexion pgvector (mode dÃ©gradÃ© si absent)
     pg_ok = init_pgvector(dsn=_pg_dsn_from_env())
-    log.info(f"  pgvector : {'OK' if pg_ok else 'indisponible (mode dégradé)'}")
+    log.info(f"  pgvector : {'OK' if pg_ok else 'indisponible (mode dÃ©gradÃ©)'}")
 
     # 4. Instancier le moteur de recommandation
-    llm_backend = "ollama"
+    llm_backend = "openrouter"
     init_engine(llm_backend=llm_backend)
     log.info(f"  LLM 2    : {llm_backend}")
 
-    log.info("API prête — en écoute sur http://0.0.0.0:8000")
+    log.info("API prÃªte â€” en Ã©coute sur http://0.0.0.0:8000")
     log.info("Documentation : http://0.0.0.0:8000/docs")
 
-    yield  # ← L'API tourne ici
+    yield  # â† L'API tourne ici
 
-    # Arrêt propre
-    log.info("Arrêt de l'API — fermeture des connexions...")
+    # ArrÃªt propre
+    log.info("ArrÃªt de l'API â€” fermeture des connexions...")
     close_all()
-    log.info("API arrêtée proprement.")
+    log.info("API arrÃªtÃ©e proprement.")
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # APPLICATION FASTAPI
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 app = FastAPI(
-    title="API Recommandation Emploi-Compétences — Cameroun",
+    title="API Recommandation Emploi-CompÃ©tences â€” Cameroun",
     description="""
-## Système de Recommandation Hybride (GraphRAG)
+## SystÃ¨me de Recommandation Hybride (GraphRAG)
 
-API REST exposant le moteur de recommandation emploi-compétences
-conçu pour le marché du travail camerounais.
+API REST exposant le moteur de recommandation emploi-compÃ©tences
+conÃ§u pour le marchÃ© du travail camerounais.
 
 ### Architecture (LLM 1 + LLM 2)
 
-**LLM 1 — SentenceTransformer fine-tuné** (`all-MiniLM-L6-v2`, 384d)
+**LLM 1 â€” SentenceTransformer fine-tunÃ©** (`all-MiniLM-L6-v2`, 384d)
 - Encode les profils candidats et les offres en vecteurs denses
-- Fine-tuné sur paires (métadonnées → description) d'offres camerounaises
-- Stockés dans pgvector avec index HNSW
+- Fine-tunÃ© sur paires (mÃ©tadonnÃ©es â†’ description) d'offres camerounaises
+- StockÃ©s dans pgvector avec index HNSW
 
-**LLM 2 — Génératif GraphRAG** (Mistral-7B / GPT-4o)
-- Reçoit le contexte Neo4j + pgvector
-- Génère recommandations + skill gap + roadmap NCF en français
+**LLM 2 â€” GÃ©nÃ©ratif GraphRAG** (Mistral-7B / GPT-4o)
+- ReÃ§oit le contexte Neo4j + pgvector
+- GÃ©nÃ¨re recommandations + skill gap + roadmap NCF en franÃ§ais
 
 ### Score hybride
 
-`score = 0.40 × sémantique + 0.35 × graphe + 0.25 × collaboratif`
+`score = 0.40 Ã— sÃ©mantique + 0.35 Ã— graphe + 0.25 Ã— collaboratif`
 
-### Référentiels intégrés
-- ESCO v1.2 (13 939 compétences, 3 039 métiers)
-- MEPC 2013 — INS Cameroun (209 groupes)
-- NCF 2017 — INS Cameroun (201 domaines)
+### RÃ©fÃ©rentiels intÃ©grÃ©s
+- ESCO v1.2 (13 939 compÃ©tences, 3 039 mÃ©tiers)
+- MEPC 2013 â€” INS Cameroun (209 groupes)
+- NCF 2017 â€” INS Cameroun (201 domaines)
     """,
     version="1.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
     openapi_tags=[
         {"name": "Recommandation", "description": "Recommandation d'offres d'emploi"},
-        {"name": "Skill Gap",      "description": "Analyse de l'écart de compétences"},
+        {"name": "Skill Gap",      "description": "Analyse de l'Ã©cart de compÃ©tences"},
         {"name": "Embeddings",     "description": "Encodage de textes en vecteurs 384d"},
         {"name": "Offres",         "description": "Consultation des offres d'emploi"},
-        {"name": "Système",        "description": "Health check et méta-informations"},
+        {"name": "SystÃ¨me",        "description": "Health check et mÃ©ta-informations"},
     ],
     lifespan=lifespan,
 )
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # MIDDLEWARES
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],   # En production : restreindre aux domaines autorisés
+    allow_origins=["*"],   # En production : restreindre aux domaines autorisÃ©s
     allow_methods=["GET", "POST"],
     allow_headers=["*"],
 )
 
 
-# Middleware de logging des requêtes
+# Middleware de logging des requÃªtes
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
     t0       = time.time()
@@ -189,7 +189,7 @@ async def log_requests(request: Request, call_next):
     elapsed  = round((time.time() - t0) * 1000, 1)
     log.info(
         f"{request.method} {request.url.path} "
-        f"→ {response.status_code} ({elapsed}ms)"
+        f"â†’ {response.status_code} ({elapsed}ms)"
     )
     return response
 
@@ -197,7 +197,7 @@ async def log_requests(request: Request, call_next):
 # Handler d'erreurs global
 @app.exception_handler(Exception)
 async def global_exception_handler(request: Request, exc: Exception):
-    log.error(f"Erreur non gérée : {exc}", exc_info=True)
+    log.error(f"Erreur non gÃ©rÃ©e : {exc}", exc_info=True)
     return JSONResponse(
         status_code=500,
         content=ErrorResponse(
@@ -208,9 +208,9 @@ async def global_exception_handler(request: Request, exc: Exception):
     )
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # ROUTES PRINCIPALES
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 app.include_router(
     recommend.router,
@@ -231,27 +231,33 @@ app.include_router(
 )
 
 app.include_router(
+    chat.router,
+    prefix="/chat",
+    tags=["Agentic GraphRAG"],
+)
+
+app.include_router(
     offre.router,
     prefix="/offre",
     tags=["Offres"],
 )
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # ENDPOINT HEALTH
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 @app.get(
     "/health",
     response_model=HealthResponse,
-    tags=["Système"],
-    summary="État de l'API et de ses services",
+    tags=["SystÃ¨me"],
+    summary="Ã‰tat de l'API et de ses services",
     description="""
-Vérifie la disponibilité de tous les services :
-- SentenceTransformer fine-tuné (LLM 1)
+VÃ©rifie la disponibilitÃ© de tous les services :
+- SentenceTransformer fine-tunÃ© (LLM 1)
 - Neo4j (graphe de connaissances)
 - PostgreSQL / pgvector (embeddings HNSW)
-- Backend LLM 2 local (Ollama qwen2:1.5b)
+- Backend LLM 2 OpenRouter (openai/gpt-oss-20b:free)
 """,
 )
 async def health():
@@ -262,10 +268,10 @@ async def health():
     )
 
 
-@app.get("/", tags=["Système"], summary="Informations de base sur l'API")
+@app.get("/", tags=["SystÃ¨me"], summary="Informations de base sur l'API")
 async def root():
     return {
-        "name":        "API Recommandation Emploi-Compétences — Cameroun",
+        "name":        "API Recommandation Emploi-CompÃ©tences â€” Cameroun",
         "version":     "1.0.0",
         "docs":        "/docs",
         "redoc":       "/redoc",
@@ -274,17 +280,17 @@ async def root():
             "POST /recommend":         "Recommandation top-k offres + skill gap + roadmap",
             "GET  /recommend/candidat/{id}": "Recommandation rapide par matricule",
             "POST /skill-gap":         "Analyse skill gap pour une paire (candidat, offre)",
-            "POST /embed":             "Encoder textes → vecteurs 384d",
-            "GET  /offre/{id}":        "Détails d'une offre",
+            "POST /embed":             "Encoder textes â†’ vecteurs 384d",
+            "GET  /offre/{id}":        "DÃ©tails d'une offre",
             "GET  /offre":             "Recherche offres (filtres secteur/ville/NCF)",
-            "GET  /health":            "État des services",
+            "GET  /health":            "Ã‰tat des services",
         },
     }
 
 
-# ─────────────────────────────────────────────────────────────────────────
-# POINT D'ENTRÉE DIRECT
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+# POINT D'ENTRÃ‰E DIRECT
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 if __name__ == "__main__":
     import uvicorn
@@ -292,6 +298,7 @@ if __name__ == "__main__":
         "main:app",
         host="0.0.0.0",
         port=8000,
-        reload=True,        # rechargement auto en développement
+        reload=True,        # rechargement auto en dÃ©veloppement
         log_level="info",
     )
+

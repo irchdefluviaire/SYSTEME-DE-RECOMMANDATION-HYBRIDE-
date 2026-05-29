@@ -1,4 +1,4 @@
-# Systeme de recommandation hybride emploi-competences
+﻿# Systeme de recommandation hybride emploi-competences
 
 Ce depot implemente un systeme de recommandation pour le matching
 emploi-competences au Cameroun. Le systeme combine:
@@ -124,11 +124,16 @@ NEO4J_USER=neo4j
 NEO4J_PASSWORD=...
 NEO4J_DATABASE=neo4j
 
-# Provider LLM (abstraction unifiee, voir src/08_agentic_graphrag/providers.py)
-LLM_PROVIDER=ollama
-LLM_BASE_URL=http://localhost:11434/v1
-LLM_API_KEY=ollama
-LLM_CHOICE=llama3.1:latest
+# Provider LLM unique
+OPENROUTER_BASE_URL=https://openrouter.ai/api/v1
+API_KEY_OPEN_ROUTEUR=<votre_cle_openrouter>
+OPENROUTER_MODEL=openai/gpt-oss-20b:free
+
+# Text2Cypher local Hugging Face
+TEXT2CYPHER_MODEL=neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1
+TEXT2CYPHER_DEVICE_MAP=auto
+TEXT2CYPHER_TORCH_DTYPE=auto
+TEXT2CYPHER_MAX_NEW_TOKENS=256
 
 # Tracing optionnel (recommande pour la demonstration H4)
 LANGCHAIN_TRACING_V2=true
@@ -448,8 +453,8 @@ data/pdf_chunks/{source}.jsonl              chunks bruts + metadonnees
 pgvector: table doc_chunks                  embeddings indexes HNSW + neo4j_node_id
 Neo4j: (:DocChunk)-[:EXTRAIT_DE]->(:DocumentReferentiel)
 Optionnel selon les codes detectes:
-       (:DocChunk)-[:DEFINIT]->(:NiveauFormationNCF | :DomaineDétailléNCF)
-       (:DocChunk)-[:DECRIT]->(:Métier | :GroupeBaseMEPC)
+       (:DocChunk)-[:DEFINIT]->(:NiveauFormationNCF | :DomaineDÃ©taillÃ©NCF)
+       (:DocChunk)-[:DECRIT]->(:MÃ©tier | :GroupeBaseMEPC)
 ```
 
 Verification apres ingestion:
@@ -501,11 +506,11 @@ poetry run python scripts/materialize_similarity.py --entity metiers --threshold
 Verification Neo4j:
 
 ```cypher
-MATCH (a:`Compétence`)-[r:SIMILAIRE_A]-(b:`Compétence`)
+MATCH (a:`CompÃ©tence`)-[r:SIMILAIRE_A]-(b:`CompÃ©tence`)
 WHERE elementId(a) < elementId(b)
 RETURN count(r) AS relations_competences;
 
-MATCH (a:`Métier`)-[r:SIMILAIRE_A]-(b:`Métier`)
+MATCH (a:`MÃ©tier`)-[r:SIMILAIRE_A]-(b:`MÃ©tier`)
 WHERE elementId(a) < elementId(b)
 RETURN count(r) AS relations_metiers;
 
@@ -524,40 +529,32 @@ LIMIT 10;
 
 Le moteur `src/05_graphrag/recommendation_engine.py` charge un candidat,
 construit un contexte via pgvector et Neo4j, puis produit les recommandations,
-le skill gap et la roadmap. Ce mode reste disponible pour la comparaison
-ablative avec le mode agentique. Le backend par defaut est `simulation`, ce qui
-permet de tester le pipeline sans generation LLM. Pour une generation locale,
-utiliser le backend `llama`, qui appelle `llama3.1:latest` via Ollama
-(`LLM_BASE_URL=http://localhost:11434/v1` dans `.env`).
+le skill gap et la roadmap. Le backend generatif unique est OpenRouter avec
+`OPENROUTER_MODEL=openai/gpt-oss-20b:free`.
 
-Test sans LLM:
+Test avec OpenRouter:
 
 ```powershell
-poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend simulation --top-k 5
+poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --top-k 5
 ```
 
-Test avec `llama3.1` local:
+Benchmark sur un echantillon:
 
 ```powershell
-poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend llama --top-k 5
-```
-
-Benchmark local sur un echantillon, sans LLM:
-
-```powershell
-poetry run python src/05_graphrag/recommendation_engine.py --benchmark --backend simulation
+poetry run python src/05_graphrag/recommendation_engine.py --benchmark
 ```
 
 Backends declares dans le code:
 
 ```text
-simulation
-llama
+openrouter
 ```
 
-Le backend `llama` exige qu'Ollama soit lance localement et que le modele
-`llama3.1:latest` soit disponible. Le mode `simulation` produit des JSON de
-test: il ne doit pas etre interprete comme une validation empirique du systeme.
+La cle `API_KEY_OPEN_ROUTEUR` doit etre presente dans `.env`. Text2Cypher utilise
+separement le modele Hugging Face `neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1`;
+prevoir `HF_TOKEN` si l'acces au modele/base Gemma le requiert. Si le modele
+Text2Cypher local est indisponible, le systeme bascule sur des templates Cypher
+read-only.
 
 ### 7. Lancer l'API FastAPI
 
@@ -725,7 +722,7 @@ Sorties principales:
 
 ```text
 outputs/evaluation/evaluation_report.json
-outputs/evaluation/ablation_study.csv       tableau H1-H4 prêt pour LaTeX
+outputs/evaluation/ablation_study.csv       tableau H1-H4 prÃªt pour LaTeX
 outputs/evaluation/embedding_benchmark.csv  tableau multi-modeles
 ```
 
@@ -762,8 +759,7 @@ poetry run python scripts/materialize_similarity.py --entity skills --threshold 
 poetry run python scripts/materialize_similarity.py --entity metiers --threshold 0.80
 
 # 4. Test moteur classique
-poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend simulation --top-k 5
-poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --backend llama --top-k 5
+poetry run python src/05_graphrag/recommendation_engine.py --candidat PPKOU2501080016340 --top-k 5
 
 # 5. API + agent + interfaces
 poetry run uvicorn src.06_api.main:app --host 0.0.0.0 --port 8000 --reload
@@ -792,3 +788,4 @@ poetry run python src/07_evaluation/evaluate_system.py
 - pdfplumber (extraction PDF): https://github.com/jsvine/pdfplumber
 - E5 multilingual embeddings: https://huggingface.co/intfloat/multilingual-e5-base
 - Sentence-CamemBERT: https://huggingface.co/dangvantuan/sentence-camembert-base
+

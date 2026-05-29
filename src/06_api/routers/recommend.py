@@ -1,5 +1,5 @@
-"""
-routers/recommend.py — Endpoint POST /recommend
+﻿"""
+routers/recommend.py â€” Endpoint POST /recommend
 """
 import time
 import logging
@@ -44,7 +44,7 @@ def _parse_skill_gap(raw: dict) -> Optional[SkillGapAnalysis]:
         return None
     return SkillGapAnalysis(
         taux_matching=raw.get("taux_matching", 0.0),
-        niveau_gap=raw.get("niveau_gap", "modéré"),
+        niveau_gap=raw.get("niveau_gap", "modÃ©rÃ©"),
         eligible_maintenant=bool(raw.get("eligible_maintenant", False)),
         competences_critiques=raw.get("competences_critiques", [])[:5],
         score_projete_apres_formation=raw.get("score_projete_apres_formation"),
@@ -88,20 +88,20 @@ def _parse_roadmap(raw: dict) -> Optional[Roadmap]:
     response_model=RecommendResponse,
     summary="Recommandation d'offres d'emploi",
     description="""
-Retourne les top-k offres d'emploi recommandées pour un candidat,
-avec score hybride (sémantique + graphe + collaboratif), analyse du skill gap
-et roadmap de formation personnalisée (formations NCF camerounaises).
+Retourne les top-k offres d'emploi recommandÃ©es pour un candidat,
+avec score hybride (sÃ©mantique + graphe + collaboratif), analyse du skill gap
+et roadmap de formation personnalisÃ©e (formations NCF camerounaises).
 
 Le pipeline GraphRAG :
-1. ANN pgvector → top-20 offres sémantiquement proches
-2. Cypher Neo4j → skill gap exact + compatibilité NCF
-3. Score hybride = 0.40×sémantique + 0.35×graphe + 0.25×collaboratif
-4. LLM 2 (Mistral-7B / GPT-4o) → génération recommandations + roadmap
+1. ANN pgvector â†’ top-20 offres sÃ©mantiquement proches
+2. Cypher Neo4j â†’ skill gap exact + compatibilitÃ© NCF
+3. Score hybride = 0.40Ã—sÃ©mantique + 0.35Ã—graphe + 0.25Ã—collaboratif
+4. LLM 2 (Mistral-7B / GPT-4o) â†’ gÃ©nÃ©ration recommandations + roadmap
     """,
     responses={
-        200: {"description": "Recommandations générées avec succès"},
-        404: {"description": "Candidat non trouvé"},
-        503: {"description": "Service indisponible (moteur non initialisé)"},
+        200: {"description": "Recommandations gÃ©nÃ©rÃ©es avec succÃ¨s"},
+        404: {"description": "Candidat non trouvÃ©"},
+        503: {"description": "Service indisponible (moteur non initialisÃ©)"},
     },
 )
 async def recommend(
@@ -110,7 +110,7 @@ async def recommend(
 ):
     t0 = time.time()
     try:
-        # Changer le top_k et le backend à la volée si demandé
+        # Changer le top_k et le backend Ã  la volÃ©e si demandÃ©
         engine.top_k = request.top_k
         result = engine.recommend(request.profil.candidat_id)
 
@@ -128,7 +128,7 @@ async def recommend(
         for i, o in enumerate(result.get("top_offres", []))
     ]
 
-    # Extraire les métadonnées LLM
+    # Extraire les mÃ©tadonnÃ©es LLM
     rec_data = result.get("recommandations", {})
 
     return RecommendResponse(
@@ -144,7 +144,7 @@ async def recommend(
         roadmap=_parse_roadmap(result.get("roadmap", {}))
             if request.include_roadmap else None,
         latence_ms=latence_ms,
-        llm_backend="ollama:qwen2:1.5b",
+        llm_backend="openrouter:openai/gpt-oss-20b:free",
     )
 
 
@@ -159,7 +159,7 @@ async def recommend_by_id(
     include_roadmap: bool = Query(True),
     engine=Depends(get_engine),
 ):
-    """Version GET simplifiée — profil chargé depuis la base Parquet."""
+    """Version GET simplifiÃ©e â€” profil chargÃ© depuis la base Parquet."""
     t0 = time.time()
     try:
         engine.top_k = top_k
@@ -183,5 +183,6 @@ async def recommend_by_id(
         prochaine_action=rec_data.get("prochaine_action"),
         roadmap=_parse_roadmap(result.get("roadmap", {})) if include_roadmap else None,
         latence_ms=latence_ms,
-        llm_backend="ollama:qwen2:1.5b",
+        llm_backend="openrouter:openai/gpt-oss-20b:free",
     )
+

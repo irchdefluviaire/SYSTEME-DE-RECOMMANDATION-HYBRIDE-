@@ -1,12 +1,12 @@
-"""
+﻿"""
 recommendation_engine.py
 ===========================================================================
-Module 05 — Moteur de recommandation hybride (GraphRAG)
+Module 05 â€” Moteur de recommandation hybride (GraphRAG)
 
 Orchestre le pipeline complet :
   1. Context builder (pgvector ANN + Neo4j Cypher)
-  2. LLM 2 local qwen2:1.5b via Ollama
-  3. Sauvegarde des résultats (PostgreSQL)
+  2. LLM 2 via OpenRouter (openai/gpt-oss-20b:free)
+  3. Sauvegarde des rÃ©sultats (PostgreSQL)
 
 Usage :
     python recommendation_engine.py --candidat PPKOU2501080016340
@@ -52,40 +52,34 @@ logging.basicConfig(
 )
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # LLM CALLER
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 class LLMCaller:
-    """Appelle un LLM pour générer du JSON structuré.
+    """Appelle un LLM pour gÃ©nÃ©rer du JSON structurÃ©.
 
-    Priorité de backend :
-      1. OpenRouter (si API_KEY_OPEN_ROUTEUR est définie dans .env)
-      2. Ollama local (fallback — nécessite que qwen2:1.5b soit installé)
+    Backend unique : OpenRouter avec OPENROUTER_MODEL dans .env.
     """
 
     _OPENROUTER_BASE = "https://openrouter.ai/api/v1"
-    _OPENROUTER_DEFAULT_MODEL = "meta-llama/llama-3.1-8b-instruct:free"
+    _OPENROUTER_DEFAULT_MODEL = "openai/gpt-oss-20b:free"
 
-    def __init__(self, backend: str = "auto"):
+    def __init__(self, backend: str = "openrouter"):
         or_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
 
-        if backend == "openrouter" or (backend == "auto" and or_key):
-            self.backend = "openrouter"
-            self.base_url = os.getenv("OPENROUTER_BASE_URL", self._OPENROUTER_BASE).rstrip("/")
-            self.api_key = or_key
-            self.model = os.getenv("OPENROUTER_MODEL", self._OPENROUTER_DEFAULT_MODEL)
-        else:
-            self.backend = "ollama"
-            self.base_url = os.getenv("LLM_BASE_URL", "http://localhost:11434/v1").rstrip("/")
-            self.api_key = os.getenv("LLM_API_KEY", "ollama")
-            self.model = os.getenv("OLLAMA_MODEL", "qwen2:1.5b")
+        if backend != "openrouter":
+            raise ValueError("Backend LLM non autorise: utiliser uniquement openrouter.")
+        self.backend = "openrouter"
+        self.base_url = os.getenv("OPENROUTER_BASE_URL", self._OPENROUTER_BASE).rstrip("/")
+        self.api_key = or_key
+        self.model = os.getenv("OPENROUTER_MODEL", self._OPENROUTER_DEFAULT_MODEL)
 
         self.timeout_s = int(os.getenv("LLM_TIMEOUT_S", "600"))
         self.max_tokens = int(os.getenv("LLM_MAX_TOKENS", "1200"))
 
     def generate(self, system: str, user: str) -> str:
-        """Génère une réponse JSON via le backend configuré (OpenRouter ou Ollama)."""
+        """GÃ©nÃ¨re une rÃ©ponse JSON via OpenRouter."""
         payload = {
             "model": self.model,
             "messages": format_openai_messages(system, user),
@@ -119,18 +113,13 @@ class LLMCaller:
                 body = json.loads(response.read().decode("utf-8"))
         except TimeoutError as exc:
             raise RuntimeError(
-                f"Timeout LLM après {self.timeout_s}s sur {self.base_url}. "
-                "Augmenter LLM_TIMEOUT_S ou réduire LLM_MAX_TOKENS."
+                f"Timeout LLM aprÃ¨s {self.timeout_s}s sur {self.base_url}. "
+                "Augmenter LLM_TIMEOUT_S ou rÃ©duire LLM_MAX_TOKENS."
             ) from exc
         except urllib.error.HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
             raise RuntimeError(f"LLM HTTP {exc.code} [{self.backend}]: {detail}") from exc
         except urllib.error.URLError as exc:
-            if self.backend == "ollama":
-                raise RuntimeError(
-                    f"Ollama indisponible sur {self.base_url}. "
-                    "Vérifier qu'Ollama est lancé et que le modèle est installé."
-                ) from exc
             raise RuntimeError(f"LLM inaccessible [{self.backend}]: {exc.reason}") from exc
 
         return self._extract_json(body["choices"][0]["message"]["content"])
@@ -151,8 +140,8 @@ class RecommendationEngine:
       1. Charger profil candidat
       2. Construire contexte (ANN pgvector + Cypher Neo4j)
       3. Invoquer LLM 2 avec le contexte
-      4. Parser + valider la réponse JSON
-      5. Générer skill gap + roadmap pour le top-1
+      4. Parser + valider la rÃ©ponse JSON
+      5. GÃ©nÃ©rer skill gap + roadmap pour le top-1
       6. Sauvegarder dans PostgreSQL
     """
 
@@ -161,7 +150,7 @@ class RecommendationEngine:
         neo4j_driver=None,
         pg_conn=None,
         st_model=None,
-        llm_backend: str = "ollama",
+        llm_backend: str = "openrouter",
         top_k: int = 5,
     ):
         self.builder = GraphRAGContextBuilder(
@@ -180,7 +169,7 @@ class RecommendationEngine:
         df = pd.read_parquet(ROOT / "data" / "processed" / "candidats_normalized.parquet")
         row = df[df["candidat_id"].astype(str) == str(candidat_id)]
         if row.empty:
-            log.warning(f"Candidat {candidat_id} non trouvé, utilisation du premier")
+            log.warning(f"Candidat {candidat_id} non trouvÃ©, utilisation du premier")
             row = df.iloc[[0]]
         r = row.iloc[0]
         return {
@@ -203,7 +192,7 @@ class RecommendationEngine:
         try:
             return json.loads(clean)
         except json.JSONDecodeError:
-            # Tentative de récupération : trouver le premier bloc JSON
+            # Tentative de rÃ©cupÃ©ration : trouver le premier bloc JSON
             start = clean.find("{")
             end   = clean.rfind("}") + 1
             if start >= 0 and end > start:
@@ -211,13 +200,13 @@ class RecommendationEngine:
                     return json.loads(clean[start:end])
                 except:
                     pass
-        log.warning("JSON invalide dans la réponse LLM — réponse brute conservée")
+        log.warning("JSON invalide dans la rÃ©ponse LLM â€” rÃ©ponse brute conservÃ©e")
         return {"raw_response": text[:500]}
 
     def recommend(self, candidat_id: str) -> dict:
         """
         Pipeline complet pour un candidat.
-        Retourne le résultat structuré : offres + skill_gap + roadmap.
+        Retourne le rÃ©sultat structurÃ© : offres + skill_gap + roadmap.
         """
         if self.pg:
             try:
@@ -234,15 +223,15 @@ class RecommendationEngine:
 
         # 2. Context GraphRAG
         ctx = self.builder.build_context(candidat_id, candidat)
-        log.info(f"  Contexte : {ctx['n_candidats']} candidats ANN → top {len(ctx['top_offres'])} offres")
+        log.info(f"  Contexte : {ctx['n_candidats']} candidats ANN â†’ top {len(ctx['top_offres'])} offres")
 
-        # 3. LLM 2 → Recommandations
+        # 3. LLM 2 â†’ Recommandations
         user_rec = USER_RECOMMANDATION.format(context_text=ctx["context_text"])
         raw_rec  = self.llm.generate(SYSTEM_RECOMMANDATION, user_rec)
         rec_json = self._safe_parse_json(raw_rec) or {}
         log.info(f"  LLM recommandation : {len(rec_json.get('recommandations', []))} offres")
 
-        # 4. LLM 2 → Skill Gap (sur la top-1 offre)
+        # 4. LLM 2 â†’ Skill Gap (sur la top-1 offre)
         top1 = ctx["top_offres"][0] if ctx["top_offres"] else {}
         sg_json = {}
         if top1:
@@ -261,7 +250,7 @@ class RecommendationEngine:
             raw_sg  = self.llm.generate(SYSTEM_SKILL_GAP, user_sg)
             sg_json = self._safe_parse_json(raw_sg) or {}
 
-        # 5. LLM 2 → Roadmap (sur la top-1 offre)
+        # 5. LLM 2 â†’ Roadmap (sur la top-1 offre)
         rm_json = {}
         if top1 and sg_json:
             score_actuel  = top1.get("score_hybride", 0.5)
@@ -286,7 +275,7 @@ class RecommendationEngine:
             rm_json = self._safe_parse_json(raw_rm) or {}
 
         elapsed = time.time() - t0
-        log.info(f"  Pipeline terminé en {elapsed:.2f}s")
+        log.info(f"  Pipeline terminÃ© en {elapsed:.2f}s")
 
         result = {
             "candidat_id":     candidat_id,
@@ -306,7 +295,7 @@ class RecommendationEngine:
         return result
 
     def _save_to_pg(self, result: dict):
-        """Sauvegarde les résultats dans la table recommandations."""
+        """Sauvegarde les rÃ©sultats dans la table recommandations."""
         sql = """
         INSERT INTO recommandations
           (candidat_id, offre_id, rang, score_hybride,
@@ -343,26 +332,26 @@ class RecommendationEngine:
             with self.pg.cursor() as cur:
                 cur.executemany(sql, rows)
             self.pg.commit()
-            log.info(f"  {len(rows)} recommandations sauvegardées dans PostgreSQL")
+            log.info(f"  {len(rows)} recommandations sauvegardÃ©es dans PostgreSQL")
         except Exception as exc:
             try:
                 self.pg.rollback()
             except Exception:
                 pass
-            log.warning(f"  Sauvegarde recommandations ignorée : {exc}")
+            log.warning(f"  Sauvegarde recommandations ignorÃ©e : {exc}")
 
 
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 # CLI
-# ─────────────────────────────────────────────────────────────────────────
+# â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
 def main():
-    parser = argparse.ArgumentParser(description="Module 05 — GraphRAG Recommandation")
+    parser = argparse.ArgumentParser(description="Module 05 â€” GraphRAG Recommandation")
     parser.add_argument("--candidat",  type=str, default=None,
                         help="Matricule candidat ou 'all'")
     parser.add_argument("--top-k",     type=int, default=5)
     parser.add_argument("--benchmark", action="store_true",
-                        help="Test sur 10 candidats aléatoires")
+                        help="Test sur 10 candidats alÃ©atoires")
     args = parser.parse_args()
 
     engine = RecommendationEngine(top_k=args.top_k)
@@ -388,3 +377,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+

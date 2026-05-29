@@ -1,25 +1,18 @@
-"""
-text2cypher.py
-===========================================================================
-Text2Cypher sécurisé — modèle GGUF + fallback templates.
+"""Secure Text2Cypher with a local Hugging Face model plus safe templates.
 
-Deux modes de génération Cypher :
-  1. Modèle GGUF (projectwilsen/llama3.1-8b-text2cypher-neo4j-live-4bit-gguf)
-     téléchargé automatiquement via huggingface_hub, exécuté avec llama-cpp-python.
-  2. Templates read-only paramétrés (fallback si llama_cpp non disponible).
+Primary model:
+    neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1
 
-Dans les deux cas, le Cypher généré est validé (lecture seule, MATCH+RETURN requis).
-===========================================================================
+The generated Cypher is always validated as read-only before execution. If the
+Hugging Face model cannot be loaded or generates invalid Cypher, deterministic
+read-only templates are used.
 """
 
 from __future__ import annotations
 
-import json
 import logging
 import os
 import re
-import urllib.error
-import urllib.request
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
@@ -28,12 +21,11 @@ log = logging.getLogger(__name__)
 
 ROOT = Path(__file__).resolve().parents[2]
 
+TEXT2CYPHER_MODEL = "neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1"
 FORBIDDEN = (
     "CREATE", "MERGE", "DELETE", "DETACH", "SET ", "DROP",
     "REMOVE", "LOAD CSV", "CALL DBMS",
 )
-
-# ── Schéma Neo4j exposé au modèle Text2Cypher ───────────────────────────────
 
 _NEO4J_SCHEMA = """
 Node properties:
@@ -77,8 +69,10 @@ Return only the Cypher query, no explanation.
 ### Cypher query:
 """
 
+_hf_tokenizer: Any | None = None
+_hf_model: Any | None = None
+_hf_load_attempted = False
 
-# ── Dataclass plan ───────────────────────────────────────────────────────────
 
 @dataclass
 class CypherPlan:
@@ -90,177 +84,109 @@ class CypherPlan:
         return asdict(self)
 
 
-# ── Validation sécurité ──────────────────────────────────────────────────────
-
 def validate_readonly_cypher(cypher: str) -> str:
-    """Valide que le Cypher est en lecture seule et ajoute LIMIT si absent."""
-    upper = " ".join(cypher.upper().split())
+    upper = " ".join(str(cypher).upper().split())
     if any(token in upper for token in FORBIDDEN):
-        raise ValueError("Cypher non autorisé: opération d'écriture détectée")
+        raise ValueError("Cypher non autorise: operation d'ecriture detectee")
     if "MATCH" not in upper or "RETURN" not in upper:
-        raise ValueError("Cypher non autorisé: MATCH et RETURN sont obligatoires")
+        raise ValueError("Cypher non autorise: MATCH et RETURN sont obligatoires")
     if "LIMIT" not in upper:
-        cypher = cypher.rstrip() + "\nLIMIT 25"
-    return cypher
+        cypher = str(cypher).rstrip() + "\nLIMIT 25"
+    return str(cypher)
 
 
-# ── Modèle GGUF (llama-cpp-python) ──────────────────────────────────────────
-
-_llama_instance: Any = None
-_llama_load_attempted: bool = False
-
-
-def _get_llama_model() -> Any | None:
-    """Charge le modèle GGUF (lazy, singleton). Retourne None si non disponible."""
-    global _llama_instance, _llama_load_attempted
-    if _llama_load_attempted:
-        return _llama_instance
-    _llama_load_attempted = True
-
-    try:
-        from llama_cpp import Llama  # type: ignore
-    except ImportError:
-        log.info(
-            "llama-cpp-python non installé — Text2Cypher LLM désactivé. "
-            "Installer avec: pip install llama-cpp-python"
-        )
+def _extract_cypher(text: str) -> str | None:
+    cleaned = re.sub(r"```(?:cypher)?|```", "", str(text), flags=re.IGNORECASE).strip()
+    match = re.search(r"(?is)\bMATCH\b.+", cleaned)
+    if not match:
         return None
+    cypher = match.group(0).strip()
+    cut_markers = ["\n###", "\nQuestion:", "\nExplanation:", "\nNotes:"]
+    for marker in cut_markers:
+        pos = cypher.find(marker)
+        if pos >= 0:
+            cypher = cypher[:pos].strip()
+    return cypher or None
+
+
+def _get_hf_model() -> tuple[Any, Any] | tuple[None, None]:
+    global _hf_tokenizer, _hf_model, _hf_load_attempted
+    if _hf_load_attempted:
+        return _hf_tokenizer, _hf_model
+    _hf_load_attempted = True
+
+    model_id = os.getenv("TEXT2CYPHER_MODEL", TEXT2CYPHER_MODEL)
+    if os.getenv("TEXT2CYPHER_DISABLE_HF", "0") == "1":
+        log.info("Text2Cypher Hugging Face desactive par TEXT2CYPHER_DISABLE_HF=1")
+        return None, None
 
     try:
-        from huggingface_hub import hf_hub_download, list_repo_files  # type: ignore
-    except ImportError:
-        log.info("huggingface_hub non disponible — Text2Cypher LLM désactivé.")
-        return None
-
-    # Chemin local configuré manuellement
-    model_path_env = os.getenv("TEXT2CYPHER_MODEL_PATH", "")
-    if model_path_env and Path(model_path_env).exists():
-        model_file = model_path_env
-        log.info("Text2Cypher: chargement depuis TEXT2CYPHER_MODEL_PATH=%s", model_file)
-    else:
-        repo_id = os.getenv(
-            "TEXT2CYPHER_REPO",
-            "projectwilsen/llama3.1-8b-text2cypher-neo4j-live-4bit-gguf",
-        )
-        cache_dir = ROOT / "models" / "text2cypher"
-        cache_dir.mkdir(parents=True, exist_ok=True)
-
-        try:
-            files = list(list_repo_files(repo_id))
-            gguf_files = sorted(f for f in files if f.endswith(".gguf"))
-            if not gguf_files:
-                log.warning("Aucun fichier .gguf trouvé dans %s — fallback templates", repo_id)
-                return None
-            # Préférer Q4_K_M pour ratio qualité/vitesse optimal
-            filename = next(
-                (f for f in gguf_files if "Q4_K_M" in f.upper()),
-                gguf_files[0],
-            )
-            log.info("Text2Cypher: téléchargement %s / %s ...", repo_id, filename)
-            model_file = hf_hub_download(
-                repo_id=repo_id,
-                filename=filename,
-                cache_dir=str(cache_dir),
-            )
-            log.info("Text2Cypher: modèle prêt → %s", model_file)
-        except Exception as exc:
-            log.warning("Échec téléchargement modèle Text2Cypher (%s) — fallback templates", exc)
-            return None
-
-    try:
-        n_ctx = int(os.getenv("TEXT2CYPHER_CTX", "4096"))
-        n_gpu_layers = int(os.getenv("TEXT2CYPHER_GPU_LAYERS", "0"))
-        _llama_instance = Llama(
-            model_path=str(model_file),
-            n_ctx=n_ctx,
-            n_gpu_layers=n_gpu_layers,
-            verbose=False,
-        )
-        log.info("Modèle Text2Cypher chargé (ctx=%s, gpu_layers=%s)", n_ctx, n_gpu_layers)
-        return _llama_instance
+        import torch
+        from transformers import AutoModelForCausalLM, AutoTokenizer
     except Exception as exc:
-        log.warning("Échec chargement Llama (%s) — fallback templates", exc)
-        return None
+        log.warning("transformers/torch indisponibles pour Text2Cypher HF: %s", exc)
+        return None, None
+
+    try:
+        token = os.getenv("HF_TOKEN") or os.getenv("HUGGINGFACE_HUB_TOKEN")
+        dtype_name = os.getenv("TEXT2CYPHER_TORCH_DTYPE", "auto")
+        torch_dtype = "auto"
+        if dtype_name in {"float16", "fp16"}:
+            torch_dtype = torch.float16
+        elif dtype_name in {"bfloat16", "bf16"}:
+            torch_dtype = torch.bfloat16
+
+        log.info("Chargement Text2Cypher HF: %s", model_id)
+        _hf_tokenizer = AutoTokenizer.from_pretrained(model_id, token=token)
+        _hf_model = AutoModelForCausalLM.from_pretrained(
+            model_id,
+            token=token,
+            torch_dtype=torch_dtype,
+            device_map=os.getenv("TEXT2CYPHER_DEVICE_MAP", "auto"),
+            low_cpu_mem_usage=True,
+        )
+        return _hf_tokenizer, _hf_model
+    except Exception as exc:
+        log.warning("Modele Text2Cypher HF indisponible (%s) - fallback templates", exc)
+        _hf_tokenizer = None
+        _hf_model = None
+        return None, None
 
 
-def _llm_generate_cypher(question: str) -> str | None:
-    """Génère du Cypher via le modèle GGUF. Retourne None si non disponible."""
-    llm = _get_llama_model()
-    if llm is None:
+def _hf_generate_cypher(question: str) -> str | None:
+    tokenizer, model = _get_hf_model()
+    if tokenizer is None or model is None:
         return None
 
     prompt = _TEXT2CYPHER_PROMPT.format(schema=_NEO4J_SCHEMA, question=question)
+    max_new_tokens = int(os.getenv("TEXT2CYPHER_MAX_NEW_TOKENS", "256"))
     try:
-        output = llm(
-            prompt,
-            max_tokens=256,
-            temperature=0.0,
-            stop=["###", "\n\n", "Question:", "Task:", "Instructions:"],
+        inputs = tokenizer(prompt, return_tensors="pt")
+        device = getattr(model, "device", None)
+        if device is not None:
+            inputs = {key: value.to(device) for key, value in inputs.items()}
+        output = model.generate(
+            **inputs,
+            max_new_tokens=max_new_tokens,
+            do_sample=False,
+            pad_token_id=getattr(tokenizer, "eos_token_id", None),
         )
-        cypher = output["choices"][0]["text"].strip()
-        return cypher if cypher else None
+        generated = tokenizer.decode(
+            output[0][inputs["input_ids"].shape[-1]:],
+            skip_special_tokens=True,
+        )
+        return _extract_cypher(generated)
     except Exception as exc:
-        log.warning("Erreur inférence Text2Cypher LLM: %s", exc)
+        log.warning("Erreur inference Text2Cypher HF: %s", exc)
         return None
 
-
-# ── OpenRouter (fallback entre GGUF et templates) ───────────────────────────
-
-def _openrouter_generate_cypher(question: str) -> str | None:
-    """Génère du Cypher via OpenRouter. Retourne None si non configuré ou en erreur."""
-    api_key = os.getenv("API_KEY_OPEN_ROUTEUR") or os.getenv("OPENROUTER_API_KEY", "")
-    if not api_key:
-        return None
-
-    base_url = os.getenv("OPENROUTER_BASE_URL", "https://openrouter.ai/api/v1").rstrip("/")
-    model = os.getenv("OPENROUTER_MODEL", "meta-llama/llama-3.1-8b-instruct:free")
-    prompt = _TEXT2CYPHER_PROMPT.format(schema=_NEO4J_SCHEMA, question=question)
-
-    payload = {
-        "model": model,
-        "messages": [{"role": "user", "content": prompt}],
-        "temperature": 0.0,
-        "max_tokens": 300,
-        "stop": ["###", "Question:", "Task:"],
-    }
-    req = urllib.request.Request(
-        f"{base_url}/chat/completions",
-        data=json.dumps(payload).encode(),
-        headers={
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {api_key}",
-            "HTTP-Referer": "https://github.com/irchdefluviaire",
-            "X-Title": "Text2Cypher-GraphRAG",
-        },
-        method="POST",
-    )
-    try:
-        with urllib.request.urlopen(req, timeout=30) as resp:
-            body = json.loads(resp.read().decode())
-        cypher = body["choices"][0]["message"]["content"].strip()
-        log.debug("Text2Cypher via OpenRouter (model=%s): %s", model, cypher[:120])
-        return cypher if cypher else None
-    except Exception as exc:
-        log.warning("Text2Cypher OpenRouter indisponible (%s) — fallback templates", exc)
-        return None
-
-
-# ── Fallback templates ───────────────────────────────────────────────────────
 
 def build_cypher_plan(question: str) -> CypherPlan:
-    """Construit un plan Cypher par templates paramétrés (sans LLM).
-
-    N'utilise que les relations vérifiées saines dans le graphe :
-      CLASSIFIE_DANS, EXTRAIT_DE, DECRIT, ALIGNE_AVEC, PREPARE_POUR.
-    Les relations REQUIERT, POSSEDE, LOCALISEE_A, DANS_SECTEUR sont
-    actuellement corrompues et exclues des templates.
-    """
     q = question.lower()
     quoted = re.findall(r'"([^"]+)"|' r"'([^']+)'", question)
     terms = [a or b for a, b in quoted if (a or b)]
     term = terms[0] if terms else _keyword_tail(question)
 
-    # Compétences — lookup direct sans traversal de relation corrompue
     if any(w in q for w in ["competence", "competences", "skill", "liees", "requiert"]):
         cypher = """
         MATCH (c:Compétence)
@@ -278,7 +204,6 @@ def build_cypher_plan(question: str) -> CypherPlan:
         """
         return CypherPlan("competence_lookup", validate_readonly_cypher(cypher), {"term": term})
 
-    # Référentiels NCF / formations / documents — EXTRAIT_DE est sain
     if any(w in q for w in ["ncf", "formation", "domaine", "referentiel", "mepc", "diplome", "nomenclature"]):
         cypher = """
         MATCH (chunk:DocChunk)-[:EXTRAIT_DE]->(doc:DocumentReferentiel)
@@ -297,7 +222,6 @@ def build_cypher_plan(question: str) -> CypherPlan:
         """
         return CypherPlan("referentiel_lookup", validate_readonly_cypher(cypher), {"term": term})
 
-    # Candidat — lookup direct sans POSSEDE (corrompu)
     if any(w in q for w in ["candidat", "profil", "skill gap", "roadmap"]):
         cypher = """
         MATCH (cand:Candidat)
@@ -316,7 +240,6 @@ def build_cypher_plan(question: str) -> CypherPlan:
         """
         return CypherPlan("candidat_lookup", validate_readonly_cypher(cypher), {"term": term})
 
-    # Offres d'emploi — sans les relations corrompues
     if any(w in q for w in ["offre", "offres", "emploi", "poste", "recrutement", "job"]):
         cypher = """
         MATCH (o:OffreEmploi)
@@ -335,7 +258,6 @@ def build_cypher_plan(question: str) -> CypherPlan:
         """
         return CypherPlan("offre_lookup", validate_readonly_cypher(cypher), {"term": term})
 
-    # Métier avec classification ISCO — CLASSIFIE_DANS est sain
     if any(w in q for w in ["metier", "orientation", "carriere", "devenir", "profession"]):
         cypher = """
         MATCH (m:Métier)
@@ -353,7 +275,6 @@ def build_cypher_plan(question: str) -> CypherPlan:
         """
         return CypherPlan("metier_lookup", validate_readonly_cypher(cypher), {"term": term})
 
-    # Domaines NCF → Métiers via PREPARE_POUR (sain)
     if any(w in q for w in ["isco", "groupe", "classification", "mepc"]):
         cypher = """
         MATCH (d:DomaineDétailléNCF)-[:PREPARE_POUR]->(m:Métier)
@@ -370,7 +291,6 @@ def build_cypher_plan(question: str) -> CypherPlan:
         """
         return CypherPlan("ncf_metier_lookup", validate_readonly_cypher(cypher), {"term": term})
 
-    # Métier par défaut (fallback)
     cypher = """
     MATCH (m:Métier)
     WHERE toLower(coalesce(m.preferredLabel, '')) CONTAINS toLower($term)
@@ -386,48 +306,27 @@ def build_cypher_plan(question: str) -> CypherPlan:
     return CypherPlan("metier_lookup", validate_readonly_cypher(cypher), {"term": term})
 
 
-# ── Point d'entrée principal ─────────────────────────────────────────────────
-
 def run_text2cypher(driver: Any, question: str, *, database: str = "neo4j") -> dict[str, Any]:
-    """
-    Exécute une requête Text2Cypher contre Neo4j.
-
-    Essaie le modèle GGUF en premier ; bascule sur les templates si :
-      - llama-cpp-python n'est pas installé
-      - le modèle n'est pas encore téléchargé
-      - le Cypher généré est invalide ou produit une erreur Neo4j
-    """
-    # 1. Modèle GGUF local (priorité si disponible)
-    cypher_raw = _llm_generate_cypher(question)
-    source = "gguf_llm"
-
-    # 2. OpenRouter (si GGUF absent ou en erreur)
-    if not cypher_raw:
-        cypher_raw = _openrouter_generate_cypher(question)
-        source = "openrouter"
+    cypher_raw = _hf_generate_cypher(question)
+    source = "hf_text2cypher_gemma"
 
     if cypher_raw:
         try:
             cypher = validate_readonly_cypher(cypher_raw)
             with driver.session(database=database) as session:
                 rows = [dict(r) for r in session.run(cypher)]
-            plan = CypherPlan("llm_generated", cypher, {})
-            log.debug("Text2Cypher %s: %d résultats", source, len(rows))
+            plan = CypherPlan("hf_generated", cypher, {})
+            log.debug("Text2Cypher HF: %d resultats", len(rows))
             return {"plan": plan.to_dict(), "rows": rows, "source": source}
         except Exception as exc:
-            log.warning(
-                "Cypher %s invalide ou erreur Neo4j (%s) — fallback template", source, exc
-            )
+            log.warning("Cypher HF invalide ou erreur Neo4j (%s) - fallback template", exc)
 
-    # 3. Templates paramétrés (fallback final)
     plan = build_cypher_plan(question)
     with driver.session(database=database) as session:
         rows = [dict(r) for r in session.run(plan.cypher, **plan.params)]
-    log.debug("Text2Cypher template '%s': %d résultats", plan.intent, len(rows))
+    log.debug("Text2Cypher template '%s': %d resultats", plan.intent, len(rows))
     return {"plan": plan.to_dict(), "rows": rows, "source": "template"}
 
-
-# ── Utilitaire ───────────────────────────────────────────────────────────────
 
 def _keyword_tail(question: str) -> str:
     cleaned = re.sub(r"[^\w\s'-]", " ", question, flags=re.UNICODE)

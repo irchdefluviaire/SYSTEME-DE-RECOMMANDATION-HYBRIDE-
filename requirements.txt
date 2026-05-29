@@ -10,6 +10,8 @@ ipykernel>=6.29.0
 
 # SentenceTransformer fine-tuning and evaluation
 sentence-transformers>=3.0.0
+transformers>=4.53.0
+peft>=0.17.0
 torch>=2.3.0
 scikit-learn>=1.5.0
 scipy>=1.13.0
@@ -36,7 +38,6 @@ streamlit>=1.35.0
 # Agentic GraphRAG / LangGraph Studio
 langchain>=1.0.0
 langchain-core>=1.0.0
-langchain-ollama>=1.0.0
 langgraph>=1.0.0
 langgraph-cli[inmem]>=0.4.0
 langsmith>=0.4.0
