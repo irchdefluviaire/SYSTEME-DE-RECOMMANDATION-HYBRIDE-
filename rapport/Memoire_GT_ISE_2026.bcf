@@ -2417,18 +2417,19 @@
     <bcf:citekey order="30" intorder="1">nimeesha2024agenticrag</bcf:citekey>
     <bcf:citekey order="31" intorder="1">yao2023react</bcf:citekey>
     <bcf:citekey order="32" intorder="1">asai2024selfrag</bcf:citekey>
-    <bcf:citekey order="33" intorder="1">reimers2019sbert</bcf:citekey>
-    <bcf:citekey order="34" intorder="1">reimers2019sbert</bcf:citekey>
-    <bcf:citekey order="35" intorder="1">thakur2021beir</bcf:citekey>
-    <bcf:citekey order="35" intorder="2">muennighoff2022mteb</bcf:citekey>
-    <bcf:citekey order="36" intorder="1">lewis2020rag</bcf:citekey>
-    <bcf:citekey order="36" intorder="2">hogan2021knowledge</bcf:citekey>
-    <bcf:citekey order="37" intorder="1">burke2002hybrid</bcf:citekey>
-    <bcf:citekey order="37" intorder="2">ricci2011recommender</bcf:citekey>
-    <bcf:citekey order="38" intorder="1">lewis2020rag</bcf:citekey>
-    <bcf:citekey order="38" intorder="2">es2024ragas</bcf:citekey>
-    <bcf:citekey order="39" intorder="1">liu2023geval</bcf:citekey>
-    <bcf:citekey order="40" intorder="1">es2024ragas</bcf:citekey>
+    <bcf:citekey order="33" intorder="1">lewis2020rag</bcf:citekey>
+    <bcf:citekey order="33" intorder="2">es2024ragas</bcf:citekey>
+    <bcf:citekey order="38" intorder="1">reimers2019sbert</bcf:citekey>
+    <bcf:citekey order="38" intorder="2">pgvector2024</bcf:citekey>
+    <bcf:citekey order="39" intorder="1">hogan2021knowledge</bcf:citekey>
+    <bcf:citekey order="39" intorder="2">hamilton2020graph</bcf:citekey>
+    <bcf:citekey order="40" intorder="1">reimers2019sbert</bcf:citekey>
+    <bcf:citekey order="41" intorder="1">pgvector2024</bcf:citekey>
+    <bcf:citekey order="42" intorder="1">malkov2018hnsw</bcf:citekey>
+    <bcf:citekey order="43" intorder="1">yao2023react</bcf:citekey>
+    <bcf:citekey order="43" intorder="2">asai2024selfrag</bcf:citekey>
+    <bcf:citekey order="44" intorder="1">thakur2021beir</bcf:citekey>
+    <bcf:citekey order="44" intorder="2">muennighoff2022mteb</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
