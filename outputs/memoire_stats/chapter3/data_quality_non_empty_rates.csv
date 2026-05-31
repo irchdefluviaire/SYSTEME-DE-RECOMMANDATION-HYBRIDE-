@@ -1,0 +1,10 @@
+﻿table,champ,taux_non_vide
+offres,titre_poste,1.0
+offres,secteur_principal,1.0
+offres,ville_principale,1.0
+offres,skills_list,1.0
+offres,text_to_embed,1.0
+candidats,candidat_id,1.0
+candidats,ncf_niveau_final,1.0
+candidats,metier_vise,1.0
+candidats,text_to_embed,1.0

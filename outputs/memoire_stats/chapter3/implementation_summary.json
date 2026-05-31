@@ -1,0 +1,11 @@
+{
+  "n_offres_normalisees": 7861,
+  "n_candidats_normalises": 1105,
+  "n_mepc_groupes_base": 209,
+  "n_ncf_domaines_detailles": 201,
+  "n_pgvector_embeddings": 34215,
+  "n_neo4j_nodes": 43008,
+  "n_neo4j_relationships": null,
+  "openrouter_model": "openai/gpt-oss-20b:free",
+  "text2cypher_model": "neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1"
+}

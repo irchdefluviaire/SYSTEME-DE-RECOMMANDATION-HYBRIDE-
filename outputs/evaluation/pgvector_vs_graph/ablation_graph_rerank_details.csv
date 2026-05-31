@@ -1,0 +1,551 @@
+candidat_id,offre_id,titre,proxy_relevance,score_sem,score_hybride,taux_match,verdict_recrutement,rank_pgvector,rank_graph,rank_shift
+PPBZV2501070016137,a1bbe8be-3050-45c3-b112-0490e59dce4a,Administrateur(trice) Finances et Ressources Humaines,0.1125,0.6127,0.7033,0.833,postuler_avec_plan_de_montee_en_competence,2,1,1
+PPBZV2501070016137,264d58e8-2184-48e9-947a-e231c613591a,Stage Professionnel et Académique en Cabinet,0.1125,0.5468,0.6803,0.833,postuler_avec_plan_de_montee_en_competence,24,2,22
+PPBZV2501070016137,c671fa5e-08cd-44a6-818f-ed54e9677e8c,Directeur d'Agence VIP H/F,0.1125,0.5411,0.6783,0.833,postuler_avec_plan_de_montee_en_competence,28,3,25
+PPBZV2501070016137,1247436c-43f2-4084-958c-718c7a18771f,Contrôleur de Gestion / Controlling,0.1125,0.5367,0.6767,0.833,postuler_avec_plan_de_montee_en_competence,29,4,25
+PPBZV2501070016137,35ebbe0d-1102-439f-a0fa-c0cab3811e6d,Directeur Général Banque H/F,0.2625,0.5627,0.6298,0.833,postuler_avec_plan_de_montee_en_competence,3,5,-2
+PPBZV2501070016137,389d72ac-3a3a-4411-843d-cb95481a1d6f,Treasury Accountant,0.1125,0.5439,0.6233,0.833,postuler_avec_plan_de_montee_en_competence,25,6,19
+PPBZV2501070016137,72c15904-c651-4bc3-9a07-f5ed221b7d81,Administrateur(trice) Finances et Ressources Humaines,0.5029,0.6127,0.5359,0.275,vivier_a_developper,1,7,-6
+PPBZV2501070016137,492b1060-c6a5-48bc-bb83-a73929100831,RESPONSABLE COMMERCIAL,0.535,0.5613,0.518,0.275,vivier_a_developper,9,8,1
+PPBZV2501070016137,c9f5be6b-445f-4a90-8842-b4781164aa79,Stage Professionnel et Académique en Cabinet,0.5671,0.5468,0.5129,0.275,vivier_a_developper,23,9,14
+PPBZV2501070016137,d22174eb-b956-4eff-a04f-ff38c22de27d,Directeur d'Agence VIP H/F,0.5029,0.5411,0.5109,0.275,vivier_a_developper,27,10,17
+PPBZV2501210017897,9f55f78c-ad4d-4b99-9a15-8930b7d79956,Techniciens,0.1125,0.4963,0.4806,0.413,vivier_a_developper,5,1,4
+PPBZV2501210017897,9078e613-9a1f-4a82-89c2-cc9e5d41b745,Technicien Réseau,0.1125,0.4963,0.4806,0.413,vivier_a_developper,11,2,9
+PPBZV2501210017897,f4e628f4-628d-4a53-8ec1-6cc1eff54433,Technicien Tracking GPS,0.1125,0.4963,0.4806,0.413,vivier_a_developper,13,3,10
+PPBZV2501210017897,38089bda-ff90-4bd5-a6dc-865018461da5,(02) Techniciens De Maintenance Dans Les Villes De Yaoundé Et Bertoua,0.1125,0.4963,0.4806,0.413,vivier_a_developper,14,4,10
+PPBZV2501210017897,659f0189-5cf3-45f2-ba91-82efb7c448f8,TECHNICIEN DE PRODUCTION,0.1125,0.4963,0.4806,0.413,vivier_a_developper,15,5,10
+PPBZV2501210017897,5b1ba62a-00e1-4ee0-ac23-3daa546d479c,20 Techniciens Agricoles-SERAGRO RH,0.1125,0.4963,0.4806,0.413,vivier_a_developper,18,6,12
+PPBZV2501210017897,83546cde-c700-41ee-959c-706965fcb6ae,TECHNICIEN(NE) MAINTENANCE ELECTRIQUE (4 Postes),0.1125,0.4963,0.4806,0.413,vivier_a_developper,21,7,14
+PPBZV2501210017897,05b11088-d4fe-4821-a4a6-8af191f59ca7,Technicien Généraliste,0.1125,0.4963,0.4806,0.413,vivier_a_developper,24,8,16
+PPBZV2501210017897,dc7c8a64-558a-43c5-94af-da0f00c8b735,TECHNICIENNE DE SURFACE,0.5625,0.4963,0.4806,0.413,vivier_a_developper,26,9,17
+PPBZV2501210017897,cd428bb3-adee-4348-bf3d-4865d150e807,Technicien de Surface - Douala,0.445,0.5019,0.4412,0.275,vivier_a_developper,1,10,-9
+PPBZV2501080016328,11188906-d3cd-4cc2-ae9d-11f65537c545,02 Assistants Principaux À La Protection De L'Enfance,0.1125,0.6388,0.7426,1.0,postuler_avec_plan_de_montee_en_competence,4,1,3
+PPBZV2501080016328,96866a8c-52b9-438f-80c1-b7118a16a532,Security Assistant Cameroon Maroua,0.1125,0.6388,0.7426,1.0,postuler_avec_plan_de_montee_en_competence,10,2,8
+PPBZV2501080016328,36b30c0a-ba8f-4085-8615-938ac387f0dd,Superviseur / Contrôleur Des Agents,0.1125,0.6388,0.7426,1.0,postuler_avec_plan_de_montee_en_competence,11,3,8
+PPBZV2501080016328,f6201d6c-b3e4-449c-90ec-2e58ecc955c3,03 SUPERVISEURS Des Agents De Sécurité,0.2625,0.6388,0.7426,1.0,postuler_avec_plan_de_montee_en_competence,12,4,8
+PPBZV2501080016328,8f754c02-f047-4d7f-a876-e2a2a3be0561,AGENTS D'ENTRETIEN AGENT DE SECURITE,0.3375,0.6388,0.7426,1.0,postuler_avec_plan_de_montee_en_competence,26,5,21
+PPBZV2501080016328,82f33765-febe-47c4-a29b-a65292f4b9fa,CONTROLEUR DES ACCES SOIR (15H -22H),0.1125,0.6388,0.7086,1.0,postuler_avec_plan_de_montee_en_competence,3,6,-3
+PPBZV2501080016328,1d13ab9b-9983-4b1c-b9b8-3fae16fecfb1,SECURITY CORDINATOR-GROUPE CIBLE,0.1125,0.6388,0.7086,1.0,postuler_avec_plan_de_montee_en_competence,5,7,-2
+PPBZV2501080016328,bc6bf24e-f7e3-44e8-a036-c2dc484e124b,Appel D'Offres : Prestations De Sécurisation Et De Gardiennage Des Immeubles,0.1125,0.6388,0.7086,1.0,postuler_avec_plan_de_montee_en_competence,13,8,5
+PPBZV2501080016328,9d05d1bf-e090-48b4-bb30-c01800f3299b,02 GARDIENS TEMPORAIRES,0.1125,0.6388,0.7086,1.0,postuler_avec_plan_de_montee_en_competence,15,9,6
+PPBZV2501080016328,70e78061-08c6-488f-a308-9834b1e9c40f,Security Operations Support Officer NOA (182143)Requisition ID 182143,0.1125,0.6388,0.7086,1.0,postuler_avec_plan_de_montee_en_competence,18,10,8
+PPBZV2501100016577,ef98d929-bbd5-4f45-98b1-a863caa9ba94,AGENTS DE CREDIT STAGIAIRES,0.49,0.5489,0.5136,0.275,vivier_a_developper,1,1,0
+PPBZV2501100016577,6d420aff-9d52-4908-80c0-f422bbe23294,ASSISTANT(E) COMPTABLE ÉT FINANCE,0.76,0.5489,0.5136,0.275,vivier_a_developper,4,2,2
+PPBZV2501100016577,06399d10-4486-44a4-a93d-6711b7ec3ea4,50 AGENTS DE TERRAIN (AT) H/F,0.535,0.5489,0.5136,0.275,vivier_a_developper,5,3,2
+PPBZV2501100016577,615cc175-26b7-4ee6-83de-5ee0ce96e205,CABINETS D’AUDIT ET D’EXPERTISE COMPTABLE,0.535,0.5489,0.5136,0.275,vivier_a_developper,7,4,3
+PPBZV2501100016577,3c0fb5b7-f538-4f6c-ba49-85cfc67d5ab0,Contrôleur Comptable,0.6475,0.5489,0.5136,0.275,vivier_a_developper,8,5,3
+PPBZV2501100016577,c26f05cd-3548-4c15-822c-bb26ad232b3b,COUNTRY FINANCE MANAGER,0.535,0.5489,0.5136,0.275,vivier_a_developper,9,6,3
+PPBZV2501100016577,36887c54-ab78-47f9-b19b-0e58eb0c21e1,01 CAISSIERE,0.61,0.5489,0.5136,0.275,vivier_a_developper,10,7,3
+PPBZV2501100016577,a9c7cdcb-5480-4af4-9bc3-ed23257a5bea,Assistant(E) Contrôle De Gestion,0.58,0.5489,0.5136,0.275,vivier_a_developper,13,8,5
+PPBZV2501100016577,9a01b88e-99a9-46ab-b649-7e8f572764ed,01 COMPTABLE,0.76,0.5489,0.5136,0.275,vivier_a_developper,15,9,6
+PPBZV2501100016577,dae96ebb-1db6-4c84-a9b1-b822029507a0,"02 FINANCE ASSISTANTS, SAFECARE Project",0.49,0.5489,0.5136,0.275,vivier_a_developper,16,10,6
+PPBZV2501100016693,3b978acd-7e0b-4b24-8848-8f6350ce8adf,Commercial D'entreprise,0.55,0.5404,0.5106,0.275,vivier_a_developper,3,1,2
+PPBZV2501100016693,2ef9c9fa-ecc9-4dd3-9115-e0fbc21db943,BUSINESS DEVELOPMENT MANAGER (BDM) (H/F),0.43,0.5404,0.5106,0.275,vivier_a_developper,4,2,2
+PPBZV2501100016693,7b04b234-036d-41bf-bb8c-724284e0eba1,Directeur Régional (H/F),0.6062,0.5302,0.5071,0.275,vivier_a_developper,6,3,3
+PPBZV2501100016693,4096d000-d1a9-4c9a-bf9d-259f8c13bbef,Directeur Commercial H/F,0.55,0.5004,0.4966,0.275,vivier_a_developper,7,4,3
+PPBZV2501100016693,d492b088-8f3e-4e2b-b5ec-6c4cda54df23,Directeur Marketing et Communication,0.3812,0.4992,0.4962,0.275,vivier_a_developper,10,5,5
+PPBZV2501100016693,5539fa9c-c841-4be4-a3c9-029c7faf67ed,Directeur des Ventes H/F,0.55,0.4939,0.4944,0.275,vivier_a_developper,12,6,6
+PPBZV2501100016693,da31ccad-a2c9-4688-ac20-8e5a7d0a8be0,"03 Commercial Et Community Manager,",0.475,0.4787,0.489,0.275,vivier_a_developper,13,7,6
+PPBZV2501100016693,dd411761-d924-4876-b061-1605b804af3b,Directeur des Ventes H/F,0.55,0.4776,0.4887,0.275,vivier_a_developper,15,8,7
+PPBZV2501100016693,f6d80fa5-a189-429c-97f7-7f8df3cec758,DIRECTEUR COMMERCIAL ET MARKETING H/F,0.55,0.4773,0.4886,0.275,vivier_a_developper,17,9,8
+PPBZV2501100016693,835c25dc-82d5-4e74-95e3-57be2ffe2623,UN(E) COMMERCIAL(E),0.4375,0.4714,0.4865,0.275,vivier_a_developper,20,10,10
+PPBZV2501160017392,2289ba63-80ac-4e51-9522-76ac1c8e234e,𝟭𝟱𝟬 𝘃𝗼𝗹𝗼𝗻𝘁𝗮𝗶𝗿𝗲𝘀 Pour Effectuer Des Stages Rémunérés,0.175,0.4031,0.4066,0.275,hors_cible_actuel,14,1,13
+PPBZV2501160017392,aff2f1e8-0f36-4e19-bb27-9276f3ec7e11,OUVRIERS ET MANOEUVRES,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,4,2,2
+PPBZV2501160017392,0a4cddda-f5b7-4141-90fa-15b98fd9c28d,Plusieurs Postes,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,5,3,2
+PPBZV2501160017392,1ec3f9f1-b635-490b-9657-e1d9824a1a34,MANUTENTIONNAIRE,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,7,4,3
+PPBZV2501160017392,2806dac4-7acd-4781-b35e-484ef02e08a0,BRAISEUR (SE),0.1125,0.4031,0.3726,0.275,hors_cible_actuel,10,5,5
+PPBZV2501160017392,1ea00b66-3f5b-422c-96e0-d00380fc1cb2,Recrutement Massif Des Jeunes Camerounais,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,11,6,5
+PPBZV2501160017392,a01015d4-b28b-4031-bc7d-8d2de196dfc4,Préposé(E) Aux Chambres,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,12,7,5
+PPBZV2501160017392,d2e335f2-9dba-49f6-a008-fb836af1c683,Concierge,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,19,8,11
+PPBZV2501160017392,6924e354-8c7a-44ed-8a50-b8e545aa4997,MAITRE NAGEUR,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,23,9,14
+PPBZV2501160017392,2ebe035b-2740-4aea-a40e-784dbab47acd,Daily Cash Collectors / Collecteurs,0.1125,0.4031,0.3726,0.275,hors_cible_actuel,27,10,17
+PPBZV2501110016726,238a7835-ad7b-4c78-b091-822806610594,CHARGE(E) DE RELATIONS CORPORATE,0.3525,0.661,0.4629,0.275,vivier_a_developper,5,1,4
+PPBZV2501110016726,ede32acc-cee7-4859-a827-81d9d6844cbe,05 Chefs D’agence,0.3975,0.661,0.4629,0.275,vivier_a_developper,6,2,4
+PPBZV2501110016726,4139e975-1609-41db-9435-6d84b18f934f,Plusieurs Profils,0.3975,0.661,0.4629,0.275,vivier_a_developper,7,3,4
+PPBZV2501110016726,337e1bb2-5618-4098-95af-00be7ec9937f,Entry Level Training Program,0.3225,0.661,0.4629,0.275,vivier_a_developper,9,4,5
+PPBZV2501110016726,210a7b95-f536-4317-9d7c-ccf69fb6a49c,02 Chargé(E)S D'Affaires PME (H/F),0.3975,0.661,0.4629,0.275,vivier_a_developper,10,5,5
+PPBZV2501110016726,1845e476-6c88-495e-a6e4-fb32fc79b5a2,Senior FINANCE OFFICER,0.3975,0.661,0.4629,0.275,vivier_a_developper,11,6,5
+PPBZV2501110016726,a60d0cce-3319-4856-bd6c-e2ccc2469adf,GESTIONNAIRES DE PORTEFEUILLE,0.3975,0.661,0.4629,0.275,vivier_a_developper,14,7,7
+PPBZV2501110016726,66edacb0-f16f-4f53-87d8-c096f1e34caa,08 Contrôleurs Internes,0.3975,0.661,0.4629,0.275,vivier_a_developper,16,8,8
+PPBZV2501110016726,8cee12ac-f553-4a0d-b38b-3641a22d01a1,02 CHEFS D’AGENCE,0.3525,0.6442,0.457,0.275,vivier_a_developper,29,9,20
+PPBZV2501110016726,a1bbe8be-3050-45c3-b112-0490e59dce4a,Administrateur(trice) Finances et Ressources Humaines,0.1125,0.712,0.4336,0.833,vivier_a_developper,1,10,-9
+PPBZV2501060016071,24e94ba3-d5c4-4dbf-9579-201ad1bc731b,Caissière en poissonnerie,0.34,0.4515,0.4235,0.275,vivier_a_developper,29,1,28
+PPBZV2501060016071,cf244fc0-2aff-4d01-8466-cfcab93e3baf,Caissière en poissonnerie,0.1125,0.4515,0.377,0.0,hors_cible_actuel,30,2,28
+PPBZV2501060016071,33222d77-69e8-4d73-b70a-8356813fc6db,Chargé de Clientèle,0.46,0.566,0.2697,0.275,hors_cible_actuel,1,3,-2
+PPBZV2501060016071,e2ad5e04-b8b1-49af-b7f4-dfd9d45fb037,Responsable Marketing (H/F),0.46,0.529,0.26,0.275,hors_cible_actuel,4,4,0
+PPBZV2501060016071,d90dc97c-9eaf-4eb5-b95f-804b01218c85,Responsable Marketing (H/F),0.46,0.529,0.26,0.275,hors_cible_actuel,5,5,0
+PPBZV2501060016071,03b8bb96-874a-4bc6-92f9-4eac306483bf,Responsable Marketing,0.37,0.4872,0.249,0.275,hors_cible_actuel,7,6,1
+PPBZV2501060016071,ad71e174-51e3-4de4-ad07-e3c3571d1705,"Manager détaillants, Direction de la Distribution",0.37,0.4753,0.2459,0.275,hors_cible_actuel,9,7,2
+PPBZV2501060016071,f03f81b9-4400-47d5-8738-d2123359b47a,Ingénieur en Génie Civil,0.37,0.4714,0.2449,0.275,hors_cible_actuel,12,8,4
+PPBZV2501060016071,5539fa9c-c841-4be4-a3c9-029c7faf67ed,Directeur des Ventes H/F,0.46,0.4665,0.2436,0.275,hors_cible_actuel,13,9,4
+PPBZV2501060016071,5ab823f7-724f-4d47-85eb-46f33f71856c,Directeur Export,0.37,0.4643,0.243,0.275,hors_cible_actuel,16,10,6
+PPBZV2501200017693,09d93187-494a-46f1-82a7-eeaad83bf701,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.475,0.3532,0.4826,0.4,vivier_a_developper,3,1,2
+PPBZV2501200017693,8e410d27-09d0-4f02-88b0-dcbd617671ca,"Laborantin, Agent d'Exécution",0.25,0.2965,0.4253,0.275,vivier_a_developper,24,2,22
+PPBZV2501200017693,3200248f-1f91-48d2-811b-567b416d8ef7,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.3375,0.3532,0.3986,0.0,hors_cible_actuel,4,3,1
+PPBZV2501200017693,46a09c41-1c9f-41d6-8512-f40c7f9f3af3,"Laborantin, Agent d'Exécution",0.1125,0.2965,0.3788,0.0,hors_cible_actuel,23,4,19
+PPBZV2501200017693,14a380ee-ba82-4837-a816-6138246e2c4d,LABORANTIN (GÉNIE CIVIL) – BOUÉE,0.1875,0.3019,0.3372,0.275,hors_cible_actuel,20,5,15
+PPBZV2501200017693,7be3776c-a230-443f-83d7-3882d2e32daf,Responsable QHSE,0.1125,0.2906,0.3332,0.275,hors_cible_actuel,25,6,19
+PPBZV2501200017693,1b95e9e4-2baf-4f31-a51b-eea9a1f84052,LABORANTIN (GÉNIE CIVIL) – BOUÉE,0.1125,0.3019,0.2907,0.0,hors_cible_actuel,19,7,12
+PPBZV2501200017693,7b226dbe-9eaa-4106-88b5-ec8a3dc4098c,Responsable QHSE,0.1125,0.2906,0.2867,0.0,hors_cible_actuel,26,8,18
+PPBZV2501200017693,6ce48225-b63f-478f-a83f-2b0e5d629737,INGÉNIEUR ÉLECTRICIEN BUREAU D’ÉTUDE H/F,0.1,0.3625,0.2163,0.275,hors_cible_actuel,1,9,-8
+PPBZV2501200017693,55146768-15fe-400d-b93a-0c9e421c85b5,Consultant QHSE,0.025,0.3388,0.2101,0.275,hors_cible_actuel,5,10,-5
+PPBZV2501030015697,a2dad86b-c77f-4072-9cb9-8fec32fb8f0f,Techniciens de Maintenance,0.3375,0.6004,0.6751,1.0,postuler_avec_plan_de_montee_en_competence,4,1,3
+PPBZV2501030015697,3a4a3a5c-21f5-49f0-9e09-b228f864cc5d,RESPONSABLE MAINTENANCE ALGÉRIE,0.6875,0.6401,0.5455,0.275,vivier_a_developper,2,2,0
+PPBZV2501030015697,549862f9-b5d2-4a4e-9f5c-daf62c4a13c7,RESPONSABLE MAINTENANCE ALGÉRIE,0.2625,0.6401,0.499,0.0,vivier_a_developper,1,3,-2
+PPBZV2501030015697,34bb846a-2c4f-4896-b186-448b84f60e37,Technicien Opérateur Machine Impression et Découpe CNC - Douala Bepanda,0.6125,0.5515,0.4585,0.275,vivier_a_developper,6,4,2
+PPBZV2501030015697,7f1127e4-92b4-4a11-b6f2-be68fdc2dab3,TECHNICIEN POIDS LOURD POUR CONCESSIONNAIRE AUTOMOBILE,0.5,0.5383,0.4539,0.275,vivier_a_developper,12,5,7
+PPBZV2501030015697,4cb5bd8e-1c37-4909-bab9-8da8f4c0a2b6,Maintenancier Industriel,0.6125,0.53,0.451,0.275,vivier_a_developper,16,6,10
+PPBZV2501030015697,ef3468df-4bb3-410c-a1ed-bbbadb2a8d48,Inspecteur / Formateur Mécanique Levage (Grues Offshore) H/F - Douala,0.6125,0.5196,0.4474,0.275,vivier_a_developper,17,7,10
+PPBZV2501030015697,95bcc795-2392-40a7-87e6-5a7b84663f4e,Assistant Instrumentation Technician,0.5,0.5179,0.4468,0.275,vivier_a_developper,20,8,12
+PPBZV2501030015697,fea0fa24-df34-4e8b-9b22-8156c1bbf5bf,Opérateur Machine - Douala,0.6125,0.4819,0.4342,0.275,vivier_a_developper,27,9,18
+PPBZV2501030015697,9cb00bb5-9fcf-4edc-809b-d06bb3b2f591,Techniciens de Maintenance,0.425,0.6004,0.4216,0.275,vivier_a_developper,3,10,-7
+PPBZV2501220018004,5a0baf43-57b5-43fb-8f4f-8c6105e54e0a,50 Gestionnaires De Portefeuilles Stagiaires,0.1125,0.4768,0.6558,0.833,postuler_avec_plan_de_montee_en_competence,19,1,18
+PPBZV2501220018004,1f26ac5b-e987-46ad-9de9-ad35dd9605ba,Stagiaire Professionnel,0.1125,0.4768,0.6558,0.833,postuler_avec_plan_de_montee_en_competence,21,2,19
+PPBZV2501220018004,f35e541f-e235-40dc-a5d0-2380d7ba1a86,Urgent !!! Support Vente,0.2625,0.4768,0.5658,0.833,postuler_avec_plan_de_montee_en_competence,17,3,14
+PPBZV2501220018004,e9df85a7-c352-4d30-9408-a04c738e4a7b,SUPERVISEUR COMMERCIAL (VAN TEAM COORDINATOR),0.6625,0.5526,0.5149,0.275,vivier_a_developper,1,4,-3
+PPBZV2501220018004,ad05d687-284e-45f4-b631-875f8d80ce71,RESPONSABLE Régional Des Ventes,0.475,0.5116,0.5006,0.275,vivier_a_developper,6,5,1
+PPBZV2501220018004,787c16cf-9250-4a23-b0ab-5a810bcd47d2,Agent Commercial - Douala,0.6625,0.5108,0.5003,0.275,vivier_a_developper,7,6,1
+PPBZV2501220018004,d77b4980-9927-471e-8221-05a67efffca1,"02 Agents De Production, 01 Responsable Commercial",0.325,0.5083,0.4994,0.275,vivier_a_developper,10,7,3
+PPBZV2501220018004,0e444e0f-3716-47d3-8476-2b1b3bf73a99,CHARGE CONTRATS JUNIOR (H/F),0.43,0.5003,0.4966,0.275,vivier_a_developper,12,8,4
+PPBZV2501220018004,b7dab83a-14b0-4f5d-8925-8a7613bf43c0,Coordinateur Régional,0.4375,0.5001,0.4965,0.275,vivier_a_developper,13,9,4
+PPBZV2501220018004,5d234324-5a49-4612-92b4-4328a5d21bd5,Agent Commercial,0.4938,0.4914,0.4935,0.275,vivier_a_developper,16,10,6
+PPBZV2501020015622,33222d77-69e8-4d73-b70a-8356813fc6db,Chargé de Clientèle,0.46,0.5683,0.2703,0.275,hors_cible_actuel,1,1,0
+PPBZV2501020015622,e2ad5e04-b8b1-49af-b7f4-dfd9d45fb037,Responsable Marketing (H/F),0.46,0.5299,0.2602,0.275,hors_cible_actuel,4,2,2
+PPBZV2501020015622,d90dc97c-9eaf-4eb5-b95f-804b01218c85,Responsable Marketing (H/F),0.46,0.5299,0.2602,0.275,hors_cible_actuel,5,3,2
+PPBZV2501020015622,03b8bb96-874a-4bc6-92f9-4eac306483bf,Responsable Marketing,0.37,0.4948,0.251,0.275,hors_cible_actuel,7,4,3
+PPBZV2501020015622,ad71e174-51e3-4de4-ad07-e3c3571d1705,"Manager détaillants, Direction de la Distribution",0.37,0.4827,0.2478,0.275,hors_cible_actuel,9,5,4
+PPBZV2501020015622,5539fa9c-c841-4be4-a3c9-029c7faf67ed,Directeur des Ventes H/F,0.46,0.4716,0.2449,0.275,hors_cible_actuel,11,6,5
+PPBZV2501020015622,5ab823f7-724f-4d47-85eb-46f33f71856c,Directeur Export,0.37,0.4715,0.2449,0.275,hors_cible_actuel,13,7,6
+PPBZV2501020015622,f03f81b9-4400-47d5-8738-d2123359b47a,Ingénieur en Génie Civil,0.37,0.4706,0.2447,0.275,hors_cible_actuel,15,8,7
+PPBZV2501020015622,71065784-dd08-4fda-99ee-f897efb669ab,Gestionnaire Réseaux et Go To Market,0.37,0.4666,0.2436,0.275,hors_cible_actuel,17,9,8
+PPBZV2501020015622,6ddd215c-b497-4260-91cf-bff8f54c7daf,Directeur Général,0.28,0.4588,0.2416,0.275,hors_cible_actuel,20,10,10
+PPBZV2501210017844,07f83cf6-2a1d-47a9-9566-e4eb844b7aab,Commercial,0.1125,0.3856,0.6239,0.833,postuler_avec_plan_de_montee_en_competence,29,1,28
+PPBZV2501210017844,aced8d84-8e5a-4fb1-b773-99ac932deea4,COMMERCIAUX FTTx,0.1125,0.3856,0.62,1.0,postuler_avec_plan_de_montee_en_competence,28,2,26
+PPBZV2501210017844,0ef9a489-9c3f-43cc-90de-448a8be7e7de,Sales Representative,0.1125,0.3856,0.62,1.0,postuler_avec_plan_de_montee_en_competence,30,3,27
+PPBZV2501210017844,f079434f-c529-4d1e-8b06-dc3029e0361e,Ambassadrices Commerciales,0.1125,0.3856,0.6,1.0,postuler_avec_plan_de_montee_en_competence,27,4,23
+PPBZV2501210017844,5ba80efd-969b-4655-8669-313e944cc50f,Commercial,0.505,0.4349,0.4737,0.275,vivier_a_developper,1,5,-4
+PPBZV2501210017844,365fbdd0-3c3b-4de1-8485-5c961a0a245a,COMMERCIAL ET COLLECTEUR,0.385,0.4292,0.4717,0.275,vivier_a_developper,3,6,-3
+PPBZV2501210017844,3bf40036-4870-48e0-be90-1968db4ecb94,Comptable Junior H/F,0.505,0.39,0.458,0.275,vivier_a_developper,15,7,8
+PPBZV2501210017844,bdd29a76-54a5-477a-b2d4-e4ab3b1ab9ed,Sociétaire-Caissier-CENC,0.505,0.3887,0.4575,0.275,vivier_a_developper,19,8,11
+PPBZV2501210017844,c14e0dd2-c2a1-40aa-aed6-35df7d87af28,45 Agents De Crédit Stagiaires,0.505,0.3887,0.4575,0.275,vivier_a_developper,22,9,13
+PPBZV2501210017844,ca0b51fa-ed0c-479c-bfda-134a346bf30b,Commercial,0.1125,0.4349,0.4272,0.0,vivier_a_developper,2,10,-8
+PPBZV2501100016547,dfac486c-9a3e-421a-8db5-52484b0ec3eb,Opportunité De Stage-Blessing Petroleum,0.1125,0.5087,0.753,1.0,pret_a_postuler,25,1,24
+PPBZV2501100016547,6517efb7-00d2-4c3f-9399-28cb8e1657fe,Technico-Commercial Centre Sud-Est - LA PASTA S.A.,0.1125,0.5087,0.697,1.0,postuler_avec_plan_de_montee_en_competence,28,2,26
+PPBZV2501100016547,20624578-dc1d-4530-b154-67f842f8e837,COMMERCIAL-POLYPHARMA,0.1125,0.5087,0.697,1.0,postuler_avec_plan_de_montee_en_competence,30,3,27
+PPBZV2501100016547,a8abff7f-ed60-46f2-b128-c06112d2fbcf,(1) GESTIONNAIRE DE CHAMBRE FROIDE,0.1125,0.5217,0.6676,1.0,postuler_avec_plan_de_montee_en_competence,13,4,9
+PPBZV2501100016547,d262dafa-08f4-4b16-8dc3-0c64c5e0da8d,Des Pompistes H/F Et Un Graisseur,0.1125,0.5087,0.663,1.0,postuler_avec_plan_de_montee_en_competence,23,5,18
+PPBZV2501100016547,447778e5-90f7-4b13-95be-95daa5bd1b36,AWS ARCHITECH,0.1125,0.5087,0.663,1.0,postuler_avec_plan_de_montee_en_competence,24,6,18
+PPBZV2501100016547,67f65b78-c9d8-47ee-ba12-a020fbbe24c5,Savonnier,0.1125,0.5087,0.663,1.0,postuler_avec_plan_de_montee_en_competence,29,7,22
+PPBZV2501100016547,be4f39d5-84e3-45ba-b1d2-5bdce30ed489,Offre D'emploi: RESPONSABLE MAINTENANCE,0.3375,0.5217,0.6476,1.0,postuler_avec_plan_de_montee_en_competence,11,8,3
+PPBZV2501100016547,a2dad86b-c77f-4072-9cb9-8fec32fb8f0f,Techniciens de Maintenance,0.3375,0.5163,0.6457,1.0,postuler_avec_plan_de_montee_en_competence,19,9,10
+PPBZV2501100016547,3a4a3a5c-21f5-49f0-9e09-b228f864cc5d,RESPONSABLE MAINTENANCE ALGÉRIE,0.53,0.5315,0.5075,0.275,vivier_a_developper,10,10,0
+PPBZV2501090016448,bd2be44b-0bb3-489f-8a01-37ee783bda80,STAGIAIRE PROFESSIONNEL RESSOURCES HUMAINES,0.4,0.6307,0.5422,0.275,vivier_a_developper,1,1,0
+PPBZV2501090016448,938acfdd-3d23-431c-884b-d56a9d2acc5a,1 Responsable De Bureau Direct Basé À Bafoussam,0.385,0.6298,0.5419,0.275,vivier_a_developper,8,2,6
+PPBZV2501090016448,5e8fdcbe-ad5a-42b4-96eb-2c324cbd532d,AGENT GENERAL EN ASSURANCES Vie,0.4225,0.6298,0.5419,0.275,vivier_a_developper,26,3,23
+PPBZV2501090016448,f3167497-5d5c-4f71-847d-681ea31b1e92,STAGIAIRE PROFESSIONNEL RESSOURCES HUMAINES,0.1125,0.6307,0.4957,0.333,vivier_a_developper,2,4,-2
+PPBZV2501090016448,3017447f-75f9-4236-bd1d-825c491dc4cc,AGENT GENERAL EN ASSURANCES Vie,0.1125,0.6298,0.4954,0.333,vivier_a_developper,11,5,6
+PPBZV2501090016448,45dc5ea5-4695-43b5-b995-86d4a1d83d5c,2 PRODUTEURS Ou PRODUCTRICES En Assurance Automobile,0.225,0.6298,0.4954,0.333,vivier_a_developper,13,6,7
+PPBZV2501090016448,19608eae-8104-444d-bd82-a369f6a2889c,Opportunité De Stage En Comptabilité -Allianz,0.1125,0.6298,0.4954,0.333,vivier_a_developper,15,7,8
+PPBZV2501090016448,f3bdfa37-f34e-4080-93dd-bf3133373929,CAISSIER-ADVANS CAMEROUN,0.1125,0.6298,0.4954,0.333,vivier_a_developper,16,8,8
+PPBZV2501090016448,a7ca8443-f38f-4980-8e19-0ac1aaef1aad,1 Responsable De Bureau Direct Basé À Bafoussam,0.1125,0.6298,0.4954,0.333,vivier_a_developper,19,9,10
+PPBZV2501090016448,7477e32c-6d7c-47f5-8cab-2ba0bb973e4c,Stagiaire Chargé Du Recrutement Des CAV,0.1125,0.6298,0.4954,0.333,vivier_a_developper,27,10,17
+PPBZV2501170017510,1f25556b-7c57-4833-a61b-49d63c6dd858,Chauffeur Journalier,0.1125,0.557,0.6838,0.833,postuler_avec_plan_de_montee_en_competence,4,1,3
+PPBZV2501170017510,7176745e-9a4d-4759-ae9f-92789c3a66ba,Chauffeur – Livreur (H/F) – Yaoundé,0.4375,0.557,0.5164,0.275,vivier_a_developper,3,2,1
+PPBZV2501170017510,833e354e-b295-41ab-81f7-bcad295e2ebe,CHAUFFEUR Navette/Bus H/F,0.475,0.557,0.5164,0.275,vivier_a_developper,6,3,3
+PPBZV2501170017510,a9b1aaef-88ec-45e3-aa23-150e5ea8ceb0,Intitulé Du Poste : Livreur/Chauffeur Tricycle,0.415,0.557,0.5164,0.275,vivier_a_developper,8,4,4
+PPBZV2501170017510,d238247b-6c9a-43d5-93ee-716c742e24c3,CHAUFFEURS SEMI-REMORQUE,0.4375,0.557,0.5164,0.275,vivier_a_developper,9,5,4
+PPBZV2501170017510,12ee5c46-abed-44ef-9765-d01837ccae18,Chauffeur Camion Mixer,0.4375,0.557,0.5164,0.275,vivier_a_developper,12,6,6
+PPBZV2501170017510,eb2d672f-fdd3-45c5-a25c-02102d264860,Chauffeur Poids Lourd (PL) WCS Paysage Nord Cameroun (PNC),0.3893,0.557,0.5164,0.275,vivier_a_developper,15,7,8
+PPBZV2501170017510,ac9bbe0a-73f8-44ee-89ab-7eb4a0c891af,Offre D'emploi: Chauffeur Exécutif,0.475,0.557,0.5164,0.275,vivier_a_developper,18,8,10
+PPBZV2501170017510,622b8700-988a-4696-ab32-d669787f6fc9,CHAUFFEUR,0.55,0.557,0.5164,0.275,vivier_a_developper,21,9,12
+PPBZV2501170017510,bb1f2c86-10c5-4215-a5de-056941424aec,"(05) CHAUFFEURS PERMIS C, CE ET G",0.475,0.557,0.5164,0.275,vivier_a_developper,22,10,12
+PPBZV2501060016085,9e9add15-8032-45ce-9d5d-85914145d99d,Assistant Administratif - Douala et Autres,0.55,0.542,0.5112,0.275,vivier_a_developper,1,1,0
+PPBZV2501060016085,a6a755a2-ba22-4b36-9c69-5791d55f5c2c,Commercial en Transport et Logistique - Douala,0.6,0.4907,0.4932,0.275,vivier_a_developper,7,2,5
+PPBZV2501060016085,9db35348-6393-4d53-ad80-e90a7f33da9c,Magasinier - Douala et Autres,0.55,0.4389,0.4751,0.275,vivier_a_developper,11,3,8
+PPBZV2501060016085,9663eca3-c411-48e2-b9e3-c6129506c741,Procurement Assistant,0.53,0.4266,0.4708,0.275,vivier_a_developper,15,4,11
+PPBZV2501060016085,4edd0643-94b6-40eb-bac5-9a187c88c3b1,Électricien - Douala et Autres,0.55,0.4251,0.4703,0.275,vivier_a_developper,18,5,13
+PPBZV2501060016085,48ad9153-a111-4542-8415-4431082e36b6,Offre D'emploi: ASSISTANT LOGISTIQUE,0.65,0.4201,0.4685,0.275,vivier_a_developper,24,6,18
+PPBZV2501060016085,f3229181-40d9-496e-9445-57f7317e06cc,"02 STAGIAIRES - Approvisionnement, Logistique, Administration",0.575,0.4201,0.4685,0.275,vivier_a_developper,26,7,19
+PPBZV2501060016085,ad137fd8-16c7-4d3e-8689-3f0c038cb9b1,Operations Assistant,0.575,0.4201,0.4685,0.275,vivier_a_developper,28,8,20
+PPBZV2501060016085,0342748e-89fe-4755-bef9-f73bd7684a9b,Assistant Administratif - Douala et Autres,0.1125,0.542,0.4647,0.0,vivier_a_developper,2,9,-7
+PPBZV2501060016085,e552d0c6-a11e-45f7-9595-f731c0f99555,Chief Finance Officer - Yaoundé,0.525,0.54,0.4545,0.275,vivier_a_developper,3,10,-7
+PPBZV2501070016186,57c770eb-869a-4ac6-9d17-31b4371f1ef6,Offre D'emploi: CUISINIERE,0.625,0.6996,0.5664,0.275,postuler_avec_plan_de_montee_en_competence,1,1,0
+PPBZV2501070016186,1772623b-18b6-42ca-955f-feb2df9b1b8d,Offre D'emploi: CUISINIERE,0.1125,0.6996,0.5199,0.0,vivier_a_developper,8,2,6
+PPBZV2501070016186,302037ca-cfb9-49e2-8c29-3f7189e421ea,RÉCEPTIONNISTES / FRONT DESK AGENT,0.475,0.6996,0.5104,0.275,vivier_a_developper,10,3,7
+PPBZV2501070016186,763b4b91-214e-4f65-8d01-c83624bd5ac8,Plusieurs Profils,0.4125,0.6996,0.4764,0.275,vivier_a_developper,4,4,0
+PPBZV2501070016186,6df7cdcf-8b5f-4a80-929b-bc1210b27aaf,DOMESTIC SUPPORT,0.4125,0.6996,0.4764,0.275,vivier_a_developper,6,5,1
+PPBZV2501070016186,0f2e8c6a-0287-4193-9aec-c3f9c626fbe7,ÉQUIPIER / VALET DE CHAMBRE / FEMME DE CHAMBRES / HOUSEKEEPER,0.4125,0.6996,0.4764,0.275,vivier_a_developper,13,6,7
+PPBZV2501070016186,8fcbdffe-4bb7-4575-9178-4ebeca574adb,02 Réceptionnistes,0.4875,0.6996,0.4764,0.275,vivier_a_developper,18,7,11
+PPBZV2501070016186,35d7e6bb-6f79-4135-98aa-9aa6b93e6fdf,Gouvernant(E)-New Town Palace Hôtel (NTPH),0.4125,0.6996,0.4764,0.275,vivier_a_developper,22,8,14
+PPBZV2501070016186,b243f98e-a764-4896-9c36-469ae86b43aa,(02) Réceptionnistes,0.4875,0.6996,0.4764,0.275,vivier_a_developper,23,9,14
+PPBZV2501070016186,1be8707a-08d3-4d52-885c-7eb109651c44,Gouvernante,0.4875,0.6996,0.4764,0.275,vivier_a_developper,24,10,14
+PPBZV2501080016433,1e407bf8-854d-47d3-ac49-bd11b06e6eb3,Responsable des Opérations,0.1125,0.759,0.7545,0.833,pret_a_postuler,1,1,0
+PPBZV2501080016433,b57377af-1d1d-48e2-9d82-9b2f70fa39f5,Adjoint RESPONSABLE TRANSIT H/F,0.1125,0.7163,0.7396,0.833,pret_a_postuler,4,2,2
+PPBZV2501080016433,e50637c9-76bf-473c-b4e8-2b1e5e93f588,ASSISTANT (E) CHARGE(E) DU TRANSIT,0.1125,0.7043,0.7354,0.833,pret_a_postuler,5,3,2
+PPBZV2501080016433,7f07ee51-088f-4f05-8c49-a15bb15018bb,ASSISTANT (E) CHARGE(E) DU TRANSIT,0.1125,0.7043,0.7354,0.833,pret_a_postuler,6,4,2
+PPBZV2501080016433,e1f3ceec-f72a-432e-ab31-e70d50642ecb,RESPONSABLE APPROVISIONNEMENT & LOGISTIQUE,0.2625,0.6733,0.7246,0.833,pret_a_postuler,9,5,4
+PPBZV2501080016433,4f04983b-b67c-497d-ad62-dc977fab1121,Assistant Administratif et Logistique H/F,0.2625,0.6451,0.7147,0.833,postuler_avec_plan_de_montee_en_competence,13,6,7
+PPBZV2501080016433,16ae6b54-8104-4b1d-8e3c-8fcc2de60acd,Responsable Logistique H/F,0.3375,0.6262,0.7081,0.833,postuler_avec_plan_de_montee_en_competence,17,7,10
+PPBZV2501080016433,09d16c3e-1385-4bed-9f72-067177399ca6,Commercial Fret H/F,0.1125,0.6221,0.7066,0.833,postuler_avec_plan_de_montee_en_competence,20,8,12
+PPBZV2501080016433,f5e83052-3b3f-4668-a92b-ae12b192e6b7,Chauffeur-Logisticien,0.1125,0.6207,0.7061,0.833,postuler_avec_plan_de_montee_en_competence,24,9,15
+PPBZV2501080016433,09efa34f-75dc-41e7-97c7-0175ad54386b,ASSISTANT(E) NEGOCE ET EXPORT,0.1125,0.6207,0.7061,0.833,postuler_avec_plan_de_montee_en_competence,29,10,19
+PPBZV2501030015789,e409695f-8299-45d3-84ab-c557bd5b0885,Responsable QHSE (H/F) - Elog -Batindi - Kribi,0.4,0.5052,0.4983,0.275,vivier_a_developper,2,1,1
+PPBZV2501030015789,fea175f3-af5d-4a9d-aa2f-5fb44d0d98e8,CONSEILLER.E SENIOR POUR LES APPUIS-CONSEILS AUX PARTENAIRES POLITIQUES ET DU SECTEUR PRIVÉ,0.4,0.4987,0.496,0.275,vivier_a_developper,4,2,2
+PPBZV2501030015789,c6bfcf86-25b3-485c-8f60-9c02fc0af3f0,Sustainable Agriculture And Forestry Manager,0.44,0.4987,0.496,0.275,vivier_a_developper,5,3,2
+PPBZV2501030015789,824c621f-e78f-43ed-98c7-42dc623bcbc6,RESPONSABLE DE SECTEUR PRODUIT GRANDE CONSOMMATION ET NON ALIMENTAIRE,0.5429,0.4864,0.4917,0.275,vivier_a_developper,8,4,4
+PPBZV2501030015789,595b7ce2-c387-4a68-9d8d-b87fb2e19f8c,BHAC Sarl Recrute Technicien D'agriculture,0.5,0.4853,0.4914,0.275,vivier_a_developper,9,5,4
+PPBZV2501030015789,50b8edc2-2282-43ef-ae2a-703cc09e171f,Technicien Supérieur - Yabassi dans Le Littoral,0.5,0.48,0.4895,0.275,vivier_a_developper,11,6,5
+PPBZV2501030015789,5c7a12b8-d17f-4939-a3fb-d953b6ed10a2,Stagiaire Assistant(e) Contrôle et Opérations – Phase Lancement - Douala,0.5,0.4703,0.4861,0.275,vivier_a_developper,14,7,7
+PPBZV2501030015789,3d8434d8-1079-40bc-b444-785d427d6add,Project Accountant And Administrative Assistant-ICRAF - The World Agroforestry Centre,0.4,0.4659,0.4846,0.275,vivier_a_developper,16,8,8
+PPBZV2501030015789,eb6abf68-df79-4c9f-8709-2bc3df10d735,Junior Scientist – Agricultural Innovation Systems GAROUA (CAMEROON),0.4062,0.4659,0.4846,0.275,vivier_a_developper,17,9,8
+PPBZV2501030015789,b581fc6c-972e-47d7-8873-1bd24223840d,"Associate, Member Monitoring (Assurance)",0.4,0.4639,0.4839,0.275,vivier_a_developper,20,10,10
+PPBZV2501090016491,3b978acd-7e0b-4b24-8848-8f6350ce8adf,Commercial D'entreprise,0.4,0.5246,0.5051,0.275,vivier_a_developper,2,1,1
+PPBZV2501090016491,2ef9c9fa-ecc9-4dd3-9115-e0fbc21db943,BUSINESS DEVELOPMENT MANAGER (BDM) (H/F),0.34,0.5246,0.5051,0.275,vivier_a_developper,3,2,1
+PPBZV2501090016491,e9df85a7-c352-4d30-9408-a04c738e4a7b,SUPERVISEUR COMMERCIAL (VAN TEAM COORDINATOR),0.6062,0.4906,0.4932,0.275,vivier_a_developper,5,3,2
+PPBZV2501090016491,da31ccad-a2c9-4688-ac20-8e5a7d0a8be0,"03 Commercial Et Community Manager,",0.3625,0.486,0.4916,0.275,vivier_a_developper,8,4,4
+PPBZV2501090016491,b7dab83a-14b0-4f5d-8925-8a7613bf43c0,Coordinateur Régional,0.4375,0.4762,0.4882,0.275,vivier_a_developper,10,5,5
+PPBZV2501090016491,ac8b5272-9c4e-435f-b9c0-978ba3770492,"Enseignant d’Anglais, Allemand Permanent",0.3812,0.4639,0.4839,0.275,vivier_a_developper,12,6,6
+PPBZV2501090016491,f348c7c9-70ed-4029-9f1e-30397e84cdb3,50 Gestionnaires De Portefeuilles Stagiaires,0.475,0.4459,0.4776,0.275,vivier_a_developper,16,7,9
+PPBZV2501090016491,ef2a7d8a-7245-4fdb-af85-7fe724995769,Stagiaire Professionnel,0.52,0.4459,0.4776,0.275,vivier_a_developper,17,8,9
+PPBZV2501090016491,75fec4e7-fbed-4a89-87d9-315d322961e4,Planneur Stratégique Junior - Yaoundé,0.3812,0.4397,0.4754,0.275,vivier_a_developper,20,9,11
+PPBZV2501090016491,bb827eae-b834-4086-8343-455923b4f162,Responsable Commercial - Douala,0.55,0.4396,0.4754,0.275,vivier_a_developper,21,10,11
+PPPNR2501090016440,22acdf6b-b8c5-4ba6-bea6-0462a27319a0,Assistant(e) Ressources Humaines (H/F) - Douala et Yaoundé,0.3975,0.596,0.4401,0.275,vivier_a_developper,1,1,0
+PPPNR2501090016440,b0c4e7e6-7d31-46b7-9ea2-4e653a70ff6b,Assistant(e) Ressources Humaines (H/F) - Douala et Yaoundé,0.2925,0.596,0.4356,0.5,vivier_a_developper,2,2,0
+PPPNR2501090016440,9f90f92e-0eef-4e80-880b-7c229c7d4832,Consultant en Recrutement et Evaluation des Compétences H/F,0.325,0.5224,0.2583,0.275,hors_cible_actuel,3,3,0
+PPPNR2501090016440,7eede5ca-a0df-48ed-85e5-180b8a0f942c,Consultant en recrutement et évaluation des compétences H/F,0.325,0.5207,0.2578,0.275,hors_cible_actuel,6,4,2
+PPPNR2501090016440,71227988-8c6d-4f3a-beb1-9fcd859c6ef8,Responsable Ressources Humaines (H/F),0.175,0.5185,0.2572,0.275,hors_cible_actuel,7,5,2
+PPPNR2501090016440,f87a77c5-d0d4-40e9-9c56-f2a752403d38,RESPONSABLE DU DÉVELOPPEMENT RH,0.175,0.5151,0.2563,0.275,hors_cible_actuel,10,6,4
+PPPNR2501090016440,d12fb144-051b-433e-8092-d3b65e250331,"Responsable des Ressources Humaines - Yaoundé, Cameroun",0.175,0.5124,0.2556,0.275,hors_cible_actuel,11,7,4
+PPPNR2501090016440,59552125-1769-4ee8-a72c-65f97ff02667,Learning & Development Manager,0.025,0.5004,0.2525,0.275,hors_cible_actuel,13,8,5
+PPPNR2501090016440,857738f6-70d6-4ef6-b21e-6355770d6580,Responsable recrutement et Développement du Personnel H/F,0.1,0.4885,0.2494,0.275,hors_cible_actuel,16,9,7
+PPPNR2501090016440,cd8522d0-e1b2-4239-b9dd-f28326a6ff71,Directeur des Ressources Humaines H/F,0.25,0.4775,0.2465,0.275,hors_cible_actuel,17,10,7
+PPBZV2501210017783,ff31423c-b6bf-4f84-a682-e53e9a44a4e0,02 PLOMBIERS,0.1125,0.3231,0.3446,0.275,hors_cible_actuel,5,1,4
+PPBZV2501210017783,c90161be-e846-41b0-aa21-4a3fbfb1a99c,PLOMBIER,0.3375,0.3231,0.3446,0.275,hors_cible_actuel,8,2,6
+PPBZV2501210017783,06c7afbe-b3ee-4173-843a-d4623c175ee1,PLOMBIER,0.2625,0.3037,0.3378,0.275,hors_cible_actuel,18,3,15
+PPBZV2501210017783,1bd17f08-0135-4551-8755-aa8b322b29b6,CONCEPTEUR D’ANIMATION,0.1,0.3067,0.3188,0.275,hors_cible_actuel,11,4,7
+PPBZV2501210017783,740ea2ff-6db9-48ae-94f5-3448e197d01b,CONCEPTEUR D’ANIMATION,0.1125,0.3067,0.3188,0.275,hors_cible_actuel,12,5,7
+PPBZV2501210017783,35fb7a3e-6813-4325-b6be-8f18175dd10c,Gouvernante d’hôtel,0.1,0.2879,0.3123,0.275,hors_cible_actuel,29,6,23
+PPBZV2501210017783,6089a532-deb1-4025-b473-624dfdc0b3f6,Gouvernante d’hôtel,0.1125,0.2879,0.3123,0.275,hors_cible_actuel,30,7,23
+PPBZV2501210017783,154a5a4b-285a-4e1e-91e6-ba4bf52f88b8,02 PLOMBIERS,0.1125,0.3231,0.2981,0.0,hors_cible_actuel,6,8,-2
+PPBZV2501210017783,28ccabff-8a0d-4cfd-8ee2-10cbf74b270b,PLOMBIER,0.5625,0.3231,0.2981,0.0,hors_cible_actuel,9,9,0
+PPBZV2501210017783,7f4d1411-d19e-4722-b81c-d290b62a9d4e,PLOMBIER,0.5625,0.3037,0.2913,0.0,hors_cible_actuel,17,10,7
+PPBZV2503120022660,87dc826c-2e7f-453c-beaf-2854ae9ae0a3,ATTACHES COMMERCIAUX,0.1125,0.4546,0.6441,1.0,postuler_avec_plan_de_montee_en_competence,19,1,18
+PPBZV2503120022660,bdee9dad-3241-4c6e-bc9d-2aa2920557d4,Des Commerciaux,0.1125,0.4546,0.6441,1.0,postuler_avec_plan_de_montee_en_competence,21,2,19
+PPBZV2503120022660,285382d1-2f02-4f59-bb37-881d795d97b7,02 COMMERCIAUX H/F Cosmétiques,0.1125,0.4546,0.6441,1.0,postuler_avec_plan_de_montee_en_competence,22,3,19
+PPBZV2503120022660,ceea6762-1ffc-4b2e-909e-74508a06ea1d,03 CONSEILLERS DE VENTE CAISSE (CDV C) H/F,0.2625,0.4546,0.6441,1.0,postuler_avec_plan_de_montee_en_competence,26,4,22
+PPBZV2503120022660,bf09a501-a086-4eae-a888-7680dc211c85,COMMERCIAUX,0.1125,0.4546,0.558,0.833,postuler_avec_plan_de_montee_en_competence,25,5,20
+PPBZV2503120022660,92b87acb-2a79-40cc-979c-f3c2acf51d5d,HÔTESSES COMMERCIALES Dans Les Supermarchés,0.1125,0.4546,0.4306,1.0,vivier_a_developper,23,6,17
+PPBZV2503120022660,e163967d-6f1d-4226-9350-eeffcabe39c6,04 COMMERCIAUX H/F (Stagiaires (02) Et Employés (02)),0.1125,0.4546,0.4306,1.0,vivier_a_developper,29,7,22
+PPBZV2503120022660,c920c1bb-f78f-47f2-9a6b-5f044b5a4b68,RESPONSABLE COMMERCIAL H/F,0.1125,0.4546,0.4306,1.0,vivier_a_developper,30,8,22
+PPBZV2503120022660,e49b0196-1dda-4422-beb6-b72325a53c0d,CHEF SERVICE COTATIONS & TARIFICATION H/F,0.3,0.4564,0.3912,0.275,hors_cible_actuel,15,9,6
+PPBZV2503120022660,6914c90d-0fc7-42de-bd12-b04bdcf93884,Commerciaux,0.4875,0.4546,0.3906,0.275,hors_cible_actuel,24,10,14
+PPBZV2501180017613,67c956d8-3576-4052-885c-b9b2e244d37c,Responsable juridique et administration des marchés,0.025,0.3705,0.2184,0.275,hors_cible_actuel,2,1,1
+PPBZV2501180017613,0daea30c-cb30-460b-8498-72a339b6bf06,JURISTE CONFIRMÉ H/F,0.025,0.3667,0.2174,0.275,hors_cible_actuel,3,2,1
+PPBZV2501180017613,271af80b-991a-4883-8ba1-096df46d1c59,Project Manager du projet P4G,0.025,0.3492,0.2128,0.275,hors_cible_actuel,5,3,2
+PPBZV2501180017613,9e606184-3c1b-4ef9-a050-72b59b2c8cff,Juriste (H/F),0.025,0.3293,0.2076,0.275,hors_cible_actuel,8,4,4
+PPBZV2501180017613,7da9d3a2-a417-4133-a250-82151e2af75d,Directeur Sinistres et Indemnisations (H/F),0.025,0.3255,0.2066,0.275,hors_cible_actuel,9,5,4
+PPBZV2501180017613,c94657ea-48c0-4005-9ce0-5f4fd2627768,EXPERT EN SAUVEGARDE SOCIALE (H/F) (Ref: TPC-0219R05ESS),0.025,0.3141,0.2036,0.275,hors_cible_actuel,12,6,6
+PPBZV2501180017613,30ed873f-d3c8-4d29-923c-c5c63f2bf006,Contrôleur de Gestion,0.025,0.3064,0.2016,0.275,hors_cible_actuel,13,7,6
+PPBZV2501180017613,adb838c9-7ccb-423c-8158-a2ff1359931e,Comptable Consolidation Groupe H/F,0.025,0.3032,0.2007,0.275,hors_cible_actuel,15,8,7
+PPBZV2501180017613,e99223b2-1160-4540-a43b-87f7fb07a65b,Adjoint Coordinateur des Programmes - Yaoundé,0.025,0.2972,0.1991,0.275,hors_cible_actuel,17,9,8
+PPBZV2501180017613,cf2b3987-0875-4e08-93ad-3bf93f8be9c7,Manager Audit Comptable et Financier H/F,0.025,0.2917,0.1977,0.275,hors_cible_actuel,20,10,10
+PPBZV2501100016669,ace4efce-5886-4537-bc6a-6bc3272903d5,Responsable de Maintenance H/F,0.575,0.6465,0.5478,0.275,vivier_a_developper,1,1,0
+PPBZV2501100016669,3a4a3a5c-21f5-49f0-9e09-b228f864cc5d,RESPONSABLE MAINTENANCE ALGÉRIE,0.575,0.6318,0.5426,0.275,vivier_a_developper,4,2,2
+PPBZV2501100016669,67873b0f-2179-4b92-83e5-9e006be587da,INGÉNIEUR INTERFACE,0.5,0.624,0.5399,0.275,vivier_a_developper,5,3,2
+PPBZV2501100016669,55146768-15fe-400d-b93a-0c9e421c85b5,Consultant QHSE,0.425,0.6078,0.5342,0.275,vivier_a_developper,7,4,3
+PPBZV2501100016669,63db74f5-12cd-47fb-9c58-5d39a6200829,Electricien,0.425,0.5995,0.5313,0.275,vivier_a_developper,10,5,5
+PPBZV2501100016669,3e72aa0e-59e6-48bb-b36b-6e1ac09f2017,MÉCANICIEN (équipements industriels & Grands chantiers),0.425,0.5913,0.5285,0.275,vivier_a_developper,14,6,8
+PPBZV2501100016669,555805a9-12e6-4ce3-8941-6f446512944b,RESPONSABLE DE PRODUCTION (H/F) ETHIOPIE,0.5,0.5842,0.526,0.275,vivier_a_developper,15,7,8
+PPBZV2501100016669,560ec1cf-8d41-4120-b485-93fdccdd85fb,Ingénieur Procédés Flow Assurance,0.575,0.5799,0.5245,0.275,vivier_a_developper,17,8,9
+PPBZV2501100016669,6ce48225-b63f-478f-a83f-2b0e5d629737,INGÉNIEUR ÉLECTRICIEN BUREAU D’ÉTUDE H/F,0.5,0.5484,0.5134,0.275,vivier_a_developper,19,9,10
+PPBZV2501100016669,7f1127e4-92b4-4a11-b6f2-be68fdc2dab3,TECHNICIEN POIDS LOURD POUR CONCESSIONNAIRE AUTOMOBILE,0.5,0.5456,0.5125,0.275,vivier_a_developper,22,10,12
+PPBZV2501070016274,8f754c02-f047-4d7f-a876-e2a2a3be0561,AGENTS D'ENTRETIEN AGENT DE SECURITE,0.3375,0.6434,0.7442,1.0,postuler_avec_plan_de_montee_en_competence,10,1,9
+PPBZV2501070016274,11188906-d3cd-4cc2-ae9d-11f65537c545,02 Assistants Principaux À La Protection De L'Enfance,0.1125,0.6434,0.7442,1.0,postuler_avec_plan_de_montee_en_competence,11,2,9
+PPBZV2501070016274,96866a8c-52b9-438f-80c1-b7118a16a532,Security Assistant Cameroon Maroua,0.1125,0.6434,0.7442,1.0,postuler_avec_plan_de_montee_en_competence,21,3,18
+PPBZV2501070016274,19ac8b50-20a6-4967-b03b-16d872dee529,Appel D'Offres National Ouvert Relatif Aux Prestations De Gardiennage,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,4,4,0
+PPBZV2501070016274,9f6f9832-4b04-4dad-bdaf-c81f21d3ae90,VIRGILE JOUR,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,12,5,7
+PPBZV2501070016274,1d13ab9b-9983-4b1c-b9b8-3fae16fecfb1,SECURITY CORDINATOR-GROUPE CIBLE,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,19,6,13
+PPBZV2501070016274,70e78061-08c6-488f-a308-9834b1e9c40f,Security Operations Support Officer NOA (182143)Requisition ID 182143,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,20,7,13
+PPBZV2501070016274,82f33765-febe-47c4-a29b-a65292f4b9fa,CONTROLEUR DES ACCES SOIR (15H -22H),0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,22,8,14
+PPBZV2501070016274,bc6bf24e-f7e3-44e8-a036-c2dc484e124b,Appel D'Offres : Prestations De Sécurisation Et De Gardiennage Des Immeubles,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,23,9,14
+PPBZV2501070016274,9d05d1bf-e090-48b4-bb30-c01800f3299b,02 GARDIENS TEMPORAIRES,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,24,10,14
+PPBZV2501220017971,09d93187-494a-46f1-82a7-eeaad83bf701,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.475,0.353,0.4825,0.4,vivier_a_developper,3,1,2
+PPBZV2501220017971,8e410d27-09d0-4f02-88b0-dcbd617671ca,"Laborantin, Agent d'Exécution",0.25,0.296,0.4251,0.275,vivier_a_developper,23,2,21
+PPBZV2501220017971,87219dce-481b-43f4-8276-bd9566d69efb,Technico Commercial H/F,0.25,0.2946,0.4246,0.275,vivier_a_developper,25,3,22
+PPBZV2501220017971,3200248f-1f91-48d2-811b-567b416d8ef7,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.3375,0.353,0.3986,0.0,hors_cible_actuel,4,4,0
+PPBZV2501220017971,46a09c41-1c9f-41d6-8512-f40c7f9f3af3,"Laborantin, Agent d'Exécution",0.1125,0.296,0.3786,0.0,hors_cible_actuel,24,5,19
+PPBZV2501220017971,6167d838-912a-42b3-bed7-4bbd7c14f58f,Technico Commercial H/F,0.1125,0.2946,0.3781,0.0,hors_cible_actuel,26,6,20
+PPBZV2501220017971,14a380ee-ba82-4837-a816-6138246e2c4d,LABORANTIN (GÉNIE CIVIL) – BOUÉE,0.1875,0.3067,0.3388,0.275,hors_cible_actuel,17,7,10
+PPBZV2501220017971,7be3776c-a230-443f-83d7-3882d2e32daf,Responsable QHSE,0.1125,0.2878,0.3322,0.275,hors_cible_actuel,29,8,21
+PPBZV2501220017971,1b95e9e4-2baf-4f31-a51b-eea9a1f84052,LABORANTIN (GÉNIE CIVIL) – BOUÉE,0.1125,0.3067,0.2923,0.0,hors_cible_actuel,18,9,9
+PPBZV2501220017971,7b226dbe-9eaa-4106-88b5-ec8a3dc4098c,Responsable QHSE,0.1125,0.2878,0.2857,0.0,hors_cible_actuel,30,10,20
+PPBZV2501080016367,b23594b6-2a97-4f00-b229-d779320cda0b,Gestionnaire Comptable,0.67,0.5928,0.529,0.275,vivier_a_developper,2,1,1
+PPBZV2501080016367,a7303f6e-d14e-41f8-ac6b-edeb3aec57d6,"STAGIAIRES EN COMPTABILITÉ / FINANCE, En CONTRÔLE DE GESTION Et En TRANSPORT & LOGISTIQUE H/F",0.5029,0.589,0.5276,0.275,vivier_a_developper,3,2,1
+PPBZV2501080016367,1dc65f05-bd2c-41a6-8e87-61b008bf4a30,STAGIAIRE COMPTABILITÉ & FISCALITÉ,0.67,0.589,0.5276,0.275,vivier_a_developper,4,3,1
+PPBZV2501080016367,6e0ec87c-fc5a-4c27-8cf5-59db8e257db9,AGENT DE CAISSE / CAISSIÈRE,0.535,0.589,0.5276,0.275,vivier_a_developper,5,4,1
+PPBZV2501080016367,992f4911-79bf-4adc-8482-b340348a3f8b,COMPTABLES H/F,0.6475,0.589,0.5276,0.275,vivier_a_developper,9,5,4
+PPBZV2501080016367,8684df41-82dc-4c5e-8f6f-ee7c32442dd0,RESPONSABLE DE LA CONFORMITE POUR LE PASSR,0.535,0.589,0.5276,0.275,vivier_a_developper,11,6,5
+PPBZV2501080016367,a1041294-f24f-4208-bb98-e4934704814a,SPA MANAGER CUSTOMER CARE COMPTABLE,0.5671,0.589,0.5276,0.275,vivier_a_developper,12,7,5
+PPBZV2501080016367,5073ed26-258e-4a8f-94f5-f2ab4b509c9f,COMPTABLES,0.6475,0.589,0.5276,0.275,vivier_a_developper,13,8,5
+PPBZV2501080016367,8a50ceff-05a3-4d53-af45-d6c5799c0f45,ASSISTANT.E ADMINISTRATIF.VE ET CAISSIER.E,0.535,0.589,0.5276,0.275,vivier_a_developper,15,9,6
+PPBZV2501080016367,d2517253-470e-416e-b827-453d9f33bba5,03 RESPONSABLES GAS,0.6475,0.589,0.5276,0.275,vivier_a_developper,22,10,12
+PPBZV2501090016461,3e654028-3c7d-4500-a194-07c59d248453,Maçon - Douala Yassa,0.1562,0.2652,0.3418,0.4,hors_cible_actuel,2,1,1
+PPBZV2501090016461,9bb4c022-d378-467e-a43d-d7de9323d317,Stagiaire Coursier et Agent de Terrain - Douala,0.175,0.1979,0.3348,0.275,hors_cible_actuel,11,2,9
+PPBZV2501090016461,e7c5282e-7f3a-4a29-9086-193bb8c86c32,STAGIAIRES JURISTES,0.175,0.1918,0.3326,0.275,hors_cible_actuel,20,3,17
+PPBZV2501090016461,e7daae0b-4b79-4fe8-bd3c-9c83dcc89c2e,Designer,0.1125,0.2044,0.303,0.275,hors_cible_actuel,8,4,4
+PPBZV2501090016461,4854bd24-04cf-495f-a781-18b138bbce1c,JURIST CHARGÉ CLIENTÈLE,0.1125,0.1918,0.2986,0.275,hors_cible_actuel,17,5,12
+PPBZV2501090016461,450fe427-d517-4737-aa42-98b35e534792,Responsable Magasins Matières Premières,0.1,0.2193,0.2883,0.275,hors_cible_actuel,4,6,-2
+PPBZV2501090016461,59ae5f11-e6b0-498b-bf22-cc48a23cdd3a,Stagiaire Coursier et Agent de Terrain - Douala,0.1125,0.1979,0.2883,0.0,hors_cible_actuel,12,7,5
+PPBZV2501090016461,578a5331-8d7a-440f-87e3-c57f82e3220a,STAGIAIRES JURISTES,0.1125,0.1918,0.2861,0.0,hors_cible_actuel,22,8,14
+PPBZV2501090016461,deab0bce-3c62-45f0-88e7-eccccf4c74d9,Agent Immobilier-HC Renvoa,0.1,0.2008,0.2818,0.275,hors_cible_actuel,9,9,0
+PPBZV2501090016461,3b448f17-0b23-4c5c-8ac6-12a254059d00,Comptable (H/F),0.1,0.1966,0.2803,0.275,hors_cible_actuel,13,10,3
+PPBZV2501060015934,a2dad86b-c77f-4072-9cb9-8fec32fb8f0f,Techniciens de Maintenance,0.3375,0.5386,0.6535,1.0,postuler_avec_plan_de_montee_en_competence,12,1,11
+PPBZV2501060015934,3a4a3a5c-21f5-49f0-9e09-b228f864cc5d,RESPONSABLE MAINTENANCE ALGÉRIE,0.575,0.5763,0.5232,0.275,vivier_a_developper,4,2,2
+PPBZV2501060015934,549862f9-b5d2-4a4e-9f5c-daf62c4a13c7,RESPONSABLE MAINTENANCE ALGÉRIE,0.2625,0.5763,0.4767,0.0,vivier_a_developper,3,3,0
+PPBZV2501060015934,ef3468df-4bb3-410c-a1ed-bbbadb2a8d48,Inspecteur / Formateur Mécanique Levage (Grues Offshore) H/F - Douala,0.5,0.5143,0.4455,0.275,vivier_a_developper,18,4,14
+PPBZV2501060015934,7f1127e4-92b4-4a11-b6f2-be68fdc2dab3,TECHNICIEN POIDS LOURD POUR CONCESSIONNAIRE AUTOMOBILE,0.5,0.5058,0.4425,0.275,vivier_a_developper,28,5,23
+PPBZV2501060015934,7be3776c-a230-443f-83d7-3882d2e32daf,Responsable QHSE,0.325,0.5677,0.4302,0.275,vivier_a_developper,6,6,0
+PPBZV2501060015934,5fe43d93-eae9-4895-8c9e-9bd6dc6e1797,Ingénieur Agronome,0.325,0.5572,0.4265,0.275,vivier_a_developper,7,7,0
+PPBZV2501060015934,b834e863-21b1-4906-8174-c049ab8465bb,Tisserand (H/F),0.325,0.506,0.4086,0.275,hors_cible_actuel,23,8,15
+PPBZV2501060015934,4adaed1e-824d-4c21-b034-b5afd0b3b9dd,FORMATEUR TECHNIQUE - POIDS LOURDS (Concessionnaire automobile),0.4375,0.5058,0.4085,0.275,hors_cible_actuel,26,9,17
+PPBZV2501060015934,9cb00bb5-9fcf-4edc-809b-d06bb3b2f591,Techniciens de Maintenance,0.425,0.5386,0.4,0.275,hors_cible_actuel,11,10,1
+PPBZV2501100016587,d5ad9480-110f-4492-bd43-58ce5f311c00,Secrétaire Infographe - Yaoundé,0.1125,0.6737,0.7008,1.0,postuler_avec_plan_de_montee_en_competence,21,1,20
+PPBZV2501100016587,73c2cb5c-11f6-482b-a3a9-b10485ce77e2,Infographe - Yaoundé,0.1125,0.6492,0.6922,1.0,postuler_avec_plan_de_montee_en_competence,26,2,24
+PPBZV2501100016587,6999263f-67bc-4bf0-901f-50daf8d244cb,Stage En Infographie,0.175,0.6971,0.5095,0.275,vivier_a_developper,4,3,1
+PPBZV2501100016587,2f7ee9bd-d9fe-4674-86bc-8ff16856ca07,Stagiaire En Design Graphique,0.175,0.6971,0.5095,0.275,vivier_a_developper,7,4,3
+PPBZV2501100016587,f813a957-b792-4940-9cb3-b35d201e230b,Stagiaire En Infographie,0.175,0.6971,0.5095,0.275,vivier_a_developper,9,5,4
+PPBZV2501100016587,afc98742-3378-48b2-be1d-1fbf3defa43d,DESIGNER GRAHIQUE SENIOR,0.1125,0.5452,0.4973,0.525,vivier_a_developper,30,6,24
+PPBZV2501100016587,fa47e3f4-8028-48d3-9940-722224956698,CONCEPTEUR DE GRAPHIQUES ANIMES / MONTAGE VIDÉO,0.1125,0.6971,0.4755,0.275,vivier_a_developper,1,7,-6
+PPBZV2501100016587,f40d14bd-02ce-4c39-a08b-a10f93cf1e2f,Infographe-Graphiste,0.1125,0.6971,0.4755,0.275,vivier_a_developper,10,8,2
+PPBZV2501100016587,17ef0526-23de-4727-90bd-8c51efbfea6d,INFOGRAPHISTE H/F,0.3375,0.6971,0.4755,0.275,vivier_a_developper,11,9,2
+PPBZV2501100016587,3152c5ae-5b19-4517-9903-58ac24d8beea,Monteur Vidéo Remote – Ads TikTok & Instagram,0.1125,0.6971,0.4755,0.275,vivier_a_developper,16,10,6
+PPBZV2501150017263,89dfde17-b517-4b7c-81b4-a701b256b5bc,Agent d'assurance de la qualité,0.25,0.6144,0.5365,0.275,vivier_a_developper,2,1,1
+PPBZV2501150017263,c23a3d5c-833e-41ed-a065-eb68949005c1,Production Engineer,0.25,0.5636,0.5188,0.275,vivier_a_developper,3,2,1
+PPBZV2501150017263,1c40947d-d691-442b-9842-9d8f3e3060ce,Quality Assurance Manager,0.25,0.5528,0.515,0.275,vivier_a_developper,6,3,3
+PPBZV2501150017263,560ec1cf-8d41-4120-b485-93fdccdd85fb,Ingénieur Procédés Flow Assurance,0.5,0.5434,0.5117,0.275,vivier_a_developper,10,4,6
+PPBZV2501150017263,332ce71f-5ec6-4fdc-a2ae-4e09d6b3b78f,VIE ADJOINT(E) AU RESPONSABLE D'EXPLOITATION H/F,0.25,0.5361,0.5091,0.275,vivier_a_developper,13,5,8
+PPBZV2501150017263,506fe38c-9952-471b-875b-2dbff2114ed8,Petroleum Engineer,0.25,0.5355,0.5089,0.275,vivier_a_developper,16,6,10
+PPBZV2501150017263,67873b0f-2179-4b92-83e5-9e006be587da,INGÉNIEUR INTERFACE,0.5,0.5046,0.4981,0.275,vivier_a_developper,17,7,10
+PPBZV2501150017263,c9127b47-7c0a-43a8-a5ba-b94ef935d71d,Agent d'assurance de la qualité,0.1125,0.6144,0.49,0.0,vivier_a_developper,1,8,-7
+PPBZV2501150017263,ace4efce-5886-4537-bc6a-6bc3272903d5,Responsable de Maintenance H/F,0.5,0.4792,0.4892,0.275,vivier_a_developper,22,9,13
+PPBZV2501150017263,6ce48225-b63f-478f-a83f-2b0e5d629737,INGÉNIEUR ÉLECTRICIEN BUREAU D’ÉTUDE H/F,0.5,0.4571,0.4815,0.275,vivier_a_developper,25,10,15
+PPBZV2501180017596,84a80b08-124d-4356-9ff8-c7eee6661030,Ingenieur Ou Technicien Génie Biomédical,0.1125,0.3129,0.5424,0.833,vivier_a_developper,11,1,10
+PPBZV2501180017596,c8d34c50-42d7-4f1a-a528-f6b815397198,"Biomonitoring Intern, Dja Biosphere Reserve (Open To Cameroon Nationals Only)",0.1125,0.3129,0.5084,0.833,vivier_a_developper,8,2,6
+PPBZV2501180017596,68b2ec76-d313-4547-b718-06c355cb78bf,"Biomonitoring Intern, Faro National Park(Open To Cameroon Nationals Only)",0.1125,0.3129,0.5084,0.833,vivier_a_developper,10,3,7
+PPBZV2501180017596,cf5985f8-aecc-48bb-b6a3-b0cf04c320d0,05 SENIOR LAB TECHNICIANS,0.1125,0.3129,0.5084,0.833,vivier_a_developper,12,4,8
+PPBZV2501180017596,09d93187-494a-46f1-82a7-eeaad83bf701,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.4429,0.3299,0.4745,0.4,vivier_a_developper,2,5,-3
+PPBZV2501180017596,e9741801-5cb1-48e5-84c0-0ddfd141f89d,TECHNICIENS DE LABORATOIRE ET AGENTS D'ACCEUIL,0.325,0.3214,0.434,0.275,vivier_a_developper,4,6,-2
+PPBZV2501180017596,7be44076-a52b-4d81-a2f5-a5a05c239c8b,TECHNICIENS DE LABORATOIRE ET AGENTS D'ACCEUIL,0.1125,0.3214,0.4295,0.5,vivier_a_developper,3,7,-4
+PPBZV2501180017596,9bc05445-2e86-4a12-be83-a5a7fd0effc8,Technicien d'Énergies Renouvelables,0.25,0.2933,0.4242,0.275,vivier_a_developper,18,8,10
+PPBZV2501180017596,f8d3b29b-c019-4f1c-9850-6e252bda269e,Gestionnaire des Stocks H/F,0.25,0.291,0.4234,0.275,vivier_a_developper,20,9,11
+PPBZV2501180017596,543cab33-cf9c-4381-98e9-16f1438143c3,Chargé de Partenariat H/F,0.25,0.2882,0.4224,0.275,vivier_a_developper,21,10,11
+PPBZV2501080016394,939a54f2-2704-4d4c-9385-042c15e63bba,PROGRAMME ASSOCIATE,0.1125,0.5006,0.6602,1.0,postuler_avec_plan_de_montee_en_competence,15,1,14
+PPBZV2501080016394,17b0c7c3-1dd1-450d-a105-04ba42beb6c4,Monitoring & Evaluation Officer (HCR Project),0.1125,0.5006,0.6602,1.0,postuler_avec_plan_de_montee_en_competence,17,2,15
+PPBZV2501080016394,17821333-8245-456a-9d03-4f076a08357e,HEAD OF COMPONENT,0.1125,0.5006,0.6602,1.0,postuler_avec_plan_de_montee_en_competence,26,3,23
+PPBZV2501080016394,d2d84b3f-a7e3-4564-8209-76521cebfbfd,UN.E RESPONSABLE DE COORDINATION PNR ET GTSA,0.1125,0.5006,0.6402,1.0,postuler_avec_plan_de_montee_en_competence,21,4,17
+PPBZV2501080016394,1c76dc4e-be3f-40c0-8f5f-4d460b3a59b5,"03 CONSULTANTS, RENFORCEMENT DES CAPACITÉS",0.1125,0.5006,0.5783,0.667,postuler_avec_plan_de_montee_en_competence,24,5,19
+PPBZV2501080016394,31dd4286-a338-492d-b4af-e65457d7e6b7,STAGIAIRE Au Service Financier De La Fondation,0.3625,0.5088,0.4996,0.275,vivier_a_developper,8,6,2
+PPBZV2501080016394,512640bf-c38e-4bde-a26a-7bf88b2f19e0,"03 CONSULTANTS, RENFORCEMENT DES CAPACITÉS",0.3625,0.5006,0.4967,0.275,vivier_a_developper,28,7,21
+PPBZV2501080016394,30c8eaf7-faee-4840-bec5-1a6ebc89f038,STAGIAIRE Au Service Financier De La Fondation,0.1125,0.5088,0.4531,0.0,vivier_a_developper,5,8,-3
+PPBZV2501080016394,acc35026-c335-4fdc-96bf-77553ac2aa55,National Consultant (COHA) - SSA9,0.1125,0.5006,0.4427,1.0,vivier_a_developper,25,9,16
+PPBZV2501080016394,e5d757fe-efde-4b5c-b615-a25fbcb9e128,Chargé De Projet SRAMPAC,0.225,0.5215,0.414,0.275,hors_cible_actuel,2,10,-8
+PPBZV2501140017050,492b1060-c6a5-48bc-bb83-a73929100831,RESPONSABLE COMMERCIAL,0.475,0.4191,0.4682,0.275,vivier_a_developper,16,1,15
+PPBZV2501140017050,0491e832-767e-49a4-99ba-b4d7b344be87,Stage pratique en Comptabilité,0.43,0.411,0.4653,0.275,vivier_a_developper,23,2,21
+PPBZV2501140017050,14a42196-146b-4da9-8396-21f2027ed3d1,Agents De Recouvrement,0.43,0.4018,0.4621,0.275,vivier_a_developper,25,3,22
+PPBZV2501140017050,f4a8f0b5-4156-408d-adbd-13d3ac58cfb8,RESPONSABLE COMMERCIAL,0.1125,0.4191,0.4217,0.0,vivier_a_developper,17,4,13
+PPBZV2501140017050,aff9b196-7e05-493a-b683-22c09a8050a9,Stage pratique en Comptabilité,0.1125,0.411,0.4189,0.0,hors_cible_actuel,24,5,19
+PPBZV2501140017050,155d4c4e-8d04-491c-b10f-017677b78bd1,Agents De Recouvrement,0.1125,0.4018,0.4156,0.0,hors_cible_actuel,26,6,20
+PPBZV2501140017050,35df9e9d-ba63-41bf-a8e6-5fb432ad8b37,JUNIOR MANAGER – FINANCES & PROJECTS SOLUTIONS,0.355,0.4281,0.4153,0.275,hors_cible_actuel,1,7,-6
+PPBZV2501140017050,312a5a01-b49f-45a3-aa0f-8c0cab14e335,Financial and Accounting Audit Manager,0.355,0.4217,0.4131,0.275,hors_cible_actuel,3,8,-5
+PPBZV2501140017050,884c70d4-1f8c-4096-a11c-6ec15619c3ee,Analyste de compte,0.265,0.3949,0.4037,0.275,hors_cible_actuel,27,9,18
+PPBZV2501140017050,337e1bb2-5618-4098-95af-00be7ec9937f,Entry Level Training Program,0.2925,0.4191,0.3782,0.275,hors_cible_actuel,5,10,-5
+PPBZV2501140017073,d73795fc-9403-4587-9fc1-d9e2b8b133f0,Assistant Administratif et Commercial H/F,0.1125,0.3761,0.5356,0.55,vivier_a_developper,6,1,5
+PPBZV2501140017073,c1db3a73-f806-4a6c-abb4-73502deb0385,Administrateur de Bases H/F,0.1125,0.3522,0.5273,0.55,vivier_a_developper,10,2,8
+PPBZV2501140017073,6fd3328d-1cb6-4d3f-9a85-b480bd4f6233,Assistant Editorial,0.1125,0.3476,0.5257,0.55,vivier_a_developper,12,3,9
+PPBZV2501140017073,f3639656-3b4c-4b02-bd7a-04db642b3d74,Directeur Général Adjoint,0.1125,0.3355,0.5214,0.55,vivier_a_developper,18,4,14
+PPBZV2501140017073,baf2679f-ca2e-4e31-85ee-af9a73f4601a,COMPTABLE,0.34,0.4015,0.462,0.275,vivier_a_developper,1,5,-4
+PPBZV2501140017073,2d2c59a5-482e-487d-934d-8b6b98e2a7a9,CHARGE DE LA PLANIFICATION,0.34,0.385,0.4562,0.275,vivier_a_developper,4,6,-2
+PPBZV2501140017073,37cf0af9-ed8e-4668-8b8d-0d920290d5ec,Assistant Administratif et Commercial H/F,0.34,0.3761,0.4531,0.275,vivier_a_developper,5,7,-2
+PPBZV2501140017073,72c15904-c651-4bc3-9a07-f5ed221b7d81,Administrateur(trice) Finances et Ressources Humaines,0.43,0.3694,0.4508,0.275,vivier_a_developper,7,8,-1
+PPBZV2501140017073,f9a35e29-cc56-4e9b-bc80-2493320a4c64,Administrateur de Bases H/F,0.34,0.3522,0.4448,0.275,vivier_a_developper,9,9,0
+PPBZV2501140017073,02ee89ec-1add-43d2-b49c-c9a334c65ec6,Assistant Editorial,0.25,0.3476,0.4432,0.275,vivier_a_developper,11,10,1
+PPLIK2501090016527,85837e3a-118c-40a8-9050-4e954b8d5c5a,Superviseur Santé Nutrition H/F,0.2625,0.5343,0.762,1.0,pret_a_postuler,11,1,10
+PPLIK2501090016527,851eceb0-66e0-4187-85c5-d27548c75812,INFIRMIER CHARGE DES REFERENCEMENTS ET DES CONTREREFERENCEMENTS H/F,0.1125,0.5318,0.7611,1.0,pret_a_postuler,14,2,12
+PPLIK2501090016527,90453e88-0ac4-432a-aa05-269d3c8335e9,Infirmier(e) - Douala,0.1125,0.7661,0.7331,1.0,postuler_avec_plan_de_montee_en_competence,1,3,-2
+PPLIK2501090016527,3b233966-ecb4-4ac1-b6e3-23d586502985,Personnel soignant,0.1125,0.6556,0.7145,1.0,postuler_avec_plan_de_montee_en_competence,3,4,-1
+PPLIK2501090016527,90c518f1-f155-49f1-b4a3-402ef8d7a209,Personnel de santé et partenariat spécialistes,0.225,0.6107,0.6987,1.0,postuler_avec_plan_de_montee_en_competence,6,5,1
+PPLIK2501090016527,a5145695-64d0-4df5-860d-c087dee60834,Infirmière,0.5625,0.5297,0.6704,1.0,postuler_avec_plan_de_montee_en_competence,15,6,9
+PPLIK2501090016527,969d77bd-e9d7-4b8e-a8dc-51e7cf938863,Infirmier(ère) - Pk 27 (Carrefour Guiness),0.1125,0.538,0.6533,1.0,postuler_avec_plan_de_montee_en_competence,9,7,2
+PPLIK2501090016527,a218a1d3-28f0-4321-b73c-8e6ed1f50ba9,Infirmier / Infirmière - Yaoundé - Ngoa Ekélé,0.2025,0.5161,0.6456,1.0,postuler_avec_plan_de_montee_en_competence,18,8,10
+PPLIK2501090016527,c050bf54-3f95-47a0-8980-9939c6821bd9,Infirmier (H/F),0.1125,0.4994,0.6398,1.0,postuler_avec_plan_de_montee_en_competence,24,9,15
+PPLIK2501090016527,791967ee-27a1-4939-a1ce-4044e5e304f9,Agent d’Accueil - Préleveur,0.1125,0.4971,0.639,1.0,postuler_avec_plan_de_montee_en_competence,28,10,18
+PPBZV2501100016661,d3ed1a9a-5841-4499-a92c-cf572a997d56,Développeurs Mobile Et Web,0.1125,0.3748,0.5352,0.55,vivier_a_developper,7,1,6
+PPBZV2501100016661,26dd5c7f-2538-4656-b805-b553d1885376,Recrutement Des Enseignants Formateurs En Marketing Digital,0.1125,0.3748,0.5352,0.55,vivier_a_developper,27,2,25
+PPBZV2501100016661,ce1838c3-b90b-4591-a9db-be63f33c0154,Responsable Développement Commercial - Douala,0.3509,0.4063,0.4637,0.275,vivier_a_developper,3,3,0
+PPBZV2501100016661,babb7d08-c786-4c7c-903f-a814f1f9e6ed,Responsable Développement Commercial - Douala,0.1125,0.4063,0.4592,0.5,vivier_a_developper,4,4,0
+PPBZV2501100016661,a3135985-acc9-4503-9a3c-9b47039ab7ac,Chef De Projet Digital,0.25,0.3748,0.4527,0.275,vivier_a_developper,8,5,3
+PPBZV2501100016661,d386f40f-d963-4314-b5ad-de40be9ad9e2,Recrutement Des Enseignants Formateurs En Marketing Digital,0.25,0.3748,0.4527,0.275,vivier_a_developper,9,6,3
+PPBZV2501100016661,31cd1d78-fbc4-4444-b3a4-357d78b4c07d,Agent Enquêteur Digital (WhatsApp),0.25,0.3748,0.4527,0.275,vivier_a_developper,21,7,14
+PPBZV2501100016661,0bc1d188-34ed-4e62-9f06-12706fbd51c5,RESPONSABLE MARKETING,0.2568,0.4217,0.4131,0.275,hors_cible_actuel,2,8,-6
+PPBZV2501100016661,05f57137-c81b-4a95-a6ef-e063a4c054b1,Développeur Angular Junior,0.1125,0.3748,0.4062,0.0,hors_cible_actuel,16,9,7
+PPBZV2501100016661,68108ef3-4b4b-4ced-bdac-8c5b0d8f8e3c,RESPONSABLE MARKETING,0.1125,0.4217,0.3666,0.0,hors_cible_actuel,1,10,-9
+PPBZV2501150017237,697c7c06-f056-4238-a2c6-13ef279ab290,INSPECTEUR COMMERCIAL,0.4225,0.5497,0.5139,0.275,vivier_a_developper,2,1,1
+PPBZV2501150017237,5e8fdcbe-ad5a-42b4-96eb-2c324cbd532d,AGENT GENERAL EN ASSURANCES Vie,0.4225,0.5424,0.5113,0.275,vivier_a_developper,3,2,1
+PPBZV2501150017237,99810761-1ac8-4345-a839-eaa1bbf747b9,Opportunité De Stage En Comptabilité -Allianz,0.4,0.5424,0.5113,0.275,vivier_a_developper,13,3,10
+PPBZV2501150017237,ece022c4-27ee-41fb-bb6a-d5183a01aad8,Stagiaire Chargé Du Recrutement Des CAV,0.4225,0.5424,0.5113,0.275,vivier_a_developper,14,4,10
+PPBZV2501150017237,1e892de4-05a8-4042-b02c-8695972b680e,Conseiller Financier (Agent Commercial) En Assurances-Vie,0.385,0.5424,0.5113,0.275,vivier_a_developper,22,5,17
+PPBZV2501150017237,f5bf1a81-d47b-446c-bd84-68973921de7b,INSPECTEUR COMMERCIAL,0.1125,0.5497,0.4674,0.0,vivier_a_developper,1,6,-5
+PPBZV2501150017237,cb873d9a-8baa-44ee-90ae-d16cc26cd651,ATTACHE COMMERCIAL,0.1125,0.5424,0.4648,0.333,vivier_a_developper,17,7,10
+PPBZV2501150017237,f3bdfa37-f34e-4080-93dd-bf3133373929,CAISSIER-ADVANS CAMEROUN,0.1125,0.5424,0.4648,0.333,vivier_a_developper,18,8,10
+PPBZV2501150017237,3017447f-75f9-4236-bd1d-825c491dc4cc,AGENT GENERAL EN ASSURANCES Vie,0.1125,0.5424,0.4648,0.333,vivier_a_developper,26,9,17
+PPBZV2501150017237,671a6c44-5b37-48f6-b458-5e5b36753def,CONSEILLER EN ASSURANCES Vie H/F,0.3225,0.5424,0.4213,0.275,vivier_a_developper,5,10,-5
+PPBZV2501070016199,09d93187-494a-46f1-82a7-eeaad83bf701,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.4188,0.3298,0.4744,0.4,vivier_a_developper,4,1,3
+PPBZV2501070016199,00c23311-aba1-4276-ac3e-b98efac622f2,"Hôte, Hôtesse pour un événement de 2 semaines - Douala",0.3063,0.2979,0.4258,0.275,vivier_a_developper,23,2,21
+PPBZV2501070016199,3200248f-1f91-48d2-811b-567b416d8ef7,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.3375,0.3298,0.3904,0.0,hors_cible_actuel,3,3,0
+PPBZV2501070016199,366b17b2-8ceb-488e-b684-d6b9c1619f49,"Hôte, Hôtesse pour un événement de 2 semaines - Douala",0.1125,0.2979,0.3793,0.0,hors_cible_actuel,24,4,20
+PPBZV2501070016199,14a380ee-ba82-4837-a816-6138246e2c4d,LABORANTIN (GÉNIE CIVIL) – BOUÉE,0.225,0.3198,0.3434,0.275,hors_cible_actuel,10,5,5
+PPBZV2501070016199,f68fb6cf-a3d4-43f2-b78d-66c5bcfbb8ca,Commercial - Douala,0.1,0.3202,0.3236,0.275,hors_cible_actuel,7,6,1
+PPBZV2501070016199,318749c6-80a7-43e2-8e01-97cbe3a33a39,Responsable Trade Marketing,0.1562,0.3131,0.3211,0.275,hors_cible_actuel,16,7,9
+PPBZV2501070016199,543cab33-cf9c-4381-98e9-16f1438143c3,Chargé de Partenariat H/F,0.1562,0.2968,0.3154,0.275,hors_cible_actuel,28,8,20
+PPBZV2501070016199,1b95e9e4-2baf-4f31-a51b-eea9a1f84052,LABORANTIN (GÉNIE CIVIL) – BOUÉE,0.1125,0.3198,0.2969,0.0,hors_cible_actuel,9,9,0
+PPBZV2501070016199,64ef992c-90cd-4bfc-9d8e-e4e65e4c4400,Commercial - Douala,0.1125,0.3202,0.2771,0.0,hors_cible_actuel,8,10,-2
+PPBZV2501140017066,ec7c4a92-30cd-4290-8268-21a48304116a,RESPONSABLE DE SECURITE.,0.3375,0.5522,0.7683,1.0,pret_a_postuler,1,1,0
+PPBZV2501140017066,36b30c0a-ba8f-4085-8615-938ac387f0dd,Superviseur / Contrôleur Des Agents,0.1125,0.5522,0.7683,1.0,pret_a_postuler,3,2,1
+PPBZV2501140017066,8f754c02-f047-4d7f-a876-e2a2a3be0561,AGENTS D'ENTRETIEN AGENT DE SECURITE,0.225,0.5522,0.7683,1.0,pret_a_postuler,7,3,4
+PPBZV2501140017066,240eb542-1f34-4440-a403-b5d9c6443882,UN RESPONSABLE DE DEPARTEMENT SECURITE ALIMENTAIRE ET MOYENS D'EXISTENCE,0.2025,0.5522,0.7683,1.0,pret_a_postuler,21,4,17
+PPBZV2501140017066,1682b2d6-04b1-464f-98cf-59f92de013e5,RESPONSABLE SÉCURITÉ SI,0.3375,0.5522,0.7683,1.0,pret_a_postuler,24,5,19
+PPBZV2501140017066,f6201d6c-b3e4-449c-90ec-2e58ecc955c3,03 SUPERVISEURS Des Agents De Sécurité,0.2625,0.5522,0.7683,1.0,pret_a_postuler,26,6,20
+PPBZV2501140017066,96866a8c-52b9-438f-80c1-b7118a16a532,Security Assistant Cameroon Maroua,0.1125,0.5522,0.7683,1.0,pret_a_postuler,27,7,20
+PPBZV2501140017066,11188906-d3cd-4cc2-ae9d-11f65537c545,02 Assistants Principaux À La Protection De L'Enfance,0.1125,0.5522,0.7683,1.0,pret_a_postuler,28,8,20
+PPBZV2501140017066,4d9a295d-75b6-4286-ae98-79f1cc2f6cbd,10 Consultant(Es) En Cybersécurité,0.1125,0.5522,0.7123,1.0,postuler_avec_plan_de_montee_en_competence,5,9,-4
+PPBZV2501140017066,4b4e7e11-f444-472d-82f7-5f2bf849aa08,INGÉNIEUR SÉCURITÉ,0.3375,0.5522,0.7123,1.0,postuler_avec_plan_de_montee_en_competence,22,10,12
+PPBZV2501130016832,11370102-8b71-4004-a31f-a07a38476632,OFFRE DE STAGE Réseau & Télécommunication (H/F),0.1125,0.5959,0.7836,1.0,pret_a_postuler,3,1,2
+PPBZV2501130016832,418305c2-7422-4bc7-8440-485f1b578ff0,STAGIAIRES EN SYSTÈMES D’INFORMATION ET EN DÉVELOPPEMENT LOGICIEL H/F,0.1125,0.5959,0.7836,1.0,pret_a_postuler,5,2,3
+PPBZV2501130016832,9e79b989-23dc-4f57-a54a-ba9b30698aa2,Stagiaires Professionnels En Réseaux Et Télécom,0.1125,0.5959,0.7836,1.0,pret_a_postuler,25,3,22
+PPBZV2501130016832,817c7dd1-a983-4585-a217-717f62ae54bb,SPÉCIALISTE DE LA SÉCURITÉ DES S.I.,0.1125,0.5959,0.6936,1.0,postuler_avec_plan_de_montee_en_competence,7,4,3
+PPBZV2501130016832,f903b734-5d2e-4855-a18e-8916045caf22,GESTIONNAIRE SYSTÈMES,0.1125,0.5959,0.6936,1.0,postuler_avec_plan_de_montee_en_competence,11,5,6
+PPBZV2501130016832,0a1d2b95-29b1-413a-89e2-7b0c950776ec,Support Call Center,0.1125,0.5959,0.6936,1.0,postuler_avec_plan_de_montee_en_competence,18,6,12
+PPBZV2501130016832,706e970e-9f47-46fb-bdb8-16dcdb5b32ab,Executive Account Management - SME - Enterprise Business Unit,0.1125,0.5959,0.6936,1.0,postuler_avec_plan_de_montee_en_competence,22,7,15
+PPBZV2501130016832,17d0d3af-1396-4d28-8bfa-c2b24bb12007,RESPONSABLE DIGITALISATION,0.1125,0.597,0.6739,1.0,postuler_avec_plan_de_montee_en_competence,2,8,-6
+PPBZV2501130016832,115aba1c-c222-4020-93b2-331a05d59116,Representative - Executive Accounts Manager,0.1125,0.5959,0.6736,1.0,postuler_avec_plan_de_montee_en_competence,4,9,-5
+PPBZV2501130016832,bdc4954a-6aae-4d8c-8565-af915269069e,CHEF DE MISSION,0.1125,0.5959,0.6736,1.0,postuler_avec_plan_de_montee_en_competence,9,10,-1
+PPBZV2501200017684,229c784f-7478-482f-bb5f-5f936d08835b,Commercial Téléopérateur Bilingue Dans Le Transport,0.1125,0.5285,0.704,1.0,postuler_avec_plan_de_montee_en_competence,23,1,22
+PPBZV2501200017684,c920c1bb-f78f-47f2-9a6b-5f044b5a4b68,RESPONSABLE COMMERCIAL H/F,0.1125,0.5285,0.704,1.0,postuler_avec_plan_de_montee_en_competence,28,2,26
+PPBZV2501200017684,1cf3e398-6a66-4c68-b6c1-91c9704ff7b2,Commercial Senior /Commercial Junior,0.1125,0.5285,0.704,1.0,postuler_avec_plan_de_montee_en_competence,30,3,27
+PPBZV2501200017684,87dc826c-2e7f-453c-beaf-2854ae9ae0a3,ATTACHES COMMERCIAUX,0.1125,0.5285,0.67,1.0,postuler_avec_plan_de_montee_en_competence,22,4,18
+PPBZV2501200017684,285382d1-2f02-4f59-bb37-881d795d97b7,02 COMMERCIAUX H/F Cosmétiques,0.1125,0.5285,0.67,1.0,postuler_avec_plan_de_montee_en_competence,24,5,19
+PPBZV2501200017684,06fa118d-ea42-4238-a35d-6578f4e5611f,10 Gestionnaires Commerciaux,0.1125,0.5285,0.67,1.0,postuler_avec_plan_de_montee_en_competence,27,6,21
+PPBZV2501200017684,bdee9dad-3241-4c6e-bc9d-2aa2920557d4,Des Commerciaux,0.1125,0.5285,0.67,1.0,postuler_avec_plan_de_montee_en_competence,29,7,22
+PPBZV2501200017684,2c442095-930d-482a-b28a-23980633e1be,COMMERCIAL,0.1125,0.5285,0.6179,0.833,postuler_avec_plan_de_montee_en_competence,21,8,13
+PPBZV2501200017684,ff5ca5c4-91e9-4738-bd1f-f68d63664f09,(10) Commercial Digital Freelance (Produits Financiers),0.1125,0.5285,0.6179,0.833,postuler_avec_plan_de_montee_en_competence,26,9,17
+PPBZV2501200017684,9ee1fc7e-a3f8-45fe-81f2-056bcb15e564,Commercial Senior /Commercial Junior,0.43,0.5285,0.4505,0.275,vivier_a_developper,25,10,15
+PPBZV2501130016880,8f754c02-f047-4d7f-a876-e2a2a3be0561,AGENTS D'ENTRETIEN AGENT DE SECURITE,0.3375,0.6434,0.7442,1.0,postuler_avec_plan_de_montee_en_competence,10,1,9
+PPBZV2501130016880,11188906-d3cd-4cc2-ae9d-11f65537c545,02 Assistants Principaux À La Protection De L'Enfance,0.1125,0.6434,0.7442,1.0,postuler_avec_plan_de_montee_en_competence,11,2,9
+PPBZV2501130016880,96866a8c-52b9-438f-80c1-b7118a16a532,Security Assistant Cameroon Maroua,0.1125,0.6434,0.7442,1.0,postuler_avec_plan_de_montee_en_competence,21,3,18
+PPBZV2501130016880,19ac8b50-20a6-4967-b03b-16d872dee529,Appel D'Offres National Ouvert Relatif Aux Prestations De Gardiennage,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,4,4,0
+PPBZV2501130016880,9f6f9832-4b04-4dad-bdaf-c81f21d3ae90,VIRGILE JOUR,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,12,5,7
+PPBZV2501130016880,1d13ab9b-9983-4b1c-b9b8-3fae16fecfb1,SECURITY CORDINATOR-GROUPE CIBLE,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,19,6,13
+PPBZV2501130016880,70e78061-08c6-488f-a308-9834b1e9c40f,Security Operations Support Officer NOA (182143)Requisition ID 182143,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,20,7,13
+PPBZV2501130016880,82f33765-febe-47c4-a29b-a65292f4b9fa,CONTROLEUR DES ACCES SOIR (15H -22H),0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,22,8,14
+PPBZV2501130016880,bc6bf24e-f7e3-44e8-a036-c2dc484e124b,Appel D'Offres : Prestations De Sécurisation Et De Gardiennage Des Immeubles,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,23,9,14
+PPBZV2501130016880,9d05d1bf-e090-48b4-bb30-c01800f3299b,02 GARDIENS TEMPORAIRES,0.1125,0.6434,0.7102,1.0,postuler_avec_plan_de_montee_en_competence,24,10,14
+PPBZV2501090016465,be4f39d5-84e3-45ba-b1d2-5bdce30ed489,Offre D'emploi: RESPONSABLE MAINTENANCE,0.3375,0.521,0.7573,1.0,pret_a_postuler,7,1,6
+PPBZV2501090016465,b4213caf-53b5-4d55-81c7-8aaa5d9a036a,Assistant Ressources Humaines,0.1125,0.5157,0.7555,1.0,pret_a_postuler,11,2,9
+PPBZV2501090016465,5520d0b6-7f48-4c6f-a8df-a88cf87da0bb,Technicien En Maintenance Industrielle,0.2625,0.5157,0.7555,1.0,pret_a_postuler,15,3,12
+PPBZV2501090016465,599163d3-16bc-41dd-b6b9-26a349131cdf,Offre D´Emploi : Responsable De L’exploitation,0.1125,0.5157,0.7555,1.0,pret_a_postuler,18,4,14
+PPBZV2501090016465,c8b5f4bc-3ccd-478a-b0d5-ec614b195b33,Assistant Administratif Et Financier – Profil Orienté Finance,0.1125,0.5157,0.7555,1.0,pret_a_postuler,21,5,16
+PPBZV2501090016465,6517efb7-00d2-4c3f-9399-28cb8e1657fe,Technico-Commercial Centre Sud-Est - LA PASTA S.A.,0.1125,0.5157,0.7555,1.0,pret_a_postuler,23,6,17
+PPBZV2501090016465,a279c19b-73ba-4c78-9f94-bc486cb379d5,TECHNICIEN ÉLECTRICIEN JUNIOR,0.1125,0.5157,0.7555,1.0,pret_a_postuler,27,7,20
+PPBZV2501090016465,20624578-dc1d-4530-b154-67f842f8e837,COMMERCIAL-POLYPHARMA,0.1125,0.5157,0.7555,1.0,pret_a_postuler,28,8,20
+PPBZV2501090016465,09afaae3-db74-423d-91e3-a97385aa3f8c,Techniciens De Maintenance,0.3375,0.5157,0.7555,1.0,pret_a_postuler,29,9,20
+PPBZV2501090016465,fc9c4571-9f93-4e51-a612-83d153d41f1f,AGENTS DE NETTOYAGE INDUSTRIEL,0.1125,0.5157,0.7555,1.0,pret_a_postuler,30,10,20
+PPLIK2501230018160,09d93187-494a-46f1-82a7-eeaad83bf701,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.2929,0.3317,0.3651,0.4,hors_cible_actuel,2,1,1
+PPLIK2501230018160,b834e863-21b1-4906-8174-c049ab8465bb,Tisserand (H/F),0.1125,0.2658,0.3245,0.275,hors_cible_actuel,29,2,27
+PPLIK2501230018160,1bd17f08-0135-4551-8755-aa8b322b29b6,CONCEPTEUR D’ANIMATION,0.1,0.282,0.3102,0.275,hors_cible_actuel,13,3,10
+PPLIK2501230018160,740ea2ff-6db9-48ae-94f5-3448e197d01b,CONCEPTEUR D’ANIMATION,0.1125,0.282,0.3102,0.275,hors_cible_actuel,14,4,10
+PPLIK2501230018160,3200248f-1f91-48d2-811b-567b416d8ef7,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.3375,0.3317,0.2811,0.0,hors_cible_actuel,1,5,-4
+PPLIK2501230018160,85c369f7-29ca-474c-9a0f-7fa74de539dd,Tisserand (H/F),0.1125,0.2658,0.278,0.0,hors_cible_actuel,30,6,24
+PPLIK2501230018160,ac08395b-ae1c-4004-9a2e-16f259e22448,Coordinateur Terrain (H/F),0.025,0.3156,0.204,0.275,hors_cible_actuel,4,7,-3
+PPLIK2501230018160,528fdff0-caee-4da5-bc64-8f583ba68d09,Charge(e) Ressources Humaines,0.025,0.3064,0.2016,0.275,hors_cible_actuel,6,8,-2
+PPLIK2501230018160,34d4f2d4-1a11-43c6-91a7-0c64ca3f0cbf,ASSISTANT(E) DE DIRECTION CHARGE(E) DES RESSOURCES HUMAINES - Douala,0.025,0.306,0.2015,0.275,hors_cible_actuel,8,9,-1
+PPLIK2501230018160,6d7cf14c-8428-40f2-a926-9a3f4ef351b0,Assistant Administratif des Ressources Humaines,0.025,0.3037,0.2008,0.275,hors_cible_actuel,10,10,0
+PPBZV2501130016890,0b482c1b-12b4-4f23-9043-eb0bccf200af,"APPEL D’OFFRE Pour Cabinet Architecte – Ingénieur De Génie Civil Du Bâtiment : Expérimenté, Autonome Et Disponible Immédiatement.",0.1875,0.4869,0.5175,0.667,vivier_a_developper,5,1,4
+PPBZV2501130016890,435d2c93-4873-4d3b-a3bb-89d7aca72591,ARCHITECTE D'INTÉRIEUR (H/F),0.3375,0.5506,0.5058,0.667,vivier_a_developper,2,2,0
+PPBZV2501130016890,2f5fd428-bfe6-4537-8fc2-cfc9dfca8000,Un Architecte Industriel,0.3375,0.5506,0.5058,0.667,vivier_a_developper,4,3,1
+PPBZV2501130016890,5cc36c57-999f-4edb-bfa6-d2857059751e,"Ingénieur Réseaux et Télécommunications - Bafoussam, Yaoundé et Douala",0.475,0.4541,0.4804,0.275,vivier_a_developper,8,4,4
+PPBZV2501130016890,32ffaf14-440d-4933-a020-e4b92cdbd5ed,COMMUNITY MANAGER - Stage Professionnel Pré-Emploi,0.4,0.4422,0.4763,0.275,vivier_a_developper,11,5,6
+PPBZV2501130016890,6959f778-018d-477f-a2a1-ba513220e7d9,RESPONSABLE DIGITALISATION,0.415,0.4333,0.4732,0.275,vivier_a_developper,15,6,9
+PPBZV2501130016890,3a753231-6e65-47ec-94ff-fb32b277b531,RESPONSABLE DES SYSTEMES D’INFORMATION,0.415,0.4119,0.4657,0.275,vivier_a_developper,19,7,12
+PPBZV2501130016890,d5f14ed3-7340-4b40-9dd6-fd6d18819fae,Offre De Stage: Deux STAGIAIRES PROFESSIONNELS,0.4,0.4119,0.4657,0.275,vivier_a_developper,24,8,16
+PPBZV2501130016890,5f25fa8c-cf47-4c5f-a563-8d70321268ad,DEVELOPPEUR APPLICATION MOBILE & WEB En Stage Pré-Emploi,0.4,0.4119,0.4657,0.275,vivier_a_developper,28,9,19
+PPBZV2501130016890,dfa12dc0-982f-4e03-b5cc-756b986fabd6,04 Stagiaires En Informatique,0.475,0.4119,0.4657,0.275,vivier_a_developper,29,10,19
+PPBZV2501150017175,82f33765-febe-47c4-a29b-a65292f4b9fa,CONTROLEUR DES ACCES SOIR (15H -22H),0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,2,1,1
+PPBZV2501150017175,f33c3fff-5696-4313-a8f9-49405b356d3b,SECURITY OFFICER NO-2,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,3,2,1
+PPBZV2501150017175,9f6f9832-4b04-4dad-bdaf-c81f21d3ae90,VIRGILE JOUR,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,14,3,11
+PPBZV2501150017175,bc6bf24e-f7e3-44e8-a036-c2dc484e124b,Appel D'Offres : Prestations De Sécurisation Et De Gardiennage Des Immeubles,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,15,4,11
+PPBZV2501150017175,c93174fb-457e-4ef5-a32a-e0bbdbb7a45b,Offre D'emploi: Moniteur De Détection De Surveillance,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,17,5,12
+PPBZV2501150017175,19ac8b50-20a6-4967-b03b-16d872dee529,Appel D'Offres National Ouvert Relatif Aux Prestations De Gardiennage,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,21,6,15
+PPBZV2501150017175,9d05d1bf-e090-48b4-bb30-c01800f3299b,02 GARDIENS TEMPORAIRES,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,27,7,20
+PPBZV2501150017175,70e78061-08c6-488f-a308-9834b1e9c40f,Security Operations Support Officer NOA (182143)Requisition ID 182143,0.1125,0.6579,0.7153,1.0,postuler_avec_plan_de_montee_en_competence,28,8,20
+PPBZV2501150017175,f6201d6c-b3e4-449c-90ec-2e58ecc955c3,03 SUPERVISEURS Des Agents De Sécurité,0.2625,0.6579,0.6953,1.0,postuler_avec_plan_de_montee_en_competence,7,9,-2
+PPBZV2501150017175,96866a8c-52b9-438f-80c1-b7118a16a532,Security Assistant Cameroon Maroua,0.1125,0.6579,0.6953,1.0,postuler_avec_plan_de_montee_en_competence,12,10,2
+PPPNR2501090016456,c645a254-78c6-44b8-9850-f16d2f177bf1,Commercial (H/F),0.4446,0.446,0.3876,0.275,hors_cible_actuel,29,1,28
+PPPNR2501090016456,71704b20-6a12-4674-823a-840d40545fe2,Commercial (H/F),0.1125,0.446,0.3411,0.0,hors_cible_actuel,30,2,28
+PPPNR2501090016456,acf68f0a-fd1d-4122-b66a-87491461201a,Responsable Commerciale,0.3571,0.5053,0.2538,0.275,hors_cible_actuel,1,3,-2
+PPPNR2501090016456,33222d77-69e8-4d73-b70a-8356813fc6db,Chargé de Clientèle,0.3571,0.47,0.2445,0.275,hors_cible_actuel,4,4,0
+PPPNR2501090016456,83c110ad-4a63-425f-911e-a1ce6d8b9d50,Vendeur(se) en Boutique - Douala,0.3571,0.4694,0.2443,0.275,hors_cible_actuel,5,5,0
+PPPNR2501090016456,2def360e-9749-4de2-941f-928200703c26,COMMERCIAL PRESTIGE,0.2929,0.4686,0.2441,0.275,hors_cible_actuel,7,6,1
+PPPNR2501090016456,8d27ab40-8ace-4ad3-8cd9-d8f98bd6ee1a,DIRECTEUR COMMERCIAL ABIDJAN,0.2286,0.4628,0.2426,0.275,hors_cible_actuel,10,7,3
+PPPNR2501090016456,44aebbf1-45c4-4d5b-bce0-86ff14ebb334,Stagiaires Professionnels Et Académiques Dans Divers Domaines,0.2929,0.461,0.2421,0.275,hors_cible_actuel,11,8,3
+PPPNR2501090016456,9e247e87-e4e5-4fae-91bd-e799e425cf48,Spécialiste en Marketing H/F,0.2929,0.4563,0.2409,0.275,hors_cible_actuel,13,9,4
+PPPNR2501090016456,d90dc97c-9eaf-4eb5-b95f-804b01218c85,Responsable Marketing (H/F),0.3571,0.4529,0.24,0.275,hors_cible_actuel,17,10,7
+PPBZV2501020015596,24e94ba3-d5c4-4dbf-9579-201ad1bc731b,Caissière en poissonnerie,0.34,0.4515,0.4235,0.275,vivier_a_developper,29,1,28
+PPBZV2501020015596,cf244fc0-2aff-4d01-8466-cfcab93e3baf,Caissière en poissonnerie,0.1125,0.4515,0.377,0.0,hors_cible_actuel,30,2,28
+PPBZV2501020015596,33222d77-69e8-4d73-b70a-8356813fc6db,Chargé de Clientèle,0.46,0.566,0.2697,0.275,hors_cible_actuel,1,3,-2
+PPBZV2501020015596,e2ad5e04-b8b1-49af-b7f4-dfd9d45fb037,Responsable Marketing (H/F),0.46,0.529,0.26,0.275,hors_cible_actuel,4,4,0
+PPBZV2501020015596,d90dc97c-9eaf-4eb5-b95f-804b01218c85,Responsable Marketing (H/F),0.46,0.529,0.26,0.275,hors_cible_actuel,5,5,0
+PPBZV2501020015596,03b8bb96-874a-4bc6-92f9-4eac306483bf,Responsable Marketing,0.37,0.4872,0.249,0.275,hors_cible_actuel,7,6,1
+PPBZV2501020015596,ad71e174-51e3-4de4-ad07-e3c3571d1705,"Manager détaillants, Direction de la Distribution",0.37,0.4753,0.2459,0.275,hors_cible_actuel,9,7,2
+PPBZV2501020015596,f03f81b9-4400-47d5-8738-d2123359b47a,Ingénieur en Génie Civil,0.37,0.4714,0.2449,0.275,hors_cible_actuel,12,8,4
+PPBZV2501020015596,5539fa9c-c841-4be4-a3c9-029c7faf67ed,Directeur des Ventes H/F,0.46,0.4665,0.2436,0.275,hors_cible_actuel,13,9,4
+PPBZV2501020015596,5ab823f7-724f-4d47-85eb-46f33f71856c,Directeur Export,0.37,0.4643,0.243,0.275,hors_cible_actuel,16,10,6
+PPBZV2501100016595,eddc0bc5-df68-4795-b1c3-4e082506babb,CHEF DE SERVICE DES AFFAIRES JURIDIQUES ET DE LA COMMUNICATION,0.5929,0.622,0.5392,0.275,vivier_a_developper,2,1,1
+PPBZV2501100016595,62d173ba-afc4-4307-ab7f-177088988104,10 Juristes Stagiaires,0.625,0.6082,0.5344,0.275,vivier_a_developper,6,2,4
+PPBZV2501100016595,023c987e-fdcb-4dd6-8042-fcdb4e576a6e,Assistant Principal De Réinstallation,0.55,0.5032,0.4976,0.275,vivier_a_developper,10,3,7
+PPBZV2501100016595,546449b0-53c5-4608-8ae7-42ab10dbb754,Supervisory Consular Assistant (General),0.5286,0.5026,0.4974,0.275,vivier_a_developper,12,4,8
+PPBZV2501100016595,a33e6877-9062-4729-8475-60a1a90370ee,CHEF DE SERVICE DES AFFAIRES JURIDIQUES ET DE LA COMMUNICATION,0.2025,0.622,0.4927,0.0,vivier_a_developper,4,5,-1
+PPBZV2501100016595,6496cf31-fc4a-4a2b-83bd-514da27201a6,10 Juristes Stagiaires,0.1125,0.6082,0.4879,0.0,vivier_a_developper,5,6,-1
+PPBZV2501100016595,0f0f78f3-f78e-4cf6-b8a8-5de0c2c33107,Juriste / Fiscaliste H/F – Douala,0.355,0.5732,0.4661,0.275,vivier_a_developper,7,7,0
+PPBZV2501100016595,c0173340-bea4-4057-8c15-226a8fdfc674,Assistant Principal De Réinstallation,0.2625,0.5032,0.4511,0.0,vivier_a_developper,9,8,1
+PPBZV2501100016595,c9123c7d-a415-497b-b6e8-8d7d8b922456,Supervisory Consular Assistant (General),0.225,0.5026,0.4509,0.0,vivier_a_developper,11,9,2
+PPBZV2501100016595,934d213b-d68c-4e42-96c9-cdd310787f12,RECRUTEMENT DE 56 JEUNES TITULAIRES D'UNE LICENCE EN DROIT PRIVE - YAOUNDE OADEPA OBSERVATORE,0.1768,0.5016,0.4506,0.0,vivier_a_developper,15,10,5
+PPBZV2501070016108,09d93187-494a-46f1-82a7-eeaad83bf701,Manœuvre Chantier Bâtiment /Travaux Agricoles - Littoral,0.4188,0.308,0.4668,0.4,vivier_a_developper,8,1,7
+PPBZV2501070016108,543cab33-cf9c-4381-98e9-16f1438143c3,Chargé de Partenariat H/F,0.3063,0.3525,0.4449,0.275,vivier_a_developper,2,2,0
+PPBZV2501070016108,9bc05445-2e86-4a12-be83-a5a7fd0effc8,Technicien d'Énergies Renouvelables,0.25,0.316,0.4321,0.275,vivier_a_developper,6,3,3
+PPBZV2501070016108,f8d3b29b-c019-4f1c-9850-6e252bda269e,Gestionnaire des Stocks H/F,0.3063,0.305,0.4283,0.275,vivier_a_developper,10,4,6
+PPBZV2501070016108,39f6a155-a164-499e-8b50-e4d3ea3d7ec0,AGENT DE SUIVI TRANSIT & DOUANE,0.25,0.2883,0.4224,0.275,vivier_a_developper,11,5,6
+PPBZV2501070016108,2e521349-6ce2-4ef5-909e-5943f47e472e,Business Developer,0.25,0.282,0.4202,0.275,vivier_a_developper,13,6,7
+PPBZV2501070016108,e9df85a7-c352-4d30-9408-a04c738e4a7b,SUPERVISEUR COMMERCIAL (VAN TEAM COORDINATOR),0.3063,0.2753,0.4179,0.275,hors_cible_actuel,17,7,10
+PPBZV2501070016108,f4cb4a17-76a1-42c2-a95f-e82eb25438df,Coordinateur Régional,0.25,0.2711,0.4164,0.275,hors_cible_actuel,22,8,14
+PPBZV2501070016108,5f969e64-a409-4397-bd58-2732cae7f165,Responsable Commercial Showroom (H/F),0.25,0.2703,0.4161,0.275,hors_cible_actuel,23,9,14
+PPBZV2501070016108,16ddb397-b6d1-48e4-9508-627901994573,Commercial H/F,0.3063,0.2681,0.4153,0.275,hors_cible_actuel,25,10,15
+PPBZV2501100016648,5f27dd74-bdc4-4537-b62f-4f76b1f3294b,02 ASSISTANTS EXAMINATEUR BREVETS,0.325,0.4185,0.468,0.275,vivier_a_developper,25,1,24
+PPBZV2501100016648,807616f6-f83d-415c-a99d-fda155fd2cf2,STAGIAIRE ELECTROMÉCANICIEN H/F,0.2875,0.4492,0.4227,0.275,vivier_a_developper,5,2,3
+PPBZV2501100016648,6453e303-93ce-4cb8-bce4-85567215f664,STAGIAIRE ELECTRICIEN Matériel Roulant H/F,0.25,0.4492,0.4227,0.275,vivier_a_developper,9,3,6
+PPBZV2501100016648,19913c99-57b3-4255-86e7-7ec9d8581016,02 ASSISTANTS EXAMINATEUR BREVETS,0.1125,0.4185,0.4215,0.0,vivier_a_developper,26,4,22
+PPBZV2501100016648,a62d0be4-f3c9-440b-b4ec-d1cbea51ea16,REGIONAL SITE SUPERVISOR,0.2025,0.4492,0.3887,0.275,hors_cible_actuel,2,5,-3
+PPBZV2501100016648,58f3e70e-fb5e-46f3-aa48-7d41360c5515,ELECTRICIEN Installations Electriques H/F,0.2025,0.4492,0.3887,0.275,hors_cible_actuel,6,6,0
+PPBZV2501100016648,47493a92-0487-438a-bc8e-6e469f9bcfec,ELECTROMECANICIEN,0.2625,0.4489,0.3886,0.275,hors_cible_actuel,12,7,5
+PPBZV2501100016648,0eaa814c-3903-4d96-bdd9-e7b17f308906,AUTOMATICIEN,0.225,0.436,0.3841,0.275,hors_cible_actuel,16,8,8
+PPBZV2501100016648,349a61b9-8678-4014-b30b-862546e6d8e4,ENVIRONNEMENTALISTE,0.2625,0.4321,0.3827,0.275,hors_cible_actuel,20,9,11
+PPBZV2501100016648,dd750860-0fb1-4661-8433-86e70eb297b7,Chef D’équipe Maintenance,0.1875,0.4249,0.3802,0.275,hors_cible_actuel,24,10,14
+PPBZV2501210017773,f6201d6c-b3e4-449c-90ec-2e58ecc955c3,03 SUPERVISEURS Des Agents De Sécurité,0.2625,0.6194,0.7358,1.0,postuler_avec_plan_de_montee_en_competence,9,1,8
+PPBZV2501210017773,96866a8c-52b9-438f-80c1-b7118a16a532,Security Assistant Cameroon Maroua,0.1125,0.6194,0.7358,1.0,postuler_avec_plan_de_montee_en_competence,13,2,11
+PPBZV2501210017773,76f40fcf-303b-4f58-801c-535deb063c81,Agent De Sécurité Sur Le Terrain-UNHCR,0.3375,0.6194,0.7358,1.0,postuler_avec_plan_de_montee_en_competence,24,3,21
+PPBZV2501210017773,1d13ab9b-9983-4b1c-b9b8-3fae16fecfb1,SECURITY CORDINATOR-GROUPE CIBLE,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,2,4,-2
+PPBZV2501210017773,19ac8b50-20a6-4967-b03b-16d872dee529,Appel D'Offres National Ouvert Relatif Aux Prestations De Gardiennage,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,5,5,0
+PPBZV2501210017773,bc6bf24e-f7e3-44e8-a036-c2dc484e124b,Appel D'Offres : Prestations De Sécurisation Et De Gardiennage Des Immeubles,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,12,6,6
+PPBZV2501210017773,c93174fb-457e-4ef5-a32a-e0bbdbb7a45b,Offre D'emploi: Moniteur De Détection De Surveillance,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,16,7,9
+PPBZV2501210017773,9d05d1bf-e090-48b4-bb30-c01800f3299b,02 GARDIENS TEMPORAIRES,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,25,8,17
+PPBZV2501210017773,f33c3fff-5696-4313-a8f9-49405b356d3b,SECURITY OFFICER NO-2,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,29,9,20
+PPBZV2501210017773,70e78061-08c6-488f-a308-9834b1e9c40f,Security Operations Support Officer NOA (182143)Requisition ID 182143,0.1125,0.6194,0.7018,1.0,postuler_avec_plan_de_montee_en_competence,30,10,20

@@ -1163,7 +1163,7 @@ Ce chapitre précise donc les choix de conception du système. Les résultats d'
   \source{Auteur}
 \end{table}
 
-\section{Sources de données et rôle dans le système}
+\section{Sources de données et leur rôle dans le système}
 
 Le système mobilise deux catégories de données. La première correspond aux données opérationnelles du marché du travail : offres d'emploi et profils de candidats. Ces données décrivent respectivement la demande de travail et l'offre de travail disponible. La seconde catégorie correspond aux référentiels de structuration : \ESCO{}, \MEPC{} et \NCF{}. Ces référentiels permettent d'éviter une approche purement textuelle et de rattacher les intitulés, compétences et niveaux de formation à des nomenclatures interprétables.
 
@@ -1294,12 +1294,399 @@ Cette approche répond aux objectifs du mémoire. Elle permet de dépasser la re
 % 10 à 15 pages.
 \vspace{-1.4cm}
 
+\section{Vue d'ensemble de l'implémentation}
+
+Ce chapitre présente la réalisation opérationnelle du système de recommandation hybride emploi-compétences. Il ne reprend pas les fondements théoriques du chapitre précédent ; il décrit plutôt comment les choix méthodologiques ont été traduits en modules exécutables, bases de données, outils d'interrogation et interfaces utilisateur. L'implémentation suit une logique modulaire : chaque brique remplit une fonction précise, mais l'ensemble est orchestré dans un workflow agentique capable de router les requêtes vers les sources pertinentes.
+
+Le système est organisé autour de huit blocs fonctionnels. Le premier bloc correspond à l'ETL et à la normalisation des données. Le deuxième concerne le fine-tuning du modèle SentenceTransformer. Le troisième construit le graphe de connaissances dans Neo4j. Le quatrième matérialise les embeddings dans PostgreSQL avec l'extension pgvector. Le cinquième implémente le moteur GraphRAG et le score hybride. Le sixième ajoute le pipeline Text2Cypher pour interroger le graphe en langage naturel. Le septième orchestre l'ensemble avec LangGraph. Le huitième expose le système à travers une CLI, une interface Streamlit et une API FastAPI.
+
+\begin{table}[H]
+  \centering
+  \caption{Organisation opérationnelle des modules implémentés}
+  \label{tab:modules_implementation}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{3.6cm}p{4.3cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Bloc} & \tabheader{Répertoire ou fichier principal} & \tabheader{Rôle dans le système} \\
+    \midrule
+    ETL et normalisation & \filevar{src/01\_etl} & Nettoyage des offres, candidats, référentiels et construction des champs d'embedding. \\
+    Fine-tuning ST & \filevar{src/02\_finetune\_st} & Adaptation du modèle SentenceTransformer au vocabulaire emploi-compétences. \\
+    Graphe Neo4j & \filevar{src/03\_knowledge\_graph} & Création des noeuds, relations, contraintes et requêtes Cypher métier. \\
+    pgvector & \filevar{src/04\_pgvector} & Stockage des embeddings, recherche ANN et recherche hybride dense--lexicale. \\
+    GraphRAG & \filevar{src/05\_graphrag} & Construction du contexte candidat--offre, score hybride, critic et Text2Cypher. \\
+    API & \filevar{src/06\_api} & Exposition des endpoints de recommandation, skill gap, embedding et chat. \\
+    Evaluation & \filevar{src/07\_evaluation} & Scripts de calcul des métriques de retrieval, embeddings et fidélité. \\
+    Agentic RAG & \filevar{src/08\_agentic\_graphrag} & Orchestration LangGraph, outils, routage, génération finale et traces. \\
+    Interface UI & \filevar{chatbot\_app.py} & Interface Streamlit conversationnelle avec affichage des traces du workflow. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur, à partir de l'architecture du projet}
+\end{table}
+
+Cette structuration répond à une exigence de maintenabilité. Les données, les embeddings, le graphe, la génération et les interfaces ne sont pas fusionnés dans un script unique. Chaque couche peut être testée séparément, puis mobilisée par l'agent selon le besoin de l'utilisateur.
+
+\section{Implémentation de la chaîne ETL}
+
+La chaîne ETL est le point d'entrée du système. Elle transforme des données hétérogènes en tables normalisées exploitables par les modèles et les bases de données. Le module \filevar{src/01\_etl} contient les traitements relatifs aux offres, aux candidats, aux référentiels et aux paires d'entraînement. Cette couche produit les champs structurants nécessaires à la suite du pipeline : identifiants stables, listes de compétences, secteurs normalisés, localisations, niveaux de formation, textes d'embedding et métadonnées.
+
+Pour les offres d'emploi, l'implémentation est portée par \filevar{normalize\_offres.py}. Le traitement commence par la lecture des données brutes, puis applique une déduplication, un nettoyage des champs textuels, une normalisation des secteurs, des localisations et des compétences. Le fichier construit ensuite deux représentations complémentaires : \filevar{text\_to\_embed}, utilisé pour l'encodage sémantique, et \filevar{metadata\_str}, utilisé pour conserver les informations courtes de contexte. Cette séparation est importante : le texte d'embedding doit être riche, tandis que les métadonnées doivent rester facilement lisibles et filtrables.
+
+Pour les candidats, \filevar{normalize\_candidats.py} suit une logique proche. Le script harmonise les niveaux d'étude, les diplômes, les spécialités, les secteurs visés, la mobilité et les objectifs professionnels. Il produit notamment un niveau de formation rapproché de la \NCF{} lorsque l'information disponible le permet. Le champ \filevar{text\_to\_embed} candidat devient la représentation textuelle utilisée pour comparer le profil à des offres, métiers ou compétences.
+
+L'alignement des référentiels est géré par \filevar{align\_referentiels.py}. Le script prépare les tables \MEPC{} et \NCF{}, construit les champs d'embedding associés et produit les correspondances nécessaires entre référentiels et graphe. L'enjeu opérationnel est double : préserver la hiérarchie des nomenclatures et rendre leurs libellés exploitables par la recherche vectorielle.
+
+\section{Implémentation du fine-tuning SentenceTransformer}
+
+Le modèle d'embeddings du projet est implémenté dans \filevar{src/02\_finetune\_st}. Le script principal \filevar{train\_sentence\_transformer.py} charge les paires d'entraînement, construit les jeux de validation et de test, puis entraîne un modèle SentenceTransformer adapté au domaine. La logique retenue est celle du fine-tuning contrastif : le modèle apprend à rapprocher les textes qui doivent être considérés comme compatibles et à éloigner ceux qui ne le sont pas.
+
+Le résultat du fine-tuning est stocké dans \filevar{models/st\_finetuned/final}. Ce chemin est ensuite utilisé par les autres composants du système, notamment les modules pgvector, GraphRAG, API et agent LangGraph. Lorsque ce modèle est disponible, il devient l'encodeur principal. En cas d'indisponibilité, certains modules prévoient un repli vers un modèle SentenceTransformer de base, mais cette situation correspond à un mode dégradé.
+
+L'évaluation du modèle d'embeddings est séparée de son entraînement. Le fichier \filevar{evaluate\_st.py} permet de comparer le modèle fine-tuné à un modèle de base. Cette séparation évite de confondre l'entraînement et la preuve de performance. Les résultats chiffrés sont présentés dans le chapitre d'évaluation ; le présent chapitre retient seulement que l'encodeur fine-tuné est intégré comme composant central du système.
+
+\section{Implémentation de la base vectorielle pgvector}
+
+La base vectorielle est implémentée dans le module \filevar{src/04\_pgvector}. Elle utilise PostgreSQL et l'extension pgvector pour stocker les représentations vectorielles des offres, candidats, compétences, métiers, groupes \MEPC{} et domaines \NCF{}. Le script \filevar{embed\_all\_entities.py} charge le modèle SentenceTransformer, encode les textes préparés par l'ETL et insère les vecteurs dans la table d'embeddings.
+
+Chaque ligne indexée conserve plusieurs informations : le type d'entité, l'identifiant métier, la source, le libellé, le texte encodé, le vecteur, l'identifiant du modèle et, lorsque c'est possible, l'identifiant du noeud Neo4j correspondant. Cette dernière colonne assure la passerelle entre pgvector et le graphe. Elle permet de partir d'un résultat de recherche sémantique et de retrouver ensuite le noeud relationnel associé.
+
+La recherche vectorielle est complétée par une recherche lexicale et une fusion des scores. Le module \filevar{hybrid\_search.py} implémente une recherche dense par embedding, une recherche textuelle et une fusion de rangs. Cette hybridation réduit le risque de manquer une entité lorsque la requête contient un terme exact important, mais dont l'embedding seul ne suffit pas à le faire remonter.
+
+L'instance courante vérifiée par le diagnostic du système contient les volumes suivants dans pgvector.
+
+\begin{table}[H]
+  \centering
+  \caption{Entités indexées dans pgvector au moment du diagnostic}
+  \label{tab:pgvector_diagnostic_chap3}
+  \tableStyleStart
+  \begin{tabularx}{0.82\textwidth}{p{5.0cm}rX}
+    \rowcolor{darkblue}
+    \tabheader{Type d'entité} & \tabheader{Nombre} & \tabheader{Rôle dans le retrieval} \\
+    \midrule
+    \filevar{OFFRE\_EMPLOI} & 15\,722 & Corpus principal de recommandation d'offres. \\
+    \filevar{COMPETENCE} & 13\,939 & Recherche et enrichissement des compétences. \\
+    \filevar{METIER} & 3\,039 & Orientation métier et rapprochement avec les profils. \\
+    \filevar{CANDIDAT} & 1\,105 & Recherche candidat--offre et comparaison de profils. \\
+    \filevar{GROUPE\_BASE\_MEPC} & 209 & Ancrage métier national. \\
+    \filevar{DOMAINE\_DETAILLE\_NCF} & 201 & Ancrage formation national. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Diagnostic local du système}
+\end{table}
+
+\section{Implémentation du graphe de connaissances Neo4j}
+
+La construction du graphe est assurée par le module \filevar{src/03\_knowledge\_graph}, principalement par le script \filevar{load\_neo4j.py}. Ce script charge les référentiels, les offres, les candidats et les relations métier-compétence dans Neo4j. Il peut être exécuté en pipeline complet ou par étape : schéma, \ESCO{}, \MEPC{}, \NCF{}, offres, candidats, relations et compétences. Cette granularité facilite les reprises partielles et limite le coût des rechargements.
+
+Le graphe contient les entités opérationnelles du système : \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Compétence}, \filevar{Métier}, \filevar{Secteur}, \filevar{Localisation}, ainsi que les noeuds de référentiels \MEPC{} et \NCF{}. Les relations structurantes permettent de représenter explicitement les exigences d'une offre, les compétences possédées par un candidat, les rattachements sectoriels, les localisations et les classifications métiers.
+
+Le diagnostic exécuté sur l'instance locale indique que Neo4j contient 43\,008 noeuds. Ce chiffre ne constitue pas une métrique de qualité, mais il atteste que la base graphe utilisée par le système est effectivement alimentée. La qualité du graphe dépend ensuite de la cohérence des relations et de leur capacité à soutenir les scénarios de recommandation, ce qui relève du chapitre d'évaluation.
+
+\begin{table}[H]
+  \centering
+  \caption{Principales fonctions du graphe dans le système}
+  \label{tab:roles_neo4j_chap3}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4.2cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Fonction} & \tabheader{Utilisation opérationnelle} \\
+    \midrule
+    Vérification relationnelle & Contrôler si une compétence, un métier ou un secteur est relié au candidat ou à l'offre. \\
+    Explication du matching & Identifier les compétences communes et les compétences manquantes entre un candidat et une offre. \\
+    Recherche graphe & Répondre aux questions relationnelles : compétences d'un métier, offres liées à une compétence, profils proches. \\
+    Contrainte institutionnelle & Mobiliser les niveaux et domaines \NCF{} ainsi que les groupes \MEPC{} dans l'interprétation. \\
+    Traçabilité & Rattacher les réponses à des noeuds et relations explicites. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur}
+\end{table}
+
+\section{Implémentation du moteur de recommandation hybride}
+
+Le moteur de recommandation est porté par le module \filevar{src/05\_graphrag}. La classe principale \filevar{RecommendationEngine} combine un constructeur de contexte, un appel au \LLM{} et un format de sortie structuré. Elle utilise la recherche pgvector comme premier filtre, puis enrichit les offres candidates par des informations issues de Neo4j.
+
+Le constructeur de contexte, implémenté dans \filevar{context\_builder.py}, suit une chaîne en plusieurs étapes. Il récupère d'abord les offres sémantiquement proches du candidat dans pgvector. Il enrichit ensuite ces offres par le graphe : compétences requises, compétences possédées, compétences manquantes, niveau de formation, secteur et autres signaux disponibles. Il calcule enfin un score hybride et prépare un contexte textuel destiné à la génération finale.
+
+Le score hybride implémenté combine quatre composantes : similarité sémantique, couverture graphe, compatibilité \NCF{} et alignement sectoriel. Cette structure évite de produire une recommandation fondée uniquement sur le texte. Une offre peut être proche sémantiquement du profil, mais peu réaliste si le niveau requis est trop éloigné ou si les compétences essentielles sont absentes. Inversement, une offre peut ne pas partager exactement les mêmes mots que le profil tout en étant compatible par ses compétences et son secteur.
+
+La logique de \textit{skill gap} transforme le score en verdict interprétable. Le système ne se contente pas de classer les offres ; il indique les compétences déjà couvertes, les compétences manquantes et les raisons pour lesquelles une offre est immédiatement accessible ou nécessite une montée en compétence. Cette couche constitue l'une des différences majeures entre une simple recherche sémantique et un système d'aide à la décision.
+
+\section{Implémentation du pipeline Text2Cypher}
+
+Le module Text2Cypher est implémenté dans \filevar{src/05\_graphrag/text2cypher.py}. Son rôle est de transformer certaines questions en langage naturel en requêtes Cypher exécutables sur Neo4j. Le modèle configuré pour cette tâche est \filevar{neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1}. Le pipeline reçoit la question de l'utilisateur, le schéma Neo4j et des consignes strictes afin de produire une requête orientée lecture.
+
+La sécurité de l'interrogation est traitée explicitement. Les requêtes générées sont validées avant exécution afin de bloquer les instructions d'écriture ou de modification du graphe. Les opérations de type création, suppression, fusion ou mise à jour ne sont pas autorisées. Le pipeline est donc conçu comme un outil d'exploration et non comme un outil d'administration de la base.
+
+Le schéma Neo4j joue un rôle central dans ce composant. Il est transmis au modèle Text2Cypher pour l'aider à utiliser les bons labels, les bonnes propriétés et les bonnes relations. Le même schéma est également injecté dans le contexte final pour les use-cases \filevar{graph\_query} et \filevar{recherche\_generale}. Cette décision réduit le risque d'interprétation erronée par le \LLM{} final, surtout lorsque la réponse doit expliquer des lignes issues du graphe.
+
+Lorsque la génération Text2Cypher n'est pas disponible ou ne produit pas une requête satisfaisante, le système prévoit un repli vers des templates Cypher déterministes. Ces templates couvrent des intentions courantes : recherche de compétences, recherche de métier, recherche de candidat, recherche d'offre et question par défaut. Ce mécanisme ne remplace pas la flexibilité d'un modèle Text2Cypher, mais il évite qu'une panne du modèle bloque entièrement les requêtes graphe simples.
+
+\section{Implémentation du workflow agentique LangGraph}
+
+L'orchestration agentique est implémentée dans \filevar{src/08\_agentic\_graphrag/graph.py}. Le workflow LangGraph organise l'exécution autour d'un état partagé et de noeuds spécialisés. Le graphe comprend les noeuds \filevar{analyse\_request}, \filevar{plan\_tools}, \filevar{execute\_tools}, \filevar{build\_context}, \filevar{generate\_final\_answer} et \filevar{expand\_context}. La réponse finale peut être acceptée directement ou révisée si le critic détecte une faiblesse.
+
+\begin{figure}[H]
+  \centering
+  \caption{Workflow agentique implémenté dans LangGraph}
+  \label{fig:workflow_langgraph_chap3}
+  \resizebox{0.95\textwidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=0.9cm and 1.8cm,
+    proc/.style={rectangle, rounded corners=3pt, draw=kmeraiteal, thick, fill=kmeraiteal!8,
+      align=center, minimum width=3.2cm, minimum height=0.8cm, font=\small\bfseries},
+    critic/.style={diamond, draw=kmeraired, thick, fill=kmeraired!8,
+      align=center, aspect=2.0, font=\small\bfseries},
+    arr/.style={-{Stealth[length=2.2mm]}, thick, draw=kmeraigray}
+  ]
+    \node[proc] (a) {\texttt{analyse\_request}};
+    \node[proc, right=of a] (p) {\texttt{plan\_tools}};
+    \node[proc, right=of p] (e) {\texttt{execute\_tools}};
+    \node[proc, below=of e] (b) {\texttt{build\_context}};
+    \node[proc, left=of b] (g) {\texttt{generate\_final\_answer}};
+    \node[critic, left=of g] (c) {critic};
+    \node[proc, below=of b] (x) {\texttt{expand\_context}};
+
+    \draw[arr] (a) -- (p);
+    \draw[arr] (p) -- (e);
+    \draw[arr] (e) -- (b);
+    \draw[arr] (b) -- (g);
+    \draw[arr] (g) -- (c);
+    \draw[arr] (c) |- node[pos=0.25, above, font=\scriptsize]{réviser} (x);
+    \draw[arr] (x) -| (e);
+  \end{tikzpicture}}
+  \source{Auteur}
+\end{figure}
+
+Le noeud \filevar{analyse\_request} identifie le type de demande. Le noeud \filevar{plan\_tools} sélectionne les outils nécessaires. Le noeud \filevar{execute\_tools} appelle ces outils et stocke les résultats. Le noeud \filevar{build\_context} normalise les sorties pour la génération. Le noeud \filevar{generate\_final\_answer} appelle le \LLM{} OpenRouter. Le critic vérifie ensuite la fidélité approximative de la réponse par rapport au contexte. En cas de décision \filevar{revise}, \filevar{expand\_context} ajoute des outils complémentaires, puis le système relance l'exécution.
+
+Le routage par use-case détermine les outils mobilisés. Une question strictement relationnelle active Neo4j via Text2Cypher. Une question de recommandation candidat active le moteur hybride. Une question générale mobilise pgvector et Neo4j afin de combiner recherche sémantique et contexte relationnel. Une question de référentiel mobilise les documents indexés.
+
+\begin{table}[H]
+  \centering
+  \caption{Outils exposés à l'agent LangGraph}
+  \label{tab:tools_agent_chap3}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4.3cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Outil} & \tabheader{Rôle} \\
+    \midrule
+    \filevar{service\_status} & Vérifie les connexions pgvector, Neo4j, modèle d'embeddings et backend LLM. \\
+    \filevar{pgvector\_semantic\_search} & Recherche des entités métier proches d'une requête : offres, métiers, compétences. \\
+    \filevar{pgvector\_document\_search} & Recherche des fragments documentaires issus des référentiels indexés. \\
+    \filevar{neo4j\_graph\_query} & Transforme une question en Cypher read-only et interroge Neo4j. \\
+    \filevar{hybrid\_candidate\_recommendation} & Produit des recommandations d'offres pour un candidat via pgvector et Neo4j. \\
+    \filevar{global\_graph\_summary} & Calcule des indicateurs de synthèse depuis Neo4j et pgvector. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur, à partir du registre d'outils du système}
+\end{table}
+
+\section{Implémentation du LLM final et du critic}
+
+La génération finale est assurée par le client OpenRouter défini dans \filevar{src/08\_agentic\_graphrag/llm\_client.py}. La politique du projet impose l'utilisation du modèle configuré dans l'environnement, à savoir \filevar{openai/gpt-oss-20b:free}. Le système n'utilise donc pas un modèle local via Ollama pour la réponse finale. Ce choix simplifie la contrainte matérielle locale et garantit que la génération est centralisée autour du modèle déclaré dans \filevar{OPENROUTER\_MODEL}.
+
+Le prompt final reçoit trois éléments : la question utilisateur, le contexte construit à partir des outils et les consignes de réponse. Il demande une réponse en français, structurée et limitée aux données récupérées. Pour les requêtes graphe ou générales, le contexte inclut également le schéma Neo4j afin que le modèle puisse interpréter correctement les lignes retournées par Cypher.
+
+Le critic est implémenté dans \filevar{answer\_critic.py}. Il ne s'agit pas d'un juge parfait ni d'une validation humaine. C'est un garde-fou local qui vérifie si la réponse semble suffisamment couverte par le contexte. Il calcule des signaux simples de fidélité, de couverture et de termes non supportés. Si le signal est insuffisant, LangGraph peut déclencher une révision en élargissant le contexte. Cette logique limite le risque d'une réponse fluide mais insuffisamment fondée.
+
+\section{API, CLI et interface Streamlit}
+
+Le système peut être utilisé de trois manières. La première est la CLI de test \filevar{src/08\_agentic\_graphrag/run\_agent.py}. Elle permet d'envoyer une requête à l'agent et d'obtenir soit la réponse finale, soit l'état complet au format JSON. Cette CLI est utile pendant le développement, car elle expose les traces du workflow sans lancer d'interface graphique.
+
+La deuxième manière est l'interface Streamlit \filevar{chatbot\_app.py}. Elle fournit une interface conversationnelle permettant de saisir une question, d'indiquer éventuellement un identifiant candidat, de choisir le nombre de résultats et d'afficher les traces du workflow. Cette interface est adaptée à la démonstration, car elle rend visibles les noeuds et outils effectivement mobilisés par l'agent.
+
+La troisième manière est l'API FastAPI implémentée dans \filevar{src/06\_api}. Elle expose des routes pour la recommandation, le skill gap, l'encodage, le chat et la santé du système. Au démarrage, l'API initialise le modèle SentenceTransformer, la connexion Neo4j, la connexion pgvector et le moteur de recommandation. L'API prévoit également un mode dégradé lorsque certains services ne sont pas disponibles, ce qui rend le système plus robuste pendant les tests.
+
+\begin{table}[H]
+  \centering
+  \caption{Modes d'accès au système implémenté}
+  \label{tab:interfaces_chap3}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{3.2cm}p{4.4cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Interface} & \tabheader{Commande ou point d'entrée} & \tabheader{Usage principal} \\
+    \midrule
+    CLI & \filevar{run\_agent.py} & Test rapide d'une requête et inspection de l'état final en JSON. \\
+    Streamlit & \filevar{streamlit run chatbot\_app.py} & Interface conversationnelle avec visualisation des traces. \\
+    LangGraph Studio & \filevar{langgraph dev} & Visualisation du graphe agentique et exécution locale du workflow. \\
+    FastAPI & \filevar{src/06\_api/main.py} & Exposition applicative des endpoints recommandation, skill gap, embed et chat. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Auteur}
+\end{table}
+
+\section{Diagnostic d'intégration}
+
+Un diagnostic d'intégration a été exécuté sur l'instance locale afin de vérifier que les services principaux sont accessibles. La requête \og diagnostic connexion pgvector neo4j \fg{} active l'outil \filevar{service\_status}. Le workflow suit alors les étapes \filevar{analyse\_request}, \filevar{plan\_tools}, \filevar{execute\_tools}, \filevar{build\_context} et \filevar{generate\_final\_answer}. Le critic accepte la réponse, car elle est générée par un template de diagnostic.
+
+\begin{table}[H]
+  \centering
+  \caption{Résultat du diagnostic local d'intégration}
+  \label{tab:diagnostic_integration_chap3}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{3.4cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Composant} & \tabheader{Etat observé} \\
+    \midrule
+    pgvector & Connecté ; entités indexées : candidats, compétences, domaines \NCF{}, groupes \MEPC{}, métiers et offres. \\
+    Neo4j & Connecté ; 43\,008 noeuds présents dans la base. \\
+    SentenceTransformer & Modèle configuré dans \filevar{models/st\_finetuned/final}. \\
+    LLM final & Backend OpenRouter actif avec \filevar{openai/gpt-oss-20b:free}. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Diagnostic exécuté localement}
+\end{table}
+
+Ce diagnostic ne mesure pas encore la qualité des recommandations. Il vérifie seulement que les briques nécessaires au fonctionnement du système sont disponibles et raccordées. La qualité du classement, la pertinence des réponses et la fidélité aux sources sont traitées dans le chapitre suivant.
+
+\section{Synthèse du chapitre}
+
+L'implémentation réalisée transforme l'architecture méthodologique en un système exécutable. Les offres, candidats et référentiels sont préparés par l'ETL ; les textes sont encodés par un SentenceTransformer fine-tuné ; les vecteurs sont stockés dans pgvector ; les relations métier-compétence-candidat-offre sont représentées dans Neo4j ; le moteur GraphRAG combine les deux sources ; Text2Cypher permet l'interrogation relationnelle en langage naturel ; LangGraph orchestre les outils ; OpenRouter produit la réponse finale ; Streamlit, FastAPI et la CLI exposent le système.
+
+La force de cette implémentation tient dans son caractère hybride et traçable. Le système ne délègue pas la décision au seul \LLM{}. Il utilise le \LLM{} comme couche de formulation et d'interprétation, tandis que les données, les scores, les chemins du graphe et les résultats pgvector constituent la base de la recommandation. Cette séparation est essentielle pour un système destiné à l'aide au recrutement et à la montée en compétences.
+
 
 
 
 \chapter{Évaluation de la performance du système}
-% 10 à 15 pages.
 \vspace{-1.4cm}
+
+\section{Objectif et logique générale de l'évaluation}
+
+Ce chapitre évalue empiriquement le système implémenté au chapitre précédent. L'objectif n'est pas seulement de produire des scores globaux, mais de répondre à une question centrale du mémoire : l'ajout d'un graphe de connaissances Neo4j apporte-t-il une amélioration mesurable par rapport à une recherche vectorielle fondée uniquement sur pgvector ? Cette question est décisive, car le graphe ajoute une complexité technique réelle : modélisation des nœuds et relations, chargement Neo4j, requêtes Cypher, enrichissement des résultats, maintenance d'une base supplémentaire. Son intérêt doit donc être justifié par un gain observable en qualité de classement, en explicabilité ou en contrôle métier.
+
+L'évaluation a été conduite en trois niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau porte sur les limites opérationnelles observées, notamment la stabilité de la connexion Neo4j et la portée réelle des métriques utilisées.
+
+Les résultats présentés dans ce chapitre proviennent de deux artefacts exécutables : le benchmark d'embeddings sauvegardé dans \filevar{outputs/evaluation/embedding\_benchmark.json} et le notebook d'ablation \filevar{notebooks/10\_Evaluation\_pgvector\_vs\_graph.ipynb}. Les sorties de ce notebook sont exportées dans \filevar{outputs/evaluation/pgvector\_vs\_graph} et les figures dans \filevar{rapport/figures/generated/evaluation}. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties produites par le pipeline local.
+
+\section{Données et protocole expérimental}
+
+Le système dispose de 7\,861 offres normalisées et de 1\,105 profils candidats. Le benchmark d'embeddings utilise le jeu de test issu de la construction des paires contrastives offre--profil, soit 473 requêtes de test. Chaque requête correspond à une description structurée d'offre ou de profil, et le corpus contient les textes enrichis utilisés pour l'apprentissage contrastif. Les métriques calculées sont celles de la recherche d'information : Precision@K, Recall@K, NDCG@K et MRR@K.
+
+Pour l'ablation \textit{pgvector} contre \textit{pgvector + graphe}, le protocole est différent. Un échantillon de 60 candidats est tiré aléatoirement avec la graine 42. Pour chaque candidat, pgvector retourne un pool initial de 30 offres candidates. Deux classements sont alors comparés :
+
+\begin{itemize}
+    \item \textbf{pgvector seul} : l'ordre des offres est conservé tel qu'il est retourné par la recherche sémantique et lexicale dans PostgreSQL/pgvector ;
+    \item \textbf{pgvector + graphe} : le même pool initial est enrichi par Neo4j, puis rerangé par le score hybride combinant similarité sémantique, compatibilité de compétences, compatibilité de niveau \NCF{} et alignement sectoriel.
+\end{itemize}
+
+Cette comparaison est volontairement réalisée sans génération \LLM{}. Le modèle génératif OpenRouter intervient dans le chatbot pour formuler la réponse finale, mais il n'est pas mobilisé dans l'ablation. Cette séparation évite de confondre deux phénomènes : la qualité du classement des offres et la qualité rédactionnelle de la réponse.
+
+La pertinence utilisée pour calculer les métriques d'ablation est un proxy construit à partir des métadonnées normalisées : chevauchement lexical entre le profil et l'offre, proximité sectorielle et compatibilité de niveau \NCF{}. Cette approximation est acceptable pour comparer deux variantes internes sur le même échantillon, mais elle ne remplace pas une annotation humaine. Les résultats doivent donc être interprétés comme une mesure comparative de l'effet du graphe, non comme une mesure définitive de satisfaction utilisateur.
+
+\section{Évaluation du modèle d'embeddings}
+
+Le premier résultat concerne l'intérêt du fine-tuning du SentenceTransformer. Le tableau \ref{tab:eval_embeddings} présente les performances du modèle fine-tuné par rapport à plusieurs modèles généralistes ou multilingues. Le modèle spécialisé domine nettement les alternatives sur les métriques de retrieval.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Benchmark des modèles d'embeddings sur 473 requêtes de test}
+\label{tab:eval_embeddings}
+\begin{tabular}{lrrrr}
+\toprule
+Modèle & NDCG@10 & MRR@10 & Recall@10 & Latence ms/phrase \\
+\midrule
+ST fine-tuné emploi-compétences & 0.6336 & 0.5653 & 0.8520 & 32.77 \\
+MiniLM-L6 généraliste & 0.1980 & 0.1603 & 0.3192 & 26.03 \\
+DistilUSE multilingue & 0.1773 & 0.1434 & 0.2896 & 57.96 \\
+mE5-base multilingue & 0.1505 & 0.1274 & 0.2262 & 295.76 \\
+ML-MiniLM-L12 & 0.1115 & 0.0922 & 0.1734 & 42.82 \\
+CamemBERT sentence & 0.0904 & 0.0771 & 0.1332 & 144.15 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le modèle fine-tuné atteint un Recall@10 de 0.8520, contre 0.3192 pour MiniLM-L6 généraliste. L'écart est substantiel : le modèle spécialisé retrouve beaucoup plus souvent le document pertinent dans les dix premiers résultats. Le NDCG@10 passe également de 0.1980 à 0.6336, ce qui indique non seulement une meilleure récupération, mais aussi un meilleur ordre des résultats pertinents. La latence moyenne du modèle spécialisé reste contenue à 32.77 ms par phrase, ce qui est compatible avec une indexation ou une recherche interactive locale.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/embedding_benchmark_plot.png}
+\caption{Comparaison des modèles d'embeddings sur le jeu de test}
+\label{fig:eval_embedding_benchmark}
+\end{figure}
+
+Ce résultat valide le choix d'un encodeur adapté au domaine. Il montre aussi pourquoi une base vectorielle généraliste ne suffit pas : le vocabulaire emploi-compétences contient des formulations longues, des intitulés hybrides, des niveaux de formation et des compétences implicites. Le fine-tuning contrastif rapproche ces formulations dans l'espace vectoriel et améliore directement le retrieval.
+
+\section{Ablation pgvector seul contre pgvector + graphe}
+
+Le coeur de l'évaluation concerne l'apport de Neo4j. Le notebook d'ablation a demandé l'évaluation de 60 candidats. Sur cet échantillon, 55 requêtes ont été évaluées avec succès ; 5 requêtes ont échoué en raison d'une erreur interne Neo4j de type \filevar{CursorException} sur certaines relations. Cette information doit être conservée dans l'analyse : elle montre que la qualité d'un système GraphRAG ne dépend pas seulement du raisonnement algorithmique, mais aussi de l'intégrité physique et logique de la base graphe.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Comparaison retrieval : pgvector seul versus pgvector + graphe}
+\label{tab:eval_pgvector_graph}
+\begin{tabular}{lrrrrr}
+\toprule
+Configuration & Precision@5 & Recall@10 & NDCG@10 & MRR@10 & HitRate@10 \\
+\midrule
+pgvector seul & 0.2509 & 0.4599 & 0.3889 & 0.5602 & 0.9273 \\
+pgvector + graphe & 0.3091 & 0.5557 & 0.4681 & 0.4647 & 0.7818 \\
+\midrule
+Différence & +0.0582 & +0.0958 & +0.0792 & -0.0955 & -0.1455 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Les résultats sont instructifs parce qu'ils ne sont pas uniformément favorables au graphe. L'ajout de Neo4j améliore Precision@5, Recall@10 et NDCG@10. Autrement dit, lorsque l'on considère les cinq ou dix premiers résultats, l'enrichissement graphe permet de remonter davantage d'offres jugées pertinentes par le proxy métier. Le Recall@10 progresse de 0.4599 à 0.5557, soit un gain de 0.0958. Le NDCG@10 augmente également de 0.3889 à 0.4681, ce qui indique une meilleure organisation globale du top 10.
+
+En revanche, le MRR@10 diminue de 0.5602 à 0.4647 et la Precision@1 passe de 0.4182 à 0.3636. Cela signifie que le graphe ne place pas toujours la première offre pertinente aussi haut que le classement vectoriel initial. Ce résultat est important : le graphe améliore la couverture et la cohérence globale du classement, mais il peut dégrader le tout premier rang lorsque ses signaux structurels sont imparfaits, incomplets ou trop fortement pondérés.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/ablation_metrics_comparison.png}
+\caption{Effet de l'enrichissement graphe sur les métriques de retrieval}
+\label{fig:eval_ablation_metrics}
+\end{figure}
+
+La figure \ref{fig:eval_ablation_metrics} confirme cette lecture. La configuration \textit{pgvector + graphe} est supérieure sur les métriques orientées couverture, mais inférieure sur les métriques sensibles au premier rang. Dans un système de recommandation destiné au recrutement, cette distinction est opérationnellement importante. Si l'interface n'affiche qu'une seule offre, pgvector seul peut être plus robuste. Si l'interface affiche une liste courte accompagnée d'explications, le graphe devient plus utile car il enrichit le top 5 ou le top 10 avec des critères métier explicables.
+
+\section{Analyse du reranking par le graphe}
+
+Le reranking graphe déplace les offres dans le classement initial. Une offre qui était par exemple au rang 8 dans pgvector peut être remontée au rang 3 si elle présente une meilleure compatibilité \NCF{}, un meilleur alignement sectoriel ou un meilleur score de compétences. Inversement, une offre très proche sémantiquement peut être rétrogradée si le niveau requis ou les signaux métier sont moins compatibles.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/graph_rerank_rank_shift.png}
+\caption{Distribution des déplacements de rang après reranking par le graphe}
+\label{fig:eval_rank_shift}
+\end{figure}
+
+Cette redistribution a deux effets. Le premier est positif : le système ne se limite plus à une proximité textuelle. Il peut corriger des cas où une offre ressemble lexicalement au profil mais ne correspond pas au niveau de formation ou au secteur recherché. Le second est plus problématique : si les relations du graphe sont incomplètes, le score structurel peut pénaliser de bonnes offres ou favoriser des offres seulement parce que leurs métadonnées sont mieux renseignées. Le graphe ajoute donc de l'information, mais il ajoute aussi une source d'erreur potentielle.
+
+Ce résultat appelle une conclusion nuancée. Le graphe n'est pas une garantie automatique d'amélioration. Il améliore le système si les relations sont correctes, si les poids du score hybride sont bien calibrés et si l'objectif est de produire une liste explicable plutôt qu'un unique meilleur résultat. Dans le système actuel, l'apport est visible sur Recall@10 et NDCG@10, mais il reste insuffisamment stabilisé sur le rang 1.
+
+\section{Performance opérationnelle et stabilité}
+
+L'évaluation d'ablation a pris 38.7 secondes pour le coeur retrieval--reranking, hors coût complet de démarrage du notebook et de chargement du modèle. Le notebook exécuté par \filevar{nbconvert} a produit les résultats en environ 85 secondes en incluant le chargement du modèle SentenceTransformer, les connexions aux bases et l'export des figures. Cette durée reste acceptable pour une évaluation hors ligne, mais elle ne représente pas encore une latence utilisateur finale, car le chatbot complet ajoute la génération \LLM{} via OpenRouter.
+
+Le point critique est la stabilité Neo4j. Cinq candidats sur soixante ont échoué à cause d'une erreur interne \filevar{Neo.DatabaseError.Statement.ExecutionFailed} liée au page cache et à des relations corrompues. Le système a donc évalué 55 requêtes valides. Cette fragilité doit être traitée avant toute démonstration en production : il faut reconstruire ou vérifier la base Neo4j, contrôler les imports, et ajouter des tests d'intégrité sur les relations candidat--offre--compétence.
+
+\section{Interprétation par rapport aux hypothèses}
+
+Les résultats soutiennent partiellement l'hypothèse selon laquelle l'intégration d'un graphe améliore la recommandation. L'hypothèse est confirmée pour les métriques de couverture du top 10 : Recall@10 et NDCG@10 progressent lorsque Neo4j est utilisé pour enrichir et reranger les offres. En revanche, elle n'est pas confirmée pour le premier rang : Precision@1, MRR@10 et HitRate@10 diminuent. Le graphe apporte donc un gain structurel, mais ce gain n'est pas encore parfaitement aligné avec l'optimisation du meilleur résultat immédiat.
+
+Sur le plan méthodologique, cette conclusion est plus utile qu'une affirmation générale. Elle montre où le graphe apporte de la valeur : explicabilité, couverture, prise en compte des niveaux et secteurs. Elle montre aussi où le système doit être amélioré : calibration des poids, complétude des relations, robustesse de Neo4j, et validation par annotation humaine.
+
+\section{Limites de l'évaluation}
+
+La principale limite est l'absence d'un jeu d'annotations humaines indiquant quelles offres sont réellement pertinentes pour chaque candidat. Le proxy utilisé combine les métadonnées disponibles, mais il ne capture pas toutes les dimensions du recrutement : motivation, expérience qualitative, disponibilité, préférences salariales, soft skills ou contraintes géographiques fines. Les métriques doivent donc être lues comme des indicateurs comparatifs internes.
+
+La deuxième limite concerne le graphe lui-même. Les erreurs Neo4j observées indiquent que l'instance locale doit être auditée. Une base graphe partiellement corrompue ou incomplète peut biaiser l'évaluation du système hybride. Avant une évaluation finale à plus grande échelle, il faudra reconstruire la base, vérifier les nombres de nœuds et de relations, puis contrôler des chemins représentatifs : candidat--compétence, offre--compétence, offre--niveau, candidat--formation et métier--compétence.
+
+La troisième limite concerne la génération \LLM{}. Ce chapitre a volontairement isolé le retrieval et le reranking. La fidélité des réponses générées, la qualité des citations, la robustesse du critic et l'expérience utilisateur nécessitent une évaluation complémentaire, idéalement avec un protocole d'annotation humaine ou un juge \LLM{} contrôlé par des critères explicites.
+
+\section{Synthèse du chapitre}
+
+L'évaluation confirme d'abord l'intérêt du SentenceTransformer fine-tuné : il dépasse nettement les modèles généralistes sur le jeu de test emploi-compétences. Elle montre ensuite que Neo4j apporte un gain réel sur les métriques de couverture et d'ordre global du top 10, mais qu'il dégrade le tout premier rang dans l'état actuel du système. La conclusion n'est donc pas que le graphe est automatiquement supérieur à pgvector. La conclusion correcte est que le graphe enrichit le classement lorsqu'on cherche une liste explicable et structurée, mais qu'il exige une meilleure qualité de relations et une calibration plus fine pour optimiser le top 1.
+
+Ces résultats orientent directement les recommandations du chapitre suivant : renforcer l'intégrité Neo4j, construire un jeu d'évaluation annoté, ajuster les poids du score hybride, et distinguer dans l'interface les cas où le système privilégie la proximité sémantique immédiate et ceux où il privilégie la compatibilité métier structurée.
 
 
 
