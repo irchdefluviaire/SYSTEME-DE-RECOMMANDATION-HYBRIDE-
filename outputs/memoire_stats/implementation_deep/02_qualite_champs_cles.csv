@@ -1,0 +1,16 @@
+source,champ,taux_renseignement,non_vides,total
+candidats,age,1.0,1105,1105
+candidats,genre,1.0,1105,1105
+candidats,diplome_raw,1.0,1105,1105
+candidats,ncf_niveau_final,1.0,1105,1105
+candidats,secteur_metier,1.0,1105,1105
+candidats,filiere_specialite,1.0,1105,1105
+candidats,metier_vise,1.0,1105,1105
+candidats,text_to_embed,1.0,1105,1105
+offres,titre_poste,1.0,7861,7861
+offres,secteur_principal,1.0,7861,7861
+offres,ville_principale,1.0,7861,7861
+offres,skills_raw,1.0,7861,7861
+offres,text_to_embed,1.0,7861,7861
+offres,ncf_niveau_code,0.6377,5013,7861
+offres,experience_min_ans,0.6006,4721,7861

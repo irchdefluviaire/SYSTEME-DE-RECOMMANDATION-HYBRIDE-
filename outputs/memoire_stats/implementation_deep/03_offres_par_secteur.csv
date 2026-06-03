@@ -1,0 +1,191 @@
+secteur,n,part
+Distribution,546,0.0695
+Administration,513,0.0653
+Informatique,430,0.0547
+Commerce,389,0.0495
+ONG / Humanitaire,342,0.0435
+Comptabilité,324,0.0412
+Santé,307,0.0391
+Tic,306,0.0389
+Marketing,296,0.0377
+Autre,290,0.0369
+Banque,287,0.0365
+Logistique,222,0.0282
+Finance,209,0.0266
+Communication,204,0.026
+Gestion,145,0.0184
+Ressources Humaines,135,0.0172
+Autres,126,0.016
+Commercial,122,0.0155
+Vente,109,0.0139
+Droit,95,0.0121
+Transport,88,0.0112
+Industrie Manufacturière,84,0.0107
+Btp,84,0.0107
+Sciences Sociales,80,0.0102
+Audit,76,0.0097
+Construction,75,0.0095
+Humanitaire,75,0.0095
+Ingénieur,74,0.0094
+Economie,71,0.009
+Enseignement,70,0.0089
+Assurance,69,0.0088
+Les Services De Base,63,0.008
+Secrétaire,61,0.0078
+Gouvernement,53,0.0067
+Environnement,50,0.0064
+Agronomie,49,0.0062
+Éducation,48,0.0061
+Agriculture,48,0.0061
+Technicien,48,0.0061
+Digital,44,0.0056
+Stage,42,0.0053
+Légal,41,0.0052
+Management,41,0.0052
+Industrie,40,0.0051
+Hotel,40,0.0051
+Hôtellerie,36,0.0046
+Community Management,36,0.0046
+Télécommunication,34,0.0043
+Graphisme,32,0.0041
+Electricité,29,0.0037
+Prestation De Services,28,0.0036
+Catégories Des Recrutements,28,0.0036
+Tourisme,27,0.0034
+Qhse,26,0.0033
+Ouvriers,25,0.0032
+Sécurité,23,0.0029
+Cuisine,23,0.0029
+Services (Autres Activités),22,0.0028
+Restauration,22,0.0028
+Projet,22,0.0028
+Journalisme,21,0.0027
+Hygiène,20,0.0025
+Conseil,19,0.0024
+Génie Civil,14,0.0018
+Caissier.E,14,0.0018
+Maintenance,13,0.0017
+Pétrole,13,0.0017
+Catégories :,13,0.0017
+Archiviste,12,0.0015
+Immobilier,11,0.0014
+Business,11,0.0014
+Droit / Juridique,11,0.0014
+Cosmetics,10,0.0013
+Non Classé,10,0.0013
+Infographie,10,0.0013
+Consultant,9,0.0011
+Chauffeur,9,0.0011
+Réseaux Sociaux,9,0.0011
+Transports,8,0.001
+Agroalimentaire,8,0.001
+Animation,8,0.001
+Tous Les Profils,8,0.001
+Électricien,8,0.001
+Centres D´Appel,7,0.0009
+Services Autres,7,0.0009
+Import,7,0.0009
+Télévendeur,7,0.0009
+Relations Internationales,7,0.0009
+Beauté,7,0.0009
+Sport,6,0.0008
+Biologie,6,0.0008
+Mécanique,6,0.0008
+Intérim,5,0.0006
+Édition,5,0.0006
+Couture,5,0.0006
+Electromécanique,5,0.0006
+Audiovisuel,5,0.0006
+Plusieurs Domaines,5,0.0006
+Traduction,5,0.0006
+Formation,5,0.0006
+Activités Associatives,4,0.0005
+Electronique,4,0.0005
+Boulangerie,4,0.0005
+Architecture,4,0.0005
+Relations Publiques,4,0.0005
+Hotesse,4,0.0005
+Plomberie,4,0.0005
+Mécanicien,4,0.0005
+Recrutement,4,0.0005
+Mode,3,0.0004
+Administration Publique,3,0.0004
+Nettoyage,3,0.0004
+Ameublement,3,0.0004
+Automobile,3,0.0004
+Textile,3,0.0004
+Agroalimentaire - Distribution,3,0.0004
+Mathématiques,3,0.0004
+Serveur.Se,3,0.0004
+Langue,3,0.0004
+Patisserie,3,0.0004
+Menuiserie,3,0.0004
+Géologie,3,0.0004
+Recrutement De Masse,3,0.0004
+Entretien,3,0.0004
+Douane,3,0.0004
+Agroalimentaire - Industrie,2,0.0003
+Télécom - Transports,2,0.0003
+Agroalimentaire - Hôtellerie,2,0.0003
+Recherche,2,0.0003
+Administration Publique - Banque,2,0.0003
+Vidéogramme,2,0.0003
+Diététique,2,0.0003
+It,2,0.0003
+Esthétique,2,0.0003
+Sciences Politiques,2,0.0003
+Pharmacie,2,0.0003
+Service Entretien,2,0.0003
+Hydraulique,2,0.0003
+Transit,2,0.0003
+Géographie,2,0.0003
+Bureautique,2,0.0003
+Electrotechnique,2,0.0003
+Elévage,2,0.0003
+Acturiat,2,0.0003
+Échange International,1,0.0001
+Espaces Verts,1,0.0001
+Services Collectifs,1,0.0001
+Secrétariat - Services Autres - Services Collectifs,1,0.0001
+Activités Associatives - Administration Publique,1,0.0001
+Agroalimentaire - Import,1,0.0001
+Agroalimentaire - Banque,1,0.0001
+Agroalimentaire - Chimie,1,0.0001
+Equipements Mécaniques,1,0.0001
+Activités Associatives - Conseil,1,0.0001
+Services Autres - Services Collectifs,1,0.0001
+Administration Publique - Éducation,1,0.0001
+Évènementiel,1,0.0001
+Agroalimentaire - Transports,1,0.0001
+Administration Publique - Distribution,1,0.0001
+Activités Associatives - Btp,1,0.0001
+Administration Publique - Marketing,1,0.0001
+Administration Publique - Agriculture,1,0.0001
+Secrétariat,1,0.0001
+Administration Publique - Btp,1,0.0001
+Aéronautique,1,0.0001
+Activités Associatives - Santé,1,0.0001
+Equip. Électriques,1,0.0001
+Mecanique,1,0.0001
+Chimie,1,0.0001
+Photographie,1,0.0001
+Cartographie,1,0.0001
+Jardinage,1,0.0001
+Gouvernance,1,0.0001
+Science De L'Education,1,0.0001
+Redacteur,1,0.0001
+Aeronautique,1,0.0001
+Artisanat,1,0.0001
+Mécatronique,1,0.0001
+Music,1,0.0001
+Offre De Formation,1,0.0001
+Bourses,1,0.0001
+Opticien,1,0.0001
+Géoinformatique,1,0.0001
+Entrepreneuriat,1,0.0001
+Secteur Public,1,0.0001
+Manicure,1,0.0001
+Protection,1,0.0001
+Fiscalité,1,0.0001
+Culture,1,0.0001
+Froid,1,0.0001

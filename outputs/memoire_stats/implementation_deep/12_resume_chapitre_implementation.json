@@ -1,0 +1,24 @@
+{
+  "n_offres": 7861,
+  "n_candidats": 1105,
+  "n_groupes_base_mepc": 209,
+  "n_domaines_detailles_ncf": 201,
+  "top_secteur_offres": {
+    "secteur": "Distribution",
+    "n": 546,
+    "part": 0.0695
+  },
+  "top_ville_offres": {
+    "ville": "Yaoundé",
+    "n": 4049,
+    "part": 0.5151
+  },
+  "top_competence_offres": {
+    "competence": "Distribution",
+    "n": 546,
+    "part_offres": 0.0695
+  },
+  "n_pgvector_embeddings": 34215,
+  "n_neo4j_nodes": 43008,
+  "note_neo4j_relations": "Le comptage global des relations n?est pas retenu si la base retourne une erreur interne."
+}

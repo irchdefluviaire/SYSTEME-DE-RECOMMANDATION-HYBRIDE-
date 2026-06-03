@@ -1,0 +1,6 @@
+point,message
+Corpus d?offres,"Le syst?me s?appuie sur 7,861 offres normalis?es."
+Corpus candidats,"Le vivier analys? contient 1,105 profils candidats normalis?s."
+R?f?rentiels,Les r?f?rentiels int?gr?s comprennent 209 groupes de base MEPC et 201 domaines d?taill?s NCF.
+Base vectorielle,"La base pgvector contient 34,215 embeddings."
+Graphe,"Le graphe Neo4j contient 43,008 n?uds."
