@@ -3,30 +3,30 @@
 
 Ce chapitre situe le mémoire dans la littérature sur l'appariement emploi-compétences, les systèmes de recommandation, l'intelligence artificielle générative, les graphes de connaissances et la génération augmentée par récupération. Il ne vise pas à reprendre l'ensemble des raisonnements des ouvrages ou articles consultés. Il sélectionne les résultats qui éclairent directement le thème du stage : concevoir un système capable de recommander des offres, d'identifier des écarts de compétences et de produire des explications fondées sur des données structurées et non structurées.
 
-La revue est guidée par une hypothèse centrale : le matching emploi-compétences n'est pas un simple problème de similarité textuelle. Il combine des frictions du marché du travail, une forte variabilité du vocabulaire, des contraintes de qualification, des relations métier-compétence-formation et un besoin d'explicabilité. Cette nature composite justifie l'architecture du mémoire : recherche sémantique par embeddings, stockage vectoriel avec pgvector, graphe de connaissances Neo4j, orchestration agentique LangGraph, génération contrôlée par un \LLM{} et critic de réponse.
+La revue est guidée par une hypothèse centrale : le matching emploi-compétences n'est pas un simple problème de similarité textuelle. Il combine des frictions du marché du travail, une forte variabilité du vocabulaire, des contraintes de qualification, des relations métier-compétence-formation et un besoin d'explicabilité. Cette nature composite explique pourquoi la littérature pertinente relève à la fois de l'économie du travail, de la recommandation hybride, de la recherche sémantique, des graphes de connaissances et de la génération contrôlée.
 
 \section{Concepts clés mobilisés dans le mémoire}
 
-Avant d'entrer dans la revue de littérature, il est nécessaire de stabiliser les concepts utilisés dans la suite du mémoire. Cette clarification évite une confusion fréquente : employer indifféremment IA générative, \LLM{}, RAG, GraphRAG, moteur de recommandation et chatbot. Dans ce travail, ces termes désignent des fonctions différentes du système.
+Avant d'entrer dans la revue de littérature, il est nécessaire de stabiliser les concepts utilisés dans la suite du mémoire. Cette clarification évite une confusion fréquente : employer indifféremment IA générative, \LLM{}, RAG, GraphRAG, moteur de recommandation et chatbot. Dans ce travail, ces termes désignent des fonctions complémentaires, mais non interchangeables.
 
 \noindent\textbf{Matching emploi-compétences.}
 
-Le matching emploi-compétences désigne le processus qui consiste à rapprocher un profil candidat d'une offre, d'un métier ou d'une trajectoire de formation à partir de leurs caractéristiques observables. Il ne s'agit pas seulement de comparer deux textes. Le matching doit tenir compte des compétences possédées, des compétences requises, du niveau de formation, de l'expérience, du secteur, de la localisation et de la trajectoire professionnelle possible. Dans ce mémoire, le matching est donc compris comme un problème d'appariement économique et informationnel, mais aussi comme un problème de représentation des connaissances.
+Le matching emploi-compétences désigne le processus qui consiste à rapprocher un profil candidat d'une offre, d'un métier ou d'une trajectoire de formation à partir de caractéristiques observables : compétences, niveau de formation, expérience, secteur, localisation et objectif professionnel. Il est traité ici comme un problème d'appariement économique, mais aussi comme un problème de représentation des connaissances.
 
 \medskip
 \noindent\textbf{Système de recommandation.}
 
-Un système de recommandation est un dispositif algorithmique qui classe des éléments selon leur pertinence probable pour un utilisateur ou un cas d'usage \cite{ricci2011recommender}. Dans ce mémoire, les éléments recommandés peuvent être des offres d'emploi, des compétences, des métiers ou des pistes de formation. Le système ne cherche pas seulement à prédire une préférence ; il cherche à produire une recommandation professionnellement défendable. Une offre pertinente doit être proche du profil, mais aussi compatible avec les exigences du poste et explicable à partir des données.
+Un système de recommandation est un dispositif algorithmique qui classe des éléments selon leur pertinence probable pour un utilisateur ou un cas d'usage \cite{ricci2011recommender}. Dans ce mémoire, les éléments recommandés peuvent être des offres d'emploi, des compétences, des métiers ou des pistes de formation. La pertinence ne renvoie donc pas seulement à une préférence ; elle renvoie aussi à une compatibilité professionnelle explicable.
 
 \medskip
 \noindent\textbf{Skill gap.}
 
-Le \emph{skill gap}, ou écart de compétences, correspond à la différence entre les compétences déjà détenues par un candidat et celles attendues pour une offre ou un métier cible. Cette notion est décisive dans le mémoire, car elle permet de dépasser une logique binaire compatible/non compatible. Un candidat peut ne pas être immédiatement prêt pour une offre tout en étant proche du profil recherché. Dans ce cas, le système doit identifier les compétences manquantes et proposer une trajectoire de montée en compétences.
+Le \emph{skill gap}, ou écart de compétences, correspond à la différence entre les compétences déjà détenues par un candidat et celles attendues pour une offre ou un métier cible. Il permet de dépasser une logique binaire compatible/non compatible : un candidat peut être proche d'un poste tout en nécessitant une montée en compétences.
 
 \medskip
 \noindent\textbf{Embedding et recherche sémantique.}
 
-Un embedding est une représentation vectorielle d'un texte, d'un profil, d'une offre ou d'une compétence. Deux textes proches en sens doivent être proches dans l'espace vectoriel. La recherche sémantique utilise cette propriété pour retrouver des objets pertinents même lorsque les mots ne sont pas exactement les mêmes. Elle est centrale dans ce projet, car les offres et les profils utilisent des formulations hétérogènes : \og data analyst \fg{}, \og analyste de données \fg{} et \og reporting statistique \fg{} peuvent renvoyer à des zones de compétences proches.
+Un embedding est une représentation vectorielle d'un texte, d'un profil, d'une offre ou d'une compétence. La recherche sémantique utilise cette représentation pour retrouver des objets proches en sens, même lorsque les formulations diffèrent. Elle répond à un problème récurrent des données d'emploi : des expressions comme \og data analyst \fg{}, \og analyste de données \fg{} et \og reporting statistique \fg{} peuvent désigner des zones de compétences voisines.
 
 \medskip
 \noindent\textbf{Base vectorielle pgvector.}
@@ -65,7 +65,7 @@ La littérature sur l'asymétrie d'information renforce ce diagnostic. Akerlof m
 
 La théorie du capital humain rappelle que la formation et l'expérience sont des investissements productifs \cite{becker1964human}. Toutefois, la possession d'un capital humain ne garantit pas l'appariement. Encore faut-il que les compétences acquises soient visibles, comparables et alignées sur les compétences demandées. Autor montre que le progrès technique transforme surtout les tâches composant les métiers, et non uniquement les intitulés d'emploi \cite{autor2013growth}. Pour un système de recommandation, cela impose de descendre au niveau des compétences et des tâches plutôt que de s'arrêter aux titres de poste.
 
-L'acquis principal de cette littérature est donc clair : le matching emploi-compétences est un problème d'information structurée. Le manque identifié est tout aussi clair : les modèles économiques expliquent les frictions, mais ils ne fournissent pas directement une architecture technique pour extraire, normaliser, comparer et expliquer les compétences dans des données textuelles. C'est l'espace occupé par les méthodes de recommandation, les représentations sémantiques et les graphes de connaissances.
+L'apport de cette littérature est de montrer que l'inadéquation emploi-compétences relève autant de la circulation imparfaite de l'information que d'un manque de formation. Sa limite, pour notre objet, est qu'elle ne fournit pas directement les outils de traitement des données nécessaires pour extraire, normaliser, comparer et expliquer les compétences. La section suivante examine donc les systèmes de recommandation comme réponse algorithmique à ce problème d'appariement.
 
 \section{Systèmes de recommandation et person-job fit}
 
@@ -77,7 +77,7 @@ Les approches fondées sur le contenu utilisent les caractéristiques explicites
 
 Le filtrage collaboratif exploite les interactions passées entre utilisateurs et items. Les approches de factorisation matricielle ont fortement structuré ce domaine en apprenant des facteurs latents à partir des matrices d'interactions \cite{koren2009matrix}. Les modèles neuronaux ont ensuite généralisé cette logique, par exemple avec le Neural Collaborative Filtering \cite{he2017ncf}. Ces méthodes sont puissantes lorsque l'on dispose d'un historique dense : clics, candidatures, recrutements, évaluations ou parcours de formation. Dans le cas étudié ici, cette hypothèse est fragile, car les données d'interaction restent limitées et de nombreux profils se trouvent en situation de démarrage à froid.
 
-Les approches hybrides combinent plusieurs sources de signal pour compenser les limites propres à chaque famille. Burke montre que l'hybridation peut améliorer la robustesse en associant contenu, collaboration, connaissances et règles métier \cite{burke2002hybrid}. Pour ce mémoire, cette conclusion est centrale : un score vectoriel peut détecter une proximité sémantique, mais il ne vérifie pas à lui seul le niveau de formation, les compétences obligatoires ou la cohérence de la trajectoire.
+Les approches hybrides combinent plusieurs sources de signal pour compenser les limites propres à chaque famille. Burke montre que l'hybridation peut améliorer la robustesse en associant contenu, collaboration, connaissances et règles métier \cite{burke2002hybrid}. Cette conclusion prépare directement le choix d'un système hybride : les signaux textuels, relationnels et métier doivent être séparés puis combinés, car chacun ne capture qu'une partie de la compatibilité.
 
 \subsection{Spécificité du person-job fit}
 
@@ -103,19 +103,19 @@ Les grands modèles de langage ont transformé le traitement automatique du lang
 
 Deux grandes familles de modèles sont utiles pour ce mémoire. La première regroupe les modèles de représentation, comme BERT et Sentence-BERT. BERT apprend des représentations contextuelles bidirectionnelles adaptées à la compréhension du texte \cite{devlin2018bert}. Sentence-BERT adapte cette logique pour produire des embeddings de phrases comparables efficacement par similarité cosinus \cite{reimers2019sbert}. La seconde famille regroupe les modèles génératifs, comme GPT, T5 ou les modèles instruction-tuned. GPT-3 a montré qu'un modèle de grande taille pouvait effectuer des tâches variées à partir de quelques exemples dans le prompt \cite{brown2020language}. T5 a proposé une formulation unifiée des tâches NLP comme transformation texte-vers-texte \cite{raffel2020t5}. L'apprentissage par retour humain a ensuite amélioré la capacité des modèles à suivre des instructions \cite{ouyang2022training}.
 
-L'acquis de cette littérature est considérable : les \LLM{} savent reformuler, synthétiser et produire des explications lisibles. Mais le manque est décisif pour un mémoire professionnel : un \LLM{} ne constitue pas une base de vérité. Il peut générer une réponse plausible sans être fondée sur les données locales. Dans un système d'emploi, cette limite est critique. Le \LLM{} doit donc être utilisé comme composant de génération contrôlée, et non comme moteur autonome de décision.
+L'acquis de cette littérature est considérable : les \LLM{} savent reformuler, synthétiser et produire des explications lisibles. Sa limite, pour notre problématique, tient au statut de la vérité : un modèle génératif peut produire une réponse plausible sans être fondée sur les données locales. Dans un système d'emploi, cette limite impose une génération contrôlée par des sources récupérées.
 
 \subsection{Embeddings, recherche sémantique et bases vectorielles}
 
-Les embeddings transforment des textes en vecteurs numériques. Cette représentation permet de mesurer la proximité de sens entre une requête, une offre, un profil candidat ou une compétence. Les benchmarks de recherche d'information montrent que les modèles d'embeddings doivent être évalués sur des tâches variées, car un bon modèle généraliste peut être insuffisant dans un domaine spécialisé \cite{thakur2021beir,muennighoff2022mteb}. Cette observation justifie l'adaptation d'un modèle SentenceTransformer au vocabulaire emploi-compétences.
+Après la clarification conceptuelle, l'enjeu est de savoir dans quelles conditions les représentations vectorielles sont fiables pour la recherche d'information. Les benchmarks montrent que les modèles d'embeddings doivent être évalués sur des tâches variées, car un bon modèle généraliste peut être insuffisant dans un domaine spécialisé \cite{thakur2021beir,muennighoff2022mteb}. Cette observation justifie l'adaptation d'un modèle SentenceTransformer au vocabulaire emploi-compétences.
 
-La recherche sémantique résout une partie du problème de vocabulaire. Elle permet de rapprocher des textes dont les mots diffèrent mais dont le sens est proche. Dans notre cas, elle peut relier un profil mentionnant \og SQL, tableaux de bord et statistiques \fg{} à une offre de \og data analyst \fg{}. Elle reste cependant une approximation. Deux textes proches peuvent cacher une incompatibilité : niveau insuffisant, compétence obligatoire absente, localisation incompatible ou métier trop éloigné. La similarité vectorielle doit donc être traitée comme un signal de présélection, non comme une décision finale.
+La recherche sémantique résout une partie du problème de vocabulaire, mais elle reste une approximation. Deux textes proches peuvent cacher une incompatibilité : niveau insuffisant, compétence obligatoire absente, localisation incompatible ou métier trop éloigné. La similarité vectorielle doit donc être traitée comme un signal de présélection, non comme une décision finale.
 
 La littérature sur la recherche approximative de plus proches voisins montre par ailleurs que le passage à l'échelle exige des structures d'indexation efficaces. HNSW fournit un cadre robuste pour la recherche vectorielle approximative \cite{malkov2018hnsw}, tandis que FAISS a popularisé la recherche vectorielle à grande échelle \cite{johnson2019faiss}. Dans ce mémoire, l'utilisation de PostgreSQL avec pgvector répond à une logique pragmatique : conserver les embeddings dans une base relationnelle exploitable, interrogeable et intégrable au reste du pipeline \cite{pgvector2024}.
 
 \subsection{Graphes de connaissances et recommandation relationnelle}
 
-Un graphe de connaissances représente des entités et les relations qui les relient. Hogan et al. montrent que les graphes de connaissances servent à structurer des informations hétérogènes, à rendre explicites des relations sémantiques et à soutenir des tâches de recherche ou de raisonnement \cite{hogan2021knowledge}. Dans le domaine emploi-compétences, cette représentation est naturelle : un candidat possède des compétences, une offre exige des compétences, un métier appartient à une famille, une formation prépare à certains métiers, et un niveau de formation conditionne l'accès à certaines offres.
+Hogan et al. montrent que les graphes de connaissances servent à structurer des informations hétérogènes, à rendre explicites des relations sémantiques et à soutenir des tâches de recherche ou de raisonnement \cite{hogan2021knowledge}. Dans le domaine emploi-compétences, cette représentation complète la recherche vectorielle : elle rend visibles les relations entre candidats, offres, compétences, métiers, formations et niveaux.
 
 La recommandation par graphe a également connu des avancées importantes. Les graph neural networks ont fourni des outils pour propager de l'information dans des graphes \cite{kipf2017gcn,velickovic2018gat}. LightGCN a montré que, dans la recommandation collaborative, une architecture simplifiée de propagation sur graphe pouvait être très efficace \cite{he2020lightgcn}. Ces travaux établissent l'intérêt de la structure relationnelle pour la recommandation.
 
@@ -127,7 +127,7 @@ Cependant, le présent mémoire ne cherche pas principalement à entraîner un G
 
 La génération augmentée par récupération, ou \RAG{}, combine une étape de recherche d'information et une étape de génération. Lewis et al. montrent que l'accès à une mémoire externe améliore les tâches intensives en connaissances, car le modèle ne dépend plus uniquement de ses paramètres internes \cite{lewis2020rag}. Les synthèses récentes sur la \RAG{} insistent sur les mêmes enjeux : qualité de la récupération, actualisation des connaissances, évaluation de la factualité et articulation entre retriever et générateur \cite{gao2023ragllm}.
 
-Dans une \RAG{} classique, le système récupère des documents proches d'une requête, puis les transmet au \LLM{}. Cette architecture est utile, mais elle reste centrée sur des passages textuels. Pour le matching emploi-compétences, cela ne suffit pas. La réponse doit aussi intégrer des relations : compétences possédées, compétences requises, niveau de formation, métier cible, secteur et formation possible. Le GraphRAG étend alors la logique de récupération vers des informations structurées par graphe.
+Dans une \RAG{} classique, le système récupère des documents proches d'une requête, puis les transmet au \LLM{}. Cette architecture est utile, mais elle reste centrée sur des passages textuels. Pour le matching emploi-compétences, le contexte doit aussi intégrer des relations : compétences possédées, compétences requises, niveau de formation, métier cible, secteur et formation possible. Le GraphRAG étend alors la récupération vers des informations structurées par graphe.
 
 \begin{figure}[H]
   \centering
@@ -143,15 +143,61 @@ La figure \ref{fig:rag_graphrag_agentic_rag_revue} illustre cette évolution. Un
 
 Les travaux ReAct montrent l'intérêt d'alterner raisonnement et action outillée dans les modèles de langage \cite{yao2023react}. Self-RAG va plus loin en introduisant une logique d'auto-réflexion pour décider quand récupérer de l'information et comment critiquer la réponse \cite{asai2024selfrag}. Pour ce mémoire, ces travaux ne doivent pas être interprétés comme une autorisation à laisser un agent décider librement. Ils justifient plutôt une orchestration contrôlée : classifier l'intention, choisir les sources, récupérer les preuves, construire le contexte, générer, puis vérifier si la réponse est suffisamment fondée.
 
-Le manque de la littérature est ici opérationnel. Beaucoup de travaux décrivent des architectures générales, mais la fiabilité dépend de détails concrets : qualité des chunks, schéma du graphe, robustesse des requêtes, traçabilité des sources, gestion des cas sans résultat et critères de révision. C'est pourquoi le système de ce mémoire ajoute un critic et des traces d'exécution. Le \LLM{} produit la réponse finale, mais les données récupérées et les outils appelés doivent rester observables.
+Le manque de la littérature est ici opérationnel. Beaucoup de travaux décrivent des architectures générales, mais la fiabilité dépend de détails concrets : qualité des chunks, schéma du graphe, robustesse des requêtes, traçabilité des sources, gestion des cas sans résultat et critères de révision. C'est pourquoi l'architecture retenue ajoute un critic et des traces d'exécution. Le \LLM{} produit la réponse finale, mais les données récupérées et les outils appelés doivent rester observables.
 
 \section{Évaluation, acquis de la littérature et positionnement du mémoire}
 
 \subsection{Évaluer la performance et la factualité}
 
-L'évaluation d'un système emploi-compétences ne peut pas se limiter à la fluidité de la réponse générée. La littérature en recherche d'information utilise des métriques comme Recall@k, Precision@k, MRR ou nDCG pour mesurer la capacité d'un système à retrouver des éléments pertinents \cite{thakur2021beir,muennighoff2022mteb}. Ces métriques sont nécessaires pour évaluer la recherche vectorielle et la présélection des offres.
+L'évaluation d'un système emploi-compétences ne peut pas se limiter à la fluidité de la réponse générée. Elle doit d'abord mesurer la qualité de la récupération d'information : le système retrouve-t-il les offres, compétences ou documents réellement pertinents ? La littérature en recherche d'information utilise pour cela des métriques de classement comme Precision@k, Recall@k, MRR et NDCG \cite{thakur2021beir,muennighoff2022mteb}. Ces métriques supposent l'existence d'un ensemble de résultats pertinents, noté $Rel(q)$, pour une requête $q$, et d'une liste classée de résultats retournés par le système.
 
-La \RAG{} ajoute d'autres critères : fidélité au contexte, pertinence de la réponse, couverture des sources et citation des preuves. RAGAS propose par exemple un cadre d'évaluation automatisée pour des systèmes RAG \cite{es2024ragas}. G-Eval explore l'utilisation de \LLM{} comme juges pour l'évaluation de génération, tout en posant implicitement la question de l'alignement avec le jugement humain \cite{liu2023geval}. Ces approches sont utiles, mais elles doivent être utilisées avec prudence dans un mémoire professionnel : un juge automatique ne remplace pas une validation métier.
+La \textbf{Precision@k} mesure la proportion de résultats pertinents parmi les $k$ premiers résultats retournés. Si $R_k(q)$ désigne l'ensemble des $k$ premiers éléments proposés pour la requête $q$, alors :
+
+\begin{equation}
+Precision@k(q)=\frac{|R_k(q)\cap Rel(q)|}{k}.
+\end{equation}
+
+Cette métrique répond à la question suivante : parmi les premières recommandations affichées, combien sont réellement utiles ? Dans un système emploi-compétences, une Precision@5 élevée signifie que les cinq premières offres proposées contiennent peu de résultats non pertinents. Sa limite est qu'elle ne mesure pas si le système a retrouvé tous les bons résultats disponibles.
+
+Le \textbf{Recall@k} mesure au contraire la proportion des éléments pertinents retrouvés dans les $k$ premiers résultats :
+
+\begin{equation}
+Recall@k(q)=\frac{|R_k(q)\cap Rel(q)|}{|Rel(q)|}.
+\end{equation}
+
+Cette métrique répond à la question : parmi toutes les offres ou compétences pertinentes, quelle part le système a-t-il réussi à faire remonter ? Elle est importante pour ne pas éliminer trop tôt des offres utiles. En recommandation emploi, un faible Recall@k peut signifier que le moteur rate des opportunités pertinentes pour le candidat.
+
+Le \textbf{MRR} (\emph{Mean Reciprocal Rank}) évalue la position du premier résultat pertinent. Pour une requête $q$, si $rank_q$ est le rang du premier résultat pertinent, alors le score associé est :
+
+\begin{equation}
+RR(q)=\frac{1}{rank_q}.
+\end{equation}
+
+Sur un ensemble de $N$ requêtes, le MRR est :
+
+\begin{equation}
+MRR=\frac{1}{N}\sum_{q=1}^{N}\frac{1}{rank_q}.
+\end{equation}
+
+Cette métrique est utile lorsque l'on veut savoir si le système place rapidement au moins une bonne réponse. Dans une interface de recommandation, cela correspond à une logique pratique : l'utilisateur regarde souvent les premiers résultats avant de parcourir toute la liste.
+
+Le \textbf{nDCG@k} (\emph{normalized Discounted Cumulative Gain}) tient compte non seulement de la présence des résultats pertinents, mais aussi de leur ordre et éventuellement de leur degré de pertinence. Si $rel_i$ désigne le niveau de pertinence du résultat placé au rang $i$, alors :
+
+\begin{equation}
+DCG@k=\sum_{i=1}^{k}\frac{2^{rel_i}-1}{\log_2(i+1)}.
+\end{equation}
+
+Le score est ensuite normalisé par le meilleur classement possible, noté $IDCG@k$ :
+
+\begin{equation}
+NDCG@k=\frac{DCG@k}{IDCG@k}.
+\end{equation}
+
+Cette métrique est particulièrement adaptée lorsque tous les résultats pertinents ne se valent pas. Par exemple, une offre parfaitement alignée avec les compétences du candidat devrait être mieux classée qu'une offre seulement partiellement compatible.
+
+Dans une architecture \RAG{}, l'évaluation ne s'arrête pas au classement des résultats. Elle doit aussi mesurer la qualité de la réponse générée à partir du contexte récupéré. RAGAS distingue notamment la fidélité au contexte, la pertinence de la réponse, la qualité de la récupération et l'usage des sources \cite{es2024ragas}. La \textbf{fidélité} vérifie si les affirmations de la réponse sont supportées par les éléments récupérés. La \textbf{pertinence de réponse} vérifie si la réponse traite effectivement la question posée. La \textbf{couverture des sources} vérifie si le contexte contient suffisamment d'informations pour répondre. Enfin, la \textbf{traçabilité} vérifie si les preuves ou citations sont identifiables.
+
+Ces critères sont moins simples à formaliser que Precision@k ou Recall@k, car ils portent sur du langage naturel. Des approches comme G-Eval utilisent des \LLM{} comme juges pour approximer l'évaluation humaine \cite{liu2023geval}. Cette pratique doit rester prudente : un juge automatique peut aider à comparer des variantes de système, mais il ne remplace pas une validation métier. Dans ce mémoire, l'évaluation doit donc combiner des métriques de retrieval pour pgvector et Neo4j, des critères de factualité pour la réponse générée, et une interprétation professionnelle de l'utilité des recommandations.
 
 \subsection{Acquis, manques et contribution du mémoire}
 
@@ -159,6 +205,6 @@ La littérature fournit plusieurs acquis solides. Les modèles d'appariement du 
 
 Mais ces acquis laissent des manques importants. Premièrement, une proximité sémantique n'est pas une preuve de compatibilité professionnelle. Deuxièmement, les modèles collaboratifs exigent des historiques d'interaction souvent absents dans les plateformes émergentes. Troisièmement, un \LLM{} peut formuler une réponse convaincante sans être fidèle aux données. Quatrièmement, les graphes RH proposés dans la littérature ne sont pas automatiquement adaptés aux nomenclatures camerounaises ni aux données locales de KmerAI.
 
-Le domaine de recherche du mémoire se situe donc à l'intersection de la recommandation hybride, des graphes de connaissances et de la génération contrôlée. La contribution n'est pas de proposer un nouveau Transformer ou un nouvel algorithme de factorisation matricielle. Elle consiste à concevoir et évaluer une architecture intégrée pour le matching emploi-compétences : recherche sémantique par embeddings, stockage vectoriel avec pgvector, structuration relationnelle avec Neo4j, interrogation GraphRAG, critic de réponse et génération finale avec un \LLM{} contraint par le contexte.
+Le domaine de recherche du mémoire se situe donc à l'intersection de la recommandation hybride, des graphes de connaissances et de la génération contrôlée. La contribution n'est pas de proposer un nouveau Transformer ou un nouvel algorithme de factorisation matricielle. Elle consiste à concevoir et évaluer une architecture intégrée pour le matching emploi-compétences, dans laquelle chaque brique remplit une fonction distincte : présélection sémantique, contrôle relationnel, calcul d'écart de compétences, génération contextualisée et vérification de la réponse.
 
 Cette position est volontairement prudente. Le système ne prétend pas remplacer l'expertise humaine du conseiller emploi ou du recruteur. Il vise à rendre l'information plus exploitable : quelles offres sont proches du profil, quelles compétences expliquent la recommandation, quels écarts subsistent, et quelles pistes de formation peuvent réduire ces écarts. C'est cette articulation entre performance algorithmique, explicabilité et utilité professionnelle qui guide les choix méthodologiques et l'implémentation présentés dans les chapitres suivants.

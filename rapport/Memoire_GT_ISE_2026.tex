@@ -1138,7 +1138,9 @@ Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le mod
 \chapter{Source de données et Approche méthodologique}
 \vspace{-1.4cm}
 
-\section{Positionnement méthodologique}
+\section{Cadre méthodologique et sources de données}
+
+\subsection{Positionnement méthodologique}
 
 La présente étude adopte une démarche d'ingénierie appliquée orientée vers la conception, l'intégration et l'évaluation d'un artefact numérique d'aide à la décision. L'objet étudié n'est donc pas uniquement un modèle statistique pris isolément, mais un système complet de recommandation emploi-compétences combinant données structurées, représentations vectorielles, graphe de connaissances, règles métier et génération augmentée par récupération. Ce positionnement est cohérent avec la problématique du mémoire : améliorer l'appariement entre candidats, offres d'emploi, compétences, métiers et trajectoires de formation dans un contexte où l'information est hétérogène, incomplète et dispersée.
 
@@ -1167,7 +1169,7 @@ Ce chapitre précise donc les choix de conception du système. Les résultats d'
   \source{Auteur}
 \end{table}
 
-\section{Sources de données et leur rôle dans le système}
+\subsection{Sources de données et leur rôle dans le système}
 
 Le système mobilise deux catégories de données. La première correspond aux données opérationnelles du marché du travail : offres d'emploi et profils de candidats. Ces données décrivent respectivement la demande de travail et l'offre de travail disponible. La seconde catégorie correspond aux référentiels de structuration : \ESCO{}, \MEPC{} et \NCF{}. Ces référentiels permettent d'éviter une approche purement textuelle et de rattacher les intitulés, compétences et niveaux de formation à des nomenclatures interprétables.
 
@@ -1196,7 +1198,7 @@ Les offres d'emploi apportent les informations relatives aux postes disponibles 
   \source{Auteur}
 \end{table}
 
-\section{Préparation et normalisation des données}
+\subsection{Préparation et normalisation des données}
 
 La préparation des données constitue la première couche méthodologique du système. Son objectif est de produire des tables propres, stables et exploitables par les deux moteurs de recherche : le moteur vectoriel et le moteur graphe. Cette étape ne se limite pas au nettoyage cosmétique des textes. Elle détermine la qualité des relations construites, la pertinence des embeddings et la fiabilité des recommandations.
 
@@ -1206,7 +1208,7 @@ Pour les candidats, la normalisation porte sur le diplôme, le niveau d'étude, 
 
 Chaque offre et chaque candidat reçoit enfin un champ \filevar{text\_to\_embed}. Ce champ synthétise les éléments utiles pour la recherche sémantique : intitulé, compétences, secteur, niveau, description et objectif. Le choix d'un texte synthétique répond à une contrainte pratique : les modèles d'embeddings travaillent sur des séquences textuelles, mais les données métier sont partiellement structurées. Le champ \filevar{text\_to\_embed} sert donc d'interface entre les variables métiers et l'espace vectoriel.
 
-\section{Alignement des référentiels métiers et formations}
+\subsection{Alignement des référentiels métiers et formations}
 
 L'alignement des référentiels répond à un besoin central : rendre comparables des données issues de sources différentes. Les annonces utilisent des formulations libres, \ESCO{} propose une taxonomie internationale, la \MEPC{} suit une logique nationale de classification des métiers et la \NCF{} structure les formations. La méthode adoptée est prudente : elle vise un alignement exploitable pour la recommandation, sans prétendre établir une équivalence parfaite entre toutes les nomenclatures.
 
@@ -1214,7 +1216,9 @@ La \MEPC{} est structurée selon ses niveaux hiérarchiques : grands groupes, so
 
 L'alignement avec \ESCO{} s'appuie sur les codes et les proximités de libellés lorsque ces informations sont disponibles. Cette stratégie est méthodologiquement raisonnable, mais elle doit être interprétée avec prudence. Un même groupe de classification peut regrouper plusieurs réalités professionnelles. L'alignement sert donc à améliorer la couverture et l'interprétabilité, non à produire une vérité définitive sur l'équivalence entre métiers.
 
-\section{Choix du modèle d'embeddings et fine-tuning}
+\section{Modélisation sémantique et structuration des connaissances}
+
+\subsection{Choix du modèle d'embeddings et fine-tuning}
 
 Le système utilise un modèle SentenceTransformer pour représenter les offres, candidats, métiers, compétences et fragments documentaires dans un espace vectoriel. Ce choix est adapté au problème, car le matching emploi-compétences repose largement sur la similarité sémantique entre textes courts ou semi-structurés : intitulés de postes, compétences, descriptions d'annonces, objectifs professionnels et libellés de référentiels. Les SentenceTransformers ont été conçus pour produire des embeddings directement comparables par similarité cosinus, ce qui les rend adaptés aux tâches de recherche sémantique \cite{reimers2019sbert}.
 
@@ -1222,7 +1226,7 @@ Le fine-tuning retenu n'est pas un fine-tuning génératif. Il ne vise pas à ap
 
 Les paires d'apprentissage sont construites à partir des données préparées. Elles peuvent mobiliser les relations offre-compétence, métier-compétence, candidat-métier et offre-candidat lorsque les signaux disponibles sont suffisamment fiables. Cette étape est critique : un fine-tuning apprend les régularités de ses exemples. Des paires mal construites peuvent dégrader l'espace vectoriel au lieu de l'améliorer. La méthodologie retient donc une construction contrôlée des exemples, puis une évaluation séparée du modèle de base et du modèle adapté.
 
-\section{Indexation vectorielle dans PostgreSQL et pgvector}
+\subsection{Indexation vectorielle dans PostgreSQL et pgvector}
 
 Les embeddings produits sont stockés dans PostgreSQL avec l'extension pgvector. Ce choix permet de conserver dans un même environnement des représentations vectorielles et des métadonnées relationnelles. pgvector permet l'indexation et la recherche de voisins proches dans PostgreSQL, ce qui facilite l'intégration avec les autres tables du système \cite{pgvector2024}. Pour accélérer les recherches top-$K$, la méthode s'appuie sur une logique d'indexation approximative des voisins proches, cohérente avec les travaux sur HNSW \cite{malkov2018hnsw}.
 
@@ -1230,7 +1234,7 @@ La base vectorielle joue deux rôles. Le premier est le retrieval sémantique : 
 
 Chaque résultat vectoriel doit conserver ses métadonnées : identifiant, type d'entité, libellé, source, score de similarité et texte associé. Sans ces métadonnées, la génération finale serait incapable de citer ses sources et le système perdrait sa traçabilité.
 
-\section{Construction du graphe de connaissances Neo4j}
+\subsection{Construction du graphe de connaissances Neo4j}
 
 Le graphe de connaissances représente la couche relationnelle du système. Son rôle est de modéliser explicitement les relations entre les candidats, les offres, les compétences, les métiers, les secteurs, les localisations et les référentiels. Cette représentation est justifiée par la nature même du problème : le matching emploi-compétences n'est pas seulement une question de proximité textuelle, mais une question de relations. Une offre requiert des compétences, un candidat possède des compétences, un métier est classé dans une nomenclature, un niveau de formation conditionne l'accès à certains postes, et une trajectoire de montée en compétences dépend des écarts identifiés.
 
@@ -1238,7 +1242,7 @@ La méthodologie retient des noeuds correspondant aux entités principales : \fi
 
 Ce graphe sert à trois opérations méthodologiques. Premièrement, il vérifie les correspondances proposées par la recherche vectorielle. Deuxièmement, il explique les recommandations en identifiant les compétences communes et manquantes. Troisièmement, il permet des requêtes relationnelles que la recherche vectorielle gère mal, par exemple : quelles compétences sont associées à un métier donné ? quelles offres exigent une compétence précise ? quelles compétences manquent à un candidat pour viser une famille de métiers ?
 
-\section{Score hybride et logique de skill gap}
+\subsection{Score hybride et logique de skill gap}
 
 Le score de recommandation combine plusieurs signaux complémentaires. La similarité sémantique mesure la proximité entre le texte du profil et celui de l'offre. La couverture de compétences mesure la proportion des compétences requises par l'offre qui sont déjà présentes chez le candidat. La compatibilité de niveau vérifie si le niveau de formation du candidat est cohérent avec le niveau attendu par l'offre. L'alignement sectoriel mesure la cohérence entre le secteur ou le domaine du candidat et celui de l'offre.
 
@@ -1250,7 +1254,9 @@ où $c$ désigne un candidat, $o$ une offre, $S_{sem}$ la similarité sémantiqu
 
 L'analyse de \textit{skill gap} complète le score. Elle distingue les compétences acquises, les compétences requises et les compétences manquantes. Cette distinction permet de produire un verdict opérationnel : candidat immédiatement compatible, candidat compatible après montée en compétence, candidat à conserver en vivier ou profil hors cible. Ce verdict est plus utile qu'un simple score numérique, car il transforme la recommandation en aide à la décision.
 
-\section{Architecture Agentic RAG et orchestration LangGraph}
+\section{Orchestration agentique et génération contrôlée}
+
+\subsection{Architecture Agentic RAG et orchestration LangGraph}
 
 L'orchestration du système repose sur un workflow agentique. La requête utilisateur est d'abord analysée afin d'identifier son intention : diagnostic, recommandation candidat, skill gap, recherche référentielle, question relationnelle sur le graphe, orientation métier ou recherche générale. Le système sélectionne ensuite les outils adaptés. Cette étape de routage est essentielle : interroger pgvector, Neo4j ou les documents réglementaires ne répond pas au même besoin.
 
@@ -1258,7 +1264,7 @@ Le workflow suit une chaîne contrôlée : \filevar{analyse\_request}, \filevar{
 
 Ce choix s'inscrit dans la logique de l'Agentic RAG : le système n'est pas un simple prompt envoyé à un modèle, mais une orchestration d'outils spécialisés autour d'un état partagé \cite{yao2023react,asai2024selfrag}. Dans le présent travail, l'agent n'est pas conçu comme une entité autonome non contrôlée. Il est plutôt un routeur raisonné, limité à des outils définis, dont les sorties sont tracées.
 
-\section{Text2Cypher et rôle du LLM}
+\subsection{Text2Cypher et rôle du LLM}
 
 Deux usages du \LLM{} sont distingués. Le premier concerne l'interrogation du graphe en langage naturel. Pour les questions de type \filevar{graph\_query} ou les recherches générales nécessitant un raisonnement relationnel, la question peut être transformée en requête Cypher par un module Text2Cypher. Le modèle retenu pour cette tâche est \filevar{neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1}. La génération de Cypher est encadrée par le schéma Neo4j : types de noeuds, propriétés et relations autorisées. Cette contrainte est indispensable, car un modèle génératif qui ne connaît pas le schéma réel peut produire des requêtes syntaxiquement plausibles mais inexécutables ou non pertinentes.
 
@@ -1266,13 +1272,15 @@ Le second usage du \LLM{} concerne la génération de la réponse finale. Le sys
 
 Cette séparation des rôles est méthodologiquement importante. Text2Cypher sert à produire une requête structurée vers le graphe. Le \LLM{} final sert à formuler une synthèse lisible. Dans les deux cas, le modèle est subordonné aux données disponibles et non l'inverse.
 
-\section{Interfaces et traçabilité}
+\subsection{Interfaces et traçabilité}
 
 Le système prévoit trois modes d'accès : une interface Streamlit pour l'usage conversationnel, une API FastAPI pour l'intégration applicative et une CLI pour les tests de développement. Ces interfaces ne changent pas la logique de recommandation ; elles exposent le même moteur sous des formes différentes. La CLI facilite la vérification rapide des use-cases, Streamlit permet une démonstration interactive et FastAPI prépare l'intégration dans un environnement applicatif.
 
 La traçabilité est intégrée à plusieurs niveaux. Les traces du workflow indiquent les noeuds traversés et les outils appelés. Les résultats conservent les identifiants des entités, les sources documentaires, les scores et les chemins du graphe. La réponse finale doit citer les éléments utilisés. Cette exigence est décisive dans un système d'aide à l'orientation ou au recrutement : une recommandation sans preuve peut être séduisante, mais elle n'est pas défendable.
 
-\section{Protocole d'évaluation prévu}
+\section{Évaluation prévue, limites et synthèse méthodologique}
+
+\subsection{Protocole d'évaluation prévu}
 
 L'évaluation est conçue comme une évaluation en plusieurs étages. Le premier étage porte sur le retrieval vectoriel : le système retrouve-t-il les offres, compétences, métiers ou documents attendus dans les premiers résultats ? Les métriques retenues sont notamment Precision@K, Recall@K, MRR@K, MAP@K et NDCG@K, couramment utilisées pour les tâches de recherche d'information \cite{thakur2021beir,muennighoff2022mteb}.
 
@@ -1280,13 +1288,13 @@ Le deuxième étage porte sur le graphe : les relations retournées sont-elles c
 
 La méthode distingue donc clairement performance de récupération et qualité de génération. Une réponse bien rédigée ne prouve pas que le système a retrouvé les bonnes informations. Inversement, un bon retrieval ne garantit pas une bonne synthèse. Cette séparation protège l'analyse contre une erreur fréquente dans les systèmes \RAG{} : juger le système uniquement à l'apparence de la réponse finale.
 
-\section{Limites méthodologiques et précautions d'interprétation}
+\subsection{Limites méthodologiques et précautions d'interprétation}
 
 Plusieurs limites doivent être prises en compte dès la conception. Premièrement, les données d'offres et de candidats peuvent contenir des omissions, des doublons et des formulations ambiguës. Deuxièmement, l'alignement entre référentiels reste partiel : il améliore la structuration, mais ne garantit pas une équivalence parfaite entre catégories. Troisièmement, le graphe dépend de la qualité des relations extraites ou importées. Une relation manquante peut conduire à sous-estimer une compatibilité réelle. Quatrièmement, les \LLM{} peuvent produire des formulations plausibles mais non soutenues par les données ; c'est pourquoi le contexte, les citations et le critic sont nécessaires.
 
 Une autre limite est matérielle. L'utilisation locale ou semi-locale de modèles spécialisés, notamment pour Text2Cypher, peut être contrainte par la mémoire disponible. Cette contrainte influence les choix techniques : recours à une API pour la génération finale, chargement contrôlé du modèle Text2Cypher et possibilité de fallback vers des templates Cypher sécurisés. Ces choix ne sont pas des faiblesses méthodologiques en soi ; ils traduisent l'adaptation du système aux ressources disponibles.
 
-\section{Synthèse de l'approche méthodologique}
+\subsection{Synthèse de l'approche méthodologique}
 
 La méthodologie proposée construit un système hybride plutôt qu'un modèle isolé. Elle part de données locales hétérogènes, les normalise, les rattache à des référentiels, les encode dans un espace vectoriel, les structure dans un graphe de connaissances, puis orchestre leur interrogation par un workflow agentique. Le rôle du \LLM{} est strictement encadré : transformer certaines questions en requêtes graphe, puis formuler une réponse fondée sur les preuves récupérées.
 
