@@ -1,15 +1,15 @@
 [0] Config.pm:328> INFO - This is Biber 2.21
-[1] Config.pm:331> INFO - Logfile is 'Memoire_GT_ISE_2026.blg'
-[156] biber-MSWIN64:342> INFO - === 
-[208] Biber.pm:421> INFO - Reading 'Memoire_GT_ISE_2026.bcf'
-[354] Biber.pm:1002> INFO - Found 38 citekeys in bib section 0
-[375] Biber.pm:4487> INFO - Processing section 0
-[390] Biber.pm:4678> INFO - Looking for bibtex file 'references.bib' for section 0
-[476] bibtex.pm:1713> INFO - LaTeX decoding ...
-[564] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
-[873] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[874] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'variable = shifted' with 'variable = non-ignorable'
-[875] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'fr-FR'
-[875] Biber.pm:4313> INFO - No sort tailoring available for locale 'fr-FR'
-[956] bbl.pm:676> INFO - Writing 'Memoire_GT_ISE_2026.bbl' with encoding 'UTF-8'
-[1032] bbl.pm:779> INFO - Output to Memoire_GT_ISE_2026.bbl
+[0] Config.pm:331> INFO - Logfile is 'Memoire_GT_ISE_2026.blg'
+[934] biber-MSWIN64:342> INFO - === 
+[1237] Biber.pm:421> INFO - Reading 'Memoire_GT_ISE_2026.bcf'
+[1748] Biber.pm:1002> INFO - Found 39 citekeys in bib section 0
+[1796] Biber.pm:4487> INFO - Processing section 0
+[1863] Biber.pm:4678> INFO - Looking for bibtex file 'references.bib' for section 0
+[1994] bibtex.pm:1713> INFO - LaTeX decoding ...
+[2168] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[4345] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'variable = shifted' with 'variable = non-ignorable'
+[4346] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[4346] Biber.pm:4307> INFO - Sorting list 'none/global//global/global/global' of type 'entry' with template 'none' and locale 'fr-FR'
+[4346] Biber.pm:4313> INFO - No sort tailoring available for locale 'fr-FR'
+[5221] bbl.pm:676> INFO - Writing 'Memoire_GT_ISE_2026.bbl' with encoding 'UTF-8'
+[5468] bbl.pm:779> INFO - Output to Memoire_GT_ISE_2026.bbl
