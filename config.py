@@ -11,7 +11,7 @@ DATA_PROC  = ROOT / "data" / "processed"
 DATA_FT    = ROOT / "data" / "finetune"
 
 # Sources brutes
-OFFRES_RAW     = DATA_RAW / "offres.xlsx"
+OFFRES_RAW     = DATA_RAW / "vrai_data.xlsx"
 DEMANDEUR_RAW  = DATA_RAW / "demandeur.xlsx"
 MEPC_RAW       = DATA_RAW / "MEPC_Nomenclature_Camerounaise_Metiers.xlsx"
 NCF_RAW        = DATA_RAW / "NCF_Nomenclature_Camerounaise_Formations.xlsx"
