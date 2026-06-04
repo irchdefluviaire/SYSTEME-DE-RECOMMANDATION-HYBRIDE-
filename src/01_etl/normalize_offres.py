@@ -5,7 +5,7 @@ Strategie ETL retenue :
   1. Validation du schema source minimum.
   2. Nettoyage texte : espaces, valeurs vides explicites.
   3. Conservation de toutes les observations : aucune deduplication destructive.
-  4. Audit des candidats doublons sur une cle metier normalisee.
+  4. Audit des lignes strictement identiques sur toutes les variables source.
   5. Score de completude sur les champs structurants.
   6. Nettoyage du champ "Details de l'Annonce" : bruit de scraping.
   7. Normalisation multi-valeurs : villes, secteurs, competences.
@@ -15,7 +15,6 @@ Strategie ETL retenue :
 """
 
 import hashlib
-import logging
 import re
 import sys
 import unicodedata
@@ -66,13 +65,6 @@ QUALITY_COLUMNS = [
     "Détails de l'Annonce",
 ]
 
-DUPLICATE_KEY_COLUMNS = [
-    "Titre du Poste",
-    "Employeur",
-    "Ville / Région",
-    "Secteur d'Activité",
-]
-
 
 def load_raw(path=OFFRES_RAW) -> pd.DataFrame:
     log.info(f"Chargement offres : {path}")
@@ -121,28 +113,43 @@ def _stable_hash(parts: list[str], size: int = 16) -> str:
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:size]
 
 
+def _cell_for_duplicate_key(value) -> str:
+    if value is None or pd.isna(value):
+        return "<NA>"
+    return str(value)
+
+
 def audit_observations(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Marque les doublons potentiels sans supprimer de lignes.
+    Marque les lignes strictement identiques sans supprimer de lignes.
 
-    La cle est volontairement stricte : titre + employeur + ville + secteur.
-    Elle sert au controle qualite, pas a une decision automatique de fusion.
+    Une offre n'est candidate doublon que si toutes les variables source sont
+    identiques apres le nettoyage de base. Le numero technique source_row_number
+    est exclu de la comparaison.
     """
     n_before = len(df)
     df = df.copy()
 
+    duplicate_key_columns = [
+        col for col in df.columns
+        if col != "source_row_number"
+    ]
     key_parts = [
-        df[col].map(_canonical_text) if col in df.columns else ""
-        for col in DUPLICATE_KEY_COLUMNS
+        df[col].map(_cell_for_duplicate_key)
+        for col in duplicate_key_columns
     ]
     df["duplicate_candidate_key"] = (
         pd.concat(key_parts, axis=1)
         .agg("||".join, axis=1)
-        .map(lambda value: _stable_hash([value], size=20) if value.replace("|", "") else "")
+        .map(lambda value: _stable_hash([value], size=20))
     )
 
     valid_key = df["duplicate_candidate_key"].ne("")
-    group_sizes = df.loc[valid_key].groupby("duplicate_candidate_key")["duplicate_candidate_key"].transform("size")
+    group_sizes = (
+        df.loc[valid_key]
+        .groupby("duplicate_candidate_key")["duplicate_candidate_key"]
+        .transform("size")
+    )
     group_ranks = df.loc[valid_key].groupby("duplicate_candidate_key").cumcount() + 1
 
     df["duplicate_candidate_count"] = 1
@@ -163,7 +170,7 @@ def audit_observations(df: pd.DataFrame) -> pd.DataFrame:
     )
     n_rows = int(df["is_duplicate_candidate"].sum())
     log.info(
-        "Audit doublons potentiels : "
+        "Audit doublons exacts ligne complete : "
         f"{n_rows} lignes dans {n_groups} groupes; aucune ligne supprimee"
     )
     log_etape("Audit observations", pd.DataFrame(index=range(n_before)), df)
@@ -184,10 +191,7 @@ def clean_details(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def explode_multivalues(df: pd.DataFrame) -> pd.DataFrame:
-    """
-    Normalise les champs multi-valeurs.
-    Cree des colonnes LIST et des colonnes scalaires principales.
-    """
+    """Normalise les champs multi-valeurs."""
     df = df.copy()
 
     df["villes_list"] = df["Ville / Région"].apply(
@@ -331,9 +335,7 @@ def finalize_schema(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def build_text_to_embed_offre(row: pd.Series) -> str:
-    """
-    Construit le texte corpus pour le fine-tuning du SentenceTransformer.
-    """
+    """Construit le texte corpus pour le fine-tuning du SentenceTransformer."""
     parts = []
 
     if isinstance(row.get("skills_list"), list) and row["skills_list"]:
@@ -346,9 +348,7 @@ def build_text_to_embed_offre(row: pd.Series) -> str:
 
 
 def build_metadata_str_offre(row: pd.Series) -> str:
-    """
-    Construit le texte requete a partir des metadonnees structurees.
-    """
+    """Construit le texte requete a partir des metadonnees structurees."""
     parts = []
     if pd.notna(row.get("titre_poste")):
         parts.append(f"Poste: {row['titre_poste']}")
@@ -369,11 +369,12 @@ def add_embed_texts(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["text_to_embed"] = df.apply(build_text_to_embed_offre, axis=1)
     df["metadata_str"] = df.apply(build_metadata_str_offre, axis=1)
-    df["ft_eligible"] = (
-        (df["text_to_embed"].str.len() > 50)
-        & (df["metadata_str"].str.len() > 20)
+    df["ft_eligible"] = True
+    log.info(
+        "  Paires FT eligibles: "
+        f"{df['ft_eligible'].sum()} / {len(df)} "
+        "(filtre informatif desactive)"
     )
-    log.info(f"  Paires FT eligibles: {df['ft_eligible'].sum()} / {len(df)}")
     return df
 
 
@@ -385,8 +386,18 @@ def save_duplicate_audit(df: pd.DataFrame) -> None:
         "duplicate_candidate_rank",
         "source_row_number",
         "offre_id",
+        "source",
+        "lien_reference",
         "titre_poste",
         "employeur",
+        "type_entreprise_raw",
+        "pays",
+        "groupe_contrat_raw",
+        "type_contrat_raw",
+        "niveau_experience_raw",
+        "niveau_etudes_raw",
+        "skills_raw",
+        "details_raw",
         "ville_region_raw",
         "secteur_activite_raw",
         "etl_completeness_score",

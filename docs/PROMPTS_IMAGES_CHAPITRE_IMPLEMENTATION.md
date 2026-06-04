@@ -67,7 +67,7 @@ normalisées utilisables par le système.
 ### Prompt à donner à l'IA
 
 ```text
-Créer une infographie académique horizontale en français montrant le pipeline de préparation des données pour un système emploi-compétences. À gauche : fichiers bruts avec offres d'emploi, candidats, référentiels MEPC, NCF et ESCO. Au centre : nettoyage, audit des doublons potentiels sans suppression, normalisation des secteurs, villes, diplômes, niveaux NCF et compétences. À droite : données normalisées avec quatre sorties : offres normalisées, candidats normalisés, référentiels alignés, paires offre-profil pour entraînement. Style sobre, fond clair, flèches simples, blocs rectangulaires, icônes minimalistes de table, balai de nettoyage, dictionnaire, fichier de sortie. Texte en français lisible.
+Créer une infographie académique horizontale en français montrant le pipeline de préparation des données pour un système emploi-compétences. À gauche : fichiers bruts avec offres d'emploi, candidats, référentiels MEPC, NCF et ESCO. Au centre : nettoyage, audit des lignes strictement identiques sans suppression, normalisation des secteurs, villes, diplômes, niveaux NCF et compétences. À droite : données normalisées avec quatre sorties : offres normalisées, candidats normalisés, référentiels alignés, paires offre-profil pour entraînement. Style sobre, fond clair, flèches simples, blocs rectangulaires, icônes minimalistes de table, balai de nettoyage, dictionnaire, fichier de sortie. Texte en français lisible.
 ```
 
 ## Image 3 - Différence entre pgvector et Neo4j

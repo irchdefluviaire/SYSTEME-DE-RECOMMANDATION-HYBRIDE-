@@ -211,7 +211,7 @@ Il effectue :
 
 - chargement du fichier brut des offres ;
 - nettoyage texte ;
-- audit des doublons potentiels sans suppression de lignes ;
+- audit des lignes source strictement identiques sur toutes les variables, sans suppression ;
 - calcul d'un score de completude ETL ;
 - nettoyage de la description d'annonce ;
 - normalisation des villes, secteurs, competences ;
@@ -222,7 +222,7 @@ Il effectue :
 - construction de `text_to_embed` ;
 - export en Parquet ;
 - export d'un rapport qualite ;
-- export d'un rapport d'audit des doublons potentiels.
+- export d'un rapport d'audit des lignes strictement identiques.
 
 Ce script produit la table offre propre utilisee par pgvector, Neo4j et le
 fine-tuning.
