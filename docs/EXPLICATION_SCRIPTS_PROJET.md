@@ -211,16 +211,18 @@ Il effectue :
 
 - chargement du fichier brut des offres ;
 - nettoyage texte ;
-- deduplication ;
+- audit des doublons potentiels sans suppression de lignes ;
+- calcul d'un score de completude ETL ;
 - nettoyage de la description d'annonce ;
 - normalisation des villes, secteurs, competences ;
 - mapping du niveau d'etudes vers NCF ;
 - mapping de l'experience ;
 - normalisation des contrats ;
-- generation d'un identifiant stable d'offre ;
+- generation d'un identifiant technique stable d'offre ;
 - construction de `text_to_embed` ;
 - export en Parquet ;
-- export d'un rapport qualite.
+- export d'un rapport qualite ;
+- export d'un rapport d'audit des doublons potentiels.
 
 Ce script produit la table offre propre utilisee par pgvector, Neo4j et le
 fine-tuning.
@@ -233,12 +235,14 @@ Il realise :
 
 - chargement du fichier brut des demandeurs ;
 - nettoyage des colonnes ;
+- audit des matricules dupliques sans suppression de lignes ;
 - mapping des diplomes et niveaux vers la NCF ;
 - normalisation de la mobilite geographique ;
 - traitement des valeurs non declarees ;
-- generation d'un schema final propre ;
+- generation d'un schema final propre avec `matricule_raw` conserve et `candidat_id` technique unique ;
 - construction de `text_to_embed` candidat ;
-- export en Parquet.
+- export en Parquet ;
+- export d'un rapport qualite et d'un rapport d'audit des matricules.
 
 Ce script produit la table candidat exploitee pour le matching.
 

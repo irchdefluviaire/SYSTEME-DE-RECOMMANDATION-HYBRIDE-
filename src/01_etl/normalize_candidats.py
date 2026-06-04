@@ -2,15 +2,15 @@
 normalize_candidats.py — Pipeline ETL complet pour le dataset des demandeurs d'emploi
 
 Stratégie de nettoyage :
-  1. Vérification unicité Matricule
-  2. Nettoyage de base (strip, espaces insécables)
+  1. Nettoyage de base (strip, espaces insécables)
+  2. Audit Matricule sans suppression de lignes
   3. Mapping Niveau Étude → code NCF (1-9)
   4. Mapping Diplôme → code NCF (confirmé / priorité sur niveau_etude)
   5. Normalisation Mobilité géographique → booléen / liste villes
   6. Normalisation Secteur demandé (valeurs "Non déclaré" → None)
   7. Construction text_to_embed côté requête (format metadata)
-  8. UUID = Matricule (déjà unique)
-  9. Sauvegarde en Parquet
+  8. candidat_id technique unique, matricule_raw conservé
+  9. Sauvegarde en Parquet et rapports qualité/audit
 """
 
 import sys
@@ -50,12 +50,41 @@ def load_raw(path=DEMANDEUR_RAW) -> pd.DataFrame:
 
 def clean_base(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
+    df.insert(0, "source_row_number", range(1, len(df) + 1))
     str_cols = df.select_dtypes(include=["object", "string"]).columns
     for col in str_cols:
         df[col] = df[col].apply(
             lambda x: clean_whitespace(str(x)) if pd.notna(x) else pd.NA
         )
         df[col] = df[col].replace("", pd.NA).replace("nan", pd.NA)
+    return df
+
+
+def audit_matricules(df: pd.DataFrame) -> pd.DataFrame:
+    """
+    Marque les matricules dupliques sans supprimer de lignes.
+
+    Le matricule reste conserve comme identifiant metier brut. L'identifiant
+    technique candidat_id est rendu unique plus loin dans finalize_schema.
+    """
+    df = df.copy()
+    if "Matricule" not in df.columns:
+        raise ValueError("Colonne Matricule absente du fichier demandeur")
+
+    valid = df["Matricule"].notna()
+    counts = df.loc[valid].groupby("Matricule")["Matricule"].transform("size")
+    ranks = df.loc[valid].groupby("Matricule").cumcount() + 1
+
+    df["matricule_duplicate_count"] = 1
+    df.loc[valid, "matricule_duplicate_count"] = counts.astype("int64")
+    df["matricule_duplicate_rank"] = 1
+    df.loc[valid, "matricule_duplicate_rank"] = ranks.astype("int64")
+    df["is_matricule_duplicate"] = df["matricule_duplicate_count"].gt(1)
+
+    log.info(
+        "  Doublons Matricule audites : "
+        f"{int(df['is_matricule_duplicate'].sum())} lignes; aucune ligne supprimee"
+    )
     return df
 
 
@@ -160,7 +189,7 @@ def finalize_schema(df: pd.DataFrame) -> pd.DataFrame:
 
     # Renommage → schéma normalisé
     rename_map = {
-        "Matricule":                           "candidat_id",
+        "Matricule":                           "matricule_raw",
         "Age":                                  "age",
         "Qualification":                        "qualification_declaree",
         "Secteur d'activité":                  "secteur_activite_cand",
@@ -176,10 +205,13 @@ def finalize_schema(df: pd.DataFrame) -> pd.DataFrame:
         "Mobilité géographique":                "mobilite_geo_raw",
     }
     df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
+    df["candidat_id"] = df.apply(_build_candidat_id, axis=1)
 
     # Ordonnancement final
     cols = [
         "candidat_id",
+        "matricule_raw",
+        "source_row_number",
         "age",
         "genre",
         "diplome_raw",
@@ -198,9 +230,23 @@ def finalize_schema(df: pd.DataFrame) -> pd.DataFrame:
         "mobilite_geo_bool",
         "mobilite_geo_villes",
         "mobilite_geo_raw",
+        "matricule_duplicate_count",
+        "matricule_duplicate_rank",
+        "is_matricule_duplicate",
     ]
     cols = [c for c in cols if c in df.columns]
     return df[cols]
+
+
+def _build_candidat_id(row: pd.Series) -> str:
+    matricule = row.get("matricule_raw")
+    if pd.isna(matricule) or str(matricule).strip() == "":
+        return f"CAND_ROW_{int(row['source_row_number']):06d}"
+
+    candidat_id = str(matricule).strip()
+    if int(row.get("matricule_duplicate_count", 1)) > 1:
+        candidat_id = f"{candidat_id}__OCC{int(row['matricule_duplicate_rank']):02d}"
+    return candidat_id
 
 
 # ─────────────────────────────────────────────────────────────────
@@ -249,6 +295,25 @@ def add_embed_text(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def save_matricule_audit(df: pd.DataFrame) -> None:
+    audit_path = DATA_PROC / "rapport_audit_matricules_candidats.csv"
+    audit_cols = [
+        "matricule_raw",
+        "matricule_duplicate_count",
+        "matricule_duplicate_rank",
+        "source_row_number",
+        "candidat_id",
+        "age",
+        "genre",
+        "diplome_raw",
+        "metier_vise",
+        "secteur_demande",
+    ]
+    audit = df.loc[df["is_matricule_duplicate"], [c for c in audit_cols if c in df.columns]]
+    audit.to_csv(audit_path, index=False)
+    log.info(f"Rapport audit matricules sauvegardé → {audit_path} ({len(audit)} lignes)")
+
+
 # ─────────────────────────────────────────────────────────────────
 # PIPELINE PRINCIPAL
 # ─────────────────────────────────────────────────────────────────
@@ -261,13 +326,11 @@ def run(save=True) -> pd.DataFrame:
     df = load_raw()
     profil_qualite(df, "demandeurs_raw")
 
-    # Vérification unicité Matricule
-    n_dup = df["Matricule"].duplicated().sum()
-    log.info(f"  Doublons Matricule : {n_dup} (attendu : 0)")
-    assert n_dup == 0, "Matricule non unique — vérifier la source"
-
     df = clean_base(df)
     log.info(f"[1/6] Nettoyage de base terminé")
+
+    df = audit_matricules(df)
+    log.info("  Audit Matricule terminé")
 
     df = normalize_non_declare(df)
     log.info(f"[2/6] Valeurs 'Non déclaré' normalisées")
@@ -291,6 +354,7 @@ def run(save=True) -> pd.DataFrame:
 
         rapport = profil_qualite(df, "candidats_processed")
         rapport.to_csv(DATA_PROC / "rapport_qualite_candidats.csv", index=False)
+        save_matricule_audit(df)
 
     log.info(f"✓ Candidats traités : {len(df)} lignes")
     return df

@@ -1,185 +1,240 @@
 """
-normalize_offres.py — Pipeline ETL complet pour le dataset des offres d'emploi
+normalize_offres.py - Pipeline ETL pour le dataset des offres d'emploi.
 
-Stratégie de nettoyage :
-  1. Déduplication sur (Titre + Employeur + Ville + Secteur)
-  2. Nettoyage texte : espaces insécables, strip, casse
-  3. Nettoyage 'Détails de l'Annonce' : boilerplate scraping
-  4. Explosion multi-valeurs : Ville / Région, Secteur d'Activité, Compétences
-  5. Mapping Niveau Études → code NCF (1-9)
-  6. Mapping Niveau Expérience → entier
-  7. Normalisation Type de Contrat et Groupe de Contrat
-  8. Génération UUID stable par offre
-  9. Construction text_to_embed (côté corpus fine-tuning ST)
- 10. Sauvegarde en Parquet (format optimisé)
+Strategie ETL retenue :
+  1. Validation du schema source minimum.
+  2. Nettoyage texte : espaces, valeurs vides explicites.
+  3. Conservation de toutes les observations : aucune deduplication destructive.
+  4. Audit des candidats doublons sur une cle metier normalisee.
+  5. Score de completude sur les champs structurants.
+  6. Nettoyage du champ "Details de l'Annonce" : bruit de scraping.
+  7. Normalisation multi-valeurs : villes, secteurs, competences.
+  8. Mapping niveaux NCF, experience et contrats.
+  9. Identifiant offre stable et schema final.
+ 10. Construction des textes d'embedding et rapports qualite.
 """
 
-import sys
+import hashlib
 import logging
+import re
+import sys
+import unicodedata
 from pathlib import Path
 
 import pandas as pd
-import numpy as np
 
-# Ajouter le répertoire parent au path
 sys.path.insert(0, str(Path(__file__).parent))
 
 from config import (
-    OFFRES_RAW, OFFRES_PROC, DATA_PROC,
-    NIVEAU_ETUDES_OFFRES_TO_NCF, TYPE_CONTRAT_NORMALIZE,
-    GROUPE_CONTRAT_NORMALIZE, EXPERIENCE_TO_INT,
+    DATA_PROC,
+    EXPERIENCE_TO_INT,
     FT_MAX_DESC_CHARS,
+    GROUPE_CONTRAT_NORMALIZE,
+    NIVEAU_ETUDES_OFFRES_TO_NCF,
+    OFFRES_PROC,
+    OFFRES_RAW,
+    TYPE_CONTRAT_NORMALIZE,
 )
 from utils import (
-    clean_whitespace, clean_details_annonce,
-    normalize_ville, normalize_secteurs, normalize_skills,
-    generate_uuid, profil_qualite, log_etape, log,
+    clean_details_annonce,
+    clean_whitespace,
+    log,
+    log_etape,
+    normalize_secteurs,
+    normalize_skills,
+    normalize_ville,
+    profil_qualite,
 )
 
 
-# ─────────────────────────────────────────────────────────────────
-# CHARGEMENT
-# ─────────────────────────────────────────────────────────────────
+REQUIRED_RAW_COLUMNS = [
+    "Titre du Poste",
+    "Employeur",
+    "Ville / Région",
+    "Secteur d'Activité",
+    "Détails de l'Annonce",
+]
+
+QUALITY_COLUMNS = [
+    "Titre du Poste",
+    "Employeur",
+    "Ville / Région",
+    "Secteur d'Activité",
+    "Niveau d'Études",
+    "Niveau d'Expérience",
+    "Compétences / Skills",
+    "Détails de l'Annonce",
+]
+
+DUPLICATE_KEY_COLUMNS = [
+    "Titre du Poste",
+    "Employeur",
+    "Ville / Région",
+    "Secteur d'Activité",
+]
+
 
 def load_raw(path=OFFRES_RAW) -> pd.DataFrame:
     log.info(f"Chargement offres : {path}")
     df = pd.read_excel(path, dtype=str)
-    log.info(f"  → {df.shape[0]} lignes, {df.shape[1]} colonnes")
+    log.info(f"  -> {df.shape[0]} lignes, {df.shape[1]} colonnes")
+    validate_raw_schema(df)
     return df
 
 
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 1 — NETTOYAGE DE BASE
-# ─────────────────────────────────────────────────────────────────
+def validate_raw_schema(df: pd.DataFrame) -> None:
+    """Verifie que les champs minimums existent avant transformation."""
+    missing = [col for col in REQUIRED_RAW_COLUMNS if col not in df.columns]
+    if missing:
+        raise ValueError(
+            "Colonnes offres manquantes dans la source brute : "
+            + ", ".join(missing)
+        )
+
 
 def clean_base(df: pd.DataFrame) -> pd.DataFrame:
-    """Strip + espaces insécables sur toutes les colonnes texte."""
+    """Strip + espaces insecables sur toutes les colonnes texte."""
     df = df.copy()
-    str_cols = df.select_dtypes(include="object").columns
+    df.insert(0, "source_row_number", range(1, len(df) + 1))
+
+    str_cols = df.select_dtypes(include=["object", "string"]).columns
     for col in str_cols:
         df[col] = df[col].apply(
             lambda x: clean_whitespace(x) if isinstance(x, str) else x
         )
-        # NaN explicites → pd.NA
         df[col] = df[col].replace("", pd.NA).replace("nan", pd.NA).replace("NaN", pd.NA)
     return df
 
 
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 2 — DÉDUPLICATION
-# ─────────────────────────────────────────────────────────────────
+def _canonical_text(value) -> str:
+    if value is None or pd.isna(value):
+        return ""
+    text = unicodedata.normalize("NFKD", str(value))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    text = text.casefold()
+    text = re.sub(r"[^a-z0-9]+", " ", text)
+    return re.sub(r"\s+", " ", text).strip()
 
-def deduplicate(df: pd.DataFrame) -> pd.DataFrame:
+
+def _stable_hash(parts: list[str], size: int = 16) -> str:
+    payload = "||".join(parts)
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()[:size]
+
+
+def audit_observations(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Supprime les doublons exacts.
-    Clé de déduplication : Titre + Employeur + Ville + Secteur.
-    Si doublon, garde la ligne avec le plus de contenu (Details non nul en priorité).
+    Marque les doublons potentiels sans supprimer de lignes.
+
+    La cle est volontairement stricte : titre + employeur + ville + secteur.
+    Elle sert au controle qualite, pas a une decision automatique de fusion.
     """
     n_before = len(df)
+    df = df.copy()
 
-    # Trier pour que les lignes avec Details non nuls arrivent en premier
-    df = df.sort_values(
-        by=["Détails de l'Annonce"],
-        key=lambda s: s.isna(),
-        ascending=True,
+    key_parts = [
+        df[col].map(_canonical_text) if col in df.columns else ""
+        for col in DUPLICATE_KEY_COLUMNS
+    ]
+    df["duplicate_candidate_key"] = (
+        pd.concat(key_parts, axis=1)
+        .agg("||".join, axis=1)
+        .map(lambda value: _stable_hash([value], size=20) if value.replace("|", "") else "")
     )
 
-    # Déduplication sur clé composite
-    subset = ["Titre du Poste", "Employeur", "Ville / Région", "Secteur d'Activité"]
-    df = df.drop_duplicates(subset=subset, keep="first").reset_index(drop=True)
+    valid_key = df["duplicate_candidate_key"].ne("")
+    group_sizes = df.loc[valid_key].groupby("duplicate_candidate_key")["duplicate_candidate_key"].transform("size")
+    group_ranks = df.loc[valid_key].groupby("duplicate_candidate_key").cumcount() + 1
 
-    log_etape("Déduplication", pd.DataFrame(index=range(n_before)), df)
+    df["duplicate_candidate_count"] = 1
+    df.loc[valid_key, "duplicate_candidate_count"] = group_sizes.astype("int64")
+    df["duplicate_candidate_rank"] = 1
+    df.loc[valid_key, "duplicate_candidate_rank"] = group_ranks.astype("int64")
+    df["is_duplicate_candidate"] = df["duplicate_candidate_count"].gt(1)
+
+    available_quality_cols = [col for col in QUALITY_COLUMNS if col in df.columns]
+    df["etl_completeness_score"] = (
+        df[available_quality_cols].notna().mean(axis=1).round(3)
+        if available_quality_cols
+        else 0.0
+    )
+
+    n_groups = int(
+        df.loc[df["is_duplicate_candidate"], "duplicate_candidate_key"].nunique()
+    )
+    n_rows = int(df["is_duplicate_candidate"].sum())
+    log.info(
+        "Audit doublons potentiels : "
+        f"{n_rows} lignes dans {n_groups} groupes; aucune ligne supprimee"
+    )
+    log_etape("Audit observations", pd.DataFrame(index=range(n_before)), df)
     return df
 
 
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 3 — NETTOYAGE DÉTAILS ANNONCE
-# ─────────────────────────────────────────────────────────────────
-
 def clean_details(df: pd.DataFrame) -> pd.DataFrame:
-    """Nettoie le champ texte brut scraped."""
+    """Nettoie le champ texte brut scrape."""
     df = df.copy()
     df["details_clean"] = df["Détails de l'Annonce"].apply(
         lambda x: clean_details_annonce(x) if isinstance(x, str) else ""
     )
-    # Tronquer à FT_MAX_DESC_CHARS pour le fine-tuning
     df["details_truncated"] = df["details_clean"].str[:FT_MAX_DESC_CHARS]
-    log.info(f"  Détails nettoyés : {(df['details_clean'] != '').sum()} / {len(df)} non vides")
+    log.info(
+        f"  Details nettoyes : {(df['details_clean'] != '').sum()} / {len(df)} non vides"
+    )
     return df
 
 
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 4 — EXPLOSION MULTI-VALEURS
-# ─────────────────────────────────────────────────────────────────
-
 def explode_multivalues(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Normalise les champs multi-valeurs (villes, secteurs, compétences).
-    Crée des colonnes LIST et des colonnes scalaires (ville_principale, secteur_principal).
+    Normalise les champs multi-valeurs.
+    Cree des colonnes LIST et des colonnes scalaires principales.
     """
     df = df.copy()
 
-    # Villes
     df["villes_list"] = df["Ville / Région"].apply(
         lambda x: normalize_ville(x) if isinstance(x, str) else []
     )
-    df["ville_principale"] = df["villes_list"].apply(
-        lambda lst: lst[0] if lst else None
-    )
+    df["ville_principale"] = df["villes_list"].apply(lambda lst: lst[0] if lst else None)
 
-    # Secteurs
     df["secteurs_list"] = df["Secteur d'Activité"].apply(
         lambda x: normalize_secteurs(x) if isinstance(x, str) else []
     )
-    df["secteur_principal"] = df["secteurs_list"].apply(
-        lambda lst: lst[0] if lst else None
-    )
+    df["secteur_principal"] = df["secteurs_list"].apply(lambda lst: lst[0] if lst else None)
 
-    # Compétences / Skills
     df["skills_list"] = df["Compétences / Skills"].apply(
         lambda x: normalize_skills(x) if isinstance(x, str) else []
     )
 
-    log.info(f"  Villes : {df['ville_principale'].notna().sum()} précisées")
-    log.info(f"  Secteurs : {df['secteur_principal'].notna().sum()} précisés")
+    log.info(f"  Villes : {df['ville_principale'].notna().sum()} precisees")
+    log.info(f"  Secteurs : {df['secteur_principal'].notna().sum()} precises")
     return df
 
-
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 5 — MAPPING NIVEAUX & NORMALISATION CATÉGORIELS
-# ─────────────────────────────────────────────────────────────────
 
 def map_categorical(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
 
-    # Niveau d'études → code NCF
     df["ncf_niveau_code"] = (
         df["Niveau d'Études"]
         .map(NIVEAU_ETUDES_OFFRES_TO_NCF)
-        .astype("Int64")        # entier nullable
+        .astype("Int64")
     )
 
-    # Niveau expérience → entier
     df["experience_min_ans"] = (
         df["Niveau d'Expérience"]
         .map(EXPERIENCE_TO_INT)
         .astype("Int64")
     )
 
-    # Normalisation type de contrat
     df["type_contrat_norm"] = (
         df["Type de Contrat"]
         .map(TYPE_CONTRAT_NORMALIZE)
         .fillna(df["Type de Contrat"])
     )
 
-    # Normalisation groupe de contrat
     df["groupe_contrat_norm"] = (
         df["Groupe de Contrat"]
         .map(GROUPE_CONTRAT_NORMALIZE)
     )
 
-    # Type d'entreprise — simplifié
     df["type_entreprise_norm"] = df["Type d'Entreprise"].apply(
         lambda x: _normalize_type_entreprise(x) if isinstance(x, str) else None
     )
@@ -196,42 +251,49 @@ def _normalize_type_entreprise(val: str) -> str:
     return "Privé"
 
 
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 6 — UUID + RENOMMAGE COLONNES
-# ─────────────────────────────────────────────────────────────────
+def _build_stable_offre_id(row: pd.Series) -> str:
+    parts = [
+        str(row.get("source_row_number", "")),
+        _canonical_text(row.get("Source")),
+        _canonical_text(row.get("Lien / Référence")),
+        _canonical_text(row.get("Titre du Poste")),
+        _canonical_text(row.get("Employeur")),
+        _canonical_text(row.get("Ville / Région")),
+        _canonical_text(row.get("Secteur d'Activité")),
+        _canonical_text(row.get("Détails de l'Annonce"))[:500],
+    ]
+    return f"OFFRE_{int(row['source_row_number']):06d}_{_stable_hash(parts, size=12)}"
+
 
 def finalize_schema(df: pd.DataFrame) -> pd.DataFrame:
     """
-    Renomme les colonnes vers le schéma du projet, génère les UUIDs,
-    sélectionne et ordonne les colonnes finales.
+    Renomme les colonnes vers le schema du projet, genere des IDs stables,
+    selectionne et ordonne les colonnes finales.
     """
     df = df.copy()
+    df["offre_id"] = df.apply(_build_stable_offre_id, axis=1)
 
-    # UUID stable
-    df["offre_id"] = [generate_uuid() for _ in range(len(df))]
-
-    # Renommage colonnes brutes → schéma normalisé
     rename_map = {
-        "Source":               "source",
-        "Lien / Référence":     "lien_reference",
-        "Titre du Poste":       "titre_poste",
-        "Employeur":            "employeur",
-        "Pays":                 "pays",
-        "Groupe de Contrat":    "groupe_contrat_raw",
-        "Type de Contrat":      "type_contrat_raw",
-        "Niveau d'Expérience":  "niveau_experience_raw",
-        "Niveau d'Études":      "niveau_etudes_raw",
+        "Source": "source",
+        "Lien / Référence": "lien_reference",
+        "Titre du Poste": "titre_poste",
+        "Employeur": "employeur",
+        "Pays": "pays",
+        "Groupe de Contrat": "groupe_contrat_raw",
+        "Type de Contrat": "type_contrat_raw",
+        "Niveau d'Expérience": "niveau_experience_raw",
+        "Niveau d'Études": "niveau_etudes_raw",
         "Compétences / Skills": "skills_raw",
         "Détails de l'Annonce": "details_raw",
-        "Type d'Entreprise":    "type_entreprise_raw",
-        "Secteur d'Activité":   "secteur_activite_raw",
-        "Ville / Région":       "ville_region_raw",
+        "Type d'Entreprise": "type_entreprise_raw",
+        "Secteur d'Activité": "secteur_activite_raw",
+        "Ville / Région": "ville_region_raw",
     }
     df = df.rename(columns={k: v for k, v in rename_map.items() if k in df.columns})
 
-    # Colonnes finales ordonnées
     cols = [
         "offre_id",
+        "source_row_number",
         "source",
         "titre_poste",
         "employeur",
@@ -258,29 +320,25 @@ def finalize_schema(df: pd.DataFrame) -> pd.DataFrame:
         "secteur_activite_raw",
         "ville_region_raw",
         "type_entreprise_raw",
+        "duplicate_candidate_key",
+        "duplicate_candidate_count",
+        "duplicate_candidate_rank",
+        "is_duplicate_candidate",
+        "etl_completeness_score",
     ]
-    # Ne garder que les colonnes qui existent
     cols = [c for c in cols if c in df.columns]
     return df[cols]
 
 
-# ─────────────────────────────────────────────────────────────────
-# ÉTAPE 7 — TEXT_TO_EMBED (côté corpus ST fine-tuning)
-# ─────────────────────────────────────────────────────────────────
-
 def build_text_to_embed_offre(row: pd.Series) -> str:
     """
-    Construit le texte côté corpus pour le fine-tuning du SentenceTransformer.
-    Ce texte encode la sémantique complète de l'offre (description + compétences).
-    C'est la sentence2 des paires (metadata → description).
+    Construit le texte corpus pour le fine-tuning du SentenceTransformer.
     """
     parts = []
 
-    # Compétences listent ce que demande l'offre
     if isinstance(row.get("skills_list"), list) and row["skills_list"]:
         parts.append("Compétences requises : " + ", ".join(row["skills_list"]))
 
-    # Détails de l'annonce (texte nettoyé)
     if row.get("details_clean"):
         parts.append(row["details_clean"][:FT_MAX_DESC_CHARS])
 
@@ -289,9 +347,7 @@ def build_text_to_embed_offre(row: pd.Series) -> str:
 
 def build_metadata_str_offre(row: pd.Series) -> str:
     """
-    Construit le texte côté requête (metadata structurées).
-    C'est la sentence1 des paires (metadata → description).
-    Aligne le format sur ce que fournirait un profil candidat.
+    Construit le texte requete a partir des metadonnees structurees.
     """
     parts = []
     if pd.notna(row.get("titre_poste")):
@@ -311,60 +367,75 @@ def build_metadata_str_offre(row: pd.Series) -> str:
 
 def add_embed_texts(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
-    df["text_to_embed"]   = df.apply(build_text_to_embed_offre, axis=1)
-    df["metadata_str"]    = df.apply(build_metadata_str_offre,  axis=1)
-    # Filtre : ne garder pour le FT que les paires où les deux côtés sont non vides
+    df["text_to_embed"] = df.apply(build_text_to_embed_offre, axis=1)
+    df["metadata_str"] = df.apply(build_metadata_str_offre, axis=1)
     df["ft_eligible"] = (
-        (df["text_to_embed"].str.len() > 50) &
-        (df["metadata_str"].str.len() > 20)
+        (df["text_to_embed"].str.len() > 50)
+        & (df["metadata_str"].str.len() > 20)
     )
-    log.info(f"  Paires FT éligibles: {df['ft_eligible'].sum()} / {len(df)}")
+    log.info(f"  Paires FT eligibles: {df['ft_eligible'].sum()} / {len(df)}")
     return df
 
 
-# ─────────────────────────────────────────────────────────────────
-# PIPELINE PRINCIPAL
-# ─────────────────────────────────────────────────────────────────
+def save_duplicate_audit(df: pd.DataFrame) -> None:
+    audit_path = DATA_PROC / "rapport_audit_doublons_offres.csv"
+    audit_cols = [
+        "duplicate_candidate_key",
+        "duplicate_candidate_count",
+        "duplicate_candidate_rank",
+        "source_row_number",
+        "offre_id",
+        "titre_poste",
+        "employeur",
+        "ville_region_raw",
+        "secteur_activite_raw",
+        "etl_completeness_score",
+    ]
+    audit = df.loc[df["is_duplicate_candidate"], [c for c in audit_cols if c in df.columns]]
+    audit.to_csv(audit_path, index=False)
+    log.info(f"Rapport audit doublons sauvegarde -> {audit_path} ({len(audit)} lignes)")
+
 
 def run(save=True) -> pd.DataFrame:
     log.info("=" * 60)
-    log.info("PIPELINE ETL — OFFRES D'EMPLOI")
+    log.info("PIPELINE ETL - OFFRES D'EMPLOI")
     log.info("=" * 60)
 
     df = load_raw()
-    rapport_initial = profil_qualite(df, "offres_raw")
+    profil_qualite(df, "offres_raw")
 
     df = clean_base(df)
-    log.info(f"[1/7] Nettoyage de base terminé")
+    log.info("[1/8] Nettoyage de base termine")
 
-    df = deduplicate(df)
-    log.info(f"[2/7] Déduplication terminée")
+    df = audit_observations(df)
+    log.info("[2/8] Audit observations termine")
 
     df = clean_details(df)
-    log.info(f"[3/7] Nettoyage détails annonce terminé")
+    log.info("[3/8] Nettoyage details annonce termine")
 
     df = explode_multivalues(df)
-    log.info(f"[4/7] Explosion multi-valeurs terminée")
+    log.info("[4/8] Explosion multi-valeurs terminee")
 
     df = map_categorical(df)
-    log.info(f"[5/7] Mapping catégoriels terminé")
+    log.info("[5/8] Mapping categoriels termine")
 
     df = finalize_schema(df)
-    log.info(f"[6/7] Schéma finalisé")
+    log.info("[6/8] Schema finalise")
 
     df = add_embed_texts(df)
-    log.info(f"[7/7] Textes d'embedding construits")
+    log.info("[7/8] Textes d'embedding construits")
 
     if save:
         DATA_PROC.mkdir(parents=True, exist_ok=True)
         df.to_parquet(OFFRES_PROC, index=False)
-        log.info(f"Sauvegardé → {OFFRES_PROC}")
+        log.info(f"Sauvegarde -> {OFFRES_PROC}")
 
-        # Rapport qualité
         rapport_final = profil_qualite(df, "offres_processed")
         rapport_final.to_csv(DATA_PROC / "rapport_qualite_offres.csv", index=False)
+        save_duplicate_audit(df)
+        log.info("[8/8] Rapports qualite sauvegardes")
 
-    log.info(f"✓ Offres traitées : {len(df)} lignes")
+    log.info(f"OK - Offres traitees : {len(df)} lignes")
     return df
 
 
