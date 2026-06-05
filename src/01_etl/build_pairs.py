@@ -3,14 +3,15 @@ build_pairs.py - Construction des paires metadata -> description pour le
 fine-tuning SentenceTransformer.
 
 Logique :
-  - sentence1 = metadonnees structurees de l'offre cote requete ;
-  - sentence2 = competences + description nettoyee de l'offre cote corpus ;
-  - toutes les offres normalisees sont retenues pour les paires ;
+  - sentence1 = metadonnees structurees + competences de l'offre ;
+  - sentence2 = details nettoyes de l'offre uniquement ;
+  - seules les offres informatives sont retenues pour les paires ;
   - split stratifie par secteur_principal (70/15/15).
 """
 
 import json
 import sys
+from collections.abc import Iterable
 from pathlib import Path
 
 import numpy as np
@@ -20,6 +21,10 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from config import (
     DATA_FT,
+    FT_MAX_DESC_CHARS,
+    FT_MAX_META_CHARS,
+    FT_MIN_DETAILS_CHARS,
+    FT_MIN_META_SKILLS_CHARS,
     FT_RANDOM_SEED,
     FT_TRAIN_RATIO,
     FT_VAL_RATIO,
@@ -32,6 +37,45 @@ from config import (
 from utils import log
 
 
+def _safe_text(value) -> str:
+    if value is None or pd.isna(value):
+        return ""
+    return str(value).strip()
+
+
+def _skills_to_text(value) -> str:
+    if hasattr(value, "tolist"):
+        value = value.tolist()
+
+    if isinstance(value, Iterable) and not isinstance(value, str):
+        skills = [str(v).strip() for v in value if str(v).strip()]
+    elif isinstance(value, str):
+        skills = [v.strip() for v in value.split(",") if v.strip()]
+    else:
+        skills = []
+    return ", ".join(skills)
+
+
+def build_sentence1(row: pd.Series) -> str:
+    """Metadonnees structurees + competences, cote requete."""
+    parts = []
+
+    metadata = _safe_text(row.get("metadata_str"))
+    if metadata:
+        parts.append(metadata)
+
+    skills = _skills_to_text(row.get("skills_list"))
+    if skills:
+        parts.append("Competences: " + skills)
+
+    return " | ".join(parts).strip()[:FT_MAX_META_CHARS]
+
+
+def build_sentence2(row: pd.Series) -> str:
+    """Details nettoyes uniquement, cote corpus."""
+    return _safe_text(row.get("details_clean"))[:FT_MAX_DESC_CHARS]
+
+
 def load_offres_processed() -> pd.DataFrame:
     log.info(f"Chargement offres processed : {OFFRES_PROC}")
     df = pd.read_parquet(OFFRES_PROC)
@@ -42,13 +86,33 @@ def load_offres_processed() -> pd.DataFrame:
 def build_pairs(df: pd.DataFrame) -> pd.DataFrame:
     """
     Construit les paires a partir du DataFrame offres normalise.
-    Le filtre informatif sur les longueurs de texte est desactive.
+    Une paire est informative si la requete contient suffisamment de
+    metadonnees/competences et si les details de l'offre ne sont pas vides.
     """
-    df_ft = df[df["ft_eligible"] == True].copy()
-    log.info(f"  Paires retenues sans filtre informatif : {len(df_ft)}")
+    df_ft = df.copy()
 
-    df_ft["sentence1"] = df_ft["metadata_str"].fillna("")
-    df_ft["sentence2"] = df_ft["text_to_embed"].fillna("")
+    df_ft["sentence1"] = df_ft.apply(build_sentence1, axis=1)
+    df_ft["sentence2"] = df_ft.apply(build_sentence2, axis=1)
+    df_ft["has_skills_for_ft"] = df_ft["skills_list"].apply(
+        lambda value: bool(_skills_to_text(value))
+    )
+    df_ft["ft_eligible_pair"] = (
+        df_ft["has_skills_for_ft"]
+        & df_ft["sentence1"].str.len().ge(FT_MIN_META_SKILLS_CHARS)
+        & df_ft["sentence2"].str.len().ge(FT_MIN_DETAILS_CHARS)
+    )
+
+    if "ft_eligible" in df_ft.columns:
+        df_ft["ft_eligible_pair"] = df_ft["ft_eligible_pair"] & df_ft["ft_eligible"].fillna(False)
+
+    n_before = len(df_ft)
+    df_ft = df_ft[df_ft["ft_eligible_pair"]].copy()
+    log.info(
+        "  Paires informatives retenues : "
+        f"{len(df_ft)} / {n_before} "
+        f"(min sentence1={FT_MIN_META_SKILLS_CHARS} car., "
+        f"min sentence2={FT_MIN_DETAILS_CHARS} car.)"
+    )
 
     return df_ft[
         [
@@ -117,12 +181,12 @@ def save_metadata(train, val, test, df_all):
             "test": 1 - FT_TRAIN_RATIO - FT_VAL_RATIO,
         },
         "random_seed": FT_RANDOM_SEED,
-        "min_s1_len": None,
-        "min_s2_len": None,
-        "filtre_informatif": False,
+        "min_s2_len": FT_MIN_DETAILS_CHARS,
+        "min_s1_len": FT_MIN_META_SKILLS_CHARS,
+        "filtre_informatif": True,
         "format": "JSONL - InputExample sentence-transformers",
-        "sentence1_role": "metadata structurees cote requete",
-        "sentence2_role": "skills_raw + details_clean cote corpus",
+        "sentence1_role": "metadata structurees + competences cote requete",
+        "sentence2_role": "details_clean uniquement cote corpus",
         "modele_cible": "all-MiniLM-L6-v2",
         "perte": "MultipleNegativesRankingLoss",
         "distribution_secteurs": dist_secteurs,

@@ -1148,6 +1148,22 @@ La logique méthodologique retenue repose sur quatre principes. Le premier est l
 
 Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
 
+\begin{figure}[p]
+  \centering
+  \includegraphics[height=0.88\textheight]{figures/myWorkflow.png}
+  \caption{Architecture méthodologique du workflow agentique de recommandation emploi-compétences}
+  \label{fig:architecture_methodologique_workflow_agentique}
+  \source{Auteur}
+\end{figure}
+
+La figure \ref{fig:architecture_methodologique_workflow_agentique} présente l'architecture générale retenue pour la solution. Elle doit être lue comme une carte méthodologique du système plutôt que comme un simple schéma technique. Le point d'entrée est la requête de l'utilisateur. Cette requête n'est pas transmise directement au modèle génératif ; elle est d'abord interprétée par une couche d'orchestration qui détermine le type de besoin exprimé. Cette étape est centrale, car une demande de recommandation candidat-offre, une question sur un référentiel, une interrogation relationnelle sur les compétences ou une question globale ne mobilisent pas les mêmes sources ni les mêmes traitements.
+
+Le workflow distingue ainsi plusieurs familles de traitements. La recommandation candidat s'appuie sur une combinaison de recherche vectorielle, de recherche textuelle et de signaux issus du graphe afin de produire un classement explicable. La recherche référentielle privilégie les fragments documentaires et les métadonnées associées, car l'enjeu est alors de retrouver une information sourcée. Les questions relationnelles exploitent davantage Neo4j, où les liens entre métiers, compétences, niveaux, secteurs et formations permettent de répondre à des questions que la similarité textuelle seule ne suffit pas à résoudre. Les questions globales mobilisent une synthèse plus large, fondée sur des résumés, des communautés ou des agrégations issues de plusieurs sources.
+
+L'intérêt méthodologique de cette architecture est donc l'hybridation contrôlée. PostgreSQL avec pgvector joue le rôle de mémoire sémantique pour retrouver des objets proches dans l'espace des embeddings. Neo4j joue le rôle de mémoire relationnelle pour vérifier, expliquer et pondérer les liens métier-compétence-formation. Les documents référentiels apportent une base de citation et de traçabilité. Le constructeur de contexte rassemble ensuite ces résultats dans un format exploitable par le \LLM{}, en évitant de lui confier seul la décision de pertinence. La génération intervient donc en aval, après récupération et structuration du contexte.
+
+Enfin, la partie inférieure du schéma rappelle que le système ne s'arrête pas à la production d'une réponse. Un module de critique évalue si la réponse est suffisamment pertinente, factuelle, complète et traçable. Si le contexte est insuffisant, la boucle peut relancer une recherche élargie avant de produire une réponse révisée. Ce choix méthodologique est important pour le mémoire : l'architecture ne cherche pas seulement à générer un texte convaincant, mais à produire une recommandation fondée sur des sources identifiables, des relations vérifiables et des critères métier explicites. Les sections suivantes détaillent chacune de ces briques : préparation des données, construction des embeddings, stockage vectoriel, graphe de connaissances, moteur hybride, orchestration agentique et protocole d'évaluation.
+
 \begin{table}[H]
   \centering
   \caption{Correspondance entre objectifs spécifiques et choix méthodologiques}

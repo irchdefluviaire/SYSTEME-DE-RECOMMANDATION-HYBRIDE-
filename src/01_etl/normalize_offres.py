@@ -28,6 +28,9 @@ from config import (
     DATA_PROC,
     EXPERIENCE_TO_INT,
     FT_MAX_DESC_CHARS,
+    FT_MAX_META_CHARS,
+    FT_MIN_DETAILS_CHARS,
+    FT_MIN_META_SKILLS_CHARS,
     GROUPE_CONTRAT_NORMALIZE,
     NIVEAU_ETUDES_OFFRES_TO_NCF,
     OFFRES_PROC,
@@ -347,6 +350,17 @@ def build_text_to_embed_offre(row: pd.Series) -> str:
     return " ".join(parts).strip()
 
 
+def build_pair_query_offre(row: pd.Series) -> str:
+    """Construit la future sentence1 : metadonnees + competences."""
+    parts = []
+    metadata = build_metadata_str_offre(row)
+    if metadata:
+        parts.append(metadata)
+    if isinstance(row.get("skills_list"), list) and row["skills_list"]:
+        parts.append("Competences: " + ", ".join(row["skills_list"]))
+    return " | ".join(parts).strip()[:FT_MAX_META_CHARS]
+
+
 def build_metadata_str_offre(row: pd.Series) -> str:
     """Construit le texte requete a partir des metadonnees structurees."""
     parts = []
@@ -369,11 +383,18 @@ def add_embed_texts(df: pd.DataFrame) -> pd.DataFrame:
     df = df.copy()
     df["text_to_embed"] = df.apply(build_text_to_embed_offre, axis=1)
     df["metadata_str"] = df.apply(build_metadata_str_offre, axis=1)
-    df["ft_eligible"] = True
+    df["pair_query_text"] = df.apply(build_pair_query_offre, axis=1)
+    df["pair_details_text"] = df["details_clean"].fillna("").str[:FT_MAX_DESC_CHARS]
+    df["ft_eligible"] = (
+        df["skills_list"].apply(lambda value: isinstance(value, list) and len(value) > 0)
+        & df["pair_query_text"].str.len().ge(FT_MIN_META_SKILLS_CHARS)
+        & df["pair_details_text"].str.len().ge(FT_MIN_DETAILS_CHARS)
+    )
     log.info(
         "  Paires FT eligibles: "
         f"{df['ft_eligible'].sum()} / {len(df)} "
-        "(filtre informatif desactive)"
+        f"(min metadata+competences={FT_MIN_META_SKILLS_CHARS}, "
+        f"min details={FT_MIN_DETAILS_CHARS})"
     )
     return df
 

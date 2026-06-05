@@ -197,3 +197,5 @@ FT_TEST_RATIO  = 0.15
 FT_RANDOM_SEED = 42
 FT_MAX_DESC_CHARS = 1500  # troncature description côté corpus
 FT_MAX_META_CHARS = 300   # troncature métadonnées côté requête
+FT_MIN_META_SKILLS_CHARS = 40
+FT_MIN_DETAILS_CHARS = 120
