@@ -1,0 +1,14 @@
+﻿source,champ,n_renseignes,total,taux_pct
+Offres,Intitulé,13957,13957,100.0
+Offres,Secteur,13957,13957,100.0
+Offres,Ville,13715,13957,98.27
+Offres,Niveau NCF,5529,13957,39.61
+Offres,Expérience min.,5212,13957,37.34
+Offres,Compétences,13957,13957,100.0
+Offres,Détails,13957,13957,100.0
+Offres,Texte embedding,13957,13957,100.0
+Candidats,Niveau NCF,41254,41298,99.89
+Candidats,Secteur visé,41298,41298,100.0
+Candidats,Métier visé,41298,41298,100.0
+Candidats,Objectif,41298,41298,100.0
+Candidats,Texte embedding,41298,41298,100.0

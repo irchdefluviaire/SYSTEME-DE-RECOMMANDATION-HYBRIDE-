@@ -1,302 +1,284 @@
 \chapter{Implémentation du système de recommandation}
-\vspace{-1.4cm}
-Ce chapitre présente la réalisation opérationnelle du système de recommandation hybride emploi-compétences. Il montre comment l'architecture méthodologique définie précédemment a été transformée en un dispositif fonctionnel capable de préparer les données, de représenter les profils et les offres, d'interroger une base vectorielle et un graphe de connaissances, puis de produire une réponse explicable à l'utilisateur.
+\vspace{-1.2cm}
 
-%L'objectif n'est pas de décrire ligne par ligne les composants techniques, mais d'expliquer la logique d'ensemble du système et les résultats descriptifs issus de son alimentation. Le chapitre met donc l'accent sur les briques fonctionnelles, les données réellement mobilisées, la structure des référentiels, les statistiques du corpus et la manière dont ces éléments soutiennent la recommandation. Les mesures de performance proprement dites sont réservées au chapitre d'évaluation.
+Ce chapitre ne reprend pas la méthodologie générale présentée précédemment. Il interprète les résultats effectivement obtenus après alimentation de la chaîne d'implémentation : données normalisées, paires de fine-tuning, embeddings indexés dans pgvector, graphe Neo4j reconstruit, documents référentiels ingérés et premiers résultats comparatifs des briques de recherche. L'objectif est de vérifier si chaque composant produit un actif exploitable pour le système de recommandation emploi-compétences.
 
-\section{Architecture générale et périmètre implémenté}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.98\textwidth]{figures/generated/implementation_results/00_dashboard_briques.png}
+  \caption{Synthèse opérationnelle des briques implémentées}
+  \label{fig:dashboard_briques_implementation}
+  \source{Calculs à partir des sorties d'implémentation, pgvector, Neo4j et benchmark embeddings}
+\end{figure}
 
-Le système implémenté repose sur une chaîne complète allant des données brutes à la réponse finale. Les données d'offres d'emploi, de candidats et de référentiels sont d'abord normalisées. Elles sont ensuite transformées en représentations textuelles exploitables par un modèle d'embeddings. Ces représentations sont stockées dans une base vectorielle afin de permettre la recherche sémantique. En parallèle, les entités métiers, compétences, formations, offres et candidats sont organisées dans un graphe de connaissances pour représenter les relations professionnelles utiles au raisonnement.
+La figure \ref{fig:dashboard_briques_implementation} donne une lecture consolidée de la chaîne. Le corpus normalisé atteint 13\,957 offres et 41\,298 profils candidats. La base vectorielle contient 72\,643 embeddings et le graphe Neo4j comporte 90\,230 nœuds reliés par 550\,542 relations. Ces volumes indiquent que le système n'est plus seulement un prototype logique : les principales briques sont effectivement alimentées. La prudence reste toutefois nécessaire, car un grand volume ne garantit pas la qualité du matching. C'est pourquoi les sous-sections suivantes interprètent séparément la couverture, la qualité et l'utilité de chaque brique.
 
-La recommandation finale résulte de la combinaison de ces deux mémoires du système : la base vectorielle identifie les proximités sémantiques entre profils et offres, tandis que le graphe vérifie les relations métier, les compétences, les niveaux de formation et les rattachements sectoriels. L'orchestration agentique permet ensuite de choisir dynamiquement les sources à interroger selon la question posée.
+\section{Résultats d'alimentation et qualité du corpus}
+
+\subsection{Vue d'ensemble des données normalisées}
+
+Après les dernières mises à jour de données, le périmètre exploitable du système a fortement augmenté. Les offres et les candidats constituent les deux blocs opérationnels du matching, tandis que les référentiels MEPC et NCF fournissent l'ancrage institutionnel nécessaire à l'interprétation des métiers et des niveaux de formation.
 
 \begin{table}[H]
   \centering
-  \caption{Briques fonctionnelles du système implémenté}
-  \label{tab:briques_fonctionnelles_implementation}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{4.2cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Brique} & \tabheader{Fonction dans le système} \\
-    \midrule
-    Préparation des données & Nettoyer, harmoniser et structurer les offres, candidats et référentiels. \\
-    Représentation sémantique & Transformer les textes métiers en vecteurs comparables. \\
-    Base vectorielle & Retrouver les offres, métiers, compétences et documents proches d'une requête. \\
-    Graphe de connaissances & Représenter les relations entre candidats, offres, compétences, métiers, secteurs et niveaux de formation. \\
-    Moteur hybride & Combiner proximité sémantique, signaux graphe, niveau de formation et alignement sectoriel. \\
-    Orchestration agentique & Router chaque question vers les outils nécessaires et construire le contexte de réponse. \\
-    Interface utilisateur & Donner accès au système par chatbot, API ou interface de test. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Auteur}
-\end{table}
-
-Cette architecture traduit une décision importante : le système ne repose pas sur un \LLM{} utilisé comme source de vérité. Le modèle génératif intervient en sortie pour formuler une réponse structurée, mais les faits utilisés proviennent des données normalisées, de la base vectorielle et du graphe.
-
-\section{Données exploitées et diagnostic descriptif du corpus}
-
-\subsection{Description statistique du corpus exploité}
-
-Avant de présenter les différentes briques, il est nécessaire de caractériser le corpus sur lequel elles reposent. Le système est alimenté par des offres d'emploi, des profils candidats et des référentiels métiers et formations. Le tableau \ref{tab:vue_ensemble_corpus_implementation} présente les volumes exploités après normalisation.
-
-\begin{table}[H]
-  \centering
-  \caption{Vue d'ensemble des données normalisées}
+  \caption{Vue d'ensemble des données normalisées exploitées}
   \label{tab:vue_ensemble_corpus_implementation}
   \tableStyleStart
-  \begin{tabularx}{0.86\textwidth}{Xrr}
+  \begin{tabularx}{0.88\textwidth}{Xrr}
     \rowcolor{darkblue}
-    \tabheader{Bloc de données} & \tabheader{Nombre de lignes} & \tabheader{Nombre de colonnes} \\
+    \tabheader{Bloc de données} & \tabheader{Lignes} & \tabheader{Colonnes} \\
     \midrule
-    Offres d'emploi normalisées & 7\,861 & 30 \\
-    Profils candidats normalisés & 1\,105 & 20 \\
+    Offres d'emploi normalisées & 13\,957 & 38 \\
+    Profils candidats normalisés & 41\,298 & 25 \\
     Groupes de base MEPC & 209 & 7 \\
     Domaines détaillés NCF & 201 & 6 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Analyse descriptive des données normalisées}
+  \source{Sortie \texttt{outputs/memoire\_stats/implementation\_results/01\_vue\_ensemble.csv}}
 \end{table}
 
-Ces volumes montrent que le système n'est pas construit sur un exemple isolé, mais sur un corpus réel comportant plusieurs milliers d'offres et plus d'un millier de profils. Les référentiels MEPC et NCF apportent la couche institutionnelle nécessaire pour éviter une simple comparaison de mots-clés.
+Le déséquilibre numérique entre candidats et offres est un fait structurant : il y a près de trois profils candidats pour une offre. Une recommandation naïve, limitée à un filtrage textuel, tendrait donc à concentrer de nombreux candidats sur les mêmes opportunités visibles. L'intérêt du système hybride est précisément de différencier les profils par les compétences, le niveau, le secteur et les trajectoires possibles, au lieu de produire uniquement une liste d'offres lexicalement proches.
 
-\subsection{Qualité et disponibilité des informations utiles}
+\subsection{Sources des offres et nettoyage de casse}
 
-La qualité d'un système de recommandation dépend fortement de la disponibilité des champs utilisés pour le matching. Dans ce projet, les champs les plus importants sont le secteur, la localisation, le niveau de formation, l'expérience, les compétences et le texte utilisé pour les embeddings.
+Le fichier d'offres utilisé dans cette version est \texttt{data/raw/vrai\_data.xlsx}, feuille \texttt{Offres\_FNE}. Le nettoyage appliqué neutralise les différences de casse, les espaces parasites et les variantes simples de libellés. Cette étape est indispensable : sans elle, une même source ou une même compétence peut être comptée plusieurs fois uniquement parce qu'elle apparaît en majuscules, minuscules ou avec une variante typographique.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep/02_qualite_champs_cles.png}
-  \caption{Disponibilité des champs clés pour le matching}
-  \label{fig:qualite_champs_cles_implementation}
-  \source{Analyse descriptive des données normalisées}
+  \includegraphics[width=0.84\textwidth]{figures/generated/vrai_data_offres/01_offres_par_source.png}
+  \caption{Répartition des offres par source après nettoyage}
+  \label{fig:vrai_data_sources_offres}
+  \source{Nettoyage de \texttt{data/raw/vrai\_data.xlsx}}
 \end{figure}
 
-La figure \ref{fig:qualite_champs_cles_implementation} montre que certains champs sont bien renseignés, notamment les textes utilisés pour l'encodage et plusieurs informations structurantes. En revanche, les variables plus spécifiques, comme certaines informations de localisation, d'expérience ou de compétences détaillées, peuvent être moins complètes. Cette situation a deux conséquences. Premièrement, le système doit être capable de fonctionner avec des informations partielles. Deuxièmement, le score hybride doit rester prudent : l'absence d'une information ne doit pas être interprétée automatiquement comme une incompatibilité réelle.
+La figure \ref{fig:vrai_data_sources_offres} montre que les offres proviennent de six sources. Louma-Jobs concentre 6\,021 offres, soit 43,14\,\% du fichier. Elle est suivie par le FNE avec 2\,494 offres, ACPE avec 2\,388 offres, Jobartis Cameroun avec 2\,350 offres, LinkedIn avec 380 offres et Emploi.cm avec 324 offres. Cette structure n'est pas neutre : les sources dominantes influencent les secteurs, les villes et la qualité des descriptions disponibles. Le système doit donc être interprété comme une représentation du marché observé par ces sources, et non comme l'ensemble exhaustif du marché de l'emploi.
 
-La disponibilité du champ textuel utilisé pour l'encodage est particulièrement importante. Il constitue le pont entre les données structurées et la recherche vectorielle. Lorsqu'il est suffisamment riche, le modèle d'embeddings peut comparer les profils et les offres sur la base d'un contenu plus large que le seul intitulé de poste.
-
-\subsection{Structure sectorielle des offres}
-
-La distribution des offres par secteur permet de comprendre la composition du marché observé dans le corpus. Elle influence directement les recommandations, car les secteurs fortement représentés disposent de davantage d'exemples et de signaux textuels.
+\subsection{Disponibilité des variables utiles au matching}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_deep/03_offres_par_secteur.png}
-  \caption{Principaux secteurs représentés dans les offres}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_results/02_qualite_champs.png}
+  \caption{Taux de renseignement des champs mobilisés par les briques du système}
+  \label{fig:qualite_champs_implementation}
+  \source{Analyse des fichiers normalisés offres et candidats}
+\end{figure}
+
+La figure \ref{fig:qualite_champs_implementation} montre une bonne couverture des textes d'encodage : les offres et les candidats disposent tous d'un champ \texttt{text\_to\_embed}. C'est un point favorable pour pgvector, car la recherche sémantique peut être appliquée à l'ensemble du corpus. En revanche, deux signaux structurés restent nettement moins couverts côté offres : le niveau NCF n'est renseigné que pour 39,61\,\% des offres et l'expérience minimale pour 37,34\,\%. Cette limite doit être prise au sérieux. Le score hybride ne peut pas traiter l'absence d'un niveau ou d'une expérience comme une preuve de compatibilité ; il doit plutôt la considérer comme une incertitude.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.86\textwidth]{figures/generated/vrai_data_offres/04_description_par_source.png}
+  \caption{Disponibilité des descriptions d'offres selon la source}
+  \label{fig:vrai_data_descriptions_source}
+  \source{Nettoyage de \texttt{data/raw/vrai\_data.xlsx}}
+\end{figure}
+
+La figure \ref{fig:vrai_data_descriptions_source} nuance la qualité textuelle des offres. Au total, 8\,197 offres disposent d'une description suffisamment renseignée. Les sources FNE, ACPE, LinkedIn et Emploi.cm sont complètement renseignées sur ce critère dans le fichier nettoyé, tandis que Jobartis Cameroun atteint 98,55\,\%. La limite principale vient de Louma-Jobs : seulement 295 descriptions disponibles sur 6\,021 offres, soit 4,90\,\%. Ce résultat explique pourquoi les compétences et les métadonnées doivent compléter le champ descriptif dans l'encodage.
+
+\subsection{Structure sectorielle et géographique des offres}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_results/03_offres_par_secteur.png}
+  \caption{Secteurs les plus représentés dans les offres}
   \label{fig:offres_par_secteur_implementation}
-  \source{Analyse descriptive des offres normalisées}
+  \source{Analyse des offres normalisées}
 \end{figure}
 
-Le secteur le plus représenté est la distribution, avec 546 offres, soit environ 6,95\,\% du corpus. Cette dominance relative n'est pas écrasante : le corpus reste distribué sur plusieurs familles d'activités. Cette diversité est favorable à un système d'orientation, car elle permet de traiter plusieurs trajectoires professionnelles. Elle introduit toutefois une contrainte : les secteurs peu représentés disposent de moins d'observations, ce qui peut réduire la stabilité des recommandations pour ces domaines.
-
-\subsection{Répartition géographique des opportunités}
-
-La localisation des offres est un autre facteur essentiel, car une recommandation pertinente sur le plan sémantique peut être peu utile si elle n'est pas compatible avec la mobilité du candidat. La figure \ref{fig:offres_par_ville_implementation} présente la répartition des offres selon la ville principale.
+Le premier poste sectoriel est la catégorie \og Autre \fg{} avec 1\,548 offres, soit 11,09\,\% du corpus. Ce résultat est moins une force qu'un signal d'alerte : une catégorie résiduelle élevée indique que la normalisation sectorielle reste perfectible. Les secteurs explicitement interprétables qui suivent sont l'administration, les services, le commerce, la finance, la distribution et l'informatique. Pour le moteur de recommandation, cela signifie que le secteur est utile, mais qu'il ne doit pas être le seul filtre de décision. Dans les cas classés \og Autre \fg{}, les embeddings, les compétences et le graphe doivent prendre davantage de poids.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_deep/04_offres_par_ville.png}
-  \caption{Localisation principale des offres}
+  \includegraphics[width=0.9\textwidth]{figures/generated/vrai_data_offres/02_localisation_villes.png}
+  \caption{Localisation nettoyée des offres : Cameroun, international et villes non précisées}
   \label{fig:offres_par_ville_implementation}
-  \source{Analyse descriptive des offres normalisées}
+  \source{Nettoyage de \texttt{data/raw/vrai\_data.xlsx}}
 \end{figure}
 
-Yaoundé concentre 4\,049 offres, soit environ 51,51\,\% du corpus. Cette concentration géographique est un résultat important pour l'interprétation des recommandations. Le système risque naturellement de proposer davantage d'offres localisées dans les zones les plus représentées. Pour un usage opérationnel, il est donc nécessaire de tenir compte de la mobilité déclarée par le candidat, afin d'éviter qu'un bon score sémantique conduise à une recommandation peu réaliste géographiquement.
+La localisation nettoyée distingue trois cas : les offres situées au Cameroun, les offres internationales et les localisations non précisées. Le Cameroun regroupe 8\,926 offres, soit 63,95\,\% du fichier ; l'international représente 2\,732 offres, soit 19,57\,\% ; les localisations non précisées représentent 2\,299 offres, soit 16,47\,\%. Au niveau des villes, Yaoundé domine avec 4\,467 offres, soit 32,01\,\% du fichier. Les principales villes internationales observées sont Pointe-Noire et Brazzaville, rattachées au Congo. Ce nettoyage est nécessaire pour éviter de mélanger une ville camerounaise, une ville étrangère et une absence de localisation dans une même catégorie.
 
-\subsection{Niveaux de formation et expérience demandés}
-
-La compatibilité entre le niveau de formation d'un candidat et les exigences d'une offre constitue l'un des apports du système hybride. La base vectorielle peut rapprocher deux textes, mais elle ne contrôle pas toujours explicitement l'écart de niveau. C'est pourquoi le niveau NCF et l'expérience minimale sont intégrés comme signaux complémentaires.
+\subsection{Niveaux, expérience et structure des candidats}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep/05_ncf_et_experience_offres.png}
-  \caption{Niveaux NCF et expérience minimale demandés dans les offres}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_results/05_ncf_et_experience_offres.png}
+  \caption{Niveaux NCF et expérience minimale dans les offres}
   \label{fig:ncf_experience_offres_implementation}
-  \source{Analyse descriptive des offres normalisées}
+  \source{Analyse des offres normalisées}
 \end{figure}
 
-La figure \ref{fig:ncf_experience_offres_implementation} montre que les offres ne se limitent pas à un seul niveau de qualification. Cette hétérogénéité justifie l'utilisation de la NCF dans le système : deux offres proches textuellement peuvent correspondre à des niveaux de formation très différents. L'expérience minimale complète cette information en donnant un signal d'accessibilité. Une offre peut être compatible par son secteur et ses compétences, mais demander un niveau d'expérience qui la rend difficilement accessible immédiatement.
-
-\subsection{Structure des profils candidats}
-
-Le système doit également tenir compte de la structure du vivier de candidats. Les profils ne sont pas homogènes : ils diffèrent par leur niveau de formation, leur secteur visé, leur spécialité et leur objectif professionnel.
+La figure \ref{fig:ncf_experience_offres_implementation} confirme que l'accessibilité d'une offre ne peut pas être déduite du seul intitulé. Deux offres proches sémantiquement peuvent demander des niveaux de formation ou d'expérience différents. La faible couverture de ces deux champs côté offres réduit cependant la capacité à pénaliser rigoureusement les écarts. Le graphe doit donc être utilisé comme une couche d'explication lorsque les informations existent, et non comme un arbitre absolu lorsque les champs sont absents.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep/06_structure_candidats.png}
-  \caption{Structure des candidats selon le niveau NCF et le secteur visé}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_results/06_structure_candidats.png}
+  \caption{Structure des profils candidats selon le niveau, le secteur et l'âge}
   \label{fig:structure_candidats_implementation}
-  \source{Analyse descriptive des profils candidats normalisés}
+  \source{Analyse des profils candidats normalisés}
 \end{figure}
 
-Cette analyse permet de rapprocher la structure de l'offre et celle de la demande. Si les candidats se concentrent dans certains secteurs alors que les offres se concentrent ailleurs, le système doit être capable de détecter les passerelles possibles : métiers voisins, compétences transférables et formations de rattrapage. C'est précisément le rôle du graphe et du module de \textit{skill gap}.
+La couverture des profils candidats est meilleure : le niveau NCF est renseigné pour 99,89\,\% des profils, et les secteurs, métiers visés, objectifs et textes d'embedding sont renseignés pour la totalité du fichier. Cette asymétrie est importante. Le système connaît mieux les candidats que certaines exigences des offres. Dans la recommandation, cela favorise une stratégie où le profil candidat sert de point d'ancrage stable, tandis que les offres sont interprétées par combinaison de texte, secteur, compétences et référentiels.
 
-\subsection{Compétences fréquentes dans les offres}
-
-Les compétences déclarées dans les offres fournissent un signal central pour le matching. Elles servent à la fois à enrichir le texte encodé, à alimenter le graphe et à expliquer les écarts entre un profil et une offre.
+\subsection{Compétences et richesse textuelle}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_deep/07_top_competences_offres.png}
-  \caption{Compétences et familles de compétences les plus fréquentes dans les offres}
+  \includegraphics[width=0.9\textwidth]{figures/generated/vrai_data_offres/03_competences.png}
+  \caption{Compétences et signaux métiers fréquents après nettoyage}
   \label{fig:top_competences_offres_implementation}
-  \source{Analyse descriptive des compétences déclarées dans les offres}
+  \source{Nettoyage de \texttt{data/raw/vrai\_data.xlsx}}
 \end{figure}
 
-La figure \ref{fig:top_competences_offres_implementation} montre que les premiers signaux de compétences recouvrent aussi des familles sectorielles ou fonctionnelles, comme la distribution, la finance, le commerce, l'administration, l'informatique, la comptabilité et le marketing. Ce résultat doit être interprété avec prudence : il indique que les données d'offres mélangent parfois compétences, secteurs et domaines professionnels. L'implémentation doit donc distinguer progressivement les compétences techniques, les familles de métiers et les secteurs, afin d'améliorer la précision du \textit{skill gap}.
-
-\subsection{Richesse textuelle des représentations utilisées}
-
-La recherche vectorielle dépend de la qualité des textes envoyés au modèle d'embeddings. Un texte trop court peut réduire le matching à un intitulé de poste. Un texte plus riche permet d'intégrer le secteur, les compétences, le niveau, l'expérience et la description.
+Les signaux les plus fréquents restent en partie hybrides : finance, commerce, vente, marketing, informatique, distribution, commerce de gros, commerce de détail, administration, banque, assurance, communication et comptabilité. Le nettoyage de casse évite de compter séparément \og FINANCE \fg{}, \og finance \fg{} ou \og Finance \fg{}. Malgré cela, le résultat confirme que la variable de compétences mélange encore compétences, domaines, secteurs et familles de métiers. C'est exploitable pour enrichir la recherche, mais insuffisant pour conclure directement à un \textit{skill gap} fin. Une amélioration future devra distinguer les compétences opérationnelles, les secteurs et les libellés de domaines.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_deep/08_longueur_text_to_embed.png}
-  \caption{Longueur des textes utilisés pour les embeddings}
+  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_results/08_longueur_text_to_embed.png}
+  \caption{Richesse textuelle transmise au modèle d'embeddings}
   \label{fig:longueur_text_to_embed_implementation}
-  \source{Analyse descriptive des textes d'encodage}
+  \source{Analyse des champs \texttt{text\_to\_embed}}
 \end{figure}
 
-La figure \ref{fig:longueur_text_to_embed_implementation} compare la longueur des textes côté offres et côté candidats. Les offres disposent généralement d'un contenu plus riche, car elles incluent souvent un intitulé, un secteur, des compétences et une description. Les profils candidats peuvent être plus courts, notamment lorsque l'objectif professionnel ou les informations de spécialité sont peu détaillés. Ce déséquilibre justifie l'usage d'un moteur hybride : lorsque le texte candidat est limité, les référentiels et le graphe peuvent apporter des signaux complémentaires.
+La distribution des longueurs confirme que l'encodage ne repose pas uniquement sur des titres courts. Les textes d'offres agrègent titre, secteur, compétences et détails, tandis que les textes candidats synthétisent niveau, métier visé, secteur et objectif. Cette construction explique pourquoi le modèle fine-tuné peut apprendre une proximité métier plus riche qu'une similarité de mots-clés.
 
-\subsection{Équilibre macro entre offres et profils}
+\section{Résultats des représentations et de l'indexation}
 
-L'analyse sectorielle conjointe des offres et des candidats permet d'observer les déséquilibres entre opportunités disponibles et profils en recherche. Cette lecture ne remplace pas le matching individuel, mais elle donne un contexte important pour interpréter les recommandations.
+\subsection{Paires de fine-tuning et modèle d'embeddings}
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep/09_equilibre_offres_candidats_secteurs.png}
-  \caption{Comparaison macro entre secteurs des offres et secteurs visés par les candidats}
-  \label{fig:equilibre_offres_candidats_implementation}
-  \source{Analyse croisée offres--candidats}
-\end{figure}
-
-La figure \ref{fig:equilibre_offres_candidats_implementation} montre que certains secteurs sont davantage représentés côté offres, tandis que d'autres apparaissent plus fortement côté candidats. Ce déséquilibre est une justification opérationnelle du système de recommandation : il ne s'agit pas seulement d'apparier un candidat à son secteur déclaré, mais aussi d'identifier des opportunités voisines ou des trajectoires de montée en compétences lorsqu'un secteur souhaité offre peu d'opportunités.
-
-\subsection{Intégration des référentiels métiers et formations}
-
-Le système s'appuie sur deux référentiels institutionnels essentiels : la nomenclature des métiers et la nomenclature des formations. Leur rôle est de donner une structure interprétable aux données d'emploi et de formation. Les groupes de base MEPC représentent l'ancrage métier, tandis que les domaines détaillés NCF représentent l'ancrage formation.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep/10_referentiels_mepc_ncf.png}
-  \caption{Couverture des référentiels MEPC et NCF intégrés}
-  \label{fig:referentiels_mepc_ncf_implementation}
-  \source{Analyse descriptive des référentiels intégrés}
-\end{figure}
-
-Le système intègre 209 groupes de base MEPC et 201 domaines détaillés NCF. Cette couverture référentielle permet d'éviter que les recommandations soient uniquement dictées par les formulations présentes dans les offres. Elle donne au système une capacité d'interprétation : un métier, une compétence ou une formation peut être replacé dans une famille plus large, ce qui facilite l'orientation et la construction de trajectoires.
-
-\section{Implémentation des briques de recherche et de recommandation}
-
-\subsection{Indexation vectorielle dans pgvector}
-
-La base vectorielle constitue la mémoire sémantique du système. Elle permet de retrouver rapidement les entités proches d'une requête, même lorsque les formulations ne sont pas identiques. Cette capacité est essentielle dans le domaine emploi-compétences, où un même besoin peut être exprimé par plusieurs libellés : \og analyse de données \fg{}, \og data analytics \fg{}, \og reporting \fg{} ou \og exploitation statistique \fg{}.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_deep/11_pgvector_counts.png}
-  \caption{Entités indexées dans la base vectorielle}
-  \label{fig:pgvector_counts_implementation}
-  \source{Diagnostic de la base vectorielle}
-\end{figure}
-
-La base pgvector contient 34\,215 embeddings. Ces vecteurs couvrent plusieurs types d'entités : offres, candidats, métiers, compétences, domaines NCF et groupes MEPC. Cette diversité est importante, car le même moteur de recherche peut être utilisé pour recommander des offres, retrouver des compétences, orienter vers des métiers ou rechercher dans les référentiels.
-
-\subsection{Construction du graphe de connaissances Neo4j}
-
-Le graphe de connaissances constitue la mémoire relationnelle du système. Contrairement à pgvector, qui mesure une proximité dans un espace sémantique, Neo4j représente explicitement les relations : une offre appartient à un secteur, requiert un niveau, mobilise des compétences ; un candidat vise un métier, possède une formation, dispose d'un niveau et peut être rapproché de certaines compétences.
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_deep/11_neo4j_node_counts.png}
-  \caption{Répartition des nœuds Neo4j par label}
-  \label{fig:neo4j_node_counts_implementation}
-  \source{Diagnostic du graphe de connaissances}
-\end{figure}
-
-L'instance locale du graphe contient 43\,008 nœuds. Ce volume montre que le graphe est effectivement alimenté. Il ne doit toutefois pas être confondu avec une mesure de qualité : un graphe volumineux peut rester peu utile si ses relations sont incomplètes ou mal typées. Dans ce projet, le graphe est surtout utilisé pour enrichir les résultats vectoriels, calculer des signaux de compatibilité et appuyer les réponses relationnelles.
-
-Le comptage global des relations n'est pas retenu dans ce chapitre, car l'instance locale a retourné une erreur interne lors de certaines requêtes de comptage. Cette limite est signalée explicitement afin d'éviter d'annoncer un chiffre non stabilisé. Elle confirme aussi qu'un système GraphRAG dépend de la qualité logique et technique de son graphe.
-
-\subsection{Moteur hybride de recommandation}
-
-Le moteur de recommandation combine les résultats de pgvector et les informations du graphe. La recherche vectorielle agit comme un premier filtre : elle identifie un ensemble d'offres proches du profil candidat. Le graphe intervient ensuite pour enrichir ces offres par des informations métier : niveau de formation, secteur, compétences acquises, compétences manquantes et cohérence du parcours.
-
-Le score final n'est donc pas une simple similarité textuelle. Il combine quatre dimensions :
-
-\begin{itemize}
-    \item la proximité sémantique entre le profil et l'offre ;
-    \item la couverture des compétences requises ;
-    \item la compatibilité du niveau de formation ;
-    \item l'alignement sectoriel ou métier.
-\end{itemize}
-
-Cette combinaison permet de produire une recommandation plus interprétable. Une offre proche textuellement peut être rétrogradée si le niveau requis est trop éloigné ou si plusieurs compétences essentielles manquent. À l'inverse, une offre moins proche lexicalement peut être retenue si elle correspond mieux au parcours, au secteur ou aux compétences du candidat.
-
-\subsection{Analyse du \textit{skill gap} et montée en compétences}
-
-L'analyse du \textit{skill gap} constitue l'une des sorties importantes du système. Elle consiste à comparer les compétences exigées par une offre aux compétences observées ou déduites pour un candidat. Le résultat n'est pas seulement un score ; il devient une explication opérationnelle.
-
-Trois situations peuvent être distinguées :
-
-\begin{itemize}
-    \item \textbf{profil prêt à postuler} : les compétences et le niveau sont globalement compatibles ;
-    \item \textbf{profil à accompagner} : l'offre est pertinente, mais certaines compétences doivent être renforcées ;
-    \item \textbf{profil à développer en vivier} : le profil est intéressant, mais l'écart actuel reste trop important pour une candidature immédiate.
-\end{itemize}
-
-Cette logique transforme le système en outil d'orientation. Il ne répond pas seulement à la question \og quelle offre recommander ? \fg{} ; il répond aussi à la question \og que manque-t-il pour rendre cette candidature plus crédible ? \fg{}.
-
-\section{Orchestration, interfaces et validation d'intégration}
-
-\subsection{Orchestration agentique et génération contrôlée}
-
-L'orchestration agentique permet au système de choisir les sources à interroger selon la demande de l'utilisateur. Une question sur un candidat active le moteur de recommandation. Une question sur une relation métier-compétence mobilise le graphe. Une question documentaire active la recherche dans les fragments référentiels. Une question générale peut mobiliser à la fois la base vectorielle et Neo4j.
-
-La réponse finale est générée par un modèle de langage configuré via OpenRouter. Le modèle utilisé est celui déclaré dans l'environnement du système : \filevar{openai/gpt-oss-20b:free}. Son rôle est de formuler la réponse en français, d'organiser les informations et de citer les éléments du contexte. Il ne remplace pas les bases de données : il reçoit un contexte déjà construit à partir des résultats de recherche.
-
-Le système intègre également un mécanisme de critique de réponse. Si la réponse semble insuffisamment fondée sur le contexte, l'agent peut élargir la recherche et reconstruire une réponse. Cette boucle limite le risque de réponse plausible mais non soutenue par les données.
-
-\subsection{Interfaces d'utilisation}
-
-Le système est accessible par plusieurs interfaces. L'interface conversationnelle permet à un utilisateur de poser une question en langage naturel et d'obtenir une réponse structurée. Elle peut afficher les traces du workflow afin de montrer quelles briques ont été mobilisées. L'API permet une intégration dans une application externe ou un site web. Une interface de test permet enfin de vérifier rapidement le comportement du moteur avec des requêtes contrôlées.
-
-Ces interfaces reposent sur le même moteur. Elles ne changent pas la logique de recommandation ; elles modifient seulement le mode d'accès. Cette séparation est importante pour la maintenance : le système peut être démontré localement, testé techniquement ou intégré à une plateforme sans réécrire le moteur.
-
-\subsection{Diagnostic d'intégration}
-
-Un diagnostic local permet de vérifier que les principales briques sont raccordées. Les résultats disponibles indiquent que la base vectorielle contient 34\,215 embeddings et que le graphe contient 43\,008 nœuds. Le modèle d'embeddings est configuré et le backend génératif OpenRouter utilise le modèle \filevar{openai/gpt-oss-20b:free}.
+La reconstruction des paires a produit 6\,476 offres éligibles au fine-tuning. Dans cette version, la première phrase correspond aux métadonnées et aux compétences, tandis que la seconde phrase correspond aux détails de l'offre. Cette séparation est cohérente avec l'objectif : apprendre au modèle à rapprocher une description structurée de l'offre de son contenu descriptif, sans exiger que les deux textes soient identiques.
 
 \begin{table}[H]
   \centering
-  \caption{Synthèse du diagnostic d'intégration}
-  \label{tab:diagnostic_integration_implementation_rewrite}
+  \caption{Résultat comparatif des modèles d'embeddings}
+  \label{tab:benchmark_embeddings_implementation}
   \tableStyleStart
-  \begin{tabularx}{0.9\textwidth}{p{4cm}X}
+  \begin{tabularx}{\textwidth}{Xrrrr}
     \rowcolor{darkblue}
-    \tabheader{Composant} & \tabheader{État observé} \\
+    \tabheader{Modèle} & \tabheader{NDCG@10} & \tabheader{MRR@10} & \tabheader{Recall@10} & \tabheader{Latence ms} \\
     \midrule
-    Données d'offres & 7\,861 offres normalisées. \\
-    Données candidats & 1\,105 profils candidats normalisés. \\
-    Référentiels & 209 groupes de base MEPC et 201 domaines détaillés NCF. \\
-    Base vectorielle & 34\,215 embeddings indexés. \\
-    Graphe de connaissances & 43\,008 nœuds Neo4j. \\
-    Génération finale & Modèle OpenRouter \filevar{openai/gpt-oss-20b:free}. \\
+    ST fine-tuné emploi-compétences & 0,6232 & 0,5874 & 0,7398 & 89,5 \\
+    mE5-base multilingue & 0,3333 & 0,3015 & 0,4355 & 637,9 \\
+    TF-IDF & 0,3159 & 0,3016 & 0,3610 & 1,3 \\
+    BM25 & 0,2105 & 0,1771 & 0,3211 & 0,1 \\
+    CamemBERT sentence & 0,2018 & 0,1755 & 0,2865 & 349,1 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Diagnostic local et analyses descriptives}
+  \source{Sortie \texttt{outputs/evaluation/embedding\_benchmark.csv}}
 \end{table}
 
-Ce diagnostic ne constitue pas une évaluation de performance. Il confirme seulement que les briques principales sont alimentées et interconnectées. La qualité du classement et l'impact du graphe sur les recommandations sont analysés dans le chapitre suivant.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.88\textwidth]{figures/generated/implementation_results/embedding_benchmark_plot.png}
+  \caption{Comparaison des modèles d'embeddings sur le jeu de test}
+  \label{fig:embedding_benchmark_implementation}
+  \source{Benchmark multi-modèles}
+\end{figure}
+
+Le modèle fine-tuné domine nettement les alternatives : son NDCG@10 atteint 0,6232, contre 0,3333 pour mE5-base et 0,3159 pour TF-IDF. L'écart est substantiel et va dans le sens attendu : l'adaptation au domaine emploi-compétences améliore le classement des offres pertinentes. Le résultat impose cependant une lecture rigoureuse. TF-IDF reste très rapide et non négligeable ; il peut donc rester utile comme signal lexical complémentaire, notamment pour les acronymes, intitulés rares et expressions exactes.
+
+\subsection{Indexation vectorielle dans pgvector}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_results/11_pgvector_embeddings.png}
+  \caption{Entités indexées dans pgvector}
+  \label{fig:pgvector_embeddings_implementation}
+  \source{Diagnostic de la table \texttt{embeddings} dans la base \texttt{kmer\_ai}}
+\end{figure}
+
+La base pgvector contient 72\,643 embeddings : 41\,298 candidats, 13\,957 offres, 13\,939 compétences, 3\,039 métiers, 209 groupes MEPC et 201 domaines NCF. Le point important n'est pas seulement le total. Toutes ces entités possèdent aussi un identifiant Neo4j synchronisé, ce qui permet de passer d'un résultat vectoriel à son contexte relationnel. L'indexation devient donc une porte d'entrée vers le graphe, et non une base isolée.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.82\textwidth]{figures/generated/implementation_results/11_pgvector_doc_chunks.png}
+  \caption{Fragments documentaires indexés et reliés au graphe}
+  \label{fig:pgvector_doc_chunks_implementation}
+  \source{Table \texttt{doc\_chunks} après ingestion des PDF référentiels}
+\end{figure}
+
+L'ingestion documentaire ajoute 142 fragments issus des référentiels, tous synchronisés avec Neo4j. Ces chunks jouent un rôle différent des offres et candidats : ils ne servent pas principalement à recommander, mais à justifier et contextualiser une réponse. Par exemple, une question sur un niveau de formation ou une famille de métiers peut récupérer un extrait référentiel plutôt qu'une simple entité de graphe.
+
+\section{Résultats du graphe, du moteur hybride et du skill gap}
+
+\subsection{Graphe de connaissances Neo4j}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/generated/implementation_results/12_neo4j_nodes.png}
+  \caption{Composition du graphe Neo4j par type de nœud}
+  \label{fig:neo4j_nodes_implementation}
+  \source{Diagnostic de l'instance Neo4j locale}
+\end{figure}
+
+Le graphe reconstruit contient 90\,230 nœuds et 550\,542 relations. Ce résultat montre que la remise à zéro de la base Neo4j a été suivie d'une reconstruction complète. L'intérêt du graphe ne réside pas dans le volume brut, mais dans sa capacité à relier les entités : candidats, offres, métiers, compétences, secteurs, niveaux de formation et fragments documentaires. Cette structure permet au système de produire une explication du classement, ce qu'un embedding seul ne fournit pas directement.
+
+\subsection{Effet observé du reranking par le graphe}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.86\textwidth]{figures/generated/implementation_results/ablation_metrics_comparison.png}
+  \caption{Comparaison entre pgvector seul et pgvector enrichi par le graphe}
+  \label{fig:ablation_pgvector_graph_implementation}
+  \source{Ablation sur 55 requêtes d'évaluation}
+\end{figure}
+
+L'ablation montre un résultat nuancé. Le passage de pgvector seul à pgvector enrichi par le graphe augmente le NDCG@10 de 0,3889 à 0,4681 et le recall@10 de 0,4599 à 0,5557. Cela signifie que le graphe améliore la couverture des éléments pertinents dans le top 10. En revanche, la précision@1 baisse de 0,4182 à 0,3636. L'interprétation est claire : le graphe enrichit la liste et récupère davantage d'options pertinentes, mais son reranking peut déplacer la meilleure réponse immédiate. Ce comportement est acceptable pour un système d'aide à l'orientation, mais il doit être calibré si l'objectif prioritaire devient la première recommandation unique.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.82\textwidth]{figures/generated/implementation_results/graph_rerank_rank_shift.png}
+  \caption{Déplacements de rang induits par le reranking graphe}
+  \label{fig:graph_rerank_shift_implementation}
+  \source{Détails du reranking pgvector + graphe}
+\end{figure}
+
+La figure \ref{fig:graph_rerank_shift_implementation} permet d'observer les mouvements de classement. Elle est importante car elle évite une conclusion simpliste du type \og le graphe améliore tout \fg{}. En réalité, le graphe agit comme un correcteur relationnel : il peut promouvoir des offres moins proches textuellement mais plus cohérentes structurellement, ou rétrograder des offres lexicalement proches mais moins alignées sur les compétences ou le niveau.
+
+\subsection{Lecture du skill gap}
+
+Le module de \textit{skill gap} devient interprétable grâce à la combinaison des trois couches précédentes. Les embeddings proposent des rapprochements, pgvector fournit les candidats ou offres voisins, et Neo4j permet d'examiner les compétences et relations associées. Les résultats sur les compétences montrent toutefois que les champs actuels mélangent encore compétences, secteurs et familles de métiers. La sortie de \textit{skill gap} doit donc être présentée comme une aide à l'analyse, non comme une décision automatique.
+
+Dans l'état actuel, trois usages sont défendables : identifier les compétences explicitement présentes chez le candidat, repérer les compétences ou familles de compétences demandées par l'offre, et proposer une trajectoire de montée en compétences lorsque l'écart reste raisonnable. En revanche, il serait excessif de prétendre mesurer finement toutes les compétences techniques tant que l'extraction des compétences n'est pas typée plus strictement.
+
+\section{Intégration, interfaces et diagnostic final}
+
+\subsection{Orchestration et génération contrôlée}
+
+L'orchestration agentique raccorde les briques précédentes. Une requête de recommandation candidat mobilise pgvector puis le graphe ; une question référentielle mobilise les chunks documentaires ; une question relationnelle peut interroger Neo4j. La génération finale ne remplace donc pas les bases : elle reformule un contexte construit à partir des résultats récupérés.
+
+Cette séparation est essentielle pour limiter les réponses non fondées. Le \textit{critic} intervient comme garde-fou local : il vérifie que la réponse reste suffisamment appuyée sur le contexte et peut demander un élargissement de recherche. Son efficacité dépendra du seuil calibré dans le chapitre d'évaluation, mais son rôle d'intégration est déjà clair : empêcher que l'interface conversationnelle masque les incertitudes des données.
+
+\subsection{Diagnostic d'intégration}
+
+\begin{table}[H]
+  \centering
+  \caption{Diagnostic d'intégration après mise à jour des données}
+  \label{tab:diagnostic_integration_implementation}
+  \tableStyleStart
+  \begin{tabularx}{0.92\textwidth}{p{4.2cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Composant} & \tabheader{Résultat observé} \\
+    \midrule
+    Données d'offres & 13\,957 offres normalisées, dont 6\,476 utilisées pour la construction des paires de fine-tuning. \\
+    Données candidats & 41\,298 profils normalisés, avec texte d'encodage disponible pour tous les profils. \\
+    Référentiels & 209 groupes de base MEPC et 201 domaines détaillés NCF intégrés. \\
+    pgvector & 72\,643 embeddings indexés dans la base \texttt{kmer\_ai}, avec synchronisation Neo4j. \\
+    Documents PDF & 142 chunks référentiels indexés et reliés au graphe. \\
+    Neo4j & 90\,230 nœuds et 550\,542 relations après reconstruction du graphe. \\
+    Modèle d'embeddings & ST fine-tuné en 384 dimensions, NDCG@10 de 0,6232 sur le benchmark. \\
+    Moteur hybride & Gain de NDCG@10 de 0,3889 à 0,4681 avec pgvector + graphe sur l'ablation. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Diagnostics locaux, benchmark embeddings et ablation pgvector--graphe}
+\end{table}
+
+Ce diagnostic confirme l'intégration de bout en bout, mais il met aussi en évidence les limites à ne pas masquer. Premièrement, la catégorie sectorielle \og Autre \fg{} reste trop présente et doit être raffinée. Deuxièmement, les champs NCF et expérience côté offres ne couvrent pas encore tout le corpus. Troisièmement, le graphe améliore la couverture du top 10 mais pas systématiquement la première position. Ces limites ne détruisent pas l'intérêt du système ; elles indiquent où la calibration doit se concentrer.
 
 \subsection{Synthèse du chapitre}
 
-L'implémentation réalisée aboutit à un système complet combinant données normalisées, embeddings, base vectorielle, graphe de connaissances, moteur hybride et orchestration agentique. Les analyses statistiques montrent que le corpus contient 7\,861 offres, 1\,105 candidats, 209 groupes de base MEPC, 201 domaines détaillés NCF, 34\,215 embeddings et 43\,008 nœuds Neo4j.
+L'implémentation aboutit à un système effectivement alimenté : les données sont normalisées, les paires de fine-tuning ont été reconstruites, le modèle d'embeddings fine-tuné domine les modèles de référence, pgvector indexe les principales entités, Neo4j a été reconstruit et les documents référentiels sont synchronisés entre les deux bases. Le résultat le plus solide est la performance du modèle fine-tuné sur le classement sémantique. Le résultat le plus nuancé concerne le graphe : il améliore le rappel et le NDCG@10, mais son influence sur le premier rang doit être calibrée.
 
-Ces chiffres ne suffisent pas à prouver la qualité du système, mais ils montrent que la chaîne est effectivement alimentée. Les analyses sectorielles, géographiques, de niveaux de formation et de compétences permettent de mieux comprendre les contraintes du matching. Elles justifient l'architecture hybride : la recherche vectorielle est utile pour retrouver des proximités sémantiques, mais le graphe est nécessaire pour structurer les relations, expliquer les écarts et soutenir la montée en compétences.
-
-Le chapitre suivant évalue donc la performance du système, en particulier l'apport du graphe par rapport à une approche fondée uniquement sur pgvector.
+Le chapitre suivant doit donc interpréter la performance du système, notamment la robustesse du modèle d'embeddings, le compromis entre précision immédiate et rappel élargi, ainsi que le seuil du \textit{critic}. Autrement dit, l'implémentation est fonctionnelle, mais son usage opérationnel exige une évaluation rigoureuse des seuils et des arbitrages de classement.

@@ -1,0 +1,58 @@
+{
+  "n_offres": 13957,
+  "n_candidats": 41298,
+  "n_groupes_base_mepc": 209,
+  "n_domaines_detailles_ncf": 201,
+  "top_secteur_offres": {
+    "secteur": "Autre",
+    "n": 1548,
+    "part": 0.11091208712474028,
+    "part_pct": 11.09
+  },
+  "top_ville_offres": {
+    "ville": "Yaoundé",
+    "n": 4467,
+    "part": 0.32005445296267104,
+    "part_pct": 32.01
+  },
+  "top_competence_offres": {
+    "competence": "FINANCE",
+    "n": 660,
+    "part_offres_pct": 4.73
+  },
+  "n_ft_eligible_offres": 6476,
+  "n_pgvector_embeddings": 72643,
+  "n_doc_chunks": 142,
+  "n_doc_chunks_synced_neo4j": 142,
+  "n_neo4j_nodes": 90230,
+  "n_neo4j_relationships": 550542,
+  "pgvector_status": {
+    "available": true,
+    "error": null
+  },
+  "neo4j_status": {
+    "available": true,
+    "error": null
+  },
+  "best_embedding_model": {
+    "label": "ST Fine-tuné (FR-EMPLOI, 384d)",
+    "family": "domaine",
+    "dim": 384,
+    "size_mb": 86.7,
+    "ndcg@1": 0.5268,
+    "ndcg@5": 0.5989,
+    "ndcg@10": 0.6232,
+    "mrr@10": 0.5874,
+    "recall@1": 0.5268,
+    "recall@5": 0.6632,
+    "recall@10": 0.7398,
+    "precision@1": 0.5268,
+    "precision@5": 0.1326,
+    "latency_ms_per_sentence": 89.498
+  },
+  "evaluation_figures": {
+    "embedding_benchmark_plot": "rapport\\figures\\generated\\implementation_results\\embedding_benchmark_plot.png",
+    "ablation_metrics_comparison": "rapport\\figures\\generated\\implementation_results\\ablation_metrics_comparison.png",
+    "graph_rerank_rank_shift": "rapport\\figures\\generated\\implementation_results\\graph_rerank_rank_shift.png"
+  }
+}
