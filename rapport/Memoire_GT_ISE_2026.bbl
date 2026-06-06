@@ -1814,6 +1814,38 @@
       \verb https://aclanthology.org/2023.emnlp-main.153/
       \endverb
     \endentry
+    \entry{langgraphdocs2026}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=8de59538e5206b848891f2b0e1898dfb}{%
+           family={{LangChain}},
+           familyi={L\bibinitperiod}}}%
+      }
+      \strng{namehash}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{fullhash}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{fullhashraw}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{bibnamehash}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{authorbibnamehash}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{authornamehash}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{authorfullhash}{8de59538e5206b848891f2b0e1898dfb}
+      \strng{authorfullhashraw}{8de59538e5206b848891f2b0e1898dfb}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Documentation officielle du framework LangGraph}
+      \field{title}{LangGraph Documentation}
+      \field{urlday}{6}
+      \field{urlmonth}{6}
+      \field{urlyear}{2026}
+      \field{year}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://langchain-ai.github.io/langgraph/
+      \endverb
+      \verb{url}
+      \verb https://langchain-ai.github.io/langgraph/
+      \endverb
+    \endentry
     \entry{hamilton2020graph}{book}{}{}
       \name{author}{1}{}{%
         {{hash=2abce6c40b4cc1a3d89f175883b24536}{%

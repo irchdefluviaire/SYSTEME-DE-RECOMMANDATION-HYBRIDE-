@@ -1,11 +1,19 @@
-\documentclass{report}
+\RequirePackage{fix-cm}
+\documentclass[12pt,twoside]{report}
 % ======================================================
 % Encodage, langue et mise en page
 % ======================================================
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
+\usepackage[sc]{mathpazo}
 \usepackage[french]{babel}
-\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
+\usepackage[
+  inner=3.81cm,
+  outer=1.90cm,
+  top=3.81cm,
+  bottom=1.90cm
+]{geometry}
+\usepackage{setspace}
 
 % ======================================================
 % Mathématiques
@@ -123,17 +131,17 @@
 
 % Couleurs des titres inspirees de l'identite visuelle KmerAI
 \titleformat{\section}
-  {\normalfont\Large\bfseries\color{kmeraiteal}}
+  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{kmeraiteal}}
   {\thesection}{0.8em}{}
 \titleformat{\subsection}
-  {\normalfont\large\bfseries\color{kmeraigreen}}
+  {\normalfont\fontsize{14}{17}\selectfont\bfseries\color{kmeraigreen}}
   {\thesubsection}{0.8em}{}
 \titleformat{\subsubsection}
-  {\normalfont\normalsize\bfseries\color{kmeraired}}
+  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{kmeraired}}
   {\thesubsubsection}{0.8em}{}
-\titlespacing*{\section}{0pt}{1.2ex plus .2ex}{0.8ex}
-\titlespacing*{\subsection}{0pt}{1ex plus .2ex}{0.6ex}
-\titlespacing*{\subsubsection}{0pt}{0.8ex plus .2ex}{0.5ex}
+\titlespacing*{\section}{0pt}{24pt}{12pt}
+\titlespacing*{\subsection}{0pt}{18pt}{9pt}
+\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
 
 % ======================================================
 % Commandes personnalisées
@@ -230,13 +238,11 @@
 % Mise en forme générale
 % ======================================================
 \frenchspacing
-\linespread{1.4}
+\onehalfspacing
+\setlength{\parskip}{12pt plus 2pt minus 1pt}
+\setlength{\parindent}{0pt}
 \raggedbottom
-\oddsidemargin -0.2cm
-\evensidemargin 0cm
-\textheight 24cm
-\textwidth 16cm
-\voffset -0.5cm
+\setlength{\headheight}{15pt}
 \setlength{\headsep}{0.35cm}
 
 % ======================================================
@@ -277,7 +283,7 @@
     \interlinepenalty\@M
     \hrule
     \vspace*{10\p@}
-    \Huge \bfseries #1\par\nobreak
+    \fontsize{18}{22}\selectfont\bfseries #1\par\nobreak
     \par
     \vspace*{10\p@}
     \hrule
@@ -293,7 +299,7 @@
     \interlinepenalty\@M
     \hrule
     \vspace*{10\p@}
-    \Huge \bfseries #1\par\nobreak
+    \fontsize{18}{22}\selectfont\bfseries #1\par\nobreak
     \par
     \vspace*{10\p@}
     \hrule
@@ -418,6 +424,7 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 \end{titlepage}
 
 \pagenumbering{roman}
+\begin{singlespace}
 
 \chapter*{Dédicace}
 \markboth{Dédicace}{Dédicace}
@@ -544,8 +551,10 @@ Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologiq
 %=======================================================
 % 3. CORPS DU DOCUMENT (Chiffres arabes)
 % ======================================================
+\end{singlespace}
 \newpage
 \pagenumbering{arabic}
+\onehalfspacing
 
 
 
@@ -1146,6 +1155,8 @@ La présente étude adopte une démarche d'ingénierie appliquée orientée vers
 
 La logique méthodologique retenue repose sur quatre principes. Le premier est la \textit{traçabilité} : chaque recommandation doit pouvoir être rattachée à des données observables, à un référentiel ou à une relation explicite du graphe. Le deuxième est l'\textit{hybridation} : aucune source d'information ne suffit seule à résoudre le problème. La similarité sémantique capte les proximités de langage, le graphe encode les relations métier, les règles contrôlent les contraintes de niveau et le \LLM{} sert à formuler une réponse intelligible. Le troisième principe est l'\textit{explicabilité opérationnelle} : le système ne doit pas seulement retourner une liste d'offres, mais justifier le rapprochement, signaler les compétences communes, identifier les écarts et proposer une trajectoire de montée en compétences. Le quatrième principe est le \textit{contrôle génératif} : les réponses produites par le \LLM{} doivent être contraintes par le contexte récupéré afin de réduire le risque d'hallucination, conformément à la logique du \RAG{} \cite{lewis2020rag,es2024ragas}.
 
+Sur le plan de l'orchestration, le mémoire retient explicitement \textit{LangGraph} comme cadre méthodologique de pilotage du système agentique \cite{langgraphdocs2026}. Ce choix signifie que le raisonnement applicatif n'est pas laissé à une boucle conversationnelle informelle : il est modélisé comme un graphe d'états, composé de noeuds spécialisés, de transitions contrôlées et d'un état partagé. LangGraph est donc utilisé pour organiser le routage entre les briques du système, conserver les traces des outils mobilisés, permettre une révision lorsque le contexte est insuffisant et rendre le workflow auditable.
+
 Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
 
 \begin{figure}[p]
@@ -1250,11 +1261,11 @@ La base vectorielle joue deux rôles. Le premier est le retrieval sémantique : 
 
 Chaque résultat vectoriel doit conserver ses métadonnées : identifiant, type d'entité, libellé, source, score de similarité et texte associé. Sans ces métadonnées, la génération finale serait incapable de citer ses sources et le système perdrait sa traçabilité.
 
-\subsection{Construction du graphe de connaissances Neo4j}
+\subsection{Construction du graphe de connaissances sous Neo4j}
 
 Le graphe de connaissances représente la couche relationnelle du système. Son rôle est de modéliser explicitement les relations entre les candidats, les offres, les compétences, les métiers, les secteurs, les localisations et les référentiels. Cette représentation est justifiée par la nature même du problème : le matching emploi-compétences n'est pas seulement une question de proximité textuelle, mais une question de relations. Une offre requiert des compétences, un candidat possède des compétences, un métier est classé dans une nomenclature, un niveau de formation conditionne l'accès à certains postes, et une trajectoire de montée en compétences dépend des écarts identifiés.
 
-La méthodologie retient des noeuds correspondant aux entités principales : \filevar{OffreEmploi}, \filevar{Candidat}, \filevar{Compétence}, \filevar{Métier}, \filevar{Secteur}, \filevar{Localisation}, \filevar{DocChunk}, \filevar{DocumentReferentiel} et groupes de nomenclature. Les relations décrivent les liens fonctionnels : une offre \filevar{REQUIERT} une compétence, un candidat \filevar{POSSEDE} une compétence, une offre est rattachée à un secteur ou à une localisation, un métier est classé dans un groupe, et un fragment documentaire provient d'un document référentiel.
+La méthodologie retient des noeuds correspondant aux entités du système. Les relations décrivent les liens fonctionnels : une offre \filevar{REQUIERT} une compétence, un candidat \filevar{POSSEDE} une compétence, une offre est rattachée à un secteur ou à une localisation, un métier est classé dans un groupe, et un fragment documentaire provient d'un document référentiel.
 
 Ce graphe sert à trois opérations méthodologiques. Premièrement, il vérifie les correspondances proposées par la recherche vectorielle. Deuxièmement, il explique les recommandations en identifiant les compétences communes et manquantes. Troisièmement, il permet des requêtes relationnelles que la recherche vectorielle gère mal, par exemple : quelles compétences sont associées à un métier donné ? quelles offres exigent une compétence précise ? quelles compétences manquent à un candidat pour viser une famille de métiers ?
 
@@ -1274,7 +1285,7 @@ L'analyse de \textit{skill gap} complète le score. Elle distingue les compéten
 
 \subsection{Architecture Agentic RAG et orchestration LangGraph}
 
-L'orchestration du système repose sur un workflow agentique. La requête utilisateur est d'abord analysée afin d'identifier son intention : diagnostic, recommandation candidat, skill gap, recherche référentielle, question relationnelle sur le graphe, orientation métier ou recherche générale. Le système sélectionne ensuite les outils adaptés. Cette étape de routage est essentielle : interroger pgvector, Neo4j ou les documents réglementaires ne répond pas au même besoin.
+L'orchestration du système repose sur un workflow agentique implémentable avec \textit{LangGraph}. Méthodologiquement, LangGraph est retenu parce qu'il permet de représenter l'agent comme un graphe d'états plutôt que comme une simple succession de prompts \cite{langgraphdocs2026}. La requête utilisateur est d'abord analysée afin d'identifier son intention : diagnostic, recommandation candidat, skill gap, recherche référentielle, question relationnelle sur le graphe, orientation métier ou recherche générale. Le système sélectionne ensuite les outils adaptés. Cette étape de routage est essentielle : interroger pgvector, Neo4j ou les documents réglementaires ne répond pas au même besoin.
 
 Le workflow suit une chaîne contrôlée : \filevar{analyse\_request}, \filevar{plan\_tools}, \filevar{execute\_tools}, \filevar{build\_context}, \filevar{generate\_final\_answer}, puis critique éventuelle de la réponse. Le noeud d'analyse identifie le use-case. Le noeud de planification sélectionne les outils. Le noeud d'exécution appelle les bases et services nécessaires. Le noeud de construction de contexte organise les résultats récupérés. Le noeud de génération produit la réponse finale avec le \LLM{}. Le critic vérifie ensuite si la réponse paraît suffisamment fidèle au contexte ; en cas de faiblesse, le workflow peut élargir le contexte avant de régénérer la réponse.
 
@@ -1290,7 +1301,7 @@ Cette séparation des rôles est méthodologiquement importante. Text2Cypher ser
 
 \subsection{Interfaces et traçabilité}
 
-Le système prévoit trois modes d'accès : une interface Streamlit pour l'usage conversationnel, une API FastAPI pour l'intégration applicative et une CLI pour les tests de développement. Ces interfaces ne changent pas la logique de recommandation ; elles exposent le même moteur sous des formes différentes. La CLI facilite la vérification rapide des use-cases, Streamlit permet une démonstration interactive et FastAPI prépare l'intégration dans un environnement applicatif.
+Le système prévoit trois modes d'accès : une interface Streamlit pour l'usage conversationnel, une API FastAPI pour l'intégration applicative et une CLI pour les tests de développement. Ces interfaces ne changent pas la logique de recommandation ; elles exposent le même moteur sous des formes différentes. La CLI facilite la vérification rapide des use-cases, Streamlit permet une démonstration interactive et FastAPI prépare l'intégration dans un environnement applicatif comme  la plateforme Kmer-AI, les agences de recrutement (FNE et l'ACPE).
 
 La traçabilité est intégrée à plusieurs niveaux. Les traces du workflow indiquent les noeuds traversés et les outils appelés. Les résultats conservent les identifiants des entités, les sources documentaires, les scores et les chemins du graphe. La réponse finale doit citer les éléments utilisés. Cette exigence est décisive dans un système d'aide à l'orientation ou au recrutement : une recommandation sans preuve peut être séduisante, mais elle n'est pas défendable.
 
@@ -1811,6 +1822,8 @@ Ces résultats orientent directement les recommandations du chapitre suivant : r
 	\source{Auteur}
 \end{table}
 \markboth{Table des matières}{Table des matières}
+\begin{singlespace}
 \tableofcontents % Table des matières détaillée à la fin (Optionnel si sommaire au début)
+\end{singlespace}
 \end{document}
 

@@ -181,7 +181,7 @@ MRR=\frac{1}{N}\sum_{q=1}^{N}\frac{1}{rank_q}.
 
 Cette métrique est utile lorsque l'on veut savoir si le système place rapidement au moins une bonne réponse. Dans une interface de recommandation, cela correspond à une logique pratique : l'utilisateur regarde souvent les premiers résultats avant de parcourir toute la liste.
 
-Le \textbf{nDCG@k} (\emph{normalized Discounted Cumulative Gain}) tient compte non seulement de la présence des résultats pertinents, mais aussi de leur ordre et éventuellement de leur degré de pertinence. Si $rel_i$ désigne le niveau de pertinence du résultat placé au rang $i$, alors :
+Le \textbf{NDCG@k} (\emph{Normalized Discounted Cumulative Gain}) tient compte non seulement de la présence des résultats pertinents, mais aussi de leur ordre et éventuellement de leur degré de pertinence. Si $rel_i$ désigne le niveau de pertinence du résultat placé au rang $i$, alors :
 
 \begin{equation}
 DCG@k=\sum_{i=1}^{k}\frac{2^{rel_i}-1}{\log_2(i+1)}.
