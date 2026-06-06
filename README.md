@@ -327,6 +327,96 @@ TF-IDF                                           (sparse)    baseline lexicale
 BM25                                             (sparse)    reference IR
 ```
 
+### 3-ter. Calibrer le seuil du critic avec RAGAS
+
+Le critic local (`src/05_graphrag/answer_critic.py`) est un garde-fou lexical.
+Son seuil ne doit pas etre fixe arbitrairement. Le script suivant calcule le
+score lexical du critic, utilise RAGAS Faithfulness comme juge de reference
+lorsqu'un LLM est disponible, puis cherche un seuil statistiquement defensible.
+La selection privilegie la precision des reponses acceptees: elle teste d'abord
+les contraintes avec les intervalles de Wilson, puis seulement en repli avec les
+estimations ponctuelles.
+
+Format attendu du fichier de calibration:
+
+```text
+query_id,user_input,response,retrieved_contexts,human_label
+```
+
+`retrieved_contexts` doit contenir une liste JSON de contextes ou un texte brut.
+`human_label` est optionnel lorsque RAGAS est utilise, mais recommande pour
+auditer le juge.
+
+Gabarit:
+
+```text
+data/evaluation/critic_calibration_template.csv
+```
+
+Calibration avec RAGAS via OpenRouter:
+
+```powershell
+poetry run python src/07_evaluation/calibrate_critic_threshold.py `
+  --input data/evaluation/critic_calibration_cases.csv `
+  --label-source ragas `
+  --ragas-provider openrouter `
+  --ragas-model openai/gpt-oss-20b:free `
+  --ragas-accept-threshold 0.80 `
+  --target-precision 0.90 `
+  --max-false-accept-rate 0.10 `
+  --min-predicted-accept 5 `
+  --fbeta-beta 0.5 `
+  --bootstrap 1000
+```
+
+Calibration sans RAGAS, a partir d'annotations humaines:
+
+```powershell
+poetry run python src/07_evaluation/calibrate_critic_threshold.py `
+  --input data/evaluation/critic_calibration_cases.csv `
+  --skip-ragas `
+  --bootstrap 1000
+```
+
+Sorties:
+
+```text
+outputs/evaluation/critic_calibration/critic_calibration_scores.csv
+outputs/evaluation/critic_calibration/critic_threshold_grid.csv
+outputs/evaluation/critic_calibration/critic_threshold_summary.json
+outputs/evaluation/critic_calibration/critic_threshold_curves.png
+outputs/evaluation/critic_calibration/critic_score_distributions.png
+outputs/evaluation/critic_calibration/critic_confusion_matrix.png
+```
+
+Les trois figures sont aussi copiees par defaut dans:
+
+```text
+rapport/figures/generated/evaluation/
+```
+
+Elles documentent respectivement la courbe precision-rappel-F1 selon le seuil,
+la separation des scores du critic entre reponses acceptees et revisees, et la
+matrice de confusion au seuil retenu. Utiliser `--no-report-figures` pour ne
+pas alimenter le dossier du memoire.
+
+La regle de selection est documentee dans `critic_threshold_summary.json`:
+
+```text
+wilson_constrained_precision_and_false_accept_rate
+point_estimate_constraints_wilson_inconclusive
+fallback_max_fbeta_no_constraint
+```
+
+Le premier cas est le seul vraiment robuste. Le deuxieme signifie que le seuil
+respecte les contraintes en valeur ponctuelle, mais que l'echantillon est encore
+trop petit ou trop instable pour le confirmer par intervalle de confiance. Le
+troisieme est un signal d'alerte: le critic ne separe pas encore correctement
+les reponses acceptables des reponses a reviser.
+
+Le seuil recommande doit etre reporte dans `answer_critic.py` seulement apres
+lecture de `critic_threshold_summary.json`.
+
 ### 4. Charger le graphe Neo4j
 
 Le module Neo4j cree le schema, charge ESCO, MEPC, NCF, les offres, les

@@ -1,0 +1,3 @@
+query_id,user_input,response,retrieved_contexts,human_label
+case_0001,Question utilisateur ici,Reponse generee par le systeme ici,"[""Contexte recupere 1"", ""Contexte recupere 2""]",accept
+case_0002,Autre question utilisateur,Reponse a verifier,"[""Preuve ou extrait documentaire"", ""Resultat Neo4j ou pgvector""]",revise

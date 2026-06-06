@@ -1706,6 +1706,25 @@ Les résultats soutiennent partiellement l'hypothèse selon laquelle l'intégrat
 
 Sur le plan méthodologique, cette conclusion est plus utile qu'une affirmation générale. Elle montre où le graphe apporte de la valeur : explicabilité, couverture, prise en compte des niveaux et secteurs. Elle montre aussi où le système doit être amélioré : calibration des poids, complétude des relations, robustesse de Neo4j, et validation par annotation humaine.
 
+\section{Lecture des sorties graphiques de performance}
+
+Les figures du chapitre convergent vers une lecture prudente. La première sortie graphique, consacrée au benchmark d'embeddings, montre que le fine-tuning apporte le gain le plus net de toute l'évaluation : le modèle spécialisé domine les modèles généralistes sur NDCG@10, MRR@10 et Recall@10. Ce résultat indique que l'adaptation au vocabulaire emploi-compétences améliore directement la capacité du système à retrouver les correspondances pertinentes.
+
+La deuxième sortie graphique, issue de l'ablation pgvector contre pgvector + graphe, confirme un effet plus nuancé. Le graphe améliore les métriques de couverture du top 5 et du top 10, mais il ne sécurise pas le premier rang. Cette différence est centrale pour l'interprétation métier : le graphe est utile lorsque l'utilisateur consulte une liste courte d'offres accompagnée d'explications, mais il reste insuffisamment calibré si l'objectif est de produire une unique meilleure offre.
+
+La troisième sortie graphique, centrée sur les déplacements de rang, explique ce résultat. Neo4j ne se contente pas d'ajouter un score marginal ; il réordonne réellement le pool initial retourné par pgvector. Cette intervention peut corriger des proximités purement lexicales, mais elle peut aussi rétrograder une bonne offre lorsque les relations de compétences, de niveau ou de secteur sont incomplètes. Le gain du graphe dépend donc de la qualité des relations et du réglage des poids du score hybride.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.82\textwidth]{figures/generated/evaluation/evaluation_operational_summary.png}
+  \caption{Stabilité opérationnelle observée pendant l'évaluation d'ablation}
+  \label{fig:eval_operational_summary}
+\end{figure}
+
+La figure \ref{fig:eval_operational_summary} complète cette lecture par la stabilité d'exécution. Sur 60 requêtes demandées, 55 ont été évaluées et 5 ont échoué à cause de Neo4j. Le taux d'erreur observé atteint donc 8.3\%. Ce résultat n'annule pas les gains mesurés sur Recall@10 et NDCG@10, mais il empêche de conclure à une robustesse de production. Dans l'état actuel, la performance algorithmique du graphe existe, mais elle est conditionnée par un assainissement de la base Neo4j.
+
+Enfin, aucune figure de calibration du critic n'est interprétée dans ce chapitre, car le dépôt ne contient pas encore de jeu réel \filevar{critic\_calibration\_cases.csv}. Le fichier disponible est seulement un gabarit, avec des lignes fictives. L'utiliser pour produire des courbes RAGAS donnerait des graphiques visibles, mais méthodologiquement faux. La calibration du critic doit donc rester une étape d'évaluation complémentaire, à exécuter uniquement après constitution d'un échantillon réel de questions, réponses, contextes récupérés et labels RAGAS ou humains.
+
 \section{Limites de l'évaluation}
 
 La principale limite est l'absence d'un jeu d'annotations humaines indiquant quelles offres sont réellement pertinentes pour chaque candidat. Le proxy utilisé combine les métadonnées disponibles, mais il ne capture pas toutes les dimensions du recrutement : motivation, expérience qualitative, disponibilité, préférences salariales, soft skills ou contraintes géographiques fines. Les métriques doivent donc être lues comme des indicateurs comparatifs internes.
