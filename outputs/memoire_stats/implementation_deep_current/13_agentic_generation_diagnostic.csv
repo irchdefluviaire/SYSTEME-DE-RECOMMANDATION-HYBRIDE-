@@ -1,0 +1,7 @@
+﻿bloc,preuve,statut
+Analyse requête,Noeud LangGraph analyse_request,implémenté
+Routage outils,"Tool registry: pgvector, Neo4j, hybrid recommendation, global summary",implémenté
+Construction contexte,build_context agrège résultats/outils avant réponse,implémenté
+Génération,LLM OpenRouter avec fallback template local,implémenté
+Critic,Vérifie appui contextuel et peut élargir la recherche,implémenté
+Score génération,À réserver au chapitre évaluation avec jeux de questions annotées/RAGAS,non mesuré ici

@@ -1,0 +1,1122 @@
+{
+  "data": {
+    "overview": [
+      {
+        "bloc": "Offres normalisées",
+        "lignes": 13957,
+        "colonnes": 38
+      },
+      {
+        "bloc": "Candidats normalisés",
+        "lignes": 41298,
+        "colonnes": 25
+      },
+      {
+        "bloc": "Offres vrai_data nettoyées",
+        "lignes": 13957,
+        "colonnes": 25
+      }
+    ],
+    "sources": [
+      {
+        "source": "Louma-Jobs",
+        "n": 6021,
+        "part_pct": 43.14
+      },
+      {
+        "source": "FNE",
+        "n": 2494,
+        "part_pct": 17.87
+      },
+      {
+        "source": "Acpe",
+        "n": 2388,
+        "part_pct": 17.11
+      },
+      {
+        "source": "Jobartiscameroun",
+        "n": 2350,
+        "part_pct": 16.84
+      },
+      {
+        "source": "LinkedIn",
+        "n": 380,
+        "part_pct": 2.72
+      },
+      {
+        "source": "Emploi.cm",
+        "n": 324,
+        "part_pct": 2.32
+      }
+    ],
+    "zones": [
+      {
+        "zone": "Cameroun",
+        "n": 8886,
+        "part_pct": 63.67
+      },
+      {
+        "zone": "International",
+        "n": 2772,
+        "part_pct": 19.86
+      },
+      {
+        "zone": "Non précisée",
+        "n": 2299,
+        "part_pct": 16.47
+      }
+    ],
+    "cities": [
+      {
+        "ville": "Yaoundé",
+        "n": 4467,
+        "part_pct": 32.01
+      },
+      {
+        "ville": "Non précisée",
+        "n": 2299,
+        "part_pct": 16.47
+      },
+      {
+        "ville": "Pointe-Noire",
+        "n": 1226,
+        "part_pct": 8.78
+      },
+      {
+        "ville": "Limbé",
+        "n": 832,
+        "part_pct": 5.96
+      },
+      {
+        "ville": "Brazzaville",
+        "n": 827,
+        "part_pct": 5.93
+      },
+      {
+        "ville": "Douala",
+        "n": 713,
+        "part_pct": 5.11
+      },
+      {
+        "ville": "Bafoussam",
+        "n": 580,
+        "part_pct": 4.16
+      },
+      {
+        "ville": "Kribi",
+        "n": 515,
+        "part_pct": 3.69
+      },
+      {
+        "ville": "Yaoundé (ekoumdoum)",
+        "n": 414,
+        "part_pct": 2.97
+      },
+      {
+        "ville": "Ngousso",
+        "n": 412,
+        "part_pct": 2.95
+      },
+      {
+        "ville": "Maroua",
+        "n": 282,
+        "part_pct": 2.02
+      },
+      {
+        "ville": "Garoua",
+        "n": 208,
+        "part_pct": 1.49
+      },
+      {
+        "ville": "Bouenza",
+        "n": 180,
+        "part_pct": 1.29
+      },
+      {
+        "ville": "Bamenda",
+        "n": 126,
+        "part_pct": 0.9
+      },
+      {
+        "ville": "Buéa",
+        "n": 101,
+        "part_pct": 0.72
+      }
+    ],
+    "skills": [
+      {
+        "competence": "Finance",
+        "n": 924,
+        "part_pct": 6.62
+      },
+      {
+        "competence": "Commerce",
+        "n": 834,
+        "part_pct": 5.98
+      },
+      {
+        "competence": "Vente",
+        "n": 663,
+        "part_pct": 4.75
+      },
+      {
+        "competence": "Marketing",
+        "n": 635,
+        "part_pct": 4.55
+      },
+      {
+        "competence": "Informatique",
+        "n": 629,
+        "part_pct": 4.51
+      },
+      {
+        "competence": "Distribution",
+        "n": 603,
+        "part_pct": 4.32
+      },
+      {
+        "competence": "Commerce De Gros",
+        "n": 587,
+        "part_pct": 4.21
+      },
+      {
+        "competence": "Commerce De Détail",
+        "n": 581,
+        "part_pct": 4.16
+      },
+      {
+        "competence": "Administration",
+        "n": 554,
+        "part_pct": 3.97
+      },
+      {
+        "competence": "Banque",
+        "n": 551,
+        "part_pct": 3.95
+      },
+      {
+        "competence": "Assurance",
+        "n": 541,
+        "part_pct": 3.88
+      },
+      {
+        "competence": "Communication",
+        "n": 538,
+        "part_pct": 3.85
+      },
+      {
+        "competence": "Comptabilité",
+        "n": 509,
+        "part_pct": 3.65
+      },
+      {
+        "competence": "Santé",
+        "n": 462,
+        "part_pct": 3.31
+      },
+      {
+        "competence": "Transport",
+        "n": 432,
+        "part_pct": 3.1
+      }
+    ],
+    "descriptions": [
+      {
+        "source": "Acpe",
+        "n_offres": 2388,
+        "n_descriptions": 2388,
+        "taux_description_pct": 100.0
+      },
+      {
+        "source": "Emploi.cm",
+        "n_offres": 324,
+        "n_descriptions": 324,
+        "taux_description_pct": 100.0
+      },
+      {
+        "source": "FNE",
+        "n_offres": 2494,
+        "n_descriptions": 2494,
+        "taux_description_pct": 100.0
+      },
+      {
+        "source": "Jobartiscameroun",
+        "n_offres": 2350,
+        "n_descriptions": 2316,
+        "taux_description_pct": 98.55
+      },
+      {
+        "source": "LinkedIn",
+        "n_offres": 380,
+        "n_descriptions": 380,
+        "taux_description_pct": 100.0
+      },
+      {
+        "source": "Louma-Jobs",
+        "n_offres": 6021,
+        "n_descriptions": 295,
+        "taux_description_pct": 4.9
+      }
+    ]
+  },
+  "fine_tuning": {
+    "metrics": {
+      "train_time_s": 15160.0,
+      "num_epochs": 5,
+      "batch_size": 32,
+      "learning_rate": 2e-05,
+      "n_train": 4542,
+      "n_val": 981,
+      "n_test": 953,
+      "test_results": {
+        "test-information-retrieval_cosine_accuracy@1": 0.5268,
+        "test-information-retrieval_cosine_accuracy@3": 0.617,
+        "test-information-retrieval_cosine_accuracy@5": 0.6632,
+        "test-information-retrieval_cosine_accuracy@10": 0.7398,
+        "test-information-retrieval_cosine_precision@1": 0.5268,
+        "test-information-retrieval_cosine_precision@5": 0.1326,
+        "test-information-retrieval_cosine_precision@10": 0.074,
+        "test-information-retrieval_cosine_recall@1": 0.5268,
+        "test-information-retrieval_cosine_recall@5": 0.6632,
+        "test-information-retrieval_cosine_recall@10": 0.7398,
+        "test-information-retrieval_cosine_ndcg@1": 0.5268,
+        "test-information-retrieval_cosine_ndcg@5": 0.5989,
+        "test-information-retrieval_cosine_ndcg@10": 0.6232,
+        "test-information-retrieval_cosine_mrr@1": 0.5268,
+        "test-information-retrieval_cosine_mrr@5": 0.5776,
+        "test-information-retrieval_cosine_mrr@10": 0.5874,
+        "test-information-retrieval_cosine_map@100": 0.5985
+      },
+      "training_logs": [
+        {
+          "loss": 2.4453857966831754,
+          "grad_norm": 23.551433563232422,
+          "learning_rate": 5.400000000000001e-06,
+          "epoch": 0.19718309859154928,
+          "step": 28
+        },
+        {
+          "loss": 1.1385910851614816,
+          "grad_norm": 13.08592414855957,
+          "learning_rate": 1.1000000000000001e-05,
+          "epoch": 0.39436619718309857,
+          "step": 56
+        },
+        {
+          "loss": 0.5921300479343959,
+          "grad_norm": 7.324715614318848,
+          "learning_rate": 1.66e-05,
+          "epoch": 0.5915492957746479,
+          "step": 84
+        },
+        {
+          "loss": 0.4699258123125349,
+          "grad_norm": 9.044292449951172,
+          "learning_rate": 1.998395723231907e-05,
+          "epoch": 0.7887323943661971,
+          "step": 112
+        },
+        {
+          "loss": 0.3470677988869803,
+          "grad_norm": 0.3595430850982666,
+          "learning_rate": 1.9798961730615182e-05,
+          "epoch": 0.9859154929577465,
+          "step": 140
+        },
+        {
+          "eval_val-information-retrieval_cosine_accuracy@1": 0.5127420998980632,
+          "eval_val-information-retrieval_cosine_accuracy@3": 0.617737003058104,
+          "eval_val-information-retrieval_cosine_accuracy@5": 0.6534148827726809,
+          "eval_val-information-retrieval_cosine_accuracy@10": 0.7176350662589195,
+          "eval_val-information-retrieval_cosine_precision@1": 0.5127420998980632,
+          "eval_val-information-retrieval_cosine_precision@5": 0.13068297655453617,
+          "eval_val-information-retrieval_cosine_precision@10": 0.07176350662589195,
+          "eval_val-information-retrieval_cosine_recall@1": 0.5127420998980632,
+          "eval_val-information-retrieval_cosine_recall@5": 0.6534148827726809,
+          "eval_val-information-retrieval_cosine_recall@10": 0.7176350662589195,
+          "eval_val-information-retrieval_cosine_ndcg@1": 0.5127420998980632,
+          "eval_val-information-retrieval_cosine_ndcg@5": 0.5886985950620981,
+          "eval_val-information-retrieval_cosine_ndcg@10": 0.609266941139319,
+          "eval_val-information-retrieval_cosine_mrr@1": 0.5127420998980632,
+          "eval_val-information-retrieval_cosine_mrr@5": 0.5670744138634047,
+          "eval_val-information-retrieval_cosine_mrr@10": 0.5754461757519861,
+          "eval_val-information-retrieval_cosine_map@100": 0.5866394036420015,
+          "eval_runtime": 53.242,
+          "eval_samples_per_second": 0.0,
+          "eval_steps_per_second": 0.0,
+          "epoch": 1.0,
+          "step": 142
+        },
+        {
+          "loss": 0.3004037652696882,
+          "grad_norm": 8.634241104125977,
+          "learning_rate": 1.9410550993406603e-05,
+          "epoch": 1.1830985915492958,
+          "step": 168
+        },
+        {
+          "loss": 0.3000421183449881,
+          "grad_norm": 4.128108978271484,
+          "learning_rate": 1.8826787983255474e-05,
+          "epoch": 1.380281690140845,
+          "step": 196
+        },
+        {
+          "loss": 0.2850311483655657,
+          "grad_norm": 5.4366912841796875,
+          "learning_rate": 1.805979095242702e-05,
+          "epoch": 1.5774647887323945,
+          "step": 224
+        },
+        {
+          "loss": 0.2556192874908447,
+          "grad_norm": 5.5973029136657715,
+          "learning_rate": 1.7125481881835802e-05,
+          "epoch": 1.7746478873239435,
+          "step": 252
+        },
+        {
+          "loss": 0.25550007820129395,
+          "grad_norm": 0.1503729671239853,
+          "learning_rate": 1.6043255958936696e-05,
+          "epoch": 1.971830985915493,
+          "step": 280
+        },
+        {
+          "eval_val-information-retrieval_cosine_accuracy@1": 0.5300713557594292,
+          "eval_val-information-retrieval_cosine_accuracy@3": 0.6401630988786952,
+          "eval_val-information-retrieval_cosine_accuracy@5": 0.6829765545361876,
+          "eval_val-information-retrieval_cosine_accuracy@10": 0.7502548419979612,
+          "eval_val-information-retrieval_cosine_precision@1": 0.5300713557594292,
+          "eval_val-information-retrieval_cosine_precision@5": 0.1365953109072375,
+          "eval_val-information-retrieval_cosine_precision@10": 0.07502548419979613,
+          "eval_val-information-retrieval_cosine_recall@1": 0.5300713557594292,
+          "eval_val-information-retrieval_cosine_recall@5": 0.6829765545361876,
+          "eval_val-information-retrieval_cosine_recall@10": 0.7502548419979612,
+          "eval_val-information-retrieval_cosine_ndcg@1": 0.5300713557594292,
+          "eval_val-information-retrieval_cosine_ndcg@5": 0.6133403284474691,
+          "eval_val-information-retrieval_cosine_ndcg@10": 0.6350162749238208,
+          "eval_val-information-retrieval_cosine_mrr@1": 0.5300713557594292,
+          "eval_val-information-retrieval_cosine_mrr@5": 0.5900271831464493,
+          "eval_val-information-retrieval_cosine_mrr@10": 0.5989272365419152,
+          "eval_val-information-retrieval_cosine_map@100": 0.6100289183337235,
+          "eval_runtime": 62.4787,
+          "eval_samples_per_second": 0.0,
+          "eval_steps_per_second": 0.0,
+          "epoch": 2.0,
+          "step": 284
+        },
+        {
+          "loss": 0.2047820942742484,
+          "grad_norm": 3.5428197383880615,
+          "learning_rate": 1.4835578955821457e-05,
+          "epoch": 2.169014084507042,
+          "step": 308
+        },
+        {
+          "loss": 0.18443388598305838,
+          "grad_norm": 6.097075939178467,
+          "learning_rate": 1.352752086549095e-05,
+          "epoch": 2.3661971830985915,
+          "step": 336
+        },
+        {
+          "loss": 0.17727466991969518,
+          "grad_norm": 6.591151714324951,
+          "learning_rate": 1.214623547748056e-05,
+          "epoch": 2.563380281690141,
+          "step": 364
+        },
+        {
+          "loss": 0.1980160985674177,
+          "grad_norm": 6.7536845207214355,
+          "learning_rate": 1.0720396696253392e-05,
+          "epoch": 2.76056338028169,
+          "step": 392
+        },
+        {
+          "loss": 0.15654192652021134,
+          "grad_norm": 0.21818086504936218,
+          "learning_rate": 9.27960330374661e-06,
+          "epoch": 2.9577464788732395,
+          "step": 420
+        },
+        {
+          "eval_val-information-retrieval_cosine_accuracy@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_accuracy@3": 0.6595310907237513,
+          "eval_val-information-retrieval_cosine_accuracy@5": 0.6992864424057085,
+          "eval_val-information-retrieval_cosine_accuracy@10": 0.7614678899082569,
+          "eval_val-information-retrieval_cosine_precision@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_precision@5": 0.13985728848114168,
+          "eval_val-information-retrieval_cosine_precision@10": 0.07614678899082569,
+          "eval_val-information-retrieval_cosine_recall@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_recall@5": 0.6992864424057085,
+          "eval_val-information-retrieval_cosine_recall@10": 0.7614678899082569,
+          "eval_val-information-retrieval_cosine_ndcg@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_ndcg@5": 0.6274913807728972,
+          "eval_val-information-retrieval_cosine_ndcg@10": 0.647391240988926,
+          "eval_val-information-retrieval_cosine_mrr@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_mrr@5": 0.6034318722392119,
+          "eval_val-information-retrieval_cosine_mrr@10": 0.6115285665744382,
+          "eval_val-information-retrieval_cosine_map@100": 0.6221568481612874,
+          "eval_runtime": 94.6109,
+          "eval_samples_per_second": 0.0,
+          "eval_steps_per_second": 0.0,
+          "epoch": 3.0,
+          "step": 426
+        },
+        {
+          "loss": 0.10630980559757777,
+          "grad_norm": 5.80597448348999,
+          "learning_rate": 7.853764522519445e-06,
+          "epoch": 3.1549295774647885,
+          "step": 448
+        },
+        {
+          "loss": 0.15200637068067277,
+          "grad_norm": 3.524609088897705,
+          "learning_rate": 6.472479134509052e-06,
+          "epoch": 3.352112676056338,
+          "step": 476
+        },
+        {
+          "loss": 0.14520393099103654,
+          "grad_norm": 4.240749835968018,
+          "learning_rate": 5.164421044178547e-06,
+          "epoch": 3.5492957746478875,
+          "step": 504
+        },
+        {
+          "loss": 0.1543787717819214,
+          "grad_norm": 3.490696907043457,
+          "learning_rate": 3.956744041063307e-06,
+          "epoch": 3.7464788732394365,
+          "step": 532
+        },
+        {
+          "loss": 0.1330025451523917,
+          "grad_norm": 5.911141395568848,
+          "learning_rate": 2.8745181181642025e-06,
+          "epoch": 3.943661971830986,
+          "step": 560
+        },
+        {
+          "eval_val-information-retrieval_cosine_accuracy@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_accuracy@3": 0.6636085626911316,
+          "eval_val-information-retrieval_cosine_accuracy@5": 0.7074413863404689,
+          "eval_val-information-retrieval_cosine_accuracy@10": 0.763506625891947,
+          "eval_val-information-retrieval_cosine_precision@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_precision@5": 0.1414882772680938,
+          "eval_val-information-retrieval_cosine_precision@10": 0.0763506625891947,
+          "eval_val-information-retrieval_cosine_recall@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_recall@5": 0.7074413863404689,
+          "eval_val-information-retrieval_cosine_recall@10": 0.763506625891947,
+          "eval_val-information-retrieval_cosine_ndcg@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_ndcg@5": 0.6310633776913932,
+          "eval_val-information-retrieval_cosine_ndcg@10": 0.6491753732693668,
+          "eval_val-information-retrieval_cosine_mrr@1": 0.5412844036697247,
+          "eval_val-information-retrieval_cosine_mrr@5": 0.6055385660890252,
+          "eval_val-information-retrieval_cosine_mrr@10": 0.6130030095626428,
+          "eval_val-information-retrieval_cosine_map@100": 0.6238710506811317,
+          "eval_runtime": 66.8453,
+          "eval_samples_per_second": 0.0,
+          "eval_steps_per_second": 0.0,
+          "epoch": 4.0,
+          "step": 568
+        },
+        {
+          "loss": 0.09068621907915388,
+          "grad_norm": 1.8737610578536987,
+          "learning_rate": 1.9402090475729796e-06,
+          "epoch": 4.140845070422535,
+          "step": 588
+        },
+        {
+          "loss": 0.13365335123879568,
+          "grad_norm": 7.407747745513916,
+          "learning_rate": 1.1732120167445248e-06,
+          "epoch": 4.338028169014084,
+          "step": 616
+        },
+        {
+          "loss": 0.17180427483149938,
+          "grad_norm": 2.975602865219116,
+          "learning_rate": 5.894490065934e-07,
+          "epoch": 4.535211267605634,
+          "step": 644
+        },
+        {
+          "loss": 0.1274221454347883,
+          "grad_norm": 4.187745571136475,
+          "learning_rate": 2.0103826938482006e-07,
+          "epoch": 4.732394366197183,
+          "step": 672
+        },
+        {
+          "loss": 0.1322073255266462,
+          "grad_norm": 3.054574728012085,
+          "learning_rate": 1.6042767680930493e-08,
+          "epoch": 4.929577464788732,
+          "step": 700
+        },
+        {
+          "eval_val-information-retrieval_cosine_accuracy@1": 0.5382262996941896,
+          "eval_val-information-retrieval_cosine_accuracy@3": 0.6554536187563711,
+          "eval_val-information-retrieval_cosine_accuracy@5": 0.7064220183486238,
+          "eval_val-information-retrieval_cosine_accuracy@10": 0.762487257900102,
+          "eval_val-information-retrieval_cosine_precision@1": 0.5382262996941896,
+          "eval_val-information-retrieval_cosine_precision@5": 0.1412844036697248,
+          "eval_val-information-retrieval_cosine_precision@10": 0.07624872579001019,
+          "eval_val-information-retrieval_cosine_recall@1": 0.5382262996941896,
+          "eval_val-information-retrieval_cosine_recall@5": 0.7064220183486238,
+          "eval_val-information-retrieval_cosine_recall@10": 0.762487257900102,
+          "eval_val-information-retrieval_cosine_ndcg@1": 0.5382262996941896,
+          "eval_val-information-retrieval_cosine_ndcg@5": 0.6288851513075442,
+          "eval_val-information-retrieval_cosine_ndcg@10": 0.6468811550829551,
+          "eval_val-information-retrieval_cosine_mrr@1": 0.5382262996941896,
+          "eval_val-information-retrieval_cosine_mrr@5": 0.603041114509005,
+          "eval_val-information-retrieval_cosine_mrr@10": 0.6103882497613389,
+          "eval_val-information-retrieval_cosine_map@100": 0.62131681964183,
+          "eval_runtime": 52.2643,
+          "eval_samples_per_second": 0.0,
+          "eval_steps_per_second": 0.0,
+          "epoch": 5.0,
+          "step": 710
+        },
+        {
+          "train_runtime": 15157.1023,
+          "train_samples_per_second": 1.498,
+          "train_steps_per_second": 0.047,
+          "total_flos": 0.0,
+          "train_loss": 0.3418181627569064,
+          "epoch": 5.0,
+          "step": 710
+        }
+      ]
+    },
+    "config": {
+      "_commentaire": "Configuration du fine-tuning SentenceTransformer — Module 02",
+      "_contexte": "all-MiniLM-L6-v2 fine-tuné sur paires (metadata offres -> description) du marché camerounais",
+      "modele_base": "sentence-transformers/all-MiniLM-L6-v2",
+      "dim_embedding": 384,
+      "output_dir": "models/st_finetuned",
+      "donnees": {
+        "train_path": "data/finetune/pairs_train.jsonl",
+        "val_path": "data/finetune/pairs_val.jsonl",
+        "test_path": "data/finetune/pairs_test.jsonl",
+        "champ_s1": "sentence1",
+        "champ_s2": "sentence2",
+        "champ_id": "offre_id"
+      },
+      "entrainement": {
+        "num_epochs": 5,
+        "batch_size": 32,
+        "learning_rate": 2e-05,
+        "scheduler": "WarmupCosine",
+        "warmup_steps": 100,
+        "weight_decay": 0.01,
+        "max_grad_norm": 1.0,
+        "evaluation_strategy": "epoch",
+        "metric_for_best_model": "ndcg_at_10",
+        "seed": 42
+      },
+      "perte": {
+        "nom": "MultipleNegativesRankingLoss",
+        "scale": 20.0,
+        "similarite": "cosine",
+        "justification": "Adapté aux paires positives uniquement - les autres exemples du batch deviennent des négatifs implicites. Batch=32 -> 31 négatifs par exemple sans annotation."
+      },
+      "evaluateurs": {
+        "embedding_similarity": {
+          "actif": false,
+          "raison": "Non utilise avec des paires positives uniquement : les labels constants rendent Pearson/Spearman indefinis."
+        },
+        "information_retrieval": {
+          "actif": true,
+          "k_values": [
+            1,
+            5,
+            10
+          ],
+          "metriques": [
+            "ndcg@10",
+            "mrr@10",
+            "recall@1",
+            "recall@5",
+            "recall@10"
+          ],
+          "corpus_role": "sentence2 (descriptions offres)",
+          "queries_role": "sentence1 (métadonnées offres)"
+        }
+      },
+      "seuils_cibles": {
+        "cosine_spearman": 0.6,
+        "ndcg_at_10": 0.65,
+        "mrr_at_10": 0.55,
+        "recall_at_5": 0.6,
+        "recall_at_10": 0.75,
+        "delta_vs_baseline_positif": true
+      },
+      "hardware": {
+        "gpu_recommend": "GPU >= 4 Go VRAM (T4 Colab / T500 local)",
+        "temps_estim_T4": "15-25 minutes",
+        "temps_estim_T500": "45-75 minutes",
+        "temps_estim_CPU": "~3 heures"
+      }
+    },
+    "best_validation_ndcg10": 0.6491753732693668,
+    "best_validation_mrr10": 0.6130030095626428,
+    "benchmark": [
+      {
+        "label": "ST Fine-tuné (FR-EMPLOI, 384d)",
+        "family": "domaine",
+        "dim": 384,
+        "size_mb": 86.7,
+        "ndcg@1": 0.5268,
+        "ndcg@5": 0.5989,
+        "ndcg@10": 0.6232,
+        "mrr@10": 0.5874,
+        "recall@1": 0.5268,
+        "recall@5": 0.6632,
+        "recall@10": 0.7398,
+        "precision@1": 0.5268,
+        "precision@5": 0.1326,
+        "latency_ms_per_sentence": 89.498
+      },
+      {
+        "label": "mE5-base (ML, 768d)",
+        "family": "multilingue",
+        "dim": 768,
+        "size_mb": 270.0,
+        "ndcg@1": 0.2466,
+        "ndcg@5": 0.3123,
+        "ndcg@10": 0.3333,
+        "mrr@10": 0.3015,
+        "recall@1": 0.2466,
+        "recall@5": 0.3715,
+        "recall@10": 0.4355,
+        "precision@1": 0.2466,
+        "precision@5": 0.0743,
+        "latency_ms_per_sentence": 637.875
+      },
+      {
+        "label": "TF-IDF (sparse)",
+        "family": "lexical",
+        "dim": 29169,
+        "size_mb": 20.0,
+        "ndcg@1": 0.2749,
+        "ndcg@5": 0.3083,
+        "ndcg@10": 0.3159,
+        "mrr@10": 0.3016,
+        "recall@1": 0.2749,
+        "recall@5": 0.3379,
+        "recall@10": 0.361,
+        "precision@1": 0.2749,
+        "precision@5": 0.0676,
+        "latency_ms_per_sentence": 1.266
+      },
+      {
+        "label": "BM25 (sparse)",
+        "family": "lexical",
+        "dim": 0,
+        "size_mb": 5.0,
+        "ndcg@1": 0.128,
+        "ndcg@5": 0.1798,
+        "ndcg@10": 0.2105,
+        "mrr@10": 0.1771,
+        "recall@1": 0.128,
+        "recall@5": 0.2267,
+        "recall@10": 0.3211,
+        "precision@1": 0.128,
+        "precision@5": 0.0453,
+        "latency_ms_per_sentence": 0.146
+      },
+      {
+        "label": "CamemBERT (FR, 768d)",
+        "family": "francais",
+        "dim": 768,
+        "size_mb": 270.0,
+        "ndcg@1": 0.1291,
+        "ndcg@5": 0.186,
+        "ndcg@10": 0.2018,
+        "mrr@10": 0.1755,
+        "recall@1": 0.1291,
+        "recall@5": 0.2371,
+        "recall@10": 0.2865,
+        "precision@1": 0.1291,
+        "precision@5": 0.0474,
+        "latency_ms_per_sentence": 349.076
+      },
+      {
+        "label": "ML-MiniLM-L12 (ML, 384d)",
+        "family": "multilingue",
+        "dim": 384,
+        "size_mb": 90.0,
+        "ndcg@1": 0.0776,
+        "ndcg@5": 0.1132,
+        "ndcg@10": 0.1319,
+        "mrr@10": 0.1104,
+        "recall@1": 0.0776,
+        "recall@5": 0.1448,
+        "recall@10": 0.2025,
+        "precision@1": 0.0776,
+        "precision@5": 0.029,
+        "latency_ms_per_sentence": 176.582
+      },
+      {
+        "label": "DistilUSE (ML, 512d)",
+        "family": "multilingue",
+        "dim": 512,
+        "size_mb": 120.0,
+        "ndcg@1": 0.0504,
+        "ndcg@5": 0.0854,
+        "ndcg@10": 0.0995,
+        "mrr@10": 0.0798,
+        "recall@1": 0.0504,
+        "recall@5": 0.1207,
+        "recall@10": 0.1637,
+        "precision@1": 0.0504,
+        "precision@5": 0.0241,
+        "latency_ms_per_sentence": 329.057
+      }
+    ]
+  },
+  "pgvector": {
+    "available": true,
+    "counts": [
+      {
+        "entity_kind": "CANDIDAT",
+        "n": 41298,
+        "n_with_neo4j_id": 41298,
+        "n_models": 1
+      },
+      {
+        "entity_kind": "OFFRE_EMPLOI",
+        "n": 13957,
+        "n_with_neo4j_id": 13957,
+        "n_models": 1
+      },
+      {
+        "entity_kind": "COMPETENCE",
+        "n": 13939,
+        "n_with_neo4j_id": 13939,
+        "n_models": 1
+      },
+      {
+        "entity_kind": "METIER",
+        "n": 3039,
+        "n_with_neo4j_id": 3039,
+        "n_models": 1
+      },
+      {
+        "entity_kind": "GROUPE_BASE_MEPC",
+        "n": 209,
+        "n_with_neo4j_id": 209,
+        "n_models": 1
+      },
+      {
+        "entity_kind": "DOMAINE_DETAILLE_NCF",
+        "n": 201,
+        "n_with_neo4j_id": 201,
+        "n_models": 1
+      }
+    ],
+    "doc_chunks": [
+      {
+        "source": "diplomes",
+        "n": 43,
+        "n_with_embedding": 43,
+        "n_with_neo4j_id": 43
+      },
+      {
+        "source": "MEPC_2013",
+        "n": 61,
+        "n_with_embedding": 61,
+        "n_with_neo4j_id": 61
+      },
+      {
+        "source": "NCF_2017",
+        "n": 38,
+        "n_with_embedding": 38,
+        "n_with_neo4j_id": 38
+      }
+    ],
+    "n_indexes": 19,
+    "latency_ms_median": 126.50810000013735,
+    "latency_ms_p90": 731.6054600001283
+  },
+  "neo4j": {
+    "available": true,
+    "n_nodes": 90230,
+    "n_relationships": 550542,
+    "density_directed": 6.762283198962318e-05,
+    "gds_available": false,
+    "gds_error": "{neo4j_code: Neo.ClientError.Procedure.ProcedureNotFound} {message: There is no procedure with the name `dbms.procedures` registered for this database instance. Please ensure you've spelled the procedure name correctly and that the procedure is properly deployed.} {gql_status: 50N42} {gql_status_description: error: general processing exception - unexpected error. There is no procedure with the name `dbms.procedures` registered for this database instance. Please ensure you've spelled the procedure name correctly and that the procedure is properly deployed.}",
+    "top_labels": [
+      {
+        "label": "Candidat",
+        "n": 41298
+      },
+      {
+        "label": "GroupeCompétences",
+        "n": 14579
+      },
+      {
+        "label": "OffreEmploi",
+        "n": 13957
+      },
+      {
+        "label": "Compétence",
+        "n": 13939
+      },
+      {
+        "label": "Métier",
+        "n": 3039
+      },
+      {
+        "label": "Employeur",
+        "n": 1638
+      },
+      {
+        "label": "GroupeISCO",
+        "n": 619
+      },
+      {
+        "label": "Localisation",
+        "n": 312
+      }
+    ],
+    "top_relations": [
+      {
+        "relation": "POSSEDE",
+        "n": 221413
+      },
+      {
+        "relation": "NECESSITE",
+        "n": 126051
+      },
+      {
+        "relation": "REQUIERT",
+        "n": 58519
+      },
+      {
+        "relation": "A_NIVEAU",
+        "n": 41254
+      },
+      {
+        "relation": "PARTIE_DE",
+        "n": 20183
+      },
+      {
+        "relation": "CORRESPOND_MEPC",
+        "n": 18642
+      },
+      {
+        "relation": "DANS_SECTEUR",
+        "n": 13957
+      },
+      {
+        "relation": "PUBLIEE_PAR",
+        "n": 13935
+      }
+    ]
+  },
+  "agentic_rag": {
+    "ablation": [
+      {
+        "system": "pgvector_only",
+        "n_queries": 55,
+        "n_relevant_in_pool": 6.3273,
+        "precision@1": 0.4182,
+        "recall@1": 0.1073,
+        "ndcg@1": 0.4182,
+        "mrr@1": 0.4182,
+        "hit_rate@1": 0.4182,
+        "precision@3": 0.2788,
+        "recall@3": 0.2224,
+        "ndcg@3": 0.3588,
+        "mrr@3": 0.5152,
+        "hit_rate@3": 0.6364,
+        "precision@5": 0.2509,
+        "recall@5": 0.2821,
+        "ndcg@5": 0.355,
+        "mrr@5": 0.5324,
+        "hit_rate@5": 0.7091,
+        "precision@10": 0.2382,
+        "recall@10": 0.4599,
+        "ndcg@10": 0.3889,
+        "mrr@10": 0.5602,
+        "hit_rate@10": 0.9273
+      },
+      {
+        "system": "pgvector_plus_graph",
+        "n_queries": 55,
+        "n_relevant_in_pool": 6.3273,
+        "precision@1": 0.3636,
+        "recall@1": 0.1446,
+        "ndcg@1": 0.3636,
+        "mrr@1": 0.3636,
+        "hit_rate@1": 0.3636,
+        "precision@3": 0.297,
+        "recall@3": 0.2249,
+        "ndcg@3": 0.3694,
+        "mrr@3": 0.4152,
+        "hit_rate@3": 0.4909,
+        "precision@5": 0.3091,
+        "recall@5": 0.3284,
+        "ndcg@5": 0.4016,
+        "mrr@5": 0.4442,
+        "hit_rate@5": 0.6182,
+        "precision@10": 0.3145,
+        "recall@10": 0.5557,
+        "ndcg@10": 0.4681,
+        "mrr@10": 0.4647,
+        "hit_rate@10": 0.7818
+      }
+    ],
+    "ablation_summary": {
+      "config": {
+        "n_candidats": 60,
+        "candidate_pool_k": 30,
+        "final_k": 10,
+        "random_seed": 42
+      },
+      "elapsed_s": 38.7,
+      "n_queries_requested": 60,
+      "n_queries_evaluated": 55,
+      "n_errors": 5,
+      "metrics": [
+        {
+          "system": "pgvector_only",
+          "n_queries": 55,
+          "n_relevant_in_pool": 6.3273,
+          "precision@1": 0.4182,
+          "recall@1": 0.1073,
+          "ndcg@1": 0.4182,
+          "mrr@1": 0.4182,
+          "hit_rate@1": 0.4182,
+          "precision@3": 0.2788,
+          "recall@3": 0.2224,
+          "ndcg@3": 0.3588,
+          "mrr@3": 0.5152,
+          "hit_rate@3": 0.6364,
+          "precision@5": 0.2509,
+          "recall@5": 0.2821,
+          "ndcg@5": 0.355,
+          "mrr@5": 0.5324,
+          "hit_rate@5": 0.7091,
+          "precision@10": 0.2382,
+          "recall@10": 0.4599,
+          "ndcg@10": 0.3889,
+          "mrr@10": 0.5602,
+          "hit_rate@10": 0.9273
+        },
+        {
+          "system": "pgvector_plus_graph",
+          "n_queries": 55,
+          "n_relevant_in_pool": 6.3273,
+          "precision@1": 0.3636,
+          "recall@1": 0.1446,
+          "ndcg@1": 0.3636,
+          "mrr@1": 0.3636,
+          "hit_rate@1": 0.3636,
+          "precision@3": 0.297,
+          "recall@3": 0.2249,
+          "ndcg@3": 0.3694,
+          "mrr@3": 0.4152,
+          "hit_rate@3": 0.4909,
+          "precision@5": 0.3091,
+          "recall@5": 0.3284,
+          "ndcg@5": 0.4016,
+          "mrr@5": 0.4442,
+          "hit_rate@5": 0.6182,
+          "precision@10": 0.3145,
+          "recall@10": 0.5557,
+          "ndcg@10": 0.4681,
+          "mrr@10": 0.4647,
+          "hit_rate@10": 0.7818
+        }
+      ],
+      "delta_pgvector_plus_graph_minus_pgvector": {
+        "n_relevant_in_pool": 0.0,
+        "precision@1": -0.0546,
+        "recall@1": 0.0373,
+        "ndcg@1": -0.0546,
+        "mrr@1": -0.0546,
+        "hit_rate@1": -0.0546,
+        "precision@3": 0.0182,
+        "recall@3": 0.0025,
+        "ndcg@3": 0.0106,
+        "mrr@3": -0.1,
+        "hit_rate@3": -0.1455,
+        "precision@5": 0.0582,
+        "recall@5": 0.0463,
+        "ndcg@5": 0.0466,
+        "mrr@5": -0.0882,
+        "hit_rate@5": -0.0909,
+        "precision@10": 0.0763,
+        "recall@10": 0.0958,
+        "ndcg@10": 0.0792,
+        "mrr@10": -0.0955,
+        "hit_rate@10": -0.1455
+      },
+      "outputs_dir": "outputs\\evaluation\\pgvector_vs_graph",
+      "figures_dir": "rapport\\figures\\generated\\evaluation",
+      "methodological_warning": "La pertinence est un proxy construit a partir des metadonnees normalisees (chevauchement lexical, secteur, niveau NCF). Ce n'est pas une annotation humaine."
+    },
+    "generation_diagnostic": [
+      {
+        "bloc": "Analyse requête",
+        "preuve": "Noeud LangGraph analyse_request",
+        "statut": "implémenté"
+      },
+      {
+        "bloc": "Routage outils",
+        "preuve": "Tool registry: pgvector, Neo4j, hybrid recommendation, global summary",
+        "statut": "implémenté"
+      },
+      {
+        "bloc": "Construction contexte",
+        "preuve": "build_context agrège résultats/outils avant réponse",
+        "statut": "implémenté"
+      },
+      {
+        "bloc": "Génération",
+        "preuve": "LLM OpenRouter avec fallback template local",
+        "statut": "implémenté"
+      },
+      {
+        "bloc": "Critic",
+        "preuve": "Vérifie appui contextuel et peut élargir la recherche",
+        "statut": "implémenté"
+      },
+      {
+        "bloc": "Score génération",
+        "preuve": "À réserver au chapitre évaluation avec jeux de questions annotées/RAGAS",
+        "statut": "non mesuré ici"
+      }
+    ]
+  },
+  "annex_figures": {
+    "00_dashboard_briques.png": "rapport/figures/generated/implementation_deep_current/annexes/00_dashboard_briques.png",
+    "02_qualite_champs.png": "rapport/figures/generated/implementation_deep_current/annexes/02_qualite_champs.png",
+    "03_offres_par_secteur.png": "rapport/figures/generated/implementation_deep_current/annexes/03_offres_par_secteur.png",
+    "04_offres_par_ville.png": "rapport/figures/generated/implementation_deep_current/annexes/04_offres_par_ville.png",
+    "05_ncf_et_experience_offres.png": "rapport/figures/generated/implementation_deep_current/annexes/05_ncf_et_experience_offres.png",
+    "06_structure_candidats.png": "rapport/figures/generated/implementation_deep_current/annexes/06_structure_candidats.png",
+    "07_top_competences_offres.png": "rapport/figures/generated/implementation_deep_current/annexes/07_top_competences_offres.png",
+    "08_longueur_text_to_embed.png": "rapport/figures/generated/implementation_deep_current/annexes/08_longueur_text_to_embed.png",
+    "09_equilibre_offres_candidats_secteurs.png": "rapport/figures/generated/implementation_deep_current/annexes/09_equilibre_offres_candidats_secteurs.png",
+    "10_referentiels_mepc_ncf.png": "rapport/figures/generated/implementation_deep_current/annexes/10_referentiels_mepc_ncf.png",
+    "11_pgvector_doc_chunks.png": "rapport/figures/generated/implementation_deep_current/annexes/11_pgvector_doc_chunks.png",
+    "11_pgvector_embeddings.png": "rapport/figures/generated/implementation_deep_current/annexes/11_pgvector_embeddings.png",
+    "12_neo4j_nodes.png": "rapport/figures/generated/implementation_deep_current/annexes/12_neo4j_nodes.png",
+    "ablation_metrics_comparison.png": "rapport/figures/generated/implementation_deep_current/annexes/ablation_metrics_comparison.png",
+    "embedding_benchmark_plot.png": "rapport/figures/generated/implementation_deep_current/annexes/embedding_benchmark_plot.png",
+    "graph_rerank_rank_shift.png": "rapport/figures/generated/implementation_deep_current/annexes/graph_rerank_rank_shift.png",
+    "01_offres_par_source.png": "rapport/figures/generated/implementation_deep_current/annexes/01_offres_par_source.png",
+    "02_localisation_villes.png": "rapport/figures/generated/implementation_deep_current/annexes/02_localisation_villes.png",
+    "03_competences.png": "rapport/figures/generated/implementation_deep_current/annexes/03_competences.png",
+    "04_description_par_source.png": "rapport/figures/generated/implementation_deep_current/annexes/04_description_par_source.png"
+  }
+}

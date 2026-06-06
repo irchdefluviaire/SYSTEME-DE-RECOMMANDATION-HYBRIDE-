@@ -1,0 +1,5 @@
+﻿objet,total_bytes,table_bytes,total_mb,table_mb
+embeddings,271630336,124542976,259.05,118.77
+emb_hnsw,85245952,85245952,81.3,81.3
+doc_chunks,1581056,294912,1.51,0.28
+doc_chunks_hnsw,303104,303104,0.29,0.29

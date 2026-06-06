@@ -1,0 +1,20 @@
+﻿schemaname,tablename,indexname,indexdef
+public,doc_chunks,doc_chunks_chunk_id_key,CREATE UNIQUE INDEX doc_chunks_chunk_id_key ON public.doc_chunks USING btree (chunk_id)
+public,doc_chunks,doc_chunks_fulltext_fr_idx,"CREATE INDEX doc_chunks_fulltext_fr_idx ON public.doc_chunks USING gin (to_tsvector('french'::regconfig, ((((COALESCE(section_title, ''::text) || ' '::text) || COALESCE(subsection_title, ''::text)) || ' '::text) || COALESCE(chunk_text, ''::text))))"
+public,doc_chunks,doc_chunks_hnsw,"CREATE INDEX doc_chunks_hnsw ON public.doc_chunks USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')"
+public,doc_chunks,doc_chunks_mepc_idx,CREATE INDEX doc_chunks_mepc_idx ON public.doc_chunks USING btree (mepc_code) WHERE (mepc_code IS NOT NULL)
+public,doc_chunks,doc_chunks_ncf_idx,CREATE INDEX doc_chunks_ncf_idx ON public.doc_chunks USING btree (ncf_code) WHERE (ncf_code IS NOT NULL)
+public,doc_chunks,doc_chunks_pkey,CREATE UNIQUE INDEX doc_chunks_pkey ON public.doc_chunks USING btree (id)
+public,doc_chunks,doc_chunks_source_idx,CREATE INDEX doc_chunks_source_idx ON public.doc_chunks USING btree (source)
+public,embeddings,emb_candidat_idx,CREATE INDEX emb_candidat_idx ON public.embeddings USING btree (entity_id) WHERE (entity_kind = 'CANDIDAT'::entity_kind)
+public,embeddings,emb_competence_idx,CREATE INDEX emb_competence_idx ON public.embeddings USING btree (entity_id) WHERE (entity_kind = 'COMPETENCE'::entity_kind)
+public,embeddings,emb_fulltext_fr_idx,"CREATE INDEX emb_fulltext_fr_idx ON public.embeddings USING gin (to_tsvector('french'::regconfig, ((COALESCE(label_fr, ''::text) || ' '::text) || COALESCE(text_to_embed, ''::text))))"
+public,embeddings,emb_hnsw,"CREATE INDEX emb_hnsw ON public.embeddings USING hnsw (embedding vector_cosine_ops) WITH (m='16', ef_construction='64')"
+public,embeddings,emb_metier_idx,CREATE INDEX emb_metier_idx ON public.embeddings USING btree (entity_id) WHERE (entity_kind = 'METIER'::entity_kind)
+public,embeddings,emb_model_idx,CREATE INDEX emb_model_idx ON public.embeddings USING btree (model_id)
+public,embeddings,emb_ncf_det_idx,CREATE INDEX emb_ncf_det_idx ON public.embeddings USING btree (entity_id) WHERE (entity_kind = 'DOMAINE_DETAILLE_NCF'::entity_kind)
+public,embeddings,emb_neo4j_idx,CREATE INDEX emb_neo4j_idx ON public.embeddings USING btree (neo4j_node_id) WHERE (neo4j_node_id IS NOT NULL)
+public,embeddings,emb_offre_idx,CREATE INDEX emb_offre_idx ON public.embeddings USING btree (entity_id) WHERE (entity_kind = 'OFFRE_EMPLOI'::entity_kind)
+public,embeddings,emb_source_idx,CREATE INDEX emb_source_idx ON public.embeddings USING btree (source_system)
+public,embeddings,embeddings_entity_kind_entity_id_model_id_key,"CREATE UNIQUE INDEX embeddings_entity_kind_entity_id_model_id_key ON public.embeddings USING btree (entity_kind, entity_id, model_id)"
+public,embeddings,embeddings_pkey,CREATE UNIQUE INDEX embeddings_pkey ON public.embeddings USING btree (id)
