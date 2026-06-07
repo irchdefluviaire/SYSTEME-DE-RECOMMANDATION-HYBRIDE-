@@ -1,25 +1,25 @@
 ﻿zone_localisation,pays_clean,ville_principale_clean,n,part_pct
-Cameroun,Cameroun,Yaoundé,4467,32.01
-Non précisée,Cameroun,Non précisée,2263,16.21
+Cameroun,Cameroun,Yaoundé,4477,32.08
+Cameroun,Cameroun,Cameroun (ville non précisée),2235,16.01
 International,Congo,Pointe-Noire,1226,8.78
 Cameroun,Cameroun,Limbé,832,5.96
 International,Congo,Brazzaville,827,5.93
-Cameroun,Cameroun,Douala,713,5.11
+Cameroun,Cameroun,Douala,723,5.18
 Cameroun,Cameroun,Bafoussam,580,4.16
-Cameroun,Cameroun,Kribi,515,3.69
+Cameroun,Cameroun,Kribi,519,3.72
 Cameroun,Cameroun,Yaoundé (ekoumdoum),414,2.97
 Cameroun,Cameroun,Ngousso,412,2.95
-Cameroun,Cameroun,Maroua,282,2.02
-Cameroun,Cameroun,Garoua,208,1.49
+Cameroun,Cameroun,Maroua,283,2.03
+Cameroun,Cameroun,Garoua,210,1.5
 International,Congo,Bouenza,180,1.29
 Cameroun,Cameroun,Bamenda,126,0.9
 Cameroun,Cameroun,Buéa,101,0.72
 International,Congo,Kouilou,52,0.37
 International,Cameroun,International non localisée,40,0.29
-Non précisée,États-Unis,Non précisée,36,0.26
+International,États-Unis,États-Unis (ville non précisée),36,0.26
 Cameroun,Cameroun,Poli,31,0.22
-International,Congo,Nkayi,30,0.21
 Cameroun,Cameroun,Bertoua,30,0.21
+International,Congo,Nkayi,30,0.21
 Cameroun,Cameroun,Douala - Yaoundé,28,0.2
 International,Congo,Ouesso,23,0.16
 International,Congo,Kayes,20,0.14
@@ -28,285 +28,285 @@ Cameroun,Cameroun,Kousseri,14,0.1
 Cameroun,Cameroun,Bafang,11,0.08
 International,États-Unis,Houston,10,0.07
 International,États-Unis,New York,9,0.06
-Cameroun,Cameroun,Mambele,8,0.06
 International,États-Unis,New York City Metropolitan Area,8,0.06
+International,États-Unis,Austin,8,0.06
+Cameroun,Cameroun,Mambele,8,0.06
 Cameroun,Cameroun,Batouri,8,0.06
 Cameroun,Cameroun,Adamaoua,8,0.06
-International,États-Unis,Austin,8,0.06
-International,États-Unis,Blue Bell,6,0.04
-Cameroun,Cameroun,Ebolowa,6,0.04
 International,États-Unis,Phoenix,6,0.04
+Cameroun,Cameroun,Ebolowa,6,0.04
+Cameroun,Cameroun,Yokadouma,6,0.04
 International,États-Unis,Chicago,6,0.04
-International,Congo,Lkouala,5,0.04
-International,États-Unis,Las Vegas,5,0.04
-Cameroun,Cameroun,Campo,5,0.04
-Cameroun,Cameroun,Yokadouma,5,0.04
+International,États-Unis,Blue Bell,6,0.04
 International,États-Unis,Falconer,5,0.04
 Cameroun,Cameroun,Bafoussam - Douala - Yaoundé,5,0.04
 International,États-Unis,Hanover,5,0.04
-International,États-Unis,Boston,4,0.03
-International,États-Unis,Sumter,4,0.03
-International,États-Unis,Seattle,4,0.03
-Cameroun,Cameroun,Ngaoundéré,4,0.03
-International,États-Unis,California,4,0.03
-Cameroun,Cameroun,Douala (akwa),4,0.03
-Cameroun,Cameroun,Ndokoa,4,0.03
-International,États-Unis,Portland,4,0.03
-Cameroun,Cameroun,Douala - International,4,0.03
+International,Congo,Lkouala,5,0.04
+International,États-Unis,Las Vegas,5,0.04
+Cameroun,Cameroun,Campo,5,0.04
 International,Congo,Mayoko,4,0.03
+International,États-Unis,Seattle,4,0.03
 International,États-Unis,Los Angeles Metropolitan Area,4,0.03
+Cameroun,Cameroun,Douala - International,4,0.03
+International,États-Unis,Portland,4,0.03
+Cameroun,Cameroun,Ndokoa,4,0.03
+Cameroun,Cameroun,Douala (akwa),4,0.03
+Cameroun,Cameroun,Ngaoundéré,4,0.03
+International,États-Unis,Boston,4,0.03
 International,États-Unis,Dexter,4,0.03
-International,États-Unis,Irvine,3,0.02
-International,Congo,Impfondo,3,0.02
-International,Congo,Bouansa,3,0.02
-International,Congo,Divenie,3,0.02
-Cameroun,Cameroun,Faro,3,0.02
-International,États-Unis,Minneapolis,3,0.02
-International,États-Unis,Plano,3,0.02
-International,États-Unis,San Francisco,3,0.02
-International,États-Unis,Muskegon,3,0.02
+International,États-Unis,California,4,0.03
+International,États-Unis,Sumter,4,0.03
 International,États-Unis,Ladson,3,0.02
-International,États-Unis,Columbus,3,0.02
+International,Congo,Impfondo,3,0.02
 International,États-Unis,Cincinnati,3,0.02
-International,États-Unis,Milwaukee,2,0.01
-Cameroun,Cameroun,Foumban,2,0.01
-International,États-Unis,Orlando,2,0.01
-International,États-Unis,Pennsylvania,2,0.01
-International,États-Unis,Santa Barbara,2,0.01
-International,États-Unis,San Francisco Bay Area,2,0.01
-International,États-Unis,Plymouth,2,0.01
-Cameroun,Cameroun,Ambam,2,0.01
-International,États-Unis,Joliet,2,0.01
-International,États-Unis,Lansdale,2,0.01
-International,Congo,Oyo,2,0.01
-International,Congo,Owando,2,0.01
-International,Congo,Boundji,2,0.01
-International,Congo,Dolisie,2,0.01
-International,États-Unis,Los Angeles,2,0.01
-Cameroun,Cameroun,Nomayos,2,0.01
-International,États-Unis,Dallas,2,0.01
-International,États-Unis,Dallas-Fort Worth Metroplex,2,0.01
-International,États-Unis,Danville,2,0.01
-International,États-Unis,East Orange,2,0.01
-International,États-Unis,Greater Sacramento,2,0.01
-International,États-Unis,Golden,2,0.01
-International,États-Unis,Anaheim,2,0.01
-International,États-Unis,Arlington,2,0.01
-International,États-Unis,Indianapolis,2,0.01
-International,États-Unis,Atlanta,2,0.01
-International,États-Unis,Aurora,2,0.01
-International,États-Unis,Cambridge,2,0.01
-International,États-Unis,Birmingham,2,0.01
+International,États-Unis,Columbus,3,0.02
+International,États-Unis,Irvine,3,0.02
+International,États-Unis,Muskegon,3,0.02
+International,Congo,Divenie,3,0.02
+International,Congo,Bouansa,3,0.02
+International,États-Unis,San Francisco,3,0.02
+Cameroun,Cameroun,Faro,3,0.02
+International,États-Unis,Plano,3,0.02
+International,États-Unis,Minneapolis,3,0.02
 International,États-Unis,Washington,2,0.01
+International,États-Unis,Joliet,2,0.01
+International,États-Unis,Los Angeles,2,0.01
+Cameroun,Cameroun,Foumban,2,0.01
+International,Congo,Dolisie,2,0.01
+International,États-Unis,Indianapolis,2,0.01
+International,États-Unis,Milwaukee,2,0.01
+Cameroun,Cameroun,Nomayos,2,0.01
+International,États-Unis,Pennsylvania,2,0.01
 Cameroun,Cameroun,Banganté,2,0.01
+International,États-Unis,Plymouth,2,0.01
 Cameroun,Cameroun,Bangangté,2,0.01
-Cameroun,Cameroun,Bafoussam - Bamenda - Bertoua - Buéa - Douala - Ebolowa - Garoua - Maroua - Ngaoundéré - Yaoundé,1,0.01
-Cameroun,Cameroun,Bafoussam - Bamenda - Bertoua - Buéa - Douala - Garoua - Maroua - Ngaoundéré - Yaoundé,1,0.01
-Cameroun,Cameroun,Bafoussam - Bamenda - Bertoua - Douala - Ebolowa - Garoua - Maroua,1,0.01
-Cameroun,Cameroun,Bafoussam - Bamenda - Buéa - Douala - Ebolowa - Garoua - Maroua - Yaoundé,1,0.01
-Cameroun,Cameroun,Bafoussam - Bertoua - Buéa - Douala - Ebolowa - Yaoundé,1,0.01
-Cameroun,Cameroun,Bafoussam - Bertoua - Douala - Ebolowa - Garoua - Maroua - Ngaoundéré - Yaoundé,1,0.01
-Cameroun,Cameroun,Bafoussam - Douala - Ebolowa - Yaoundé,1,0.01
-Cameroun,Cameroun,Bafoussam - Yaoundé,1,0.01
-Cameroun,Cameroun,Bertoua - Douala - Garoua - Maroua - Yaoundé,1,0.01
-International,États-Unis,Tuscaloosa,1,0.01
-International,États-Unis,Utah,1,0.01
-International,États-Unis,Utah County,1,0.01
-International,États-Unis,Valentine,1,0.01
-International,États-Unis,Vancouver,1,0.01
-International,États-Unis,Vandalia,1,0.01
-International,États-Unis,Virginia Beach,1,0.01
-International,États-Unis,Virginia City,1,0.01
-International,États-Unis,Warren,1,0.01
-International,États-Unis,West Chester,1,0.01
-International,États-Unis,White County,1,0.01
-International,États-Unis,Wichita,1,0.01
-International,États-Unis,Winsted,1,0.01
-International,États-Unis,Winston-Salem,1,0.01
-International,États-Unis,Wooster,1,0.01
-International,États-Unis,Boca Raton,1,0.01
-International,États-Unis,Bolingbrook,1,0.01
-International,États-Unis,Bossier City,1,0.01
-International,États-Unis,Bradenton,1,0.01
-International,États-Unis,Brooklyn,1,0.01
-International,États-Unis,Broomfield,1,0.01
-International,États-Unis,Buda,1,0.01
-International,États-Unis,Carlsbad,1,0.01
-International,États-Unis,Charlotte,1,0.01
-International,États-Unis,Cheyenne,1,0.01
-International,États-Unis,Cincinnati Metropolitan Area,1,0.01
-International,États-Unis,Clackamas,1,0.01
-International,États-Unis,Cleveland,1,0.01
-International,États-Unis,Coeur D'alene,1,0.01
-International,États-Unis,Colorado,1,0.01
-International,États-Unis,Colts Neck,1,0.01
-International,États-Unis,Columbia,1,0.01
-International,États-Unis,Corona,1,0.01
-International,États-Unis,Costa Mesa,1,0.01
-International,États-Unis,Cranberry Township,1,0.01
-International,États-Unis,Crystal Lake,1,0.01
-International,États-Unis,Culver City,1,0.01
-International,États-Unis,Dayton,1,0.01
-International,États-Unis,Dearborn,1,0.01
-International,États-Unis,Denver,1,0.01
-International,États-Unis,Des Moines,1,0.01
-International,États-Unis,Duluth,1,0.01
-International,États-Unis,Eden Prairie,1,0.01
-International,États-Unis,Edison,1,0.01
-International,États-Unis,Elgin,1,0.01
-International,États-Unis,Elmsford,1,0.01
-International,États-Unis,Evanston,1,0.01
-International,États-Unis,Evansville,1,0.01
-International,États-Unis,Exton,1,0.01
-International,États-Unis,Fairfield,1,0.01
-International,États-Unis,Fayetteville,1,0.01
-International,États-Unis,Florida,1,0.01
-International,États-Unis,Forest Park,1,0.01
-International,États-Unis,Fort Lauderdale,1,0.01
-International,États-Unis,Fort Lupton,1,0.01
-International,États-Unis,Franklin,1,0.01
-International,États-Unis,Frederick,1,0.01
-International,États-Unis,Fredericksburg,1,0.01
-International,États-Unis,Fresno,1,0.01
-International,États-Unis,Garland,1,0.01
-International,États-Unis,Goleta,1,0.01
-International,États-Unis,Goodyear,1,0.01
-International,États-Unis,Grand Prairie,1,0.01
-International,États-Unis,Grand Rapids,1,0.01
-International,États-Unis,Grayson,1,0.01
-International,États-Unis,Greater Flagstaff Area,1,0.01
-International,États-Unis,Greater Grand Junction Area,1,0.01
-International,États-Unis,Greater Minneapolis-St. Paul Area,1,0.01
-International,États-Unis,Greater New Orleans Region,1,0.01
-International,États-Unis,Greater Philadelphia,1,0.01
-International,États-Unis,Greater Rockford Area,1,0.01
-International,États-Unis,Greenville-Spartanburg-Anderson,1,0.01
-International,États-Unis,Grover Beach,1,0.01
-International,États-Unis,Hartford,1,0.01
-International,États-Unis,Hartford County,1,0.01
-International,États-Unis,Hatboro,1,0.01
-International,États-Unis,Hillsboro,1,0.01
-International,États-Unis,Ames,1,0.01
-International,États-Unis,Annapolis,1,0.01
-International,États-Unis,Antioch,1,0.01
-International,États-Unis,Asheville,1,0.01
-International,États-Unis,Atlanta Metropolitan Area,1,0.01
-International,États-Unis,Avon,1,0.01
-International,États-Unis,Batavia,1,0.01
-International,États-Unis,Baton Rouge,1,0.01
-International,États-Unis,Beaumont,1,0.01
-International,États-Unis,Berkeley,1,0.01
-International,États-Unis,Big Lake,1,0.01
-International,États-Unis,Huntsville,1,0.01
-International,États-Unis,Jackson,1,0.01
-International,États-Unis,Jacksonville,1,0.01
-International,États-Unis,Jersey City,1,0.01
-International,États-Unis,Kalamazoo,1,0.01
-International,États-Unis,Kankakee,1,0.01
-International,États-Unis,Kansas City,1,0.01
-International,États-Unis,Kearney,1,0.01
-International,États-Unis,Kennesaw,1,0.01
-International,États-Unis,Knoxville,1,0.01
-International,États-Unis,Lagrange,1,0.01
-International,Congo,Gamboma,1,0.01
-International,Congo,Hinda,1,0.01
-International,Congo,Loango,1,0.01
-International,Congo,Ntokou,1,0.01
-International,États-Unis,Allentown,1,0.01
-International,États-Unis,Alpharetta,1,0.01
-Cameroun,Cameroun,Édéa,1,0.01
-International,États-Unis,Las Cruces,1,0.01
-International,États-Unis,Las Vegas Metropolitan Area,1,0.01
-International,États-Unis,Lemont,1,0.01
-International,États-Unis,Lewis Run,1,0.01
-International,États-Unis,Lexington,1,0.01
-International,États-Unis,Lombard,1,0.01
-International,États-Unis,Long Beach,1,0.01
-International,États-Unis,Lonoke,1,0.01
-International,États-Unis,Madison,1,0.01
-International,États-Unis,Maine,1,0.01
-International,États-Unis,Malibu,1,0.01
-International,États-Unis,Marietta,1,0.01
-International,États-Unis,Marlborough,1,0.01
-International,États-Unis,Meeker,1,0.01
-International,États-Unis,Menlo Park,1,0.01
-International,États-Unis,Miami,1,0.01
-International,États-Unis,Milledgeville,1,0.01
-International,États-Unis,Montgomery,1,0.01
-International,États-Unis,Montpelier,1,0.01
-International,États-Unis,Mooresville,1,0.01
-International,États-Unis,Morristown,1,0.01
-International,États-Unis,Naperville,1,0.01
-International,États-Unis,Nassau County,1,0.01
-International,États-Unis,New Haven,1,0.01
-Cameroun,Cameroun,Extreme-Nord,1,0.01
-Cameroun,Cameroun,Figuil,1,0.01
-Cameroun,Cameroun,Fotokol,1,0.01
-Cameroun,Cameroun,Guider,1,0.01
-Cameroun,Cameroun,Mbalmayo,1,0.01
-Cameroun,Cameroun,Mbankomo,1,0.01
-International,États-Unis,North Brunswick,1,0.01
-International,États-Unis,North Carolina,1,0.01
-International,États-Unis,North Creek,1,0.01
-International,États-Unis,North Salt Lake,1,0.01
-International,États-Unis,Novi,1,0.01
-International,États-Unis,Oakbrook Terrace,1,0.01
-International,États-Unis,Ohio,1,0.01
-International,États-Unis,Omaha,1,0.01
-International,États-Unis,Oregon,1,0.01
-International,États-Unis,Orient,1,0.01
-International,États-Unis,Owensboro,1,0.01
-International,États-Unis,Palo Alto,1,0.01
-International,États-Unis,Pearland,1,0.01
-International,États-Unis,Pella,1,0.01
-International,États-Unis,Pensacola,1,0.01
-International,États-Unis,Philadelphia,1,0.01
-International,États-Unis,Port Charlotte,1,0.01
-International,États-Unis,Prospect,1,0.01
-International,États-Unis,Redmond,1,0.01
-International,États-Unis,Richardson,1,0.01
-International,États-Unis,Ridgefield,1,0.01
-International,États-Unis,Ridgewood,1,0.01
-International,États-Unis,Rohnert Park,1,0.01
-International,États-Unis,Roseville,1,0.01
-International,États-Unis,Sacramento,1,0.01
-International,États-Unis,Safford,1,0.01
-International,États-Unis,Salem,1,0.01
-International,États-Unis,Salt Lake City,1,0.01
-International,États-Unis,San Antonio,1,0.01
-International,États-Unis,San Carlos,1,0.01
-International,États-Unis,San Diego Metropolitan Area,1,0.01
-International,États-Unis,San Jose,1,0.01
-International,États-Unis,San Rafael,1,0.01
-International,États-Unis,Santa Ana,1,0.01
-International,États-Unis,Santa Barbara County,1,0.01
-International,États-Unis,Santa Clara,1,0.01
-International,États-Unis,Santa Fe,1,0.01
-International,États-Unis,Santa Rosa,1,0.01
-International,États-Unis,Scottsdale,1,0.01
-Cameroun,Cameroun,Bertoua - Douala - Garoua - Yaoundé,1,0.01
-Cameroun,Cameroun,Bertoua - Yaoundé,1,0.01
-Cameroun,Cameroun,Buéa - Douala - Yaoundé,1,0.01
-Cameroun,Cameroun,Djohung,1,0.01
-Cameroun,Cameroun,Douala - Ebolowa - Yaoundé,1,0.01
-Cameroun,Cameroun,Douala - Ebolowa - Yaoundé - International,1,0.01
-Cameroun,Cameroun,Douala - Garoua,1,0.01
-Cameroun,Cameroun,Douala - Garoua - Maroua - Yaoundé,1,0.01
-Cameroun,Cameroun,Doumé,1,0.01
-Cameroun,Cameroun,Dschang,1,0.01
-International,États-Unis,Seaside,1,0.01
-International,États-Unis,Shelby Township,1,0.01
-International,États-Unis,Somerset,1,0.01
-International,États-Unis,South Hackensack,1,0.01
-International,États-Unis,South Plainfield,1,0.01
-International,États-Unis,Southlake,1,0.01
-International,États-Unis,St Louis,1,0.01
-International,États-Unis,Staunton,1,0.01
-International,États-Unis,Sunnyvale,1,0.01
-International,États-Unis,Tacoma,1,0.01
-International,États-Unis,Tallahassee,1,0.01
-International,États-Unis,Tampa,1,0.01
-International,États-Unis,Texas,1,0.01
-International,États-Unis,Toms River,1,0.01
+International,États-Unis,Orlando,2,0.01
+International,Congo,Boundji,2,0.01
+International,Congo,Owando,2,0.01
+International,Congo,Oyo,2,0.01
+International,États-Unis,East Orange,2,0.01
+International,États-Unis,Golden,2,0.01
+International,États-Unis,Greater Sacramento,2,0.01
+International,États-Unis,Lansdale,2,0.01
+International,États-Unis,Birmingham,2,0.01
+International,États-Unis,Arlington,2,0.01
+International,États-Unis,Cambridge,2,0.01
+International,États-Unis,Anaheim,2,0.01
+International,États-Unis,Dallas,2,0.01
+International,États-Unis,Aurora,2,0.01
+International,États-Unis,Atlanta,2,0.01
+International,États-Unis,Danville,2,0.01
+International,États-Unis,Dallas-Fort Worth Metroplex,2,0.01
+International,États-Unis,San Francisco Bay Area,2,0.01
+International,États-Unis,Santa Barbara,2,0.01
+Cameroun,Cameroun,Ambam,2,0.01
 Cameroun,Cameroun,Bafia,1,0.01
+International,États-Unis,Tuscaloosa,1,0.01
+International,États-Unis,Toms River,1,0.01
+International,États-Unis,Seaside,1,0.01
+Cameroun,Cameroun,Bafoussam - Bamenda - Bertoua - Buéa - Douala - Garoua - Maroua - Ngaoundéré - Yaoundé,1,0.01
+International,États-Unis,Scottsdale,1,0.01
+International,États-Unis,Santa Rosa,1,0.01
+International,États-Unis,Santa Fe,1,0.01
+International,États-Unis,Santa Clara,1,0.01
+International,États-Unis,Santa Barbara County,1,0.01
+International,États-Unis,Santa Ana,1,0.01
+International,États-Unis,San Rafael,1,0.01
+International,États-Unis,San Jose,1,0.01
+Cameroun,Cameroun,Bafoussam - Bertoua - Douala - Ebolowa - Garoua - Maroua - Ngaoundéré - Yaoundé,1,0.01
+Cameroun,Cameroun,Bafoussam - Bertoua - Buéa - Douala - Ebolowa - Yaoundé,1,0.01
+Cameroun,Cameroun,Bafoussam - Bamenda - Buéa - Douala - Ebolowa - Garoua - Maroua - Yaoundé,1,0.01
+Cameroun,Cameroun,Bafoussam - Bamenda - Bertoua - Douala - Ebolowa - Garoua - Maroua,1,0.01
+International,États-Unis,Texas,1,0.01
+International,États-Unis,Salt Lake City,1,0.01
+International,États-Unis,Tampa,1,0.01
+International,États-Unis,Tallahassee,1,0.01
+International,États-Unis,Tacoma,1,0.01
+International,États-Unis,Sunnyvale,1,0.01
+International,États-Unis,Staunton,1,0.01
+International,États-Unis,Virginia City,1,0.01
+International,États-Unis,Virginia Beach,1,0.01
+International,États-Unis,Vandalia,1,0.01
+International,États-Unis,Vancouver,1,0.01
+International,États-Unis,Buda,1,0.01
+International,États-Unis,Broomfield,1,0.01
+International,États-Unis,Brooklyn,1,0.01
+International,États-Unis,Bradenton,1,0.01
+International,États-Unis,Bossier City,1,0.01
+International,États-Unis,Bolingbrook,1,0.01
+International,États-Unis,Boca Raton,1,0.01
+International,États-Unis,Culver City,1,0.01
+International,États-Unis,Crystal Lake,1,0.01
+International,États-Unis,Cranberry Township,1,0.01
+International,États-Unis,Costa Mesa,1,0.01
+International,États-Unis,Avon,1,0.01
+International,États-Unis,Atlanta Metropolitan Area,1,0.01
+International,États-Unis,Asheville,1,0.01
+International,États-Unis,Antioch,1,0.01
+International,États-Unis,Annapolis,1,0.01
+International,États-Unis,Cheyenne,1,0.01
+International,États-Unis,Charlotte,1,0.01
+International,États-Unis,Carlsbad,1,0.01
+International,États-Unis,Corona,1,0.01
+International,États-Unis,Columbia,1,0.01
+International,États-Unis,Colts Neck,1,0.01
+International,États-Unis,Colorado,1,0.01
+International,États-Unis,Coeur D'alene,1,0.01
+International,États-Unis,Cleveland,1,0.01
+International,États-Unis,Clackamas,1,0.01
+International,États-Unis,Cincinnati Metropolitan Area,1,0.01
+International,États-Unis,Fairfield,1,0.01
+International,États-Unis,Exton,1,0.01
+International,États-Unis,Evansville,1,0.01
+International,États-Unis,Evanston,1,0.01
+International,États-Unis,Elmsford,1,0.01
+International,États-Unis,Elgin,1,0.01
+International,États-Unis,Edison,1,0.01
+International,États-Unis,Eden Prairie,1,0.01
+International,États-Unis,Duluth,1,0.01
+International,États-Unis,Des Moines,1,0.01
+International,États-Unis,Denver,1,0.01
+International,États-Unis,Dearborn,1,0.01
+International,États-Unis,Dayton,1,0.01
+International,États-Unis,Grayson,1,0.01
+International,États-Unis,Grand Rapids,1,0.01
+International,États-Unis,Grand Prairie,1,0.01
+International,États-Unis,Goodyear,1,0.01
+International,États-Unis,Goleta,1,0.01
+International,États-Unis,Garland,1,0.01
+International,États-Unis,Fresno,1,0.01
+International,États-Unis,Fredericksburg,1,0.01
+International,États-Unis,Frederick,1,0.01
+International,États-Unis,Franklin,1,0.01
+International,États-Unis,Fort Lupton,1,0.01
+International,États-Unis,Fort Lauderdale,1,0.01
+International,États-Unis,Forest Park,1,0.01
+International,États-Unis,Florida,1,0.01
+International,États-Unis,Fayetteville,1,0.01
+International,États-Unis,Huntsville,1,0.01
+International,États-Unis,Hillsboro,1,0.01
+International,États-Unis,Hatboro,1,0.01
+International,États-Unis,Hartford County,1,0.01
+International,États-Unis,Hartford,1,0.01
+International,États-Unis,Grover Beach,1,0.01
+International,États-Unis,Greenville-Spartanburg-Anderson,1,0.01
+International,États-Unis,Greater Rockford Area,1,0.01
+International,États-Unis,Greater Philadelphia,1,0.01
+International,États-Unis,Greater New Orleans Region,1,0.01
+International,États-Unis,Greater Minneapolis-St. Paul Area,1,0.01
+International,États-Unis,Greater Grand Junction Area,1,0.01
+International,États-Unis,Greater Flagstaff Area,1,0.01
+International,États-Unis,Las Cruces,1,0.01
+International,États-Unis,Lagrange,1,0.01
+International,États-Unis,Knoxville,1,0.01
+International,États-Unis,Kennesaw,1,0.01
+International,États-Unis,Kearney,1,0.01
+International,États-Unis,Kansas City,1,0.01
+International,États-Unis,Alpharetta,1,0.01
+International,États-Unis,Allentown,1,0.01
+International,Congo,Ntokou,1,0.01
+International,Congo,Loango,1,0.01
+International,Congo,Hinda,1,0.01
+International,États-Unis,Big Lake,1,0.01
+International,États-Unis,Berkeley,1,0.01
+International,États-Unis,Beaumont,1,0.01
+International,États-Unis,Baton Rouge,1,0.01
+International,États-Unis,Batavia,1,0.01
+International,États-Unis,Kankakee,1,0.01
+International,États-Unis,Kalamazoo,1,0.01
+International,États-Unis,Jersey City,1,0.01
+International,États-Unis,Jacksonville,1,0.01
+International,États-Unis,Jackson,1,0.01
+International,États-Unis,Meeker,1,0.01
+International,États-Unis,Marlborough,1,0.01
+International,États-Unis,Marietta,1,0.01
+International,États-Unis,Malibu,1,0.01
+International,États-Unis,Maine,1,0.01
+International,États-Unis,Madison,1,0.01
+International,États-Unis,Lonoke,1,0.01
+International,États-Unis,St Louis,1,0.01
+International,États-Unis,Southlake,1,0.01
+International,États-Unis,South Plainfield,1,0.01
+International,États-Unis,South Hackensack,1,0.01
+International,États-Unis,Somerset,1,0.01
+International,États-Unis,Shelby Township,1,0.01
+Cameroun,Cameroun,Dschang,1,0.01
+Cameroun,Cameroun,Doumé,1,0.01
+Cameroun,Cameroun,Douala - Garoua - Maroua - Yaoundé,1,0.01
+Cameroun,Cameroun,Douala - Garoua,1,0.01
+Cameroun,Cameroun,Douala - Ebolowa - Yaoundé - International,1,0.01
+Cameroun,Cameroun,Douala - Ebolowa - Yaoundé,1,0.01
+International,États-Unis,Long Beach,1,0.01
+International,États-Unis,Lombard,1,0.01
+International,États-Unis,Lexington,1,0.01
+International,États-Unis,Lewis Run,1,0.01
+International,États-Unis,Lemont,1,0.01
+International,États-Unis,Las Vegas Metropolitan Area,1,0.01
+International,États-Unis,North Brunswick,1,0.01
+International,États-Unis,New Haven,1,0.01
+International,États-Unis,Nassau County,1,0.01
+International,États-Unis,Naperville,1,0.01
+International,États-Unis,Morristown,1,0.01
+International,États-Unis,Mooresville,1,0.01
+International,États-Unis,Montpelier,1,0.01
+International,États-Unis,Montgomery,1,0.01
+Cameroun,Cameroun,Mbalmayo,1,0.01
+Cameroun,Cameroun,Guider,1,0.01
+Cameroun,Cameroun,Fotokol,1,0.01
+Cameroun,Cameroun,Figuil,1,0.01
+Cameroun,Cameroun,Extreme-Nord,1,0.01
+International,Congo,Gamboma,1,0.01
+Cameroun,Cameroun,Édéa,1,0.01
+International,États-Unis,Ames,1,0.01
+International,États-Unis,Milledgeville,1,0.01
+International,États-Unis,Miami,1,0.01
+International,États-Unis,Menlo Park,1,0.01
+International,États-Unis,Pensacola,1,0.01
+International,États-Unis,Pella,1,0.01
+International,États-Unis,Pearland,1,0.01
+International,États-Unis,Palo Alto,1,0.01
+International,États-Unis,Owensboro,1,0.01
+International,États-Unis,Orient,1,0.01
+International,États-Unis,Oregon,1,0.01
+International,États-Unis,Omaha,1,0.01
+International,États-Unis,Ohio,1,0.01
+International,États-Unis,Oakbrook Terrace,1,0.01
+International,États-Unis,Novi,1,0.01
+International,États-Unis,North Salt Lake,1,0.01
+International,États-Unis,North Creek,1,0.01
+International,États-Unis,North Carolina,1,0.01
+International,États-Unis,Salem,1,0.01
+International,États-Unis,Safford,1,0.01
+International,États-Unis,Sacramento,1,0.01
+International,États-Unis,Roseville,1,0.01
+International,États-Unis,Rohnert Park,1,0.01
+International,États-Unis,Ridgewood,1,0.01
+International,États-Unis,Ridgefield,1,0.01
+International,États-Unis,Richardson,1,0.01
+International,États-Unis,Redmond,1,0.01
+International,États-Unis,Prospect,1,0.01
+International,États-Unis,San Diego Metropolitan Area,1,0.01
+International,États-Unis,San Carlos,1,0.01
+International,États-Unis,San Antonio,1,0.01
+Cameroun,Cameroun,Bafoussam - Bamenda - Bertoua - Buéa - Douala - Ebolowa - Garoua - Maroua - Ngaoundéré - Yaoundé,1,0.01
+Cameroun,Cameroun,Bertoua - Douala - Garoua - Maroua - Yaoundé,1,0.01
+Cameroun,Cameroun,Bafoussam - Yaoundé,1,0.01
+Cameroun,Cameroun,Djohung,1,0.01
+Cameroun,Cameroun,Buéa - Douala - Yaoundé,1,0.01
+Cameroun,Cameroun,Mbankomo,1,0.01
+International,États-Unis,Port Charlotte,1,0.01
+International,États-Unis,Philadelphia,1,0.01
+Cameroun,Cameroun,Bertoua - Douala - Garoua - Yaoundé,1,0.01
+International,États-Unis,Wooster,1,0.01
+International,États-Unis,Winston-Salem,1,0.01
+International,États-Unis,Winsted,1,0.01
+International,États-Unis,Wichita,1,0.01
+International,États-Unis,White County,1,0.01
+International,États-Unis,West Chester,1,0.01
+International,États-Unis,Warren,1,0.01
+Cameroun,Cameroun,Bafoussam - Douala - Ebolowa - Yaoundé,1,0.01
+International,États-Unis,Valentine,1,0.01
+International,États-Unis,Utah County,1,0.01
+International,États-Unis,Utah,1,0.01
+Cameroun,Cameroun,Bertoua - Yaoundé,1,0.01
 Cameroun,Cameroun,Abong-Mbang,1,0.01

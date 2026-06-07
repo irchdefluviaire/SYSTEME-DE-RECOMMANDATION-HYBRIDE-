@@ -178,8 +178,13 @@ def normalize_city_list(value, country: str) -> list[str]:
         if city and key not in seen:
             seen.add(key)
             cities.append(city)
+    real_cities = [city for city in cities if city != "Non précisée"]
+    if real_cities:
+        cities = real_cities
     if not cities:
-        cities = ["Non précisée"]
+        cities = [f"{country} (ville non précisée)" if country else "Non précisée"]
+    if cities == ["Non précisée"] and country:
+        cities = [f"{country} (ville non précisée)"]
     return cities
 
 

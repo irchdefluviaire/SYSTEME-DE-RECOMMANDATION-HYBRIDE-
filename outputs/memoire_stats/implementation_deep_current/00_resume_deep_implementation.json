@@ -52,30 +52,25 @@
     "zones": [
       {
         "zone": "Cameroun",
-        "n": 8886,
-        "part_pct": 63.67
+        "n": 11149,
+        "part_pct": 79.88
       },
       {
         "zone": "International",
-        "n": 2772,
-        "part_pct": 19.86
-      },
-      {
-        "zone": "Non précisée",
-        "n": 2299,
-        "part_pct": 16.47
+        "n": 2808,
+        "part_pct": 20.12
       }
     ],
     "cities": [
       {
         "ville": "Yaoundé",
-        "n": 4467,
-        "part_pct": 32.01
+        "n": 4477,
+        "part_pct": 32.08
       },
       {
-        "ville": "Non précisée",
-        "n": 2299,
-        "part_pct": 16.47
+        "ville": "Cameroun (ville non précisée)",
+        "n": 2235,
+        "part_pct": 16.01
       },
       {
         "ville": "Pointe-Noire",
@@ -94,8 +89,8 @@
       },
       {
         "ville": "Douala",
-        "n": 713,
-        "part_pct": 5.11
+        "n": 723,
+        "part_pct": 5.18
       },
       {
         "ville": "Bafoussam",
@@ -104,8 +99,8 @@
       },
       {
         "ville": "Kribi",
-        "n": 515,
-        "part_pct": 3.69
+        "n": 519,
+        "part_pct": 3.72
       },
       {
         "ville": "Yaoundé (ekoumdoum)",
@@ -119,13 +114,13 @@
       },
       {
         "ville": "Maroua",
-        "n": 282,
-        "part_pct": 2.02
+        "n": 283,
+        "part_pct": 2.03
       },
       {
         "ville": "Garoua",
-        "n": 208,
-        "part_pct": 1.49
+        "n": 210,
+        "part_pct": 1.5
       },
       {
         "ville": "Bouenza",
@@ -842,8 +837,8 @@
       }
     ],
     "n_indexes": 19,
-    "latency_ms_median": 126.50810000013735,
-    "latency_ms_p90": 731.6054600001283
+    "latency_ms_median": 30.889899993781,
+    "latency_ms_p90": 64.41412000567655
   },
   "neo4j": {
     "available": true,
