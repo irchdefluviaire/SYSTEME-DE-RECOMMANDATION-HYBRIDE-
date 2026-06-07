@@ -572,7 +572,7 @@ La capture pgvector doit montrer les tables \texttt{embeddings} et \texttt{doc\_
 
 La conclusion technique est nette : pgvector remplit les conditions minimales d'une brique de retrieval. Il indexe toutes les entités utiles, conserve les liens Neo4j, dispose d'index vectoriels et lexicaux, et présente des latences compatibles avec une application interactive. Le point à surveiller pour l'évaluation n'est donc plus la disponibilité du stockage, mais la qualité du ranking produit par le retrieval et son amélioration par le graphe.
 
-\section{Graphe de connaissances Neo4j et moteur hybride}
+\section{Implémentation du graphe Neo4j comme base de connaissances}
 
 \subsection{Schéma du graphe de connaissances}
 
@@ -584,7 +584,7 @@ La conclusion technique est nette : pgvector remplit les conditions minimales d'
   \source{Synthèse des labels et relations implémentés dans Neo4j}
 \end{figure}
 
-Le graphe relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Sa fonction principale n'est pas de remplacer l'embedding, mais de donner un contexte relationnel aux résultats vectoriels. Une offre proche vectoriellement peut ainsi être expliquée par ses compétences requises, son secteur, son niveau NCF ou son rattachement métier.
+Le graphe relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Sa fonction principale n'est pas de remplacer l'embedding, mais de donner un contexte relationnel aux résultats vectoriels. Une offre proche vectoriellement peut ainsi être expliquée par ses compétences requises, son secteur, son niveau NCF ou son rattachement métier. Cette section ne décrit donc pas Neo4j en général ; elle interprète le graphe effectivement construit dans le projet.
 
 \implementationScreenshot
   {fig:capture_neo4j_browser}
@@ -604,7 +604,58 @@ La capture Neo4j doit être utilisée comme preuve visuelle de la base de connai
   \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/08\_neo4j\_*.csv}}
 \end{figure}
 
-Le graphe contient 90\,230 noeuds et 550\,542 relations. Les principaux labels sont \texttt{Candidat} avec 41\,298 noeuds, \texttt{GroupeCompétences} avec 14\,579 noeuds, \texttt{OffreEmploi} avec 13\,957 noeuds, \texttt{Compétence} avec 13\,939 noeuds et \texttt{Métier} avec 3\,039 noeuds. Les relations dominantes sont \texttt{POSSEDE} avec 221\,413 liens, \texttt{NECESSITE} avec 126\,051 liens, \texttt{REQUIERT} avec 58\,519 liens, puis \texttt{A\_NIVEAU} avec 41\,254 liens. Cette hiérarchie confirme que le graphe est surtout structuré autour du triptyque candidat--compétence--offre, complété par les référentiels.
+Le graphe contient 90\,230 noeuds et 550\,542 relations. Sa densité orientée globale est très faible, environ $6,76 \times 10^{-5}$, ce qui est normal pour un graphe hétérogène de connaissances : toutes les entités n'ont pas vocation à être reliées entre elles. Le degré moyen non orienté vaut 12,20 relations par noeud. Cette moyenne est cependant trompeuse, car le graphe est fortement déséquilibré : les cinq premiers types de noeuds concentrent 96,21\,\% des noeuds, et les trois premières relations concentrent 73,74\,\% des liens.
+
+\begin{table}[H]
+  \centering
+  \caption{Indicateurs structuraux du graphe Neo4j}
+  \label{tab:implementation_neo4j_indicateurs}
+  \tableStyleStart
+  \begin{tabularx}{0.94\textwidth}{Xr}
+    \rowcolor{darkblue}
+    \tabheader{Indicateur} & \tabheader{Valeur observée} \\
+    \midrule
+    Nombre total de noeuds & 90\,230 \\
+    Nombre total de relations & 550\,542 \\
+    Types de noeuds observés & 18 \\
+    Types de relations observés & 18 \\
+    Degré moyen non orienté & 12,20 \\
+    Densité orientée globale & 0,0000676 \\
+    Part des 5 premiers labels & 96,21\,\% \\
+    Part des 3 premières relations & 73,74\,\% \\
+    Noeuds isolés observés & 12\,487 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{08\_neo4j\_node\_counts.csv}, \texttt{08\_neo4j\_relation\_counts.csv} et requêtes Neo4j de diagnostic}
+\end{table}
+
+Les principaux labels sont \texttt{Candidat} avec 41\,298 noeuds, \texttt{GroupeCompétences} avec 14\,579 noeuds, \texttt{OffreEmploi} avec 13\,957 noeuds, \texttt{Compétence} avec 13\,939 noeuds et \texttt{Métier} avec 3\,039 noeuds. Cette structure est cohérente avec l'objectif métier : le graphe est d'abord un graphe d'appariement, non un graphe encyclopédique. Les candidats représentent 45,77\,\% des noeuds, les offres 15,47\,\%, les compétences 15,45\,\% et les groupes de compétences 16,16\,\%. Le risque statistique est clair : si le score de recommandation n'est pas normalisé, les familles très représentées peuvent dominer la recherche au détriment de signaux plus spécifiques comme le métier, le niveau ou le secteur.
+
+\begin{table}[H]
+  \centering
+  \caption{Principaux types de noeuds et de relations}
+  \label{tab:implementation_neo4j_labels_relations}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{XrXr}
+    \rowcolor{darkblue}
+    \tabheader{Type de noeud} & \tabheader{Noeuds} & \tabheader{Relation dominante} & \tabheader{Relations} \\
+    \midrule
+    \texttt{Candidat} & 41\,298 & \texttt{POSSEDE} & 221\,413 \\
+    \texttt{GroupeCompétences} & 14\,579 & \texttt{NECESSITE} & 126\,051 \\
+    \texttt{OffreEmploi} & 13\,957 & \texttt{REQUIERT} & 58\,519 \\
+    \texttt{Compétence} & 13\,939 & \texttt{A\_NIVEAU} & 41\,254 \\
+    \texttt{Métier} & 3\,039 & \texttt{PARTIE\_DE} & 20\,183 \\
+    \texttt{Employeur} & 1\,638 & \texttt{CORRESPOND\_MEPC} & 18\,642 \\
+    \texttt{Localisation} & 312 & \texttt{DANS\_SECTEUR} & 13\,957 \\
+    \texttt{Secteur} & 192 & \texttt{PUBLIEE\_PAR} & 13\,935 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{08\_neo4j\_node\_counts.csv} et \texttt{08\_neo4j\_relation\_counts.csv}}
+\end{table}
+
+Les relations dominantes sont \texttt{POSSEDE}, \texttt{NECESSITE} et \texttt{REQUIERT}. Elles forment le coeur du système : candidat--compétence, métier--compétence et offre--compétence. Les relations \texttt{DANS\_SECTEUR}, \texttt{PUBLIEE\_PAR}, \texttt{LOCALISEE\_A}, \texttt{A\_NIVEAU} et \texttt{REQUIERT\_NIVEAU} ajoutent des contraintes d'interprétation. Le graphe n'est donc pas seulement volumineux ; il encode les chemins nécessaires à l'explication d'une recommandation.
 
 \begin{figure}[H]
   \centering
@@ -614,7 +665,32 @@ Le graphe contient 90\,230 noeuds et 550\,542 relations. Les principaux labels s
   \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/09\_neo4j\_degree\_stats.csv}}
 \end{figure}
 
-Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen très élevé, car peu de niveaux concentrent de nombreux candidats et offres. Les \texttt{Compétence}, \texttt{Secteur}, \texttt{Localisation} et \texttt{GroupeBaseMEPC} jouent aussi des rôles de hubs. Ce résultat est utile mais dangereux si on le surinterprète : un hub peut aider à regrouper, mais il peut aussi devenir trop générique pour discriminer finement les recommandations.
+Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56 et un degré médian de 7\,073, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC} ont un degré moyen de 90,22, les \texttt{Secteur} de 72,69, les \texttt{Métier} de 48,61 et les \texttt{Localisation} de 43,96. À l'inverse, \texttt{DocChunk}, \texttt{SousGroupeMEPC} et plusieurs noeuds référentiels restent faiblement connectés.
+
+\begin{table}[H]
+  \centering
+  \caption{Hétérogénéité des degrés par famille de noeuds}
+  \label{tab:implementation_neo4j_degres}
+  \tableStyleStart
+  \begin{tabularx}{0.94\textwidth}{Xrrrr}
+    \rowcolor{darkblue}
+    \tabheader{Label} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p90} & \tabheader{Max} \\
+    \midrule
+    \texttt{NiveauFormationNCF} & 5\,812,56 & 7\,073 & 10\,672,4 & 11\,050 \\
+    \texttt{GroupeBaseMEPC} & 90,22 & 73 & 201 & 276 \\
+    \texttt{Secteur} & 72,69 & 5,5 & 151,6 & 1\,548 \\
+    \texttt{Métier} & 48,61 & 44 & 77 & 186 \\
+    \texttt{Localisation} & 43,96 & 1 & 8 & 4\,467 \\
+    \texttt{Compétence} & 30,57 & 5 & 28 & 6\,789 \\
+    \texttt{OffreEmploi} & 7,97 & 9 & 11 & 11 \\
+    \texttt{Candidat} & 6,56 & 7 & 8 & 8 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{09\_neo4j\_degree\_stats.csv}}
+\end{table}
+
+Cette hétérogénéité est une force et une faiblesse. Elle est une force car les hubs facilitent l'explication : le système peut rattacher rapidement une offre à un niveau, un secteur, une ville ou une famille MEPC. Elle est une faiblesse car certains hubs sont trop génériques. Les cinq plus grands hubs sont des niveaux NCF, puis apparaissent des compétences très larges liées au transport, à l'assurance ou au bâtiment. Le noeud \texttt{Employeur non précisé} atteint aussi un degré de 5\,933. Ce dernier n'est pas un vrai signal métier ; il doit être pénalisé dans le reranking, sinon le graphe risque de récompenser une absence d'information.
 
 \begin{figure}[H]
   \centering
@@ -624,15 +700,168 @@ Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{Niv
   \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/08\_neo4j\_patterns\_top.csv}}
 \end{figure}
 
-La matrice des liaisons confirme que le graphe n'est pas seulement une collection de tables importées. Les relations structurantes relient candidats et compétences, offres et compétences, offres et secteurs, offres et employeurs, ainsi que les référentiels entre eux. Les algorithmes avancés de graphe de type PageRank ou Louvain ne sont pas revendiqués ici, car ils doivent être calculés explicitement dans un protocole d'analyse. Le chapitre se limite donc aux indicateurs vérifiés : volumes, degrés, hubs et motifs relationnels.
+La matrice des liaisons confirme que le graphe n'est pas seulement une collection de tables importées. Les relations structurantes relient candidats et compétences, offres et compétences, métiers et compétences, offres et secteurs, offres et employeurs, ainsi que les référentiels entre eux. Les motifs les plus importants sont les suivants : 221\,413 chemins \texttt{Candidat--POSSEDE--Compétence}, 58\,519 chemins \texttt{OffreEmploi--REQUIERT--Compétence} et 126\,051 chemins \texttt{Métier--NECESSITE--Compétence}. En croisant les chemins, le graphe expose 72\,832\,868 triplets candidat--compétence--offre, 27\,984\,337 triplets candidat--niveau--offre et 963\,063 triplets métier--compétence--offre. Ces chiffres expliquent pourquoi un simple top-$K$ vectoriel est insuffisant : la base relationnelle offre un espace de justification beaucoup plus riche que la similarité textuelle seule.
 
-\subsection{Moteur hybride et logique de skill gap}
+\begin{table}[H]
+  \centering
+  \caption{Chemins métiers exploitables pour l'explication}
+  \label{tab:implementation_neo4j_chemins}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{XrX}
+    \rowcolor{darkblue}
+    \tabheader{Chemin relationnel} & \tabheader{Occurrences} & \tabheader{Usage dans le système} \\
+    \midrule
+    Candidat--Compétence--Offre & 72\,832\,868 & Mesure des compétences communes et base du \textit{skill gap}. \\
+    Candidat--Niveau NCF--Offre & 27\,984\,337 & Contrôle de cohérence entre niveau acquis et niveau requis. \\
+    Métier--Compétence--Offre & 963\,063 & Rattachement métier des offres et enrichissement MEPC/ISCO. \\
+    Offre--Secteur / Employeur / Localisation & 41\,607 & Filtrage métier, géographique et contextualisation de la recommandation. \\
+    DocChunk--Référentiel & 142 & Citation et justification documentaire dans le GraphRAG. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Requêtes Cypher de diagnostic sur Neo4j et \texttt{08\_neo4j\_patterns\_top.csv}}
+\end{table}
 
-Le moteur hybride combine la similarité vectorielle avec des signaux relationnels et métiers. La similarité pgvector présélectionne les entités proches ; le graphe vérifie les relations candidat--compétence--offre ; les règles métier contrôlent les niveaux, secteurs et contraintes disponibles ; l'analyse de \textit{skill gap} distingue les compétences acquises, requises et manquantes.
+Les communautés algorithmiques, de type Louvain, et les scores PageRank ne sont pas revendiqués dans ce chapitre. Le diagnostic d'exécution montre que les procédures GDS nécessaires n'étaient pas disponibles dans l'instance utilisée. C'est une limite méthodologique à assumer : parler de communautés sans calcul effectif serait fragile. En revanche, les composantes relationnelles métier sont déjà visibles par motifs : candidat--compétence--offre, métier--compétence--offre, offre--niveau--candidat et chunk--référentiel.
 
-Cette brique est essentielle car elle empêche de confondre proximité textuelle et compatibilité professionnelle. Deux textes peuvent être proches parce qu'ils partagent un vocabulaire sectoriel, mais rester incompatibles si le niveau de formation, l'expérience ou les compétences obligatoires ne sont pas alignés. À l'inverse, un candidat peut ne pas correspondre exactement lexicalement à une offre tout en présentant une trajectoire de montée en compétences réaliste.
+\section{Implémentation du moteur hybride de recommandation}
 
-L'interprétation professionnelle du moteur hybride repose donc sur quatre verdicts : candidat immédiatement compatible, candidat compatible après montée en compétence, candidat à conserver en vivier, ou profil hors cible. Cette catégorisation est plus utile qu'un score unique, car elle transforme la recommandation en aide à la décision.
+Le moteur hybride constitue le coeur décisionnel du système. Sans lui, l'application ne serait qu'un chatbot branché sur une recherche vectorielle. L'implémentation située dans \filevar{src/05\_graphrag/context\_builder.py} suit une logique en trois temps : pgvector présélectionne un ensemble d'offres candidates, Neo4j enrichit chaque couple candidat--offre avec des signaux relationnels, puis un score hybride réordonne les offres avant la génération. Le classement final n'est donc pas directement le score de similarité textuelle ; c'est une combinaison pondérée entre proximité sémantique, couverture des compétences, niveau de formation et cohérence sectorielle.
+
+\subsection{Formalisation du score hybride}
+
+Pour chaque couple candidat--offre, le score implémenté est :
+
+\[
+S_{\text{hybride}} =
+0{,}35 S_{\text{sémantique}}
++ 0{,}30 S_{\text{compétences}}
++ 0{,}20 S_{\text{niveau NCF}}
++ 0{,}15 S_{\text{secteur}}
+\]
+
+Le score sémantique provient du retrieval pgvector. Le score de compétences utilise le taux de compétences requises retrouvées dans le profil du candidat, puis applique une pénalité lorsque des compétences essentielles sont manquantes. Le score de niveau compare le niveau NCF du candidat au niveau NCF requis par l'offre. Le score sectoriel mesure le recouvrement lexical entre métier visé, secteur du candidat, formation et informations de l'offre. La localisation est utilisée comme information de contexte et d'affichage, notamment dans la sortie structurée, mais elle n'est pas encore intégrée comme composante pondérée du score. C'est une limite importante : le système peut expliquer la ville d'une offre, mais ne doit pas encore prétendre optimiser strictement la distance géographique.
+
+\begin{table}[H]
+  \centering
+  \caption{Composantes du score hybride implémenté}
+  \label{tab:implementation_moteur_hybride_score}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{3.2cm}p{2.0cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Composante} & \tabheader{Poids} & \tabheader{Interprétation décisionnelle} \\
+    \midrule
+    Similarité sémantique & 0,35 & Mesure la proximité dense entre le profil/requête et l'offre présélectionnée par pgvector. \\
+    Compétences & 0,30 & Mesure la couverture des compétences requises ; les compétences essentielles manquantes réduisent le score. \\
+    Niveau NCF & 0,20 & Vérifie si le niveau du candidat est compatible avec le niveau requis par l'offre. \\
+    Secteur métier & 0,15 & Contrôle la cohérence entre secteur/métier visé du candidat et domaine de l'offre. \\
+    Localisation & Non pondérée & Conservée dans le contexte et l'explication, mais non utilisée comme poids explicite dans la version actuelle. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\filevar{src/05\_graphrag/context\_builder.py}}
+\end{table}
+
+Le traitement du niveau NCF est volontairement non linéaire. Si le niveau du candidat est supérieur ou égal au niveau requis, la composante vaut 1. Si le candidat est inférieur d'un niveau, elle vaut 0,72 ; inférieur de deux niveaux, 0,45 ; inférieur de trois niveaux ou plus, 0,20, avec pénalité supplémentaire sur le score final. Cette règle évite une erreur classique : traiter une différence d'un niveau et une différence de quatre niveaux comme de simples écarts numériques comparables.
+
+\subsection{Skill gap et verdicts de décision}
+
+Le \textit{skill gap} est calculé à partir des relations du graphe : les compétences de l'offre sont séparées entre compétences acquises, compétences manquantes et compétences essentielles manquantes. Ce découpage est plus informatif qu'un score unique. Un candidat peut avoir un score moyen mais manquer une compétence essentielle ; inversement, un candidat légèrement sous le niveau requis peut être conservé si les compétences sont proches et si l'écart NCF est faible.
+
+\begin{table}[H]
+  \centering
+  \caption{Règles de verdict du moteur hybride}
+  \label{tab:implementation_moteur_hybride_verdicts}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4.2cm}p{3.0cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Verdict implémenté} & \tabheader{Condition principale} & \tabheader{Lecture métier} \\
+    \midrule
+    Prêt à postuler & Score $\geq 0{,}72$, au plus une compétence essentielle manquante, pas d'écart NCF positif. & Profil immédiatement compatible. \\
+    Montée en compétence & Score $\geq 0{,}55$, au plus trois compétences essentielles manquantes, pas d'écart NCF bloquant. & Profil plausible, mais nécessitant un plan de montée en compétence. \\
+    Vivier à développer & Score $\geq 0{,}42$. & Profil à conserver, intéressant pour une trajectoire future ou une offre voisine. \\
+    Hors cible actuel & Score $< 0{,}42$. & Profil trop éloigné dans l'état actuel. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\filevar{src/05\_graphrag/context\_builder.py}}
+\end{table}
+
+Sur les 550 couples candidat--offre analysés dans le fichier d'ablation, les verdicts sont très majoritairement prudents : 259 couples, soit 47,09\,\%, relèvent du vivier à développer ; 144, soit 26,18\,\%, sont hors cible dans l'état actuel ; 118, soit 21,45\,\%, nécessitent une montée en compétence ; seuls 29 couples, soit 5,27\,\%, sont directement prêts à postuler. Cette distribution est rassurante : le moteur ne transforme pas mécaniquement toute proximité vectorielle en recommandation forte.
+
+\begin{table}[H]
+  \centering
+  \caption{Distribution statistique des verdicts sur les sorties de reranking}
+  \label{tab:implementation_moteur_hybride_distribution}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{Xrrrr}
+    \rowcolor{darkblue}
+    \tabheader{Verdict} & \tabheader{n} & \tabheader{Part} & \tabheader{Score moyen} & \tabheader{Taux match moyen} \\
+    \midrule
+    Vivier à développer & 259 & 47,09\,\% & 0,4843 & 0,3050 \\
+    Hors cible actuel & 144 & 26,18\,\% & 0,3073 & 0,2252 \\
+    Montée en compétence & 118 & 21,45\,\% & 0,6870 & 0,9641 \\
+    Prêt à postuler & 29 & 5,27\,\% & 0,7593 & 0,9712 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}}
+\end{table}
+
+La corrélation entre le score sémantique et le score hybride vaut 0,6002, tandis que la corrélation entre le taux de match des compétences et le score hybride vaut 0,8023. Cela montre que le moteur ne se contente pas de recopier la similarité vectorielle : la compétence pèse fortement dans la décision finale. C'est cohérent avec l'objectif emploi--compétences. En revanche, cette forte dépendance aux compétences exige de surveiller la qualité des compétences extraites : si certaines compétences sont trop génériques ou mal typées, elles peuvent influencer fortement le score.
+
+\subsection{Effet du reranking hybride}
+
+Le reranking hybride modifie fortement les rangs. Sur les 550 couples étudiés, 82,73\,\% gagnent des positions après intégration du graphe et des règles métier, 10,18\,\% perdent des positions et 7,09\,\% restent au même rang. Le déplacement moyen est de 8,11 rangs. Ce résultat doit être lu avec nuance : un fort déplacement de rang n'est pas automatiquement une amélioration, mais il prouve que le moteur hybride apporte une décision supplémentaire par rapport au retrieval vectoriel.
+
+\begin{table}[H]
+  \centering
+  \caption{Résumé statistique des scores et des rangs}
+  \label{tab:implementation_moteur_hybride_scores}
+  \tableStyleStart
+  \begin{tabularx}{0.94\textwidth}{Xrrrr}
+    \rowcolor{darkblue}
+    \tabheader{Indicateur} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p75} & \tabheader{Max} \\
+    \midrule
+    Score sémantique & 0,4963 & 0,5087 & 0,5890 & 0,7661 \\
+    Score hybride & 0,4959 & 0,4863 & 0,6225 & 0,7836 \\
+    Taux de match compétences & 0,4606 & 0,2750 & 0,8330 & 1,0000 \\
+    Rang pgvector initial & 13,6073 & 12,0 & 21,0 & 30,0 \\
+    Rang après graphe & 5,5000 & 5,5 & 8,0 & 10,0 \\
+    Déplacement de rang & 8,1073 & 7,0 & 14,0 & 28,0 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}}
+\end{table}
+
+L'ablation confirme l'intérêt du moteur hybride : l'ajout du graphe augmente le recall@10 de 0,4599 à 0,5557 et le NDCG@10 de 0,3889 à 0,4681. En contrepartie, la précision@1 baisse de 0,4182 à 0,3636. Ce compromis est cohérent avec la finalité du système : pour explorer des opportunités et construire un plan de montée en compétence, élargir correctement le top 10 est plus utile que forcer une seule réponse immédiate. Si l'usage cible devient le recrutement automatique d'un seul candidat, les poids du score devront être recalibrés pour regagner de la précision@1.
+
+\subsection{Exemple de sortie intermédiaire}
+
+Le tableau suivant illustre une sortie intermédiaire avant génération. Il montre que le moteur expose les variables nécessaires à l'audit : score sémantique, score hybride, taux de match, verdict et déplacement de rang. Ce niveau de traçabilité est indispensable pour défendre le système comme recommandation robuste.
+
+\begin{table}[H]
+  \centering
+  \caption{Exemple de reranking hybride pour un candidat}
+  \label{tab:implementation_moteur_hybride_exemple}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4.5cm}rrrrX}
+    \rowcolor{darkblue}
+    \tabheader{Offre} & \tabheader{Sem.} & \tabheader{Hybr.} & \tabheader{Match} & \tabheader{Rang} & \tabheader{Verdict} \\
+    \midrule
+    Administrateur Finances et RH & 0,6127 & 0,7033 & 0,833 & 2 $\rightarrow$ 1 & Montée en compétence \\
+    Stage professionnel en cabinet & 0,5468 & 0,6803 & 0,833 & 24 $\rightarrow$ 2 & Montée en compétence \\
+    Directeur d'agence VIP & 0,5411 & 0,6783 & 0,833 & 28 $\rightarrow$ 3 & Montée en compétence \\
+    Contrôleur de gestion & 0,5367 & 0,6767 & 0,833 & 29 $\rightarrow$ 4 & Montée en compétence \\
+    Directeur Général Banque & 0,5627 & 0,6298 & 0,833 & 3 $\rightarrow$ 5 & Montée en compétence \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}, candidat \texttt{PPBZV2501070016137}}
+\end{table}
+
+Cet exemple montre pourquoi le score hybride est nécessaire. Certaines offres initialement classées très bas par pgvector remontent fortement parce que leurs compétences et signaux métier correspondent mieux au profil. Mais le verdict reste \og montée en compétence \fg{} et non \og prêt à postuler \fg{} : le moteur ne se limite pas à reclasser, il qualifie la nature de la compatibilité. C'est précisément cette couche décisionnelle qui distingue le système d'un simple RAG conversationnel.
 
 \section{Orchestration LangGraph, génération contrôlée et interfaces}
 

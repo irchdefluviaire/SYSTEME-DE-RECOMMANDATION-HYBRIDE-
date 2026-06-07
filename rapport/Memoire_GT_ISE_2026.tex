@@ -1279,6 +1279,10 @@ S_{hyb}(c,o)=\alpha S_{sem}(c,o)+\beta S_{graph}(c,o)+\gamma C_{ncf}(c,o)+\delta
 \]
 où $c$ désigne un candidat, $o$ une offre, $S_{sem}$ la similarité sémantique, $S_{graph}$ la couverture de compétences issue du graphe, $C_{ncf}$ la compatibilité de niveau de formation et $A_{sect}$ l'alignement sectoriel. Cette formulation traduit un choix méthodologique important : le système ne délègue pas toute la décision au \LLM{}. Le \LLM{} intervient pour synthétiser et expliquer, mais le classement repose sur des signaux calculables et auditables.
 
+Les pondérations ne doivent pas être fixées uniquement par intuition. La méthodologie retient donc une calibration statistique par optimisation bayésienne avec Optuna, en utilisant le \textit{Tree-structured Parzen Estimator} comme stratégie de recherche \cite{akiba2019optuna}. Dans l'expérience logicielle retenue, le score calibré est volontairement ramené à deux signaux observables dans les sorties d'évaluation : le score sémantique issu de pgvector et le score Neo4j issu de l'enrichissement graphe. L'objectif retenu est le NDCG@10, car cette métrique évalue à la fois la présence des offres pertinentes dans le top 10 et leur ordre dans la liste. Pour chaque essai, l'algorithme propose des poids positifs, les normalise afin que leur somme soit égale à 1, recalcule le score hybride, rerange les offres par candidat, puis mesure le NDCG@10 moyen. La solution retenue est celle qui maximise cette métrique sur l'échantillon d'évaluation.
+
+Cette calibration est volontairement séparée de la génération \LLM{}. Elle concerne seulement le moteur de classement. Elle inclut également un garde-fou : les poids proposés par Optuna sont comparés à des solutions de frontière, par exemple un score purement sémantique ou un score purement fondé sur les compétences. Cette précaution évite de retenir artificiellement un score hybride si les données montrent qu'une composante unique classe mieux les offres selon le critère NDCG@10. La calibration est donc utilisée comme un test empirique des pondérations, non comme une justification automatique du caractère hybride du système.
+
 L'analyse de \textit{skill gap} complète le score. Elle distingue les compétences acquises, les compétences requises et les compétences manquantes. Cette distinction permet de produire un verdict opérationnel : candidat immédiatement compatible, candidat compatible après montée en compétence, candidat à conserver en vivier ou profil hors cible. Ce verdict est plus utile qu'un simple score numérique, car il transforme la recommandation en aide à la décision.
 
 \section{Orchestration agentique et génération contrôlée}
@@ -1704,6 +1708,61 @@ Le reranking graphe déplace les offres dans le classement initial. Une offre qu
 Cette redistribution a deux effets. Le premier est positif : le système ne se limite plus à une proximité textuelle. Il peut corriger des cas où une offre ressemble lexicalement au profil mais ne correspond pas au niveau de formation ou au secteur recherché. Le second est plus problématique : si les relations du graphe sont incomplètes, le score structurel peut pénaliser de bonnes offres ou favoriser des offres seulement parce que leurs métadonnées sont mieux renseignées. Le graphe ajoute donc de l'information, mais il ajoute aussi une source d'erreur potentielle.
 
 Ce résultat appelle une conclusion nuancée. Le graphe n'est pas une garantie automatique d'amélioration. Il améliore le système si les relations sont correctes, si les poids du score hybride sont bien calibrés et si l'objectif est de produire une liste explicable plutôt qu'un unique meilleur résultat. Dans le système actuel, l'apport est visible sur Recall@10 et NDCG@10, mais il reste insuffisamment stabilisé sur le rang 1.
+
+\section{Calibration bayésienne des pondérations du score hybride}
+
+Afin de ne pas conserver des pondérations arbitraires dans le moteur hybride, un module logiciel spécifique a été ajouté : \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py}. Ce module lit les sorties détaillées de l'ablation, optimise les pondérations du score hybride avec Optuna et retient la combinaison qui maximise le NDCG@10. Les sorties sont sauvegardées dans \filevar{outputs/evaluation/hybrid\_weight\_optimization} et les figures correspondantes dans \filevar{rapport/figures/generated/evaluation}.
+
+L'expérience a été conduite sur 550 couples candidat--offre correspondant à 55 candidats évalués. La pertinence graduée utilisée pour le NDCG@10 est \filevar{proxy\_relevance}, c'est-à-dire le proxy métier construit à partir des métadonnées normalisées. Cette décision est préférable à l'utilisation directe des verdicts du moteur, car elle limite la circularité : on ne calibre pas les poids uniquement sur une étiquette déjà produite par le score hybride. Cependant, cette pertinence reste un label faible ; elle ne remplace pas une annotation humaine.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Résultat de l'optimisation bayésienne des pondérations du score hybride}
+\label{tab:eval_optimisation_poids_hybrides}
+\begin{tabular}{lrr}
+\toprule
+Configuration testée & NDCG@10 moyen & Lecture statistique \\
+\midrule
+Score sémantique seul & 0.9087 & Meilleure solution observée \\
+Meilleur essai Optuna & 0.9060 & Très proche, mais inférieur au bord sémantique \\
+Score Neo4j seul & 0.8735 & Moins performant que le signal sémantique \\
+Poids égaux & 0.8704 & Combinaison naïve défavorable \\
+Score hybride actuel & 0.8829 & Inférieur au score sémantique seul \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le résultat est sévère pour le score hybride actuel. Sur ce protocole, la meilleure pondération retenue est :
+\[
+w_{semantique}=1{,}0000 \quad ; \quad w_{Neo4j}=0{,}0000.
+\]
+Autrement dit, avec les composantes actuellement exportées dans le fichier d'évaluation, le NDCG@10 est maximisé par le score sémantique seul. Ce résultat ne doit pas être maquillé : il indique que le signal Neo4j disponible dans cette expérience, exporté sous la forme \filevar{taux\_match}, n'améliore pas le classement selon le proxy de pertinence. Il peut rester utile pour expliquer le \textit{skill gap}, produire les verdicts ou filtrer des profils, mais il ne doit pas être surpondéré dans le classement si l'objectif unique est le NDCG@10.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials.png}
+\caption{Évolution du NDCG@10 au cours des essais Optuna}
+\label{fig:eval_hybrid_weights_trials}
+\end{figure}
+
+La figure \ref{fig:eval_hybrid_weights_trials} montre que les meilleurs essais apparaissent lorsque le poids de la composante Neo4j devient presque nul. Cette concentration des bons essais près de la frontière confirme que le problème n'est pas seulement un mauvais choix initial de pondérations : dans l'échantillon disponible, le signal graphe agrégé par \filevar{taux\_match} n'apporte pas d'amélioration marginale au NDCG@10.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.74\textwidth]{figures/generated/evaluation/hybrid_weights_best.png}
+\caption{Pondérations retenues après optimisation NDCG@10}
+\label{fig:eval_hybrid_weights_best}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.80\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison.png}
+\caption{Comparaison du NDCG@10 avant et après calibration}
+\label{fig:eval_hybrid_weights_comparison}
+\end{figure}
+
+La figure \ref{fig:eval_hybrid_weights_comparison} confirme que la calibration améliore le score hybride actuel, qui passe de 0.8829 à 0.9087. Mais cette amélioration vient d'un choix radical : revenir au score sémantique pur. La conclusion d'ingénierie est donc claire. Le moteur hybride ne doit pas être abandonné, mais le score Neo4j doit être affiné avant d'être utilisé comme pondération de ranking : distinguer compétences essentielles et secondaires, intégrer explicitement le niveau \NCF{}, exporter le score sectoriel, ajouter une composante géographique mesurable et calibrer ces signaux sur un jeu annoté. Dans l'état actuel des sorties disponibles, la stratégie optimale pour le NDCG@10 est de conserver Neo4j pour l'explication et le \textit{skill gap}, mais de ne pas laisser le signal graphe brut dominer le classement.
 
 \section{Performance opérationnelle et stabilité}
 

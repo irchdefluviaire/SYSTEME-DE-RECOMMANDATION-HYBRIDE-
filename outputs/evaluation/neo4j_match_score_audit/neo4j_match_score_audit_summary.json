@@ -1,0 +1,68 @@
+{
+  "input_path": "outputs\\evaluation\\pgvector_vs_graph\\ablation_graph_rerank_details.csv",
+  "n_pairs": 550,
+  "global_counts": {
+    "has_possede": true,
+    "has_requiert": true,
+    "n_possede": 221413,
+    "n_requiert": 58519
+  },
+  "pgvector_counts": [
+    {
+      "entity_kind": "CANDIDAT",
+      "n": 41298
+    },
+    {
+      "entity_kind": "COMPETENCE",
+      "n": 13939
+    },
+    {
+      "entity_kind": "DOMAINE_DETAILLE_NCF",
+      "n": 201
+    },
+    {
+      "entity_kind": "GROUPE_BASE_MEPC",
+      "n": 209
+    },
+    {
+      "entity_kind": "METIER",
+      "n": 3039
+    },
+    {
+      "entity_kind": "OFFRE_EMPLOI",
+      "n": 13957
+    }
+  ],
+  "pgvector_coverage_for_eval_offer_ids": {
+    "n_offer_entity_ids": 13957,
+    "n_offer_neo4j_node_ids": 13957,
+    "n_eval_offer_ids_as_entity_id": 0,
+    "n_eval_offer_ids_as_neo4j_node_id": 0
+  },
+  "pgvector_offer_hits": [],
+  "id_coverage": {
+    "n_candidate_ids_requested": 55,
+    "n_candidates_found": 55,
+    "n_candidates_with_possede": 53,
+    "n_offer_ids_requested": 429,
+    "n_offers_found": 0,
+    "n_offers_with_requiert": 0
+  },
+  "sample_offer_hits": [],
+  "pairs_found": 0,
+  "pairs_with_offre_skills": 0,
+  "pairs_with_candidat_skills": 530,
+  "pairs_with_common_skills": 0,
+  "mean_offre_skills": 0.0,
+  "mean_candidat_skills": 5.4,
+  "mean_common_skills": 0.0,
+  "mean_taux_match_neo4j": null,
+  "mean_taux_match_stocke": null,
+  "max_abs_delta": null,
+  "mean_abs_delta": null,
+  "n_delta_gt_001": 0,
+  "outputs": {
+    "details_csv": "outputs\\evaluation\\neo4j_match_score_audit\\neo4j_match_score_audit_details.csv",
+    "summary_json": "outputs\\evaluation\\neo4j_match_score_audit\\neo4j_match_score_audit_summary.json"
+  }
+}

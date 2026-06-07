@@ -1,0 +1,39 @@
+{
+  "objective": "NDCG@10",
+  "optimizer": "Optuna TPESampler",
+  "n_trials": 250,
+  "seed": 42,
+  "relevance_source": "proxy",
+  "input_path": "outputs\\evaluation\\pgvector_vs_graph\\ablation_graph_rerank_details.csv",
+  "n_rows": 550,
+  "n_candidates": 55,
+  "components": {
+    "semantique": "score_sem",
+    "neo4j": "taux_match"
+  },
+  "best_trial": 50,
+  "best_value": 0.905975,
+  "retained_weight_set": "pur_semantique",
+  "best_weights": {
+    "semantique": 1.0,
+    "neo4j": 0.0
+  },
+  "candidate_weight_set_metrics": {
+    "pur_semantique": 0.908707,
+    "optuna_best": 0.905975,
+    "pur_neo4j": 0.873483,
+    "poids_egaux": 0.870419
+  },
+  "metrics": {
+    "pgvector_semantique": 0.908707,
+    "score_hybride_actuel": 0.88293,
+    "score_hybride_optuna": 0.908707
+  },
+  "outputs": {
+    "trials_csv": "outputs\\evaluation\\hybrid_weight_optimization\\hybrid_weight_trials.csv",
+    "details_csv": "outputs\\evaluation\\hybrid_weight_optimization\\optimized_ranking_details.csv",
+    "trials_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_optimization_trials.png",
+    "weights_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_best.png",
+    "comparison_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_ndcg_comparison.png"
+  }
+}

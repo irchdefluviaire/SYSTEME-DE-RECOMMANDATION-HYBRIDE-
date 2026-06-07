@@ -2427,11 +2427,12 @@
     <bcf:citekey order="48" intorder="1">reimers2019sbert</bcf:citekey>
     <bcf:citekey order="49" intorder="1">pgvector2024</bcf:citekey>
     <bcf:citekey order="50" intorder="1">malkov2018hnsw</bcf:citekey>
-    <bcf:citekey order="51" intorder="1">langgraphdocs2026</bcf:citekey>
-    <bcf:citekey order="52" intorder="1">yao2023react</bcf:citekey>
-    <bcf:citekey order="52" intorder="2">asai2024selfrag</bcf:citekey>
-    <bcf:citekey order="53" intorder="1">thakur2021beir</bcf:citekey>
-    <bcf:citekey order="53" intorder="2">muennighoff2022mteb</bcf:citekey>
+    <bcf:citekey order="51" intorder="1">akiba2019optuna</bcf:citekey>
+    <bcf:citekey order="52" intorder="1">langgraphdocs2026</bcf:citekey>
+    <bcf:citekey order="53" intorder="1">yao2023react</bcf:citekey>
+    <bcf:citekey order="53" intorder="2">asai2024selfrag</bcf:citekey>
+    <bcf:citekey order="54" intorder="1">thakur2021beir</bcf:citekey>
+    <bcf:citekey order="54" intorder="2">muennighoff2022mteb</bcf:citekey>
   </bcf:section>
   <!-- SORTING TEMPLATES -->
   <bcf:sortingtemplate name="none">
