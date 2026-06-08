@@ -1,0 +1,4 @@
+source,n_chunks,tokens_total,tokens_moyens,tokens_medians,tokens_min,tokens_max
+MEPC_2013,61,14182,232.49180327868854,186.0,13,492
+NCF_2017,38,6340,166.8421052631579,119.5,6,436
+diplomes,43,6053,140.7674418604651,54.0,16,468

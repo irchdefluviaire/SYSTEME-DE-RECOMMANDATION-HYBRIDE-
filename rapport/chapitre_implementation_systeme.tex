@@ -339,24 +339,24 @@ La validation atteint un NDCG@10 maximal de 0,6492 à l'époque 4, avant un lég
     \rowcolor{darkblue}
     \tabheader{Métrique test} & \tabheader{Baseline} & \tabheader{Fine-tuné} & \tabheader{Gain} \\
     \midrule
-    NDCG@10 & 0,1173 & 0,4537 & +0,3364 \\
-    MRR@10 & 0,1012 & 0,3984 & +0,2971 \\
-    Recall@1 & 0,0730 & 0,3127 & +0,2398 \\
-    Recall@5 & 0,1367 & 0,5058 & +0,3692 \\
-    Recall@10 & 0,1688 & 0,6347 & +0,4660 \\
-    Precision@1 & 0,0730 & 0,3127 & +0,2398 \\
+    NDCG@10 & 0,1681 & 0,6232 & +0,4552 \\
+    MRR@10 & 0,1410 & 0,5874 & +0,4463 \\
+    Recall@1 & 0,0986 & 0,5268 & +0,4281 \\
+    Recall@5 & 0,1983 & 0,6632 & +0,4648 \\
+    Recall@10 & 0,2560 & 0,7398 & +0,4837 \\
+    Precision@1 & 0,0986 & 0,5268 & +0,4281 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
   \source{\texttt{models/st\_finetuned/eval\_comparatif/evaluation\_comparatif.json}}
 \end{table}
 
-Cette comparaison est la preuve la plus directe de l'intérêt du fine-tuning : le modèle de base ne structure pas correctement le domaine dans ce protocole, alors que le modèle adapté récupère beaucoup plus souvent la description pertinente dans les premiers rangs. Le gain de recall@10 est particulièrement important, car l'application ne dépend pas d'une seule réponse immédiate ; elle récupère d'abord un ensemble court de candidats pertinents avant reranking hybride.
+Cette comparaison a été régénérée sur 953 paires de test après la mise à jour du jeu de paires. Elle est la preuve la plus directe de l'intérêt du fine-tuning : le modèle de base ne structure pas correctement le domaine dans ce protocole, alors que le modèle adapté récupère beaucoup plus souvent la description pertinente dans les premiers rangs. Le NDCG@10 est multiplié par 3,7 et le MRR@10 par 4,2. Le gain de recall@10 est particulièrement important, car l'application ne dépend pas d'une seule réponse immédiate ; elle récupère d'abord un ensemble court de candidats pertinents avant reranking hybride.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/05_benchmark_modeles_embeddings.png}
-  \caption{Comparaison des modèles d'embeddings : qualité de classement et latence}
+  \caption{Comparaison des modèles d'embeddings : qualité de classement, rappel et latence}
   \label{fig:implementation_benchmark_embeddings}
   \source{\texttt{outputs/evaluation/embedding\_benchmark.csv}}
 \end{figure}
@@ -381,7 +381,7 @@ Cette comparaison est la preuve la plus directe de l'intérêt du fine-tuning : 
   \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/05\_benchmark\_modeles\_embeddings.csv}}
 \end{table}
 
-Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint un NDCG@10 de 0,6232 et un MRR@10 de 0,5874, contre 0,3333 pour mE5-base et 0,3159 pour TF-IDF. L'intérêt du fine-tuning est donc empirique, pas seulement théorique. TF-IDF reste cependant utile pour les correspondances exactes, acronymes et intitulés rares. La bonne architecture n'oppose donc pas \og deep learning \fg{} et lexical ; elle utilise le modèle fine-tuné comme signal sémantique principal et conserve les signaux lexicaux comme complément.
+Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint un NDCG@10 de 0,6232, un MRR@10 de 0,5874 et un recall@10 de 0,7398. Le meilleur modèle généraliste dense testé, mE5-base, atteint seulement 0,3333 en NDCG@10 et 0,4355 en recall@10, avec une latence nettement plus élevée. TF-IDF reste très rapide et compétitif sur certains signaux lexicaux, mais son recall@10 reste inférieur à celui du modèle fine-tuné. L'intérêt du fine-tuning est donc empirique, pas seulement théorique. La bonne architecture n'oppose pas \og deep learning \fg{} et lexical ; elle utilise le modèle fine-tuné comme signal sémantique principal et conserve les signaux lexicaux comme complément.
 
 \subsection{Interprétation de l'espace vectoriel}
 
@@ -393,7 +393,7 @@ Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint
   \source{Échantillon d'embeddings extrait de la table \texttt{embeddings}}
 \end{figure}
 
-La projection PCA ne doit pas être interprétée comme une carte exacte du sens ; elle compresse un espace de 384 dimensions en deux axes. Elle sert plutôt de diagnostic : vérifier que les embeddings présentent une structure exploitable et que les différents types d'entités ne sont pas totalement confondus. La distribution des similarités cosinus complète cette lecture en montrant si les proximités intra-types et inter-types sont cohérentes. L'enjeu n'est pas d'obtenir de beaux nuages de points, mais de vérifier que l'espace permet au moteur de retrouver des offres, candidats, compétences et métiers proches sans tout écraser dans une masse indifférenciée.
+La projection PCA ne doit pas être interprétée comme une carte exacte du sens ; elle compresse un espace de 384 dimensions en deux axes. C'est précisément pour cela que la figure indique la variance expliquée. Dans l'échantillon indexé, le premier axe porte 5,8\,\% de l'information, le deuxième 4,4\,\%, soit seulement 10,2\,\% pour le plan factoriel. Le nuage 2D est donc un diagnostic de structure, pas une preuve complète de séparation sémantique. Il montre surtout que les entités ne sont pas totalement écrasées dans une masse indifférenciée, tout en rappelant que l'essentiel de l'information reste dans les dimensions non représentées. Pour le retrieval, les mesures de ranking et les similarités cosinus restent donc plus probantes que la seule projection PCA.
 
 \begin{figure}[H]
   \centering
@@ -456,7 +456,7 @@ Le modèle d'encodage utilisé est le SentenceTransformer fine-tuné du projet, 
 
 Les chunks documentaires ne sont pas produits par un découpage arbitraire du texte. La stratégie implémentée dans \texttt{scripts/ingest\_pdfs.py} est structurelle par défaut : le script détecte les titres de section à partir de la mise en forme et des motifs numérotés, puis chaque titre ouvre un chunk dont le contenu s'étend jusqu'au titre suivant. Les fragments trop courts, inférieurs à 80 caractères, sont fusionnés avec le fragment précédent afin d'éviter d'indexer des passages sans contexte. Une limite supérieure de 3\,000 caractères contrôle la taille maximale du passage envoyé à l'encodeur. Cette stratégie est cohérente avec les documents exploités, car la NCF, le MEPC et le référentiel des diplômes sont des documents hiérarchisés : niveaux, domaines, groupes, sous-groupes, métiers et descripteurs.
 
-Le pipeline prévoit aussi une stratégie sémantique de secours : si la structure n'est pas détectée, le texte est découpé en fenêtres glissantes de 800 caractères avec un recouvrement de 120 caractères. Cette option n'a pas été nécessaire dans l'index courant : les 142 chunks effectivement présents dans \texttt{doc\_chunks} ont tous été générés par la stratégie structurelle. C'est une information importante pour l'évaluation, car le retrieval documentaire ne récupère pas seulement des morceaux de taille fixe ; il récupère des unités qui correspondent autant que possible à des sections réglementaires interprétables.
+Le pipeline prévoit aussi une stratégie sémantique de secours : si la structure n'est pas détectée, le texte est découpé en fenêtres glissantes de 800 caractères avec un recouvrement de 120 caractères. Cette option n'a pas été nécessaire dans l'index courant : les 142 chunks effectivement présents dans \texttt{doc\_chunks} ont tous été générés par la stratégie structurelle. Le taux de recouvrement observé est donc nul dans la base actuelle. C'est une information importante pour l'évaluation, car le retrieval documentaire ne récupère pas seulement des morceaux de taille fixe ; il récupère des unités qui correspondent autant que possible à des sections réglementaires interprétables.
 
 \begin{table}[H]
   \centering
@@ -467,24 +467,82 @@ Le pipeline prévoit aussi une stratégie sémantique de secours : si la structu
     \rowcolor{darkblue}
     \tabheader{Indicateur} & \tabheader{Valeur observée} \\
     \midrule
+    Documents sources indexés & 3 \\
     Chunks documentaires indexés & 142 \\
     Stratégie réellement utilisée & 100\,\% structurelle \\
-    Chunks NCF 2017 & 38 \\
-    Chunks MEPC 2013 & 61 \\
-    Chunks référentiel des diplômes & 43 \\
-    Longueur minimale d'un chunk & 84 caractères \\
-    Longueur médiane & 952,5 caractères \\
-    Longueur moyenne & 1\,329,0 caractères \\
-    Longueur p90 & 3\,000 caractères \\
+    Taille moyenne & 187,1 tokens \\
+    Taille médiane & 116,0 tokens \\
+    Écart-type & 169,6 tokens \\
+    Minimum / maximum & 6 / 492 tokens \\
+    Coefficient de variation & 0,91 \\
     Chunks avec embedding & 142 / 142 \\
     Chunks synchronisés avec Neo4j & 142 / 142 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Table \texttt{doc\_chunks} de la base PostgreSQL \texttt{kmer\_ai} et pipeline \texttt{scripts/ingest\_pdfs.py}}
+  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/06\_chunking\_stats\_descriptives.csv}}
 \end{table}
 
-Ce diagnostic apporte deux garanties. Premièrement, la granularité est suffisamment fine pour permettre un top-$K$ documentaire : 142 unités de recherche couvrent les trois référentiels sans transformer chaque page entière en bloc massif. Deuxièmement, les chunks restent assez longs pour conserver le contexte réglementaire : une médiane proche de 953 caractères évite de récupérer uniquement des intitulés isolés. La borne haute à 3\,000 caractères limite cependant le risque inverse, c'est-à-dire des chunks trop larges qui diluent le signal sémantique dans l'embedding. En pratique, cette stratégie rend les résultats plus citables : le système peut retourner un passage, sa source, sa page approximative, son titre de section et son noeud Neo4j associé.
+Ce diagnostic est plus nuancé qu'une simple description de paramètres. La taille médiane de 116 tokens produit des unités courtes, adaptées au retrieval, mais le coefficient de variation de 0,91 indique une hétérogénéité importante. Certains chunks sont très courts, ce qui peut créer des passages peu informatifs ; d'autres approchent 500 tokens, ce qui peut diluer le signal dans l'embedding. Cette variabilité n'est pas automatiquement mauvaise : elle reflète la structure inégale des référentiels. Elle impose cependant de contrôler la qualité des chunks récupérés dans les réponses RAG.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
+  \caption{Distribution des tailles, sources et couverture du chunking documentaire}
+  \label{fig:implementation_chunking_diagnostics}
+  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/06\_chunking\_*.csv}}
+\end{figure}
+
+\begin{table}[H]
+  \centering
+  \caption{Couverture documentaire et duplication des chunks}
+  \label{tab:implementation_chunking_coverage_duplication}
+  \tableStyleStart
+  \begin{tabularx}{0.92\textwidth}{Xrr}
+    \rowcolor{darkblue}
+    \tabheader{Source} & \tabheader{Couverture approximative} & \tabheader{Chunks} \\
+    \midrule
+    NCF 2017 & 25,9\,\% & 38 \\
+    MEPC 2013 & 23,6\,\% & 61 \\
+    Référentiel des diplômes & 79,3\,\% & 43 \\
+    \midrule
+    Taux de duplication cosinus $>0{,}95$ & 0,0\,\% & 142 \\
+    Similarité maximale hors diagonale & 0,921 & -- \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{06\_chunking\_couverture\_documentaire.csv} et \texttt{06\_chunking\_duplication.csv}}
+\end{table}
+
+La couverture documentaire est calculée en rapportant le nombre de tokens indexés dans les chunks au nombre de tokens extraits des PDF. Elle doit être interprétée avec prudence, car les PDF contiennent aussi des pages de garde, tables, sommaires et contenus peu utiles au retrieval. Malgré cette limite, le résultat est un signal de vigilance : l'index actuel couvre 25,9\,\% de la NCF et 23,6\,\% du MEPC, contre 79,3\,\% pour le référentiel des diplômes. Le chunking structurel a donc privilégié les sections détectées comme exploitables, mais il ne doit pas être présenté comme une ingestion exhaustive des PDF réglementaires. A l'inverse, le taux de duplication quasi exacte est nul ; la base ne gaspille donc pas le stockage sur des chunks presque identiques.
+
+\begin{table}[H]
+  \centering
+  \caption{Cohérence sémantique intra-chunk}
+  \label{tab:implementation_chunking_coherence}
+  \tableStyleStart
+  \begin{tabularx}{0.92\textwidth}{Xrrr}
+    \rowcolor{darkblue}
+    \tabheader{Source} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{Intervalle observé} \\
+    \midrule
+    MEPC 2013 & 0,307 & 0,288 & 0,191--0,502 \\
+    NCF 2017 & 0,336 & 0,321 & 0,259--0,474 \\
+    Référentiel des diplômes & 0,268 & 0,260 & 0,066--0,457 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/06\_chunking\_coherence\_par\_source.csv}}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.72\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
+  \caption{Distribution de la cohérence sémantique intra-chunk par source}
+  \label{fig:implementation_chunking_coherence}
+  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/06\_chunking\_coherence\_semantique.csv}}
+\end{figure}
+
+La cohérence sémantique moyenne vaut 0,303. Ce niveau est modéré : les chunks ne sont pas incohérents, mais ils ne forment pas non plus des blocs fortement homogènes. C'est cohérent avec des référentiels administratifs qui mêlent intitulés, codes, descriptions et listes. Pour un RAG de production, cette mesure suggère deux améliorations : fusionner certains fragments trop courts et tester une variante de chunking sémantique contrôlée par la cohérence intra-chunk. L'objectif ne serait pas de maximiser artificiellement la cohérence, mais de trouver le meilleur compromis entre contexte, taille et performance de retrieval.
 
 \begin{table}[H]
   \centering

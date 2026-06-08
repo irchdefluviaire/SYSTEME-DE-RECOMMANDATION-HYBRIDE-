@@ -1,0 +1,4 @@
+indicateur,valeur
+similarite_max_hors_diagonale,0.9212373773335254
+similarite_moyenne_hors_diagonale,0.15242851112008174
+duplication_rate_cosine_gt_0_95,0.0

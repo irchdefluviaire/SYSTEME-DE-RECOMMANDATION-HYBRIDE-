@@ -1,0 +1,19 @@
+{
+  "benchmark_rows": 7,
+  "pca": {
+    "pc1": 0.05770829499481329,
+    "pc2": 0.044098867599075164,
+    "pc1_pc2": 0.10180716259388845
+  },
+  "chunking": {
+    "n_chunks": 142,
+    "mean_tokens": 187.14788732394365,
+    "median_tokens": 116.0,
+    "duplication_rate": 0.0,
+    "mean_coverage": 0.4292224122236104
+  },
+  "chunking_coherence": {
+    "coherence_mean": 0.30266718077295607,
+    "coherence_median": 0.2929873764514923
+  }
+}
