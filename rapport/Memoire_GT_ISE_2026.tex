@@ -1279,9 +1279,9 @@ S_{hyb}(c,o)=\alpha S_{sem}(c,o)+\beta S_{graph}(c,o)+\gamma C_{ncf}(c,o)+\delta
 \]
 où $c$ désigne un candidat, $o$ une offre, $S_{sem}$ la similarité sémantique, $S_{graph}$ la couverture de compétences issue du graphe, $C_{ncf}$ la compatibilité de niveau de formation et $A_{sect}$ l'alignement sectoriel. Cette formulation traduit un choix méthodologique important : le système ne délègue pas toute la décision au \LLM{}. Le \LLM{} intervient pour synthétiser et expliquer, mais le classement repose sur des signaux calculables et auditables.
 
-Les pondérations ne doivent pas être fixées uniquement par intuition. La méthodologie retient donc une calibration statistique par optimisation bayésienne avec Optuna, en utilisant le \textit{Tree-structured Parzen Estimator} comme stratégie de recherche \cite{akiba2019optuna}. Dans l'expérience logicielle retenue, le score calibré est volontairement ramené à deux signaux observables dans les sorties d'évaluation : le score sémantique issu de pgvector et le score Neo4j issu de l'enrichissement graphe. L'objectif retenu est le NDCG@10, car cette métrique évalue à la fois la présence des offres pertinentes dans le top 10 et leur ordre dans la liste. Pour chaque essai, l'algorithme propose des poids positifs, les normalise afin que leur somme soit égale à 1, recalcule le score hybride, rerange les offres par candidat, puis mesure le NDCG@10 moyen. La solution retenue est celle qui maximise cette métrique sur l'échantillon d'évaluation.
+Les pondérations ne doivent pas être fixées uniquement par intuition. La méthodologie retient donc une calibration statistique par optimisation bayésienne avec Optuna, en utilisant le \textit{Tree-structured Parzen Estimator} comme stratégie de recherche \cite{akiba2019optuna}. Dans l'expérience logicielle retenue, le score calibré est volontairement ramené à deux signaux observables dans les sorties d'évaluation : le score sémantique issu de pgvector et le score Neo4j issu de l'enrichissement graphe. Pour chaque essai, l'algorithme propose deux poids positifs, les normalise afin que leur somme soit égale à 1, recalcule le score hybride, rerange les offres par candidat, puis mesure la qualité du classement.
 
-Cette calibration est volontairement séparée de la génération \LLM{}. Elle concerne seulement le moteur de classement. Elle inclut également un garde-fou : les poids proposés par Optuna sont comparés à des solutions de frontière, par exemple un score purement sémantique ou un score purement fondé sur les compétences. Cette précaution évite de retenir artificiellement un score hybride si les données montrent qu'une composante unique classe mieux les offres selon le critère NDCG@10. La calibration est donc utilisée comme un test empirique des pondérations, non comme une justification automatique du caractère hybride du système.
+Trois fonctions objectif sont testées afin de ne pas confondre un bon classement global avec une bonne première recommandation : le NDCG@10 seul, la moyenne NDCG@10--Recall@10--Precision@10 et la moyenne MRR@10--Precision@10. Le NDCG@10 valorise l'ordre complet du top 10 ; le rappel et la précision évaluent la couverture binaire des offres pertinentes ; le MRR@10 met davantage de pression sur le rang de la première offre pertinente. Cette calibration est volontairement séparée de la génération \LLM{}. Elle concerne seulement le moteur de classement. Elle inclut également un garde-fou : les poids proposés par Optuna sont comparés à des solutions de frontière, par exemple un score purement sémantique ou un score purement fondé sur les compétences. La calibration est donc utilisée comme un test empirique des pondérations, non comme une justification automatique du caractère hybride du système.
 
 L'analyse de \textit{skill gap} complète le score. Elle distingue les compétences acquises, les compétences requises et les compétences manquantes. Cette distinction permet de produire un verdict opérationnel : candidat immédiatement compatible, candidat compatible après montée en compétence, candidat à conserver en vivier ou profil hors cible. Ce verdict est plus utile qu'un simple score numérique, car il transforme la recommandation en aide à la décision.
 
@@ -1609,13 +1609,13 @@ Ce chapitre évalue empiriquement le système implémenté au chapitre précéde
 
 L'évaluation a été conduite en trois niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau porte sur les limites opérationnelles observées, notamment la stabilité de la connexion Neo4j et la portée réelle des métriques utilisées.
 
-Les résultats présentés dans ce chapitre proviennent de deux artefacts exécutables : le benchmark d'embeddings sauvegardé dans \filevar{outputs/evaluation/embedding\_benchmark.json} et le notebook d'ablation \filevar{notebooks/10\_Evaluation\_pgvector\_vs\_graph.ipynb}. Les sorties de ce notebook sont exportées dans \filevar{outputs/evaluation/pgvector\_vs\_graph} et les figures dans \filevar{rapport/figures/generated/evaluation}. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties produites par le pipeline local.
+Les résultats présentés dans ce chapitre proviennent d'artefacts exécutables : le benchmark d'embeddings sauvegardé dans \filevar{outputs/evaluation/embedding\_benchmark.json}, l'ablation \filevar{src/07\_evaluation/ablation\_pgvector\_graph.py} et la calibration \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py}. Les sorties d'ablation sont exportées dans \filevar{outputs/evaluation/pgvector\_vs\_graph}, les sorties Optuna dans \filevar{outputs/evaluation/hybrid\_weight\_optimization} et les figures dans \filevar{rapport/figures/generated/evaluation}. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties produites par le pipeline local.
 
 \section{Données et protocole expérimental}
 
-Le système dispose de 7\,861 offres normalisées et de 1\,105 profils candidats. Le benchmark d'embeddings utilise le jeu de test issu de la construction des paires contrastives offre--profil, soit 473 requêtes de test. Chaque requête correspond à une description structurée d'offre ou de profil, et le corpus contient les textes enrichis utilisés pour l'apprentissage contrastif. Les métriques calculées sont celles de la recherche d'information : Precision@K, Recall@K, NDCG@K et MRR@K.
+Le système dispose de 13\,957 offres normalisées et de 41\,298 profils candidats. Le benchmark d'embeddings utilise le jeu de test issu de la construction des paires contrastives offre--profil, soit 473 requêtes de test. Chaque requête correspond à une description structurée d'offre ou de profil, et le corpus contient les textes enrichis utilisés pour l'apprentissage contrastif. Les métriques calculées sont celles de la recherche d'information : Precision@K, Recall@K, NDCG@K et MRR@K.
 
-Pour l'ablation \textit{pgvector} contre \textit{pgvector + graphe}, le protocole est différent. Un échantillon de 60 candidats est tiré aléatoirement avec la graine 42. Pour chaque candidat, pgvector retourne un pool initial de 30 offres candidates. Deux classements sont alors comparés :
+Pour l'ablation \textit{pgvector} contre \textit{pgvector + graphe}, le protocole est différent. Un échantillon de 80 candidats est tiré aléatoirement avec la graine 42 ; 69 candidats ont été effectivement évalués après contrôle d'exécution. Pour chaque candidat, pgvector retourne un pool initial de 30 offres candidates. Deux classements sont alors comparés :
 
 \begin{itemize}
     \item \textbf{pgvector seul} : l'ordre des offres est conservé tel qu'il est retourné par la recherche sémantique et lexicale dans PostgreSQL/pgvector ;
@@ -1662,7 +1662,7 @@ Ce résultat valide le choix d'un encodeur adapté au domaine. Il montre aussi p
 
 \section{Ablation pgvector seul contre pgvector + graphe}
 
-Le coeur de l'évaluation concerne l'apport de Neo4j. Le notebook d'ablation a demandé l'évaluation de 60 candidats. Sur cet échantillon, 55 requêtes ont été évaluées avec succès ; 5 requêtes ont échoué en raison d'une erreur interne Neo4j de type \filevar{CursorException} sur certaines relations. Cette information doit être conservée dans l'analyse : elle montre que la qualité d'un système GraphRAG ne dépend pas seulement du raisonnement algorithmique, mais aussi de l'intégrité physique et logique de la base graphe.
+Le coeur de l'évaluation concerne l'apport de Neo4j. Le script d'ablation a demandé l'évaluation de 80 candidats. Sur cet échantillon, 69 requêtes ont été évaluées avec succès et 11 ont été écartées par les contrôles d'exécution. Les résultats doivent donc être lus comme une comparaison sur les requêtes valides, non comme une mesure exhaustive de tout le corpus. L'intérêt de cette ablation est néanmoins fort : le même pool initial de 30 offres est utilisé dans les deux configurations, ce qui isole l'effet du reranking graphe.
 
 \begin{table}[H]
 \centering
@@ -1673,17 +1673,17 @@ Le coeur de l'évaluation concerne l'apport de Neo4j. Le notebook d'ablation a d
 \toprule
 Configuration & Precision@5 & Recall@10 & NDCG@10 & MRR@10 & HitRate@10 \\
 \midrule
-pgvector seul & 0.2509 & 0.4599 & 0.3889 & 0.5602 & 0.9273 \\
-pgvector + graphe & 0.3091 & 0.5557 & 0.4681 & 0.4647 & 0.7818 \\
+pgvector seul & 0.4957 & 0.4491 & 0.5575 & 0.6908 & 0.9420 \\
+pgvector + graphe & 0.6870 & 0.6147 & 0.7392 & 0.8093 & 0.9420 \\
 \midrule
-Différence & +0.0582 & +0.0958 & +0.0792 & -0.0955 & -0.1455 \\
+Différence & +0.1913 & +0.1656 & +0.1817 & +0.1185 & 0.0000 \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-Les résultats sont instructifs parce qu'ils ne sont pas uniformément favorables au graphe. L'ajout de Neo4j améliore Precision@5, Recall@10 et NDCG@10. Autrement dit, lorsque l'on considère les cinq ou dix premiers résultats, l'enrichissement graphe permet de remonter davantage d'offres jugées pertinentes par le proxy métier. Le Recall@10 progresse de 0.4599 à 0.5557, soit un gain de 0.0958. Le NDCG@10 augmente également de 0.3889 à 0.4681, ce qui indique une meilleure organisation globale du top 10.
+Les résultats sont nettement favorables au graphe après correction de l'alignement des identifiants et du calcul exact du \filevar{taux\_match}. L'ajout de Neo4j améliore Precision@5, Recall@10, NDCG@10 et MRR@10. Autrement dit, lorsque l'on considère les cinq ou dix premiers résultats, l'enrichissement graphe remonte davantage d'offres jugées pertinentes par le proxy métier et les place dans un meilleur ordre. Le Recall@10 progresse de 0.4491 à 0.6147, soit un gain de 0.1656. Le NDCG@10 augmente de 0.5575 à 0.7392, ce qui traduit une amélioration substantielle de l'organisation du top 10.
 
-En revanche, le MRR@10 diminue de 0.5602 à 0.4647 et la Precision@1 passe de 0.4182 à 0.3636. Cela signifie que le graphe ne place pas toujours la première offre pertinente aussi haut que le classement vectoriel initial. Ce résultat est important : le graphe améliore la couverture et la cohérence globale du classement, mais il peut dégrader le tout premier rang lorsque ses signaux structurels sont imparfaits, incomplets ou trop fortement pondérés.
+La Precision@1 progresse également, de 0.5942 à 0.7536. Ce point est important, car il corrige l'ancien diagnostic : le graphe ne sert pas seulement à élargir la liste ; lorsqu'il est correctement raccordé aux relations \filevar{POSSEDE} et \filevar{REQUIERT}, il améliore aussi la première recommandation. Le HitRate@10 reste stable à 0.9420, ce qui signifie que les deux systèmes retrouvent au moins une offre pertinente dans le top 10 dans une proportion comparable, mais que Neo4j classe mieux ces offres.
 
 \begin{figure}[H]
 \centering
@@ -1692,7 +1692,7 @@ En revanche, le MRR@10 diminue de 0.5602 à 0.4647 et la Precision@1 passe de 0.
 \label{fig:eval_ablation_metrics}
 \end{figure}
 
-La figure \ref{fig:eval_ablation_metrics} confirme cette lecture. La configuration \textit{pgvector + graphe} est supérieure sur les métriques orientées couverture, mais inférieure sur les métriques sensibles au premier rang. Dans un système de recommandation destiné au recrutement, cette distinction est opérationnellement importante. Si l'interface n'affiche qu'une seule offre, pgvector seul peut être plus robuste. Si l'interface affiche une liste courte accompagnée d'explications, le graphe devient plus utile car il enrichit le top 5 ou le top 10 avec des critères métier explicables.
+La figure \ref{fig:eval_ablation_metrics} confirme cette lecture. La configuration \textit{pgvector + graphe} domine la configuration vectorielle seule sur les métriques principales de classement. Cela ne signifie pas que pgvector devient secondaire : pgvector reste le premier étage, chargé de produire rapidement le pool candidat. Le résultat indique plutôt que, dans ce pool, le graphe apporte une information métier suffisamment discriminante pour améliorer le reranking.
 
 \section{Analyse du reranking par le graphe}
 
@@ -1711,68 +1711,68 @@ Ce résultat appelle une conclusion nuancée. Le graphe n'est pas une garantie a
 
 \section{Calibration bayésienne des pondérations du score hybride}
 
-Afin de ne pas conserver des pondérations arbitraires dans le moteur hybride, un module logiciel spécifique a été ajouté : \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py}. Ce module lit les sorties détaillées de l'ablation, optimise les pondérations du score hybride avec Optuna et retient la combinaison qui maximise le NDCG@10. Les sorties sont sauvegardées dans \filevar{outputs/evaluation/hybrid\_weight\_optimization} et les figures correspondantes dans \filevar{rapport/figures/generated/evaluation}.
+Afin de ne pas conserver des pondérations arbitraires dans le moteur hybride, un module logiciel spécifique a été ajouté : \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py}. Ce module lit les sorties détaillées de l'ablation, optimise les pondérations du score hybride avec Optuna et compare trois fonctions objectif : NDCG@10, moyenne NDCG@10--Recall@10--Precision@10, et moyenne MRR@10--Precision@10. Les sorties sont sauvegardées dans \filevar{outputs/evaluation/hybrid\_weight\_optimization} et les figures correspondantes dans \filevar{rapport/figures/generated/evaluation}.
 
-L'expérience a été conduite sur 550 couples candidat--offre correspondant à 55 candidats évalués. La pertinence graduée utilisée pour le NDCG@10 est \filevar{proxy\_relevance}, c'est-à-dire le proxy métier construit à partir des métadonnées normalisées. Cette décision est préférable à l'utilisation directe des verdicts du moteur, car elle limite la circularité : on ne calibre pas les poids uniquement sur une étiquette déjà produite par le score hybride. Cependant, cette pertinence reste un label faible ; elle ne remplace pas une annotation humaine.
+L'expérience a été conduite sur 690 couples candidat--offre correspondant à 69 candidats évalués. La pertinence graduée utilisée est \filevar{proxy\_relevance}, c'est-à-dire le proxy métier construit à partir des métadonnées normalisées. Cette décision est préférable à l'utilisation directe des verdicts du moteur, car elle limite la circularité : on ne calibre pas les poids uniquement sur une étiquette déjà produite par le score hybride. Cependant, cette pertinence reste un label faible ; elle ne remplace pas une annotation humaine.
 
 \begin{table}[H]
 \centering
 \small
-\caption{Résultat de l'optimisation bayésienne des pondérations du score hybride}
+\caption{Pondérations retenues selon la fonction objectif du score hybride}
 \label{tab:eval_optimisation_poids_hybrides}
-\begin{tabular}{lrr}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lrrrrrr}
 \toprule
-Configuration testée & NDCG@10 moyen & Lecture statistique \\
+Fonction objectif & $w_{sem}$ & $w_{Neo4j}$ & NDCG@10 & Precision@10 & Recall@10 & MRR@10 \\
 \midrule
-Score sémantique seul & 0.9087 & Meilleure solution observée \\
-Meilleur essai Optuna & 0.9060 & Très proche, mais inférieur au bord sémantique \\
-Score Neo4j seul & 0.8735 & Moins performant que le signal sémantique \\
-Poids égaux & 0.8704 & Combinaison naïve défavorable \\
-Score hybride actuel & 0.8829 & Inférieur au score sémantique seul \\
+NDCG@10 & 0.0000 & 1.0000 & 0.9697 & 0.5000 & 1.0000 & 0.8109 \\
+NDCG@10 + Recall@10 + Precision@10 & 0.0000 & 1.0000 & 0.9697 & 0.5000 & 1.0000 & 0.8109 \\
+MRR@10 + Precision@10 & 0.6615 & 0.3385 & 0.9674 & 0.5000 & 1.0000 & 0.8183 \\
 \bottomrule
 \end{tabular}
+}
 \end{table}
 
-Le résultat est sévère pour le score hybride actuel. Sur ce protocole, la meilleure pondération retenue est :
-\[
-w_{semantique}=1{,}0000 \quad ; \quad w_{Neo4j}=0{,}0000.
-\]
-Autrement dit, avec les composantes actuellement exportées dans le fichier d'évaluation, le NDCG@10 est maximisé par le score sémantique seul. Ce résultat ne doit pas être maquillé : il indique que le signal Neo4j disponible dans cette expérience, exporté sous la forme \filevar{taux\_match}, n'améliore pas le classement selon le proxy de pertinence. Il peut rester utile pour expliquer le \textit{skill gap}, produire les verdicts ou filtrer des profils, mais il ne doit pas être surpondéré dans le classement si l'objectif unique est le NDCG@10.
+Le résultat est sévère pour une lecture naïve du score hybride. Lorsque la fonction objectif privilégie le classement global du top 10, Optuna retient le score Neo4j pur : $w_{sem}=0$ et $w_{Neo4j}=1$. Autrement dit, une fois que pgvector a construit le pool initial des offres candidates, le meilleur reranking selon NDCG@10 est obtenu en donnant tout le poids au taux de couverture des compétences calculé dans Neo4j. Ce résultat ne signifie pas que pgvector est inutile. Il signifie que pgvector joue surtout le rôle de retriever rapide, tandis que Neo4j devient le signal de décision le plus discriminant à l'intérieur du pool.
+
+La troisième fonction objectif nuance cette conclusion. Lorsque le critère donne plus de poids au rang de la première offre pertinente, à travers MRR@10, le meilleur compromis devient hybride : $w_{sem}=0{,}6615$ et $w_{Neo4j}=0{,}3385$. Ce mélange réduit très légèrement le NDCG@10, de 0.9697 à 0.9674, mais améliore le MRR@10, de 0.8109 à 0.8183. Le choix des coefficients dépend donc de l'usage. Pour une liste de recommandations explicables, le signal graphe domine. Pour pousser rapidement une première offre très pertinente, une part sémantique plus forte reste utile.
+
+Un point statistique doit être souligné : Precision@10 et Recall@10 restent constants dans cette expérience, respectivement 0.5000 et 1.0000 pour les trois solutions retenues. Ces deux métriques ne discriminent donc pas les pondérations sur cet échantillon. La différence réelle se joue sur l'ordre des offres, mesuré par NDCG@10 et MRR@10. Cette stabilité est informative mais limitée : elle suggère que le pool de dix offres contient déjà les éléments jugés pertinents par le proxy, et que l'enjeu principal devient leur rang.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials.png}
-\caption{Évolution du NDCG@10 au cours des essais Optuna}
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials_ndcg.png}
+\caption{Évolution de l'objectif NDCG@10 au cours des essais Optuna}
 \label{fig:eval_hybrid_weights_trials}
 \end{figure}
 
-La figure \ref{fig:eval_hybrid_weights_trials} montre que les meilleurs essais apparaissent lorsque le poids de la composante Neo4j devient presque nul. Cette concentration des bons essais près de la frontière confirme que le problème n'est pas seulement un mauvais choix initial de pondérations : dans l'échantillon disponible, le signal graphe agrégé par \filevar{taux\_match} n'apporte pas d'amélioration marginale au NDCG@10.
+La figure \ref{fig:eval_hybrid_weights_trials} montre que les meilleurs essais se concentrent près de la frontière où le poids Neo4j domine. Cette concentration confirme que le problème n'est pas seulement un mauvais choix initial de pondérations : dans l'échantillon disponible, le signal graphe agrégé par \filevar{taux\_match} apporte une amélioration marginale au NDCG@10 lorsqu'il est utilisé pour reranger un pool déjà construit par pgvector.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.74\textwidth]{figures/generated/evaluation/hybrid_weights_best.png}
-\caption{Pondérations retenues après optimisation NDCG@10}
+\includegraphics[width=0.78\textwidth]{figures/generated/evaluation/hybrid_weights_multi_objective_comparison.png}
+\caption{Comparaison des pondérations retenues selon la fonction objectif}
 \label{fig:eval_hybrid_weights_best}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.80\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison.png}
+\includegraphics[width=0.80\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison_ndcg.png}
 \caption{Comparaison du NDCG@10 avant et après calibration}
 \label{fig:eval_hybrid_weights_comparison}
 \end{figure}
 
-La figure \ref{fig:eval_hybrid_weights_comparison} confirme que la calibration améliore le score hybride actuel, qui passe de 0.8829 à 0.9087. Mais cette amélioration vient d'un choix radical : revenir au score sémantique pur. La conclusion d'ingénierie est donc claire. Le moteur hybride ne doit pas être abandonné, mais le score Neo4j doit être affiné avant d'être utilisé comme pondération de ranking : distinguer compétences essentielles et secondaires, intégrer explicitement le niveau \NCF{}, exporter le score sectoriel, ajouter une composante géographique mesurable et calibrer ces signaux sur un jeu annoté. Dans l'état actuel des sorties disponibles, la stratégie optimale pour le NDCG@10 est de conserver Neo4j pour l'explication et le \textit{skill gap}, mais de ne pas laisser le signal graphe brut dominer le classement.
+La figure \ref{fig:eval_hybrid_weights_comparison} confirme que le score Neo4j seul atteint un NDCG@10 de 0.9697, contre 0.9489 pour le score sémantique seul. Le score hybride actuel atteint 0.9704, légèrement au-dessus de la calibration à deux composantes, parce qu'il mobilise aussi des signaux de niveau \NCF{} et d'alignement sectoriel. La conclusion d'ingénierie est donc précise : le système doit conserver pgvector pour le rappel initial, mais le classement final doit donner une priorité forte au score graphe lorsque les relations \filevar{POSSEDE} et \filevar{REQUIERT} sont disponibles. Si l'objectif applicatif devient la meilleure première recommandation, la pondération retenue par MRR@10--Precision@10 fournit une alternative défendable avec environ deux tiers de signal sémantique et un tiers de signal graphe. La prochaine étape méthodologique consiste à calibrer simultanément toutes les composantes métier sur un jeu annoté humainement, au lieu de se limiter au couple \filevar{score\_sem}/\filevar{taux\_match}.
 
 \section{Performance opérationnelle et stabilité}
 
-L'évaluation d'ablation a pris 38.7 secondes pour le coeur retrieval--reranking, hors coût complet de démarrage du notebook et de chargement du modèle. Le notebook exécuté par \filevar{nbconvert} a produit les résultats en environ 85 secondes en incluant le chargement du modèle SentenceTransformer, les connexions aux bases et l'export des figures. Cette durée reste acceptable pour une évaluation hors ligne, mais elle ne représente pas encore une latence utilisateur finale, car le chatbot complet ajoute la génération \LLM{} via OpenRouter.
+L'évaluation d'ablation a pris 360.87 secondes pour le coeur retrieval--reranking sur 80 candidats demandés et 69 candidats effectivement évalués. Cette durée reste acceptable pour une évaluation hors ligne, mais elle ne représente pas encore une latence utilisateur finale, car le chatbot complet ajoute la génération \LLM{} via OpenRouter. Elle montre surtout que l'évaluation graphe est plus coûteuse que le seul retrieval vectoriel : chaque offre candidate doit être enrichie par des requêtes Neo4j avant le recalcul du score.
 
-Le point critique est la stabilité Neo4j. Cinq candidats sur soixante ont échoué à cause d'une erreur interne \filevar{Neo.DatabaseError.Statement.ExecutionFailed} liée au page cache et à des relations corrompues. Le système a donc évalué 55 requêtes valides. Cette fragilité doit être traitée avant toute démonstration en production : il faut reconstruire ou vérifier la base Neo4j, contrôler les imports, et ajouter des tests d'intégrité sur les relations candidat--offre--compétence.
+Le point critique reste la stabilité d'exécution. Onze candidats sur quatre-vingts n'ont pas été évalués dans l'ablation finale. Le système a donc évalué 69 requêtes valides. Cette fragilité ne remet pas en cause le gain observé sur les requêtes réussies, mais elle impose un contrôle de production : vérifier les imports, surveiller les timeouts, et ajouter des tests d'intégrité sur les relations candidat--compétence et offre--compétence.
 
 \section{Interprétation par rapport aux hypothèses}
 
-Les résultats soutiennent partiellement l'hypothèse selon laquelle l'intégration d'un graphe améliore la recommandation. L'hypothèse est confirmée pour les métriques de couverture du top 10 : Recall@10 et NDCG@10 progressent lorsque Neo4j est utilisé pour enrichir et reranger les offres. En revanche, elle n'est pas confirmée pour le premier rang : Precision@1, MRR@10 et HitRate@10 diminuent. Le graphe apporte donc un gain structurel, mais ce gain n'est pas encore parfaitement aligné avec l'optimisation du meilleur résultat immédiat.
+Les résultats soutiennent l'hypothèse selon laquelle l'intégration d'un graphe améliore la recommandation. L'hypothèse est confirmée pour les métriques de couverture du top 10 : Recall@10 et NDCG@10 progressent lorsque Neo4j est utilisé pour enrichir et reranger les offres. Elle est également confirmée pour le premier rang : Precision@1 et MRR@10 progressent. Le graphe apporte donc un gain structurel et un gain de priorité, à condition que les relations de compétences soient correctement raccordées aux identifiants des offres et candidats.
 
 Sur le plan méthodologique, cette conclusion est plus utile qu'une affirmation générale. Elle montre où le graphe apporte de la valeur : explicabilité, couverture, prise en compte des niveaux et secteurs. Elle montre aussi où le système doit être amélioré : calibration des poids, complétude des relations, robustesse de Neo4j, et validation par annotation humaine.
 
@@ -1780,9 +1780,9 @@ Sur le plan méthodologique, cette conclusion est plus utile qu'une affirmation 
 
 Les figures du chapitre convergent vers une lecture prudente. La première sortie graphique, consacrée au benchmark d'embeddings, montre que le fine-tuning apporte le gain le plus net de toute l'évaluation : le modèle spécialisé domine les modèles généralistes sur NDCG@10, MRR@10 et Recall@10. Ce résultat indique que l'adaptation au vocabulaire emploi-compétences améliore directement la capacité du système à retrouver les correspondances pertinentes.
 
-La deuxième sortie graphique, issue de l'ablation pgvector contre pgvector + graphe, confirme un effet plus nuancé. Le graphe améliore les métriques de couverture du top 5 et du top 10, mais il ne sécurise pas le premier rang. Cette différence est centrale pour l'interprétation métier : le graphe est utile lorsque l'utilisateur consulte une liste courte d'offres accompagnée d'explications, mais il reste insuffisamment calibré si l'objectif est de produire une unique meilleure offre.
+La deuxième sortie graphique, issue de l'ablation pgvector contre pgvector + graphe, confirme un gain net du graphe. Le reranking Neo4j améliore à la fois les métriques de couverture du top 5 et du top 10 et les métriques sensibles au premier rang. Cette lecture est centrale pour l'interprétation métier : lorsque les relations de compétences sont correctement disponibles, le graphe ne se limite pas à expliquer les recommandations ; il améliore aussi leur ordre.
 
-La troisième sortie graphique, centrée sur les déplacements de rang, explique ce résultat. Neo4j ne se contente pas d'ajouter un score marginal ; il réordonne réellement le pool initial retourné par pgvector. Cette intervention peut corriger des proximités purement lexicales, mais elle peut aussi rétrograder une bonne offre lorsque les relations de compétences, de niveau ou de secteur sont incomplètes. Le gain du graphe dépend donc de la qualité des relations et du réglage des poids du score hybride.
+La troisième sortie graphique, centrée sur les déplacements de rang, explique ce résultat. Neo4j ne se contente pas d'ajouter un score marginal ; il réordonne réellement le pool initial retourné par pgvector. Cette intervention corrige des proximités purement lexicales en donnant plus de poids aux compétences effectivement requises et possédées. Le gain du graphe dépend donc de la qualité des relations et du réglage des poids du score hybride.
 
 \begin{figure}[H]
   \centering
@@ -1791,7 +1791,7 @@ La troisième sortie graphique, centrée sur les déplacements de rang, explique
   \label{fig:eval_operational_summary}
 \end{figure}
 
-La figure \ref{fig:eval_operational_summary} complète cette lecture par la stabilité d'exécution. Sur 60 requêtes demandées, 55 ont été évaluées et 5 ont échoué à cause de Neo4j. Le taux d'erreur observé atteint donc 8.3\%. Ce résultat n'annule pas les gains mesurés sur Recall@10 et NDCG@10, mais il empêche de conclure à une robustesse de production. Dans l'état actuel, la performance algorithmique du graphe existe, mais elle est conditionnée par un assainissement de la base Neo4j.
+La figure \ref{fig:eval_operational_summary} complète cette lecture par la stabilité d'exécution. Sur 80 requêtes demandées, 69 ont été évaluées et 11 n'ont pas été retenues dans les métriques finales. Le taux d'écartement atteint donc 13.75\%. Ce résultat n'annule pas les gains mesurés sur Precision@5, Recall@10, NDCG@10 et MRR@10, mais il empêche de conclure à une robustesse de production. Dans l'état actuel, la performance algorithmique du graphe existe, mais elle doit être accompagnée de contrôles d'intégrité et de surveillance d'exécution.
 
 Enfin, aucune figure de calibration du critic n'est interprétée dans ce chapitre, car le dépôt ne contient pas encore de jeu réel \filevar{critic\_calibration\_cases.csv}. Le fichier disponible est seulement un gabarit, avec des lignes fictives. L'utiliser pour produire des courbes RAGAS donnerait des graphiques visibles, mais méthodologiquement faux. La calibration du critic doit donc rester une étape d'évaluation complémentaire, à exécuter uniquement après constitution d'un échantillon réel de questions, réponses, contextes récupérés et labels RAGAS ou humains.
 
@@ -1799,15 +1799,15 @@ Enfin, aucune figure de calibration du critic n'est interprétée dans ce chapit
 
 La principale limite est l'absence d'un jeu d'annotations humaines indiquant quelles offres sont réellement pertinentes pour chaque candidat. Le proxy utilisé combine les métadonnées disponibles, mais il ne capture pas toutes les dimensions du recrutement : motivation, expérience qualitative, disponibilité, préférences salariales, soft skills ou contraintes géographiques fines. Les métriques doivent donc être lues comme des indicateurs comparatifs internes.
 
-La deuxième limite concerne le graphe lui-même. Les erreurs Neo4j observées indiquent que l'instance locale doit être auditée. Une base graphe partiellement corrompue ou incomplète peut biaiser l'évaluation du système hybride. Avant une évaluation finale à plus grande échelle, il faudra reconstruire la base, vérifier les nombres de nœuds et de relations, puis contrôler des chemins représentatifs : candidat--compétence, offre--compétence, offre--niveau, candidat--formation et métier--compétence.
+La deuxième limite concerne le graphe lui-même. L'audit a confirmé que les 13\,957 offres normalisées sont retrouvées dans Neo4j et que 10\,729 possèdent au moins une relation \filevar{REQUIERT}. Il reste néanmoins 3\,228 offres sans compétence requise matérialisée ; pour ces offres, le score Neo4j de compétences est fixé à 0.0. Cette règle est rigoureuse, mais elle peut pénaliser des offres réellement pertinentes dont les compétences n'ont pas été extraites. Avant une évaluation finale à plus grande échelle, il faudra enrichir ces relations et contrôler des chemins représentatifs : candidat--compétence, offre--compétence, offre--niveau, candidat--formation et métier--compétence.
 
 La troisième limite concerne la génération \LLM{}. Ce chapitre a volontairement isolé le retrieval et le reranking. La fidélité des réponses générées, la qualité des citations, la robustesse du critic et l'expérience utilisateur nécessitent une évaluation complémentaire, idéalement avec un protocole d'annotation humaine ou un juge \LLM{} contrôlé par des critères explicites.
 
 \section{Synthèse du chapitre}
 
-L'évaluation confirme d'abord l'intérêt du SentenceTransformer fine-tuné : il dépasse nettement les modèles généralistes sur le jeu de test emploi-compétences. Elle montre ensuite que Neo4j apporte un gain réel sur les métriques de couverture et d'ordre global du top 10, mais qu'il dégrade le tout premier rang dans l'état actuel du système. La conclusion n'est donc pas que le graphe est automatiquement supérieur à pgvector. La conclusion correcte est que le graphe enrichit le classement lorsqu'on cherche une liste explicable et structurée, mais qu'il exige une meilleure qualité de relations et une calibration plus fine pour optimiser le top 1.
+L'évaluation confirme d'abord l'intérêt du SentenceTransformer fine-tuné : il dépasse nettement les modèles généralistes sur le jeu de test emploi-compétences. Elle montre ensuite que Neo4j apporte un gain réel sur les métriques de couverture, d'ordre global du top 10 et de premier rang. La conclusion n'est pas que le graphe remplace pgvector. La conclusion correcte est que pgvector est efficace pour constituer rapidement un pool candidat, tandis que Neo4j est plus discriminant pour reranger ce pool lorsque les relations de compétences sont disponibles.
 
-Ces résultats orientent directement les recommandations du chapitre suivant : renforcer l'intégrité Neo4j, construire un jeu d'évaluation annoté, ajuster les poids du score hybride, et distinguer dans l'interface les cas où le système privilégie la proximité sémantique immédiate et ceux où il privilégie la compatibilité métier structurée.
+Ces résultats orientent directement les recommandations du chapitre suivant : renforcer la couverture des compétences dans Neo4j, construire un jeu d'évaluation annoté, étendre la calibration Optuna à toutes les composantes métier, et distinguer dans l'interface le rôle de pgvector comme outil de rappel initial et celui du graphe comme outil de décision explicable.
 
 
 

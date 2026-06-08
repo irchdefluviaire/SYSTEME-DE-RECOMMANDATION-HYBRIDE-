@@ -1,6 +1,6 @@
 {
-  "objective": "ndcg",
-  "objective_formula": "NDCG@10",
+  "objective": "mrr_precision",
+  "objective_formula": "(MRR@10 + Precision@10) / 2",
   "optimizer": "Optuna TPESampler",
   "n_trials": 500,
   "seed": 42,
@@ -12,25 +12,25 @@
     "semantique": "score_sem",
     "neo4j": "taux_match"
   },
-  "best_trial": 53,
-  "best_value": 0.967457,
-  "retained_weight_set": "pur_neo4j",
+  "best_trial": 54,
+  "best_value": 0.659136,
+  "retained_weight_set": "optuna_best",
   "best_weights": {
-    "semantique": 0.0,
-    "neo4j": 1.0
+    "semantique": 0.661532,
+    "neo4j": 0.338468
   },
   "candidate_weight_set_objectives": {
-    "pur_neo4j": 0.969713,
-    "optuna_best": 0.967457,
-    "poids_egaux": 0.967041,
-    "pur_semantique": 0.948905
+    "optuna_best": 0.659136,
+    "poids_egaux": 0.658169,
+    "pur_neo4j": 0.655443,
+    "pur_semantique": 0.597731
   },
   "candidate_weight_set_metrics": {
     "optuna_best": {
-      "ndcg": 0.967457,
+      "ndcg": 0.967428,
       "precision": 0.5,
       "recall": 1.0,
-      "mrr": 0.817063
+      "mrr": 0.818271
     },
     "poids_egaux": {
       "ndcg": 0.967041,
@@ -65,17 +65,17 @@
       "mrr": 0.799293
     },
     "score_hybride_optuna": {
-      "ndcg": 0.969713,
+      "ndcg": 0.967428,
       "precision": 0.5,
       "recall": 1.0,
-      "mrr": 0.810887
+      "mrr": 0.818271
     }
   },
   "outputs": {
-    "trials_csv": "outputs\\evaluation\\hybrid_weight_optimization\\hybrid_weight_trials_ndcg.csv",
-    "details_csv": "outputs\\evaluation\\hybrid_weight_optimization\\optimized_ranking_details_ndcg.csv",
-    "trials_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_optimization_trials_ndcg.png",
-    "weights_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_best_ndcg.png",
-    "comparison_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_ndcg_comparison_ndcg.png"
+    "trials_csv": "outputs\\evaluation\\hybrid_weight_optimization\\hybrid_weight_trials_mrr_precision.csv",
+    "details_csv": "outputs\\evaluation\\hybrid_weight_optimization\\optimized_ranking_details_mrr_precision.csv",
+    "trials_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_optimization_trials_mrr_precision.png",
+    "weights_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_best_mrr_precision.png",
+    "comparison_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_ndcg_comparison_mrr_precision.png"
   }
 }

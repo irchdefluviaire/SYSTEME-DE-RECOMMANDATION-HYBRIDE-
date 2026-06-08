@@ -71,7 +71,7 @@ RETURN
   size(essential_missing) AS n_essentielles_manquantes,
   CASE WHEN size(offre_skills) > 0
        THEN toFloat(size(acquired)) / size(offre_skills)
-       ELSE null
+       ELSE 0.0
   END AS taux_match_neo4j,
   [x IN acquired | x.label][0..8] AS competences_acquises,
   [x IN missing | x.label][0..8] AS competences_manquantes,
@@ -88,14 +88,14 @@ RETURN
 """
 
 Q_ID_COVERAGE = """
-CALL {
+CALL () {
   MATCH (c:Candidat)
   WHERE c.id IN $candidate_ids
   RETURN
     count(DISTINCT c) AS n_candidates_found,
     count(DISTINCT CASE WHEN EXISTS { (c)-[:POSSEDE]->(:Compétence) } THEN c END) AS n_candidates_with_possede
 }
-CALL {
+CALL () {
   MATCH (o:OffreEmploi)
   WHERE o.id IN $offer_ids
   RETURN

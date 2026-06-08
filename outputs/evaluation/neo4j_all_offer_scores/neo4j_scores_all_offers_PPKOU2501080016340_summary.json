@@ -1,0 +1,21 @@
+{
+  "candidate_id": "PPKOU2501080016340",
+  "n_offres_data": 13957,
+  "graph_counts": {
+    "n_offres_neo4j": 13957,
+    "n_requiert_relations": 58519,
+    "n_offres_with_requiert": 10729
+  },
+  "n_offres_found_in_neo4j": 13957,
+  "n_offres_missing_in_neo4j": 0,
+  "n_offres_with_requiert": 10729,
+  "n_offres_without_requiert": 3228,
+  "coverage_offres_found_pct": 100.0,
+  "coverage_requiert_pct": 76.872,
+  "mean_required_skills_per_offer": 4.1928,
+  "median_required_skills_per_offer": 6.0,
+  "mean_taux_match_neo4j": 0.032469,
+  "median_taux_match_neo4j": 0.0,
+  "n_offres_with_positive_match": 627,
+  "output_csv": "outputs\\evaluation\\neo4j_all_offer_scores\\neo4j_scores_all_offers_PPKOU2501080016340.csv"
+}

@@ -18,6 +18,7 @@ Architecture GraphRAG :
 
 import json
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Optional
@@ -244,21 +245,24 @@ class GraphRAGContextBuilder:
         if self.driver is None:
             return self._simulate_neo4j(candidat_id, offre)
 
-        with self.driver.session() as session:
+        oid = str(offre.get("neo4j_id") or offre.get("neo4j_node_id") or offre["offre_id"])
+        database = os.getenv("NEO4J_DATABASE", "neo4j")
+
+        with self.driver.session(database=database) as session:
             graph_row = session.run(
                 Q_GRAPH_ENRICHMENT,
                 cid=candidat_id,
-                oid=offre["offre_id"],
+                oid=oid,
             ).single()
             skill_gap = session.run(
                 Q_SKILL_GAP_EXACT,
                 cid=candidat_id,
-                oid=offre["offre_id"],
+                oid=oid,
             ).single()
             ncf = session.run(Q_NCF_CHEMIN, cid=candidat_id).single()
 
         graph = dict(graph_row) if graph_row else {}
-        if skill_gap and int(skill_gap.get("n_total", 0) or 0) > 0:
+        if skill_gap:
             acquired = [item.get("label", "") for item in (skill_gap.get("acquises") or []) if item.get("label")]
             missing = [item.get("label", "") for item in (skill_gap.get("manquantes") or []) if item.get("label")]
             essential_missing = [
@@ -266,8 +270,9 @@ class GraphRAGContextBuilder:
                 for item in (skill_gap.get("essentielles_manquantes") or [])
                 if item.get("label")
             ]
-            taux = float(skill_gap.get("taux", 0.0) or 0.0)
-            graph_schema = "ESCO_SKILL_GAP"
+            n_total = int(skill_gap.get("n_total", 0) or 0)
+            taux = float(skill_gap.get("taux", 0.0) or 0.0) if n_total > 0 else 0.0
+            graph_schema = "ESCO_SKILL_GAP" if n_total > 0 else "ESCO_SKILL_GAP_NO_REQUIRED_SKILLS"
         else:
             acquired, missing, essential_missing, taux = self._score_existing_graph(
                 candidat_id=candidat_id,
@@ -277,6 +282,7 @@ class GraphRAGContextBuilder:
 
         return {
             **offre,
+            "neo4j_lookup_id": oid,
             "secteur": graph.get("secteur") or offre.get("secteur"),
             "ville": graph.get("ville") or offre.get("ville"),
             "type_contrat": graph.get("type_contrat") or offre.get("type_contrat"),

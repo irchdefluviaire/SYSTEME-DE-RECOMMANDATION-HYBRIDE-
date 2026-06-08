@@ -1,6 +1,6 @@
 {
-  "objective": "ndcg",
-  "objective_formula": "NDCG@10",
+  "objective": "ndcg_recall_precision",
+  "objective_formula": "(NDCG@10 + Recall@10 + Precision@10) / 3",
   "optimizer": "Optuna TPESampler",
   "n_trials": 500,
   "seed": 42,
@@ -13,17 +13,17 @@
     "neo4j": "taux_match"
   },
   "best_trial": 53,
-  "best_value": 0.967457,
+  "best_value": 0.822486,
   "retained_weight_set": "pur_neo4j",
   "best_weights": {
     "semantique": 0.0,
     "neo4j": 1.0
   },
   "candidate_weight_set_objectives": {
-    "pur_neo4j": 0.969713,
-    "optuna_best": 0.967457,
-    "poids_egaux": 0.967041,
-    "pur_semantique": 0.948905
+    "pur_neo4j": 0.823238,
+    "optuna_best": 0.822486,
+    "poids_egaux": 0.822347,
+    "pur_semantique": 0.816302
   },
   "candidate_weight_set_metrics": {
     "optuna_best": {
@@ -72,10 +72,10 @@
     }
   },
   "outputs": {
-    "trials_csv": "outputs\\evaluation\\hybrid_weight_optimization\\hybrid_weight_trials_ndcg.csv",
-    "details_csv": "outputs\\evaluation\\hybrid_weight_optimization\\optimized_ranking_details_ndcg.csv",
-    "trials_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_optimization_trials_ndcg.png",
-    "weights_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_best_ndcg.png",
-    "comparison_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_ndcg_comparison_ndcg.png"
+    "trials_csv": "outputs\\evaluation\\hybrid_weight_optimization\\hybrid_weight_trials_ndcg_recall_precision.csv",
+    "details_csv": "outputs\\evaluation\\hybrid_weight_optimization\\optimized_ranking_details_ndcg_recall_precision.csv",
+    "trials_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_optimization_trials_ndcg_recall_precision.png",
+    "weights_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_best_ndcg_recall_precision.png",
+    "comparison_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_ndcg_comparison_ndcg_recall_precision.png"
   }
 }

@@ -1,6 +1,6 @@
 {
   "input_path": "outputs\\evaluation\\pgvector_vs_graph\\ablation_graph_rerank_details.csv",
-  "n_pairs": 550,
+  "n_pairs": 690,
   "global_counts": {
     "has_possede": true,
     "has_requiert": true,
@@ -36,30 +36,132 @@
   "pgvector_coverage_for_eval_offer_ids": {
     "n_offer_entity_ids": 13957,
     "n_offer_neo4j_node_ids": 13957,
-    "n_eval_offer_ids_as_entity_id": 0,
-    "n_eval_offer_ids_as_neo4j_node_id": 0
+    "n_eval_offer_ids_as_entity_id": 445,
+    "n_eval_offer_ids_as_neo4j_node_id": 445
   },
-  "pgvector_offer_hits": [],
+  "pgvector_offer_hits": [
+    {
+      "entity_id": "OFFRE_003686_988a8a331507",
+      "neo4j_node_id": "OFFRE_003686_988a8a331507",
+      "label_fr": "Superviseur / Contrôleur Des Agents"
+    },
+    {
+      "entity_id": "OFFRE_010752_3e4e224b1890",
+      "neo4j_node_id": "OFFRE_010752_3e4e224b1890",
+      "label_fr": "Contrôleur de Gestion / Controlling"
+    },
+    {
+      "entity_id": "OFFRE_003700_be88bc692012",
+      "neo4j_node_id": "OFFRE_003700_be88bc692012",
+      "label_fr": "GESTIONNAIRE De COMPTE"
+    },
+    {
+      "entity_id": "OFFRE_003776_8e8b0a7d14b4",
+      "neo4j_node_id": "OFFRE_003776_8e8b0a7d14b4",
+      "label_fr": "RESPONSABLE DU CRÉDIT"
+    },
+    {
+      "entity_id": "OFFRE_003803_bc38a67a4920",
+      "neo4j_node_id": "OFFRE_003803_bc38a67a4920",
+      "label_fr": "REGIONAL SITE SUPERVISOR"
+    },
+    {
+      "entity_id": "OFFRE_003845_a277378decbb",
+      "neo4j_node_id": "OFFRE_003845_a277378decbb",
+      "label_fr": "INGENIEUR RESEAU TELECOM H/F"
+    },
+    {
+      "entity_id": "OFFRE_003846_53cbc29f4408",
+      "neo4j_node_id": "OFFRE_003846_53cbc29f4408",
+      "label_fr": "ÉLECTROTECHNICIENS"
+    },
+    {
+      "entity_id": "OFFRE_010899_961fde117b28",
+      "neo4j_node_id": "OFFRE_010899_961fde117b28",
+      "label_fr": "Réceptionniste - Douala"
+    },
+    {
+      "entity_id": "OFFRE_003872_81df883ec829",
+      "neo4j_node_id": "OFFRE_003872_81df883ec829",
+      "label_fr": "FINANCE CLERKS"
+    },
+    {
+      "entity_id": "OFFRE_003888_7ef5b033718f",
+      "neo4j_node_id": "OFFRE_003888_7ef5b033718f",
+      "label_fr": "Chargé De Programme D'incubation"
+    }
+  ],
   "id_coverage": {
-    "n_candidate_ids_requested": 55,
-    "n_candidates_found": 55,
-    "n_candidates_with_possede": 53,
-    "n_offer_ids_requested": 429,
-    "n_offers_found": 0,
-    "n_offers_with_requiert": 0
+    "n_candidate_ids_requested": 69,
+    "n_candidates_found": 69,
+    "n_candidates_with_possede": 67,
+    "n_offer_ids_requested": 445,
+    "n_offers_found": 445,
+    "n_offers_with_requiert": 415
   },
-  "sample_offer_hits": [],
-  "pairs_found": 0,
-  "pairs_with_offre_skills": 0,
-  "pairs_with_candidat_skills": 530,
-  "pairs_with_common_skills": 0,
-  "mean_offre_skills": 0.0,
-  "mean_candidat_skills": 5.4,
-  "mean_common_skills": 0.0,
-  "mean_taux_match_neo4j": null,
-  "mean_taux_match_stocke": null,
-  "max_abs_delta": null,
-  "mean_abs_delta": null,
+  "sample_offer_hits": [
+    {
+      "offre_id": "OFFRE_000006_4191c3ab002f",
+      "titre": "Electromécanicien",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_002914_c813b31789c1",
+      "titre": "Wash Officer",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_002918_8b6791a98fce",
+      "titre": "TECHNICIEN MAINTENANCE INDUSTRIELLE",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_002923_34dbbad5cebe",
+      "titre": "Responsable De La Surêté",
+      "n_requiert": 1
+    },
+    {
+      "offre_id": "OFFRE_002981_1f353d85bdff",
+      "titre": "Support Call Center",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_003026_5aecc11d8ab1",
+      "titre": "CHEF DE MISSION",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_003049_88217f3bd4bd",
+      "titre": "RESPONSABLE DIGITALISATION",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_003081_483d495769e8",
+      "titre": "3 AGENTS POLYVALENTS EN HOTELLERIE",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_003108_4a9a359bd3b7",
+      "titre": "Pool De Cuisinier.Ères Remplaçant.Es",
+      "n_requiert": 6
+    },
+    {
+      "offre_id": "OFFRE_003171_25d86dbe877a",
+      "titre": "MENUISIER",
+      "n_requiert": 2
+    }
+  ],
+  "pairs_found": 690,
+  "pairs_with_offre_skills": 646,
+  "pairs_with_candidat_skills": 670,
+  "pairs_with_common_skills": 474,
+  "mean_offre_skills": 5.3667,
+  "mean_candidat_skills": 5.6957,
+  "mean_common_skills": 3.3565,
+  "mean_taux_match_neo4j": 0.56058,
+  "mean_taux_match_stocke": 0.560554,
+  "max_abs_delta": 0.000333,
+  "mean_abs_delta": 8.2e-05,
   "n_delta_gt_001": 0,
   "outputs": {
     "details_csv": "outputs\\evaluation\\neo4j_match_score_audit\\neo4j_match_score_audit_details.csv",

@@ -787,7 +787,7 @@ Le \textit{skill gap} est calculé à partir des relations du graphe : les comp�
   \source{\filevar{src/05\_graphrag/context\_builder.py}}
 \end{table}
 
-Sur les 550 couples candidat--offre analysés dans le fichier d'ablation, les verdicts sont très majoritairement prudents : 259 couples, soit 47,09\,\%, relèvent du vivier à développer ; 144, soit 26,18\,\%, sont hors cible dans l'état actuel ; 118, soit 21,45\,\%, nécessitent une montée en compétence ; seuls 29 couples, soit 5,27\,\%, sont directement prêts à postuler. Cette distribution est rassurante : le moteur ne transforme pas mécaniquement toute proximité vectorielle en recommandation forte.
+Sur les 690 couples candidat--offre analysés dans le fichier d'ablation final, les verdicts restent prudents : 278 couples, soit 40,29\,\%, nécessitent une montée en compétence ; 213, soit 30,87\,\%, sont hors cible dans l'état actuel ; 133, soit 19,28\,\%, relèvent du vivier à développer ; 66 couples, soit 9,57\,\%, sont directement prêts à postuler. Cette distribution est rassurante : le moteur ne transforme pas mécaniquement toute proximité vectorielle en recommandation forte.
 
 \begin{table}[H]
   \centering
@@ -798,21 +798,21 @@ Sur les 550 couples candidat--offre analysés dans le fichier d'ablation, les ve
     \rowcolor{darkblue}
     \tabheader{Verdict} & \tabheader{n} & \tabheader{Part} & \tabheader{Score moyen} & \tabheader{Taux match moyen} \\
     \midrule
-    Vivier à développer & 259 & 47,09\,\% & 0,4843 & 0,3050 \\
-    Hors cible actuel & 144 & 26,18\,\% & 0,3073 & 0,2252 \\
-    Montée en compétence & 118 & 21,45\,\% & 0,6870 & 0,9641 \\
-    Prêt à postuler & 29 & 5,27\,\% & 0,7593 & 0,9712 \\
+    Montée en compétence & 278 & 40,29\,\% & 0,6671 & 0,9646 \\
+    Hors cible actuel & 213 & 30,87\,\% & 0,3632 & 0,1125 \\
+    Vivier à développer & 133 & 19,28\,\% & 0,4596 & 0,2218 \\
+    Prêt à postuler & 66 & 9,57\,\% & 0,7408 & 0,9873 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
   \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}}
 \end{table}
 
-La corrélation entre le score sémantique et le score hybride vaut 0,6002, tandis que la corrélation entre le taux de match des compétences et le score hybride vaut 0,8023. Cela montre que le moteur ne se contente pas de recopier la similarité vectorielle : la compétence pèse fortement dans la décision finale. C'est cohérent avec l'objectif emploi--compétences. En revanche, cette forte dépendance aux compétences exige de surveiller la qualité des compétences extraites : si certaines compétences sont trop génériques ou mal typées, elles peuvent influencer fortement le score.
+La corrélation entre le score sémantique et le score hybride vaut 0,4898, tandis que la corrélation entre le taux de match des compétences et le score hybride vaut 0,9118. Cela montre que le moteur ne se contente pas de recopier la similarité vectorielle : la compétence pèse fortement dans la décision finale. C'est cohérent avec l'objectif emploi--compétences et avec l'optimisation Optuna présentée au chapitre d'évaluation. En revanche, cette forte dépendance aux compétences exige de surveiller la qualité des compétences extraites : si certaines compétences sont trop génériques ou mal typées, elles peuvent influencer fortement le score.
 
 \subsection{Effet du reranking hybride}
 
-Le reranking hybride modifie fortement les rangs. Sur les 550 couples étudiés, 82,73\,\% gagnent des positions après intégration du graphe et des règles métier, 10,18\,\% perdent des positions et 7,09\,\% restent au même rang. Le déplacement moyen est de 8,11 rangs. Ce résultat doit être lu avec nuance : un fort déplacement de rang n'est pas automatiquement une amélioration, mais il prouve que le moteur hybride apporte une décision supplémentaire par rapport au retrieval vectoriel.
+Le reranking hybride modifie fortement les rangs. Sur les 690 couples étudiés, 57,10\,\% gagnent des positions après intégration du graphe et des règles métier, 15,65\,\% perdent des positions et 27,25\,\% restent au même rang. Le déplacement moyen est de 4,01 rangs. Ce résultat doit être lu avec nuance : un déplacement de rang n'est pas automatiquement une amélioration, mais il prouve que le moteur hybride apporte une décision supplémentaire par rapport au retrieval vectoriel.
 
 \begin{table}[H]
   \centering
@@ -823,19 +823,19 @@ Le reranking hybride modifie fortement les rangs. Sur les 550 couples étudiés,
     \rowcolor{darkblue}
     \tabheader{Indicateur} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p75} & \tabheader{Max} \\
     \midrule
-    Score sémantique & 0,4963 & 0,5087 & 0,5890 & 0,7661 \\
-    Score hybride & 0,4959 & 0,4863 & 0,6225 & 0,7836 \\
-    Taux de match compétences & 0,4606 & 0,2750 & 0,8330 & 1,0000 \\
-    Rang pgvector initial & 13,6073 & 12,0 & 21,0 & 30,0 \\
+    Score sémantique & 0,5225 & 0,5304 & 0,5738 & 0,7521 \\
+    Score hybride & 0,5404 & 0,5334 & 0,6793 & 0,7742 \\
+    Taux de match compétences & 0,5606 & 0,8330 & 1,0000 & 1,0000 \\
+    Rang pgvector initial & 9,5101 & 8,0 & 14,0 & 30,0 \\
     Rang après graphe & 5,5000 & 5,5 & 8,0 & 10,0 \\
-    Déplacement de rang & 8,1073 & 7,0 & 14,0 & 28,0 \\
+    Déplacement de rang & 4,0101 & 1,0 & 7,0 & 28,0 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
   \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}}
 \end{table}
 
-L'ablation confirme l'intérêt du moteur hybride : l'ajout du graphe augmente le recall@10 de 0,4599 à 0,5557 et le NDCG@10 de 0,3889 à 0,4681. En contrepartie, la précision@1 baisse de 0,4182 à 0,3636. Ce compromis est cohérent avec la finalité du système : pour explorer des opportunités et construire un plan de montée en compétence, élargir correctement le top 10 est plus utile que forcer une seule réponse immédiate. Si l'usage cible devient le recrutement automatique d'un seul candidat, les poids du score devront être recalibrés pour regagner de la précision@1.
+L'ablation confirme l'intérêt du moteur hybride : l'ajout du graphe augmente le recall@10 de 0,4491 à 0,6147 et le NDCG@10 de 0,5575 à 0,7392. La précision@1 progresse aussi, de 0,5942 à 0,7536. Le graphe améliore donc à la fois la couverture du top 10 et la première recommandation, à condition que les relations candidat--compétence et offre--compétence soient correctement raccordées.
 
 \subsection{Exemple de sortie intermédiaire}
 
@@ -910,7 +910,7 @@ Cette table fixe une frontière importante. Côté génération, le chapitre d'i
   \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_metrics.csv}}
 \end{figure}
 
-L'ablation compare un retrieval pgvector seul à un retrieval pgvector enrichi par le graphe. Sur 55 requêtes évaluées, le passage à \texttt{pgvector\_plus\_graph} augmente le NDCG@10 de 0,3889 à 0,4681 et le recall@10 de 0,4599 à 0,5557. Le graphe améliore donc la couverture des éléments pertinents dans le top 10. En revanche, la précision@1 baisse de 0,4182 à 0,3636. Ce résultat doit être assumé : le graphe aide à élargir et contextualiser la liste, mais il peut déplacer la meilleure réponse immédiate. Le calibrage du reranking doit donc dépendre de l'usage cible : exploration d'opportunités ou recommandation unique.
+L'ablation compare un retrieval pgvector seul à un retrieval pgvector enrichi par le graphe. Sur 69 requêtes évaluées, le passage à \texttt{pgvector\_plus\_graph} augmente le NDCG@10 de 0,5575 à 0,7392 et le recall@10 de 0,4491 à 0,6147. Le graphe améliore donc la couverture des éléments pertinents dans le top 10 et l'ordre du classement. La précision@1 progresse également de 0,5942 à 0,7536. Le calibrage du reranking doit néanmoins rester dépendant de l'usage cible : exploration d'opportunités, recommandation unique ou diagnostic de montée en compétences.
 
 \subsection{Interfaces d'exploitation et captures à documenter}
 
