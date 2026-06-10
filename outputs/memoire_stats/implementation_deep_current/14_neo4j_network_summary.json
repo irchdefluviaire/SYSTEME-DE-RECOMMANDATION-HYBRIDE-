@@ -1,0 +1,50 @@
+{
+  "available": true,
+  "exact": {
+    "nodes": 90230,
+    "relationships": 550542
+  },
+  "projection": {
+    "projection_nodes": 72516,
+    "projection_edges": 499080,
+    "n_components": 1,
+    "giant_size": 72516,
+    "giant_share": 1.0,
+    "directed_density_complete": 6.762283198962318e-05,
+    "density_projection": 0.00018981847085475784
+  },
+  "power_law": [
+    {
+      "xmin": 1,
+      "n_tail": 72516,
+      "gamma_estime": 1.3991338309222612
+    },
+    {
+      "xmin": 2,
+      "n_tail": 66890,
+      "gamma_estime": 1.6413378677890815
+    },
+    {
+      "xmin": 5,
+      "n_tail": 56031,
+      "gamma_estime": 2.5087316736882705
+    },
+    {
+      "xmin": 10,
+      "n_tail": 6857,
+      "gamma_estime": 1.751454730289455
+    }
+  ],
+  "centrality_rows": 72516,
+  "communities": {
+    "community_method": "louvain_networkx",
+    "n_communities_sample": 100,
+    "distance_mean_sample": 4.103087011542739,
+    "distance_median_sample": 4.0
+  },
+  "domain": {
+    "skill_gap_mean": 5.322331195775179,
+    "skill_gap_median": 6.0,
+    "skill_gap_under_3_share": 0.12334967936627687
+  }
+}

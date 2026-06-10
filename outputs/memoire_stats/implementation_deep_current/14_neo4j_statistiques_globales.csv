@@ -1,0 +1,12 @@
+﻿indicateur,valeur,note
+Graphe complet Neo4j - noeuds,90230.0,Toutes relations et tous labels
+Graphe complet Neo4j - relations,550542.0,Toutes relations
+Nombre de labels,18.0,CALL db.labels
+Nombre de types de relations,18.0,MATCH ()-[r]->()
+Densite dirigee complete,6.762283198962318e-05,relations / n(n-1)
+Projection matching - noeuds,72516.0,Relations utiles au matching
+Projection matching - aretes,499080.0,Graphe non dirige
+Projection matching - densite,0.00018981847085475784,2m / n(n-1)
+Composantes connexes,1.0,Projection matching
+Taille composante geante,72516.0,Projection matching
+Part composante geante,1.0,Projection matching

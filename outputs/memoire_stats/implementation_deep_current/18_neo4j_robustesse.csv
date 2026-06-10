@@ -1,0 +1,5 @@
+﻿scenario,removed_share,removed_nodes,giant_size,giant_share_of_base
+base,0.0,0,72516,1.0
+retrait_top_1pct_degre,0.01,725,21833,0.3010783827017486
+retrait_top_5pct_degre,0.05,3626,8224,0.11340945446522147
+retrait_top_10pct_degre,0.1,7252,49,0.000675712946108445

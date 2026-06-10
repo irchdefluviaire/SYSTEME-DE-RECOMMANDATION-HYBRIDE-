@@ -1,0 +1,101 @@
+﻿community_id,n_nodes,dominant_label,labels_resume,competences_exemples
+0,682,Métier,Métier:345; Compétence:282; GroupeBaseMEPC:46; OffreEmploi:4; Candidat:4,réparer des appareils électroménagers; organiser le travail par équipe; utiliser une rectifieuse à commande numérique; relever un compteur de gaz; utiliser des instruments de mesure; diriger des inspections; composants d’articles en cuir; documentation concernant la production de viandes
+1,553,Candidat,Candidat:258; OffreEmploi:193; Compétence:69; Métier:12; Secteur:11,surveiller la gestion d’une marque; utiliser un système de communication complexe; activités bancaires; droit des affaires; mettre en œuvre des systèmes de gestion de la qualité; donner des conseils en finance; utiliser des dispositifs de communication; vérifier les fonctions de communication d’une attraction
+2,521,Métier,Métier:264; Compétence:218; GroupeBaseMEPC:33; OffreEmploi:5; Candidat:1,conduire des machines agricoles; Élaborer des stratégies la passation de marchés publics dans le domaine de l’innovation; organiser des cérémonies gouvernementales; entretenir des relations avec les organismes gouvernementaux; comparer les offres des soumissionnaires; déterminer les bénéfices pour la santé des changements d’alimentation; coordonner des événements; vendre des appareils ménagers
+3,379,Candidat,Candidat:325; OffreEmploi:34; Compétence:15; NiveauFormationNCF:3; Secteur:1,législation sur le transport routier; véhicules de transport pour chevaux; mettre en œuvre des plans d’efficacité des opérations logistiques; coordonner le transport; gérer les systèmes de tarification de la logistique; coordonner les opérations de transport routier; gérer la logistique électronique de matériel de sonorisation; logistique verte
+4,292,Compétence,Compétence:131; Métier:128; Candidat:16; GroupeBaseMEPC:11; OffreEmploi:5,participer à des activités de médiation artistique; informer le personnel sur la radioprotection; élaborer une stratégie de traduction; négocier des droits d'exploitation; superviser des enfants; fournir des informations avant un traitement; orthographe; s'adapter au type de média
+5,290,Candidat,Candidat:258; OffreEmploi:21; Compétence:9; Localisation:1; Secteur:1,industrie de l’aquaculture; industrie de l'habillement; plateformes d’aide en ligne; industrie cosmétique; industrie de la musique et de la vidéo; délibérer avec un monteur de son; se tenir informé des tendances dans l’industrie du design; hygiène et sécurité dans l’industrie textile
+6,261,Candidat,Candidat:236; Compétence:15; OffreEmploi:8; Métier:1; NiveauFormationNCF:1,"génie civil; concevoir un puits de production pétrolière; examiner des ouvrages de génie civil; nettoyer la façade d’un bâtiment; établir un plan d’étanchéité à l’air du bâtiment; engins d'exploitation minière, de construction et de génie civil; effectuer des travaux de maçonnerie dans des jardins; conception de bâtiments durables"
+7,250,Compétence,Compétence:124; Métier:114; GroupeBaseMEPC:9; OffreEmploi:3,mener une analyse de contrôle qualité; gérer une classe; coopérer avec des professionnels de l’enseignement; communiquer des résultats scientifiques; aider des étudiants à utiliser le matériel; déceler des troubles de l’apprentissage; analyser un système éducatif; réfléchir de manière abstraite
+8,236,Candidat,Candidat:147; OffreEmploi:59; Compétence:25; Secteur:4; NiveauFormationNCF:1,vendre du bois transformé dans un environnement commercial; droit douanier; motiver le personnel pour atteindre les objectifs de vente; planifier des campagnes de marketing sur les médias sociaux; glossaire de l’habillement commercial; droit pharmaceutique; exécuter un plan de marketing; organiser des événements d’échantillonnage sur des points de vente au détail
+9,182,Candidat,Candidat:107; OffreEmploi:52; Compétence:18; Localisation:3; Secteur:2,gérer les ressources humaines; méthodes de conseil; gérer l’administration d’un établissement d’enseignement; gérer l’administration du personnel; gérer l’administration des prêts; embaucher des ressources humaines; déterminer les ressources humaines nécessaires; fournir un conseil pharmaceutique
+10,181,Candidat,Candidat:135; OffreEmploi:30; Compétence:13; NiveauFormationNCF:1; Métier:1,fibre optique; génie informatique; supprimer un virus informatique ou un logiciel malveillant d’un ordinateur; matériel informatique; apporter un soutien en génie pétrolier; avoir des connaissances en informatique; négocier des droits d'édition; optique
+11,144,Candidat,Candidat:114; OffreEmploi:17; Compétence:12; Secteur:1,assurer la sécurité de machines; risques pour la santé et la sécurité dans les travaux souterrains; mettre en place des protocoles de sécurité sur un site; entretenir un environnement d’entraînement; principes de sécurité en équitation; maintenir la qualité de l’eau en aquaculture; fixer des dispositifs de sécurité; organiser un environnement sportif
+12,128,Candidat,Candidat:76; Compétence:24; Métier:14; OffreEmploi:9; GroupeBaseMEPC:4,créer des cadres pour des meubles; utiliser un microscope; assurer la conformité avec des spécifications de conception d’un bijou; consigner le temps de transformation d’un bijou; estimer les coûts de restauration; relier des éléments en bois; créer des modèles de bijoux; évaluer des procédures de restauration
+13,102,OffreEmploi,OffreEmploi:75; Compétence:20; Secteur:4; Candidat:2; Localisation:1,industrie des télécommunications; réglementation en matière de télécommunications; assurer la distribution d'électricité; assurer la conformité des activités de distribution; télécommunications maritimes; utiliser des systèmes de distribution par radio pour des taxis; bonnes pratiques de laboratoire; diriger des opérations de distribution
+14,89,Compétence,Compétence:48; Métier:37; OffreEmploi:3; GroupeBaseMEPC:1,VBScript; composants matériels; faire une présentation en direct; normes de sécurité des TIC; optimiser le choix d’une solution TIC; installer un pare-feu; Pascal (programmation informatique); Perl
+15,82,Candidat,Candidat:70; Compétence:6; OffreEmploi:6,intégrer l’énergie biogaz dans des bâtiments; systèmes aliments-énergie intégrés; énergie de substitution; prévoir l’évolution des prix de l’énergie; conseiller des clients sur les besoins en énergie de produits; potentiel d’économies d’énergie des systèmes de changement de vitesse automatiques
+16,73,Candidat,Candidat:38; OffreEmploi:21; Compétence:13; Secteur:1,aider les utilisateurs de soins de santé à être autonomes; garantir la santé et la sécurité dans une opération de fabrication; biologie médicale; chimie inorganique; système de santé; évaluer les services de santé au sein d’une communauté; services de santé psychologique; examiner des questions de santé publique
+17,56,Candidat,Candidat:25; OffreEmploi:21; Compétence:10,enquêter sur divers sujets; favoriser les relations avec divers types de transporteurs; suivre une économie nationale; se tenir au courant d’innovations dans divers secteurs économiques; nouer le dialogue avec divers groupes de jeunes; économie politique; économie; enseigner l’économie domestique
+18,55,OffreEmploi,OffreEmploi:38; Compétence:11; Localisation:4; Secteur:2,coordonner les opérations d’un puits de pétrole; nettoyer des déversements de pétrole; connecter des têtes de puits de pétrole; bulgare; gérer des fluides de production dans la production de pétrole; slovaque; mesurer la température de réservoirs de pétrole; pétrole
+19,20,OffreEmploi,OffreEmploi:18; Localisation:1; Secteur:1,
+20,1,Localisation,Localisation:1,
+21,1,Compétence,Compétence:1,vendre des logiciels de jeux
+22,1,Compétence,Compétence:1,former un lit pour du verre
+23,1,Compétence,Compétence:1,élaborer des régimes alimentaires avec des aliments pour animaux
+24,1,Compétence,Compétence:1,intervenir en tant qu'assistant pour assurer l’hémostase
+25,1,Compétence,Compétence:1,fabrication de matelas
+26,1,Secteur,Secteur:1,
+27,1,Localisation,Localisation:1,
+28,1,Compétence,Compétence:1,utiliser un laminoir à froid
+29,1,Compétence,Compétence:1,techniques d’analyse qualitative des risques
+30,1,Secteur,Secteur:1,
+31,1,Compétence,Compétence:1,manipuler des cylindres
+32,1,Compétence,Compétence:1,domaines d’application de la technologie de la blockchain
+33,1,Compétence,Compétence:1,retirer la surface d’une chaussée
+34,1,Secteur,Secteur:1,
+35,1,Compétence,Compétence:1,assurer l'alimentation électrique du système de tramway
+36,1,Secteur,Secteur:1,
+37,1,Compétence,Compétence:1,reprendre le contrôle des pédales
+38,1,Compétence,Compétence:1,utiliser des outils de câblage manuels
+39,1,Compétence,Compétence:1,utiliser des outils d’exploitation minière
+40,1,Compétence,Compétence:1,inspecter une gravure
+41,1,Compétence,Compétence:1,utiliser un broyeur à marteau
+42,1,Compétence,Compétence:1,droit international en matière de droits humains
+43,1,Compétence,Compétence:1,systèmes de guichets automatiques
+44,1,Compétence,Compétence:1,intervenir en tant qu'assistant lors de procédures de diagnostic vétérinaire
+45,1,Compétence,Compétence:1,offrir des services de conduite haut de gamme
+46,1,Secteur,Secteur:1,
+47,1,Compétence,Compétence:1,législation sur les paris
+48,1,Compétence,Compétence:1,effectuer un contrôle qualité avant assemblage
+49,1,Compétence,Compétence:1,pédagogie du théâtre
+50,1,Compétence,Compétence:1,gérer des déchets de capture de poissons
+51,1,Compétence,Compétence:1,utiliser un grattoir
+52,1,Compétence,Compétence:1,organiser des expositions zoologiques
+53,1,Compétence,Compétence:1,rassembler les affaires des visiteurs
+54,1,Compétence,Compétence:1,évaluer la qualité de services
+55,1,Compétence,Compétence:1,élever des bovins
+56,1,Compétence,Compétence:1,recouvrir des jointures avec du mastic
+57,1,Compétence,Compétence:1,mesurer le temps de travail dans la production de marchandises
+58,1,Secteur,Secteur:1,
+59,1,Compétence,Compétence:1,mettre en œuvre des constructions cryptographiques
+60,1,Compétence,Compétence:1,entretenir des noyaux
+61,1,Compétence,Compétence:1,sélectionner des prises vidéo
+62,1,Compétence,Compétence:1,identifier de nouvelles opportunités de recyclage
+63,1,Compétence,Compétence:1,perte d’audition
+64,1,Compétence,Compétence:1,suivre des stratégies de pari
+65,1,Compétence,Compétence:1,tenir un inventaire forestier
+66,1,Compétence,Compétence:1,préparer l’autorisation de régulation des vols
+67,1,Compétence,Compétence:1,gérer le personnel d'un zoo
+68,1,Compétence,Compétence:1,fixer des girons et des contremarches
+69,1,Compétence,Compétence:1,réaliser des inspections de pont sous-marines
+70,1,Compétence,Compétence:1,nettoyer des forêts
+71,1,Compétence,Compétence:1,partager les règles de bonne pratique entre des filiales
+72,1,Compétence,Compétence:1,utiliser un chalumeau soudeur oxygaz
+73,1,Compétence,Compétence:1,développer des supports de formation en fabrication biochimique
+74,1,Compétence,Compétence:1,enseigner les méthodes de communication
+75,1,Compétence,Compétence:1,organiser des compositions
+76,1,Secteur,Secteur:1,
+77,1,Compétence,Compétence:1,sensibiliser le public à la faune sauvage
+78,1,Compétence,Compétence:1,créer des possibilités de progression en sport
+79,1,Compétence,Compétence:1,résoudre des problèmes de formulation de produits cosmétiques
+80,1,Compétence,Compétence:1,lire une fiche technique
+81,1,Compétence,Compétence:1,mobilité en tant que service
+82,1,Localisation,Localisation:1,
+83,1,Compétence,Compétence:1,rédiger des textes professionnels
+84,1,Compétence,Compétence:1,encrer des plaques d'impression
+85,1,Compétence,Compétence:1,nettoyer le mobilier public
+86,1,Compétence,Compétence:1,inspecter du bois
+87,1,Compétence,Compétence:1,processus de maltage
+88,1,Compétence,Compétence:1,définir des modèles statistiques
+89,1,Compétence,Compétence:1,stocker des paillettes de savon
+90,1,Compétence,Compétence:1,demander un financement pour une bibliothèque
+91,1,Compétence,Compétence:1,techniques de commercialisation de textiles
+92,1,Compétence,Compétence:1,installer des éclairages de scène
+93,1,Compétence,Compétence:1,relever un compteur d’eau
+94,1,Compétence,Compétence:1,réaliser des échographies
+95,1,Compétence,Compétence:1,cirer des meubles
+96,1,Compétence,Compétence:1,dénuder des câbles
+97,1,Compétence,Compétence:1,basque
+98,1,Compétence,Compétence:1,sélectionner les animaux pour les interventions thérapeutiques
+99,1,Compétence,Compétence:1,aider des clients ayant des problèmes capillaires

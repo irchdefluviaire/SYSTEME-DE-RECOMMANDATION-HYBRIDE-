@@ -656,39 +656,47 @@ La capture Neo4j doit être utilisée comme preuve visuelle de la base de connai
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
-  \caption{Composition du graphe par types de noeuds et relations}
-  \label{fig:implementation_neo4j_composition}
-  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/08\_neo4j\_*.csv}}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
+  \caption{Tableau de bord statistique du graphe Neo4j}
+  \label{fig:implementation_neo4j_dashboard}
+  \source{\texttt{scripts/generate\_neo4j\_network\_diagnostics.py}}
 \end{figure}
 
-Le graphe contient 90\,230 noeuds et 550\,542 relations. Sa densité orientée globale est très faible, environ $6,76 \times 10^{-5}$, ce qui est normal pour un graphe hétérogène de connaissances : toutes les entités n'ont pas vocation à être reliées entre elles. Le degré moyen non orienté vaut 12,20 relations par noeud. Cette moyenne est cependant trompeuse, car le graphe est fortement déséquilibré : les cinq premiers types de noeuds concentrent 96,21\,\% des noeuds, et les trois premières relations concentrent 73,74\,\% des liens.
+Le graphe complet contient 90\,230 noeuds et 550\,542 relations, répartis en 18 labels et 18 types de relations. Sa densité dirigée globale est très faible, environ $6{,}76 \times 10^{-5}$, ce qui est normal pour un graphe hétérogène de connaissances : toutes les entités n'ont pas vocation à être reliées entre elles. Pour analyser la partie réellement mobilisée par le matching, une projection non orientée a été construite à partir des relations \texttt{POSSEDE}, \texttt{REQUIERT}, \texttt{NECESSITE}, \texttt{CORRESPOND\_MEPC}, \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU}, \texttt{DANS\_SECTEUR} et \texttt{LOCALISEE\_A}. Cette projection contient 72\,516 noeuds et 499\,080 arêtes ; elle forme une seule composante connexe. Ce résultat est important : les entités utiles au matching ne sont pas dispersées en sous-graphes indépendants, elles appartiennent à un même réseau de propagation candidat--offre--compétence.
 
 \begin{table}[H]
   \centering
-  \caption{Indicateurs structuraux du graphe Neo4j}
+  \caption{Statistiques descriptives du graphe de connaissances}
   \label{tab:implementation_neo4j_indicateurs}
   \tableStyleStart
-  \begin{tabularx}{0.94\textwidth}{Xr}
+  \begin{tabularx}{0.94\textwidth}{XrX}
     \rowcolor{darkblue}
-    \tabheader{Indicateur} & \tabheader{Valeur observée} \\
+    \tabheader{Indicateur} & \tabheader{Valeur} & \tabheader{Lecture statistique} \\
     \midrule
-    Nombre total de noeuds & 90\,230 \\
-    Nombre total de relations & 550\,542 \\
-    Types de noeuds observés & 18 \\
-    Types de relations observés & 18 \\
-    Degré moyen non orienté & 12,20 \\
-    Densité orientée globale & 0,0000676 \\
-    Part des 5 premiers labels & 96,21\,\% \\
-    Part des 3 premières relations & 73,74\,\% \\
-    Noeuds isolés observés & 12\,487 \\
+    Nombre total de noeuds & 90\,230 & Graphe complet Neo4j, tous labels confondus. \\
+    Nombre total de relations & 550\,542 & Relations de matching, référentiels, localisation, secteur et documents. \\
+    Nombre de labels & 18 & Ontologie opérationnelle suffisamment riche pour dépasser offre--candidat. \\
+    Nombre de types de relations & 18 & Relations métier, formation, localisation, publication et documentation. \\
+    Densité dirigée complète & 0,0000676 & Graphe très creux, attendu pour une base de connaissances hétérogène. \\
+    Noeuds de la projection matching & 72\,516 & Sous-graphe utilisé pour l'analyse de réseau. \\
+    Arêtes de la projection matching & 499\,080 & Relations utiles au score et à l'explication. \\
+    Composantes connexes de la projection & 1 & Les entités utiles au matching sont connectées. \\
+    Taille de la composante géante & 72\,516 & 100\,\% de la projection matching. \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{\texttt{08\_neo4j\_node\_counts.csv}, \texttt{08\_neo4j\_relation\_counts.csv} et requêtes Neo4j de diagnostic}
+  \source{\texttt{14\_neo4j\_statistiques\_globales.csv}}
 \end{table}
 
-Les principaux labels sont \texttt{Candidat} avec 41\,298 noeuds, \texttt{GroupeCompétences} avec 14\,579 noeuds, \texttt{OffreEmploi} avec 13\,957 noeuds, \texttt{Compétence} avec 13\,939 noeuds et \texttt{Métier} avec 3\,039 noeuds. Cette structure est cohérente avec l'objectif métier : le graphe est d'abord un graphe d'appariement, non un graphe encyclopédique. Les candidats représentent 45,77\,\% des noeuds, les offres 15,47\,\%, les compétences 15,45\,\% et les groupes de compétences 16,16\,\%. Le risque statistique est clair : si le score de recommandation n'est pas normalisé, les familles très représentées peuvent dominer la recherche au détriment de signaux plus spécifiques comme le métier, le niveau ou le secteur.
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
+  \caption{Composition du graphe par types de noeuds et relations}
+  \label{fig:implementation_neo4j_composition}
+  \source{\texttt{08\_neo4j\_node\_counts.csv} et \texttt{08\_neo4j\_relation\_counts.csv}}
+\end{figure}
+
+Les principaux labels sont \texttt{Candidat} avec 41\,298 noeuds, \texttt{GroupeCompétences} avec 14\,579 noeuds, \texttt{OffreEmploi} avec 13\,957 noeuds, \texttt{Compétence} avec 13\,939 noeuds et \texttt{Métier} avec 3\,039 noeuds. Les cinq premiers labels concentrent 96,21\,\% des noeuds. Cette structure est cohérente avec l'objectif métier : le graphe est d'abord un graphe d'appariement, non un graphe encyclopédique. Le risque statistique est clair : si le score de recommandation n'est pas normalisé, les familles très représentées peuvent dominer la recherche au détriment de signaux plus spécifiques comme le métier, le niveau ou le secteur.
 
 \begin{table}[H]
   \centering
@@ -713,17 +721,19 @@ Les principaux labels sont \texttt{Candidat} avec 41\,298 noeuds, \texttt{Groupe
   \source{\texttt{08\_neo4j\_node\_counts.csv} et \texttt{08\_neo4j\_relation\_counts.csv}}
 \end{table}
 
-Les relations dominantes sont \texttt{POSSEDE}, \texttt{NECESSITE} et \texttt{REQUIERT}. Elles forment le coeur du système : candidat--compétence, métier--compétence et offre--compétence. Les relations \texttt{DANS\_SECTEUR}, \texttt{PUBLIEE\_PAR}, \texttt{LOCALISEE\_A}, \texttt{A\_NIVEAU} et \texttt{REQUIERT\_NIVEAU} ajoutent des contraintes d'interprétation. Le graphe n'est donc pas seulement volumineux ; il encode les chemins nécessaires à l'explication d'une recommandation.
+Les relations dominantes sont \texttt{POSSEDE}, \texttt{NECESSITE} et \texttt{REQUIERT}. Elles concentrent 73,74\,\% des liens et forment le coeur du système : candidat--compétence, métier--compétence et offre--compétence. Les relations \texttt{DANS\_SECTEUR}, \texttt{PUBLIEE\_PAR}, \texttt{LOCALISEE\_A}, \texttt{A\_NIVEAU} et \texttt{REQUIERT\_NIVEAU} ajoutent des contraintes d'interprétation. Le graphe n'est donc pas seulement volumineux ; il encode les chemins nécessaires à l'explication d'une recommandation.
+
+\subsection{Degrés, hubs et compétences centrales}
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/09_neo4j_degres_hubs.png}
-  \caption{Degrés et noeuds centraux du graphe}
-  \label{fig:implementation_neo4j_degres}
-  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/09\_neo4j\_degree\_stats.csv}}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_distribution_degres.png}
+  \caption{Distribution des degrés dans la projection matching}
+  \label{fig:implementation_neo4j_distribution_degres}
+  \source{\texttt{14\_neo4j\_projection\_degrees\_detail.csv}}
 \end{figure}
 
-Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56 et un degré médian de 7\,073, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC} ont un degré moyen de 90,22, les \texttt{Secteur} de 72,69, les \texttt{Métier} de 48,61 et les \texttt{Localisation} de 43,96. À l'inverse, \texttt{DocChunk}, \texttt{SousGroupeMEPC} et plusieurs noeuds référentiels restent faiblement connectés.
+La distribution des degrés est fortement asymétrique. L'estimation exploratoire d'une loi de puissance sur la queue de distribution donne un exposant compris entre 1,40 et 2,51 selon le seuil $x_{\min}$ retenu. Ce n'est pas une preuve formelle de loi de puissance, mais un diagnostic utile : le graphe comporte bien des hubs. Dans un système de recommandation, ces hubs doivent être traités avec prudence. Une compétence très connectée n'est pas automatiquement discriminante ; elle peut simplement être générique, très fréquente ou issue d'un référentiel large.
 
 \begin{table}[H]
   \centering
@@ -748,39 +758,110 @@ Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{Niv
   \source{\texttt{09\_neo4j\_degree\_stats.csv}}
 \end{table}
 
-Cette hétérogénéité est une force et une faiblesse. Elle est une force car les hubs facilitent l'explication : le système peut rattacher rapidement une offre à un niveau, un secteur, une ville ou une famille MEPC. Elle est une faiblesse car certains hubs sont trop génériques. Les cinq plus grands hubs sont des niveaux NCF, puis apparaissent des compétences très larges liées au transport, à l'assurance ou au bâtiment. Le noeud \texttt{Employeur non précisé} atteint aussi un degré de 5\,933. Ce dernier n'est pas un vrai signal métier ; il doit être pénalisé dans le reranking, sinon le graphe risque de récompenser une absence d'information.
+Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/15_neo4j_centralites_competences.png}
+  \caption{Centralités des compétences : degré, PageRank et intermédiarité approximée}
+  \label{fig:implementation_neo4j_centralites_competences}
+  \source{\texttt{15\_neo4j\_top\_competences\_*.csv}}
+\end{figure}
+
+Les centralités donnent trois lectures complémentaires. La centralité de degré et le PageRank identifient surtout les compétences les plus connectées, par exemple \og coordonner le transport \fg{}, \og respecter le planning de travail dans les transports \fg{}, \og gérer le transport de fonds \fg{} et \og comptabilité \fg{}. L'intermédiarité approximée, calculée sur le sous-graphe des noeuds de plus fort degré, fait ressortir d'autres compétences : \og utiliser différents moyens de communication \fg{}, \og gérer les budgets \fg{}, \og former le personnel \fg{}, \og normes de qualité \fg{} et \og assurer la gestion de projets \fg{}. Ces dernières sont plus intéressantes pour la recommandation, car elles jouent un rôle de passerelle entre plusieurs familles de métiers.
+
+\begin{table}[H]
+  \centering
+  \caption{Exemples de compétences centrales selon trois métriques}
+  \label{tab:implementation_neo4j_centralites}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{XrXrXr}
+    \rowcolor{darkblue}
+    \tabheader{Degré} & \tabheader{Valeur} & \tabheader{PageRank} & \tabheader{Valeur} & \tabheader{Intermédiarité} & \tabheader{Valeur} \\
+    \midrule
+    Coordonner le transport & 6\,787 & Coordonner le transport & 0,00672 & Utiliser différents moyens de communication & 0,02919 \\
+    Respecter le planning de travail dans les transports & 6\,726 & Respecter le planning de travail dans les transports & 0,00664 & Gérer les budgets & 0,02592 \\
+    Gérer le transport de fonds & 6\,718 & Gérer le transport de fonds & 0,00664 & Former le personnel & 0,02297 \\
+    Comptabilité & 5\,822 & Comptabilité & 0,00571 & Normes de qualité & 0,02193 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{15\_neo4j\_top\_competences\_degree.csv}, \texttt{15\_neo4j\_top\_competences\_pagerank.csv} et \texttt{15\_neo4j\_top\_competences\_betweenness.csv}}
+\end{table}
+
+La distinction entre degré, PageRank et intermédiarité est importante. Un noeud peut être très populaire sans être une bonne passerelle de recommandation. Pour le \textit{skill gap}, les compétences d'intermédiarité sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
+
+\subsection{Communautés, connectivité et robustesse}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/16_neo4j_communautes_connectivite.png}
+  \caption{Communautés Louvain, distances et composantes connexes}
+  \label{fig:implementation_neo4j_communautes}
+  \source{\texttt{16\_neo4j\_communautes\_louvain.csv}, \texttt{16\_neo4j\_distances\_resume.csv} et \texttt{16\_neo4j\_composantes\_connexes.csv}}
+\end{figure}
+
+La détection de communautés a été réalisée avec Louvain sur un échantillon pondéré de la composante géante, enrichi par les noeuds de plus fort degré afin de conserver l'ossature du réseau. Elle identifie 100 communautés dans la projection analysée. Ce résultat ne doit pas être vendu comme une typologie définitive des métiers ; il sert à vérifier que le graphe contient des regroupements relationnels exploitables. La distance moyenne échantillonnée dans la composante géante vaut 4,10 sauts, avec une médiane de 4. En pratique, cela signifie qu'un candidat, une offre, une compétence ou un métier peut être relié au reste du réseau par quelques relations seulement, ce qui rend le GraphRAG opérationnel pour produire des chemins explicatifs courts.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.78\textwidth]{figures/generated/implementation_deep_current/18_neo4j_robustesse.png}
+  \caption{Robustesse de la projection matching après retrait des hubs}
+  \label{fig:implementation_neo4j_robustesse}
+  \source{\texttt{18\_neo4j\_robustesse.csv}}
+\end{figure}
+
+Le test de robustesse retire successivement les 1\,\%, 5\,\% et 10\,\% de noeuds les plus centraux selon le degré, puis mesure la taille de la composante géante restante. Ce test est sévère, car il cible les hubs au lieu de supprimer des noeuds au hasard. Son intérêt est de mesurer la dépendance du graphe à quelques entités très connectées. Si la composante géante s'effondre fortement après retrait des hubs, cela signifie que le système dépend excessivement de compétences ou niveaux génériques. Dans ce cas, le reranking doit pénaliser les hubs trop peu discriminants et valoriser les compétences spécifiques.
+
+\subsection{Analyse métier et skill gap}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/17_neo4j_competences_metier_offre_candidat.png}
+  \caption{Compétences par offre, candidat et métier dans Neo4j}
+  \label{fig:implementation_neo4j_competences_entites}
+  \source{\texttt{17\_neo4j\_competences\_moyennes.csv}}
+\end{figure}
+
+L'analyse métier confirme le rôle pivot des compétences. Une offre exige en moyenne 4,19 compétences, avec une médiane de 6. Un candidat possède en moyenne 5,36 compétences, avec une médiane de 6. Les métiers sont beaucoup plus riches : 41,48 compétences en moyenne et 37 en médiane, parce qu'ils agrègent des exigences de référentiel. Cette différence est saine : l'offre et le candidat portent un signal opérationnel court ; le métier porte un contexte plus large qui sert à l'enrichissement, à l'explication et à la montée en compétences.
+
+\begin{table}[H]
+  \centering
+  \caption{Nombre moyen de compétences par objet métier}
+  \label{tab:implementation_neo4j_competences_moyennes}
+  \tableStyleStart
+  \begin{tabularx}{0.88\textwidth}{Xrrrr}
+    \rowcolor{darkblue}
+    \tabheader{Objet} & \tabheader{Effectif} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p90} \\
+    \midrule
+    Offre & 13\,957 & 4,19 & 6 & 6 \\
+    Candidat & 41\,298 & 5,36 & 6 & 6 \\
+    Métier & 3\,039 & 41,48 & 37 & 70 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{17\_neo4j\_competences\_moyennes.csv}}
+\end{table}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.86\textwidth]{figures/generated/implementation_deep_current/17_neo4j_skill_gap_distribution.png}
+  \caption{Distribution échantillonnée du skill gap candidat--offre}
+  \label{fig:implementation_neo4j_skill_gap}
+  \source{\texttt{17\_neo4j\_skill\_gap\_sample.csv}}
+\end{figure}
+
+Le \textit{skill gap} a été mesuré sur un échantillon de couples candidat--offre en comparant les compétences \texttt{REQUIERT} de l'offre aux compétences \texttt{POSSEDE} du candidat. Le déficit moyen est de 5,32 compétences, avec une médiane de 6 ; seulement 12,33\,\% des couples échantillonnés ont un déficit inférieur ou égal à trois compétences. Ce résultat est dur, mais utile : le graphe ne dit pas que la majorité des candidats sont immédiatement compatibles avec une offre prise au hasard. Il montre au contraire que le matching doit sélectionner, filtrer et reranker. C'est précisément la raison d'être du moteur hybride : utiliser pgvector pour présélectionner des couples plausibles, puis Neo4j pour mesurer finement les compétences acquises, manquantes et passerelles.
 
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.86\textwidth]{figures/generated/implementation_deep_current/10_neo4j_matrice_liaisons.png}
   \caption{Matrice des liaisons entre familles de noeuds}
   \label{fig:implementation_neo4j_matrice}
-  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/08\_neo4j\_patterns\_top.csv}}
+  \source{\texttt{08\_neo4j\_patterns\_top.csv}}
 \end{figure}
 
-La matrice des liaisons confirme que le graphe n'est pas seulement une collection de tables importées. Les relations structurantes relient candidats et compétences, offres et compétences, métiers et compétences, offres et secteurs, offres et employeurs, ainsi que les référentiels entre eux. Les motifs les plus importants sont les suivants : 221\,413 chemins \texttt{Candidat--POSSEDE--Compétence}, 58\,519 chemins \texttt{OffreEmploi--REQUIERT--Compétence} et 126\,051 chemins \texttt{Métier--NECESSITE--Compétence}. En croisant les chemins, le graphe expose 72\,832\,868 triplets candidat--compétence--offre, 27\,984\,337 triplets candidat--niveau--offre et 963\,063 triplets métier--compétence--offre. Ces chiffres expliquent pourquoi un simple top-$K$ vectoriel est insuffisant : la base relationnelle offre un espace de justification beaucoup plus riche que la similarité textuelle seule.
-
-\begin{table}[H]
-  \centering
-  \caption{Chemins métiers exploitables pour l'explication}
-  \label{tab:implementation_neo4j_chemins}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{XrX}
-    \rowcolor{darkblue}
-    \tabheader{Chemin relationnel} & \tabheader{Occurrences} & \tabheader{Usage dans le système} \\
-    \midrule
-    Candidat--Compétence--Offre & 72\,832\,868 & Mesure des compétences communes et base du \textit{skill gap}. \\
-    Candidat--Niveau NCF--Offre & 27\,984\,337 & Contrôle de cohérence entre niveau acquis et niveau requis. \\
-    Métier--Compétence--Offre & 963\,063 & Rattachement métier des offres et enrichissement MEPC/ISCO. \\
-    Offre--Secteur / Employeur / Localisation & 41\,607 & Filtrage métier, géographique et contextualisation de la recommandation. \\
-    DocChunk--Référentiel & 142 & Citation et justification documentaire dans le GraphRAG. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Requêtes Cypher de diagnostic sur Neo4j et \texttt{08\_neo4j\_patterns\_top.csv}}
-\end{table}
-
-Les communautés algorithmiques, de type Louvain, et les scores PageRank ne sont pas revendiqués dans ce chapitre. Le diagnostic d'exécution montre que les procédures GDS nécessaires n'étaient pas disponibles dans l'instance utilisée. C'est une limite méthodologique à assumer : parler de communautés sans calcul effectif serait fragile. En revanche, les composantes relationnelles métier sont déjà visibles par motifs : candidat--compétence--offre, métier--compétence--offre, offre--niveau--candidat et chunk--référentiel.
+La matrice des liaisons confirme que le graphe n'est pas seulement une collection de tables importées. Les motifs les plus importants sont les chemins candidat--compétence--offre portés par \texttt{POSSEDE} et \texttt{REQUIERT}, avec respectivement 221\,413 relations candidat--compétence et 58\,519 relations offre--compétence, ainsi que 126\,051 relations métier--compétence portées par \texttt{NECESSITE}. Ces chemins sont directement exploitables : ils permettent de calculer un taux de couverture des compétences, d'identifier les compétences manquantes, de rattacher l'offre à un métier et de proposer une trajectoire de montée en compétences. Le graphe est donc riche, mais déséquilibré ; il est utile pour expliquer les recommandations à condition de contrôler les hubs génériques.
 
 \section{Implémentation du moteur hybride de recommandation}
 
