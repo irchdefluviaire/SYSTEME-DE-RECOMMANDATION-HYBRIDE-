@@ -1,0 +1,7 @@
+entity_kind,centroid_umap_1,centroid_umap_2,n_points,umap_n_neighbors,umap_min_dist,umap_metric
+CANDIDAT,0.20908582,-1.8106911,350,25,0.12,cosine
+COMPETENCE,-0.9974482,-1.6962047,350,25,0.12,cosine
+DOMAINE_DETAILLE_NCF,-1.3195169,-0.73577577,201,25,0.12,cosine
+GROUPE_BASE_MEPC,-0.8584844,-1.2759466,209,25,0.12,cosine
+METIER,-0.434452,-1.6913555,350,25,0.12,cosine
+OFFRE_EMPLOI,1.487527,1.4854547,350,25,0.12,cosine

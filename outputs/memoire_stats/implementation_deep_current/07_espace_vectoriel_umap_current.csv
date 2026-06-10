@@ -1,0 +1,1811 @@
+entity_kind,entity_id,label_fr,umap_1,umap_2
+COMPETENCE,http://data.europa.eu/esco/skill/1e38f5be-bb7d-42c5-8301-c16cf400f8ee,énergies renouvelables,0.3515281,-2.8168788
+COMPETENCE,http://data.europa.eu/esco/skill/7838b15f-1beb-4da3-b4f2-22d8ae6e9079,défendre les droits des usagers,-1.3409762,0.28380188
+COMPETENCE,http://data.europa.eu/esco/skill/96a6b597-fc62-487e-87f2-de5b67950a3a,calculer des dividendes,-1.4373701,-1.2112705
+COMPETENCE,http://data.europa.eu/esco/skill/e307e333-426d-4e7e-81f0-16cff013a20f,politiques d’annulation des prestataires de services,-1.3096898,-0.15722589
+COMPETENCE,http://data.europa.eu/esco/skill/3159d806-fa7b-4803-9288-0c0417b7871c,machines de l'industrie textile,-0.31192693,-3.1358356
+COMPETENCE,http://data.europa.eu/esco/skill/68117f21-c66a-4769-87b0-586fe17f9ab5,mesurer des feuilles de papier,-0.8625496,-3.2543283
+COMPETENCE,http://data.europa.eu/esco/skill/39d7a905-07f0-43a8-82c8-be135821d564,élaborer des itinéraires touristiques personnalisés,-0.6885092,-1.1073533
+COMPETENCE,http://data.europa.eu/esco/skill/3cad3a73-8a5d-49f8-8151-f3260a10f479,surveiller la validité des certificats de navires,-1.6365393,-1.4901187
+COMPETENCE,http://data.europa.eu/esco/skill/c7e8948c-e7e4-406a-957d-55daaa4cdb44,garantir la sécurité de conservation des stocks,-0.8397026,-1.4017011
+COMPETENCE,http://data.europa.eu/esco/skill/7afb5a64-e574-421a-bb3a-7a7bc108d2a5,exécuter des opérations d’entreposage,0.05298768,-4.208852
+COMPETENCE,http://data.europa.eu/esco/skill/88af9294-b697-4687-ae19-aefbb6234dfa,économie,-1.2895162,-0.051266864
+COMPETENCE,http://data.europa.eu/esco/skill/83331548-2159-4b87-9177-c3cb29978540,inspecter des arbres,-0.79718256,-2.4446778
+COMPETENCE,http://data.europa.eu/esco/skill/4b9b1bc5-a1a9-4172-a669-509f94a479dc,troubles psychiatriques,0.4585426,-0.3802674
+COMPETENCE,http://data.europa.eu/esco/skill/4c9e3dd5-0e3a-4e22-9b70-213f7d0e8a3c,sélectionner des types de coquilles,-1.3132797,-2.2304115
+COMPETENCE,http://data.europa.eu/esco/skill/c611304c-2b99-4d56-b267-55e403925736,maintenir la propreté de l’espace bar,-0.88555855,-1.4273832
+COMPETENCE,http://data.europa.eu/esco/skill/00c85cbc-2b24-4605-a6fe-55b5c615e3fe,techniques de sciage,-2.555209,-0.70407695
+COMPETENCE,http://data.europa.eu/esco/skill/07ebc888-0f3f-46e7-99d2-a7c7ebd7ffe3,logiciel de gestions des réservations,-0.57251585,0.43070072
+COMPETENCE,http://data.europa.eu/esco/skill/dfbf38d8-87c9-4e67-925a-e421150aae09,prévenir les problèmes techniques des instruments de musique,-2.6116295,-2.0917225
+COMPETENCE,http://data.europa.eu/esco/skill/b080a008-a35d-4bd0-92e9-edf3773bb2b7,utiliser des logiciels de communication et de collaboration,-2.5079389,1.920956
+COMPETENCE,http://data.europa.eu/esco/skill/b459f803-ddbf-4a90-9419-fb92acf12e14,fournir des soins en cas d’interruption de grossesse,0.29662645,-0.5820691
+COMPETENCE,http://data.europa.eu/esco/skill/86d1dd29-b6af-4964-a9aa-b34e9e547b3b,se tenir au courant des innovations en matière de diagnostic,-2.2040246,-0.4850852
+COMPETENCE,http://data.europa.eu/esco/skill/ef069fe6-305b-4452-8f7d-0c572e98effc,mobile marketing,-2.5054095,1.7763171
+COMPETENCE,http://data.europa.eu/esco/skill/e9867780-9584-43a9-af10-8eb730b525cc,examiner une zone après un dynamitage,-0.09119094,-0.81445295
+COMPETENCE,http://data.europa.eu/esco/skill/fdfd4336-fda1-44c8-8dbf-771a472d79bb,orienter un tuyau de pompe à béton,-1.1760296,-3.0391054
+COMPETENCE,http://data.europa.eu/esco/skill/0eb3807c-acdf-47fe-8853-32a29c7bba27,diagnostic psychiatrique,0.6142151,-0.5042774
+COMPETENCE,http://data.europa.eu/esco/skill/732ce235-dbdb-4585-92fb-0c62b994bd5e,construire une cage d’armature,-1.1944919,-3.6094017
+COMPETENCE,http://data.europa.eu/esco/skill/0637466c-4f91-4faa-99f6-1594d9d72d32,négocier avec des fournisseurs pour le matériel visuel,-1.3244728,-1.4351312
+COMPETENCE,http://data.europa.eu/esco/skill/0be7c835-a562-416f-8c35-67abd0995b4d,procédés de matriçage,-0.63765895,-2.9187193
+COMPETENCE,http://data.europa.eu/esco/skill/b997afc1-19a7-4208-8010-fa0ffef15799,gérer les instructions à l’intention d’utilisateurs d’archives,-2.2710547,-0.89210665
+COMPETENCE,http://data.europa.eu/esco/skill/0f6a4412-7517-4db9-bf3f-53597ff48f1e,surveiller les finances d’un casino,-0.9573099,-0.3951594
+COMPETENCE,http://data.europa.eu/esco/skill/1299a59c-8b90-4838-8bef-0065cdfc8bdf,écrire en pendjabi,-2.131891,-1.5224727
+COMPETENCE,http://data.europa.eu/esco/skill/ee93e363-0c2b-40ed-bbf1-aa5aaf9683fe,soutenir des bénévoles,-1.5912906,-2.001814
+COMPETENCE,http://data.europa.eu/esco/skill/b1d7660b-0f5e-4ff6-819e-2b64e35bb7a7,réaliser la transformation de produits à la ferme,-0.1710557,-2.7434194
+COMPETENCE,http://data.europa.eu/esco/skill/343fec26-5ed3-4bbf-ba95-bea6f2b371b0,améliorer du bois sur pied,-1.2026573,-2.5841079
+COMPETENCE,http://data.europa.eu/esco/skill/0c8f5f32-a286-4f88-b9e9-d7e7f3a3684b,élaborer un plan d’activité pour des écloseries en aquaculture,0.3363419,-1.8647559
+COMPETENCE,http://data.europa.eu/esco/skill/cc5c0498-ddbb-4f21-9cdc-1eb06efce075,gérer l’archivage de dossiers de construction de bâtiments,-0.9821221,-1.9882547
+COMPETENCE,http://data.europa.eu/esco/skill/92f8ebaa-da5f-4159-9b33-ac8dc4b9c84e,céramique émaillée,-1.6042705,-1.736316
+COMPETENCE,http://data.europa.eu/esco/skill/3c01382f-c01c-46f1-af4b-0aea4c1d58f2,utiliser une dépanneuse,0.037676465,-4.301448
+COMPETENCE,http://data.europa.eu/esco/skill/d397a883-8e97-4b7e-bfd2-d07fc0aa6d3d,types de plieuses,-1.3604424,-2.7423322
+COMPETENCE,http://data.europa.eu/esco/skill/eb8f12d9-8a94-4dd9-9d41-6262fd9d7fd8,réaliser des traitements orthoptiques,-1.3648448,-2.6957169
+COMPETENCE,http://data.europa.eu/esco/skill/dffed0c4-0de5-437c-90d6-a1619eacc05e,parler de son œuvre en public,-2.2012627,-0.6933336
+COMPETENCE,http://data.europa.eu/esco/skill/f77cb8fa-5a5a-4909-a9a7-4d610c969c1d,intervenir en tant qu'assistant pour assurer l’hémostase,-0.20317271,-2.8092456
+COMPETENCE,http://data.europa.eu/esco/skill/6474fc36-67ae-436b-9d39-c14402c6a89b,utiliser du matériel TIC,-0.7244604,-2.5207868
+COMPETENCE,http://data.europa.eu/esco/skill/453b6898-de72-4ff9-b217-4a3cd377e155,surveiller la santé des usagers,0.39304844,-0.6757782
+COMPETENCE,http://data.europa.eu/esco/skill/daa8bf2c-8539-4007-b9f5-8875bd2f07e6,surveiller des systèmes de filets de cages,-0.6944552,-3.0538535
+COMPETENCE,http://data.europa.eu/esco/skill/78affa10-50af-4f02-8e16-a90b7ed84279,assurer la préparation des produits,-0.4617751,-2.3152606
+COMPETENCE,http://data.europa.eu/esco/skill/1edd57be-9746-42ad-87e4-f468f0950628,rechercher de nouveaux ingrédients alimentaires,-0.78477585,-2.4369297
+COMPETENCE,http://data.europa.eu/esco/skill/23b8dced-62a9-41f4-8b41-692e2d8e6d52,travailler en toute sécurité avec des matériaux chauds,-1.1867836,-2.1227744
+COMPETENCE,http://data.europa.eu/esco/skill/86df7af2-f9f3-4c06-a500-7f1fba9e78fe,suivre les procédures en matière de santé et de sécurité dans une construction,0.17225595,-0.8309084
+COMPETENCE,http://data.europa.eu/esco/skill/fa091c5d-5141-4864-8bb8-2c8331569ded,définir des mouvements de gréage,-1.2583795,-1.5554414
+COMPETENCE,http://data.europa.eu/esco/skill/70de94f5-9575-4edd-bca7-c797b023b9d6,Oracle WebLogic,-2.317662,2.3982484
+COMPETENCE,http://data.europa.eu/esco/skill/2f58fc20-4528-410b-877f-3dec775f1b4e,lubrifier des moteurs,-1.2649279,-3.5014882
+COMPETENCE,http://data.europa.eu/esco/skill/627d72bd-8e1e-4382-8ec1-224044687d22,gérer le stock de linge,-1.0927871,-1.7595747
+COMPETENCE,http://data.europa.eu/esco/skill/21b298f3-370d-4d9a-8601-ccfa7446446e,aider des personnes dans des zones contaminées,-0.12727658,-0.49606633
+COMPETENCE,http://data.europa.eu/esco/skill/f0ff6f10-cbb4-44c0-acd5-ed17046b1396,installer des répéteurs de signal,-2.75812,1.8151064
+COMPETENCE,http://data.europa.eu/esco/skill/d4ee5954-d60b-4d3b-8ea1-c8eaa0dcb606,trouver des parutions dans la presse écrite,-2.2537053,-0.6971723
+COMPETENCE,http://data.europa.eu/esco/skill/9bb7a97a-1a16-431e-8ea6-ad0f9f59aa0a,objectifs de contrôle de l’information et des technologies associées,-2.263103,2.0204003
+COMPETENCE,http://data.europa.eu/esco/skill/1e25d043-0307-4e50-8a19-9e7cce22caea,évaluer les besoins de conservation,-0.9176515,-2.111223
+COMPETENCE,http://data.europa.eu/esco/skill/9e30c91c-a598-4686-80db-8e934aa75bcf,examiner l’alimentation d’une machine,-0.264735,-2.9542813
+COMPETENCE,http://data.europa.eu/esco/skill/321f7ade-ba43-4923-a432-54df75ec80a5,effectuer une traduction orale consécutive,-1.8442227,-1.2363479
+COMPETENCE,http://data.europa.eu/esco/skill/acecc13c-90fa-406f-81e3-eb71bca47ae5,remplir des fiches de rapport d’activité,-0.9032818,2.7232838
+COMPETENCE,http://data.europa.eu/esco/skill/db85a2ca-04c4-4275-ba7a-b615c3686e09,types de peau,-1.2585381,-2.275606
+COMPETENCE,http://data.europa.eu/esco/skill/7109d172-c370-47fe-ac81-8fe93550a9e3,investissement d’impact,-1.3640485,-0.095347516
+COMPETENCE,http://data.europa.eu/esco/skill/7d0f33ea-e724-4d77-8b75-ee4fe66bb9ba,planifier des processus de fabrication,0.64503044,-2.8017988
+COMPETENCE,http://data.europa.eu/esco/skill/38bceda2-af8c-40f5-943b-c9f3f13db6e6,superviser l’alimentation en milieu médical,0.63949186,-0.49306002
+COMPETENCE,http://data.europa.eu/esco/skill/48c34089-d74a-4e52-b783-aea877f2fea1,équipements d’apprentissage pour l’équitation,-0.84385294,-2.0113034
+COMPETENCE,http://data.europa.eu/esco/skill/489b2571-ce18-4944-b452-ed1f54e55b68,Schoology,-2.287079,0.20955412
+COMPETENCE,http://data.europa.eu/esco/skill/c2b81b34-b009-4f62-85e9-cbf304d7f2f7,gérer les transporteurs,0.20281346,-4.402108
+COMPETENCE,http://data.europa.eu/esco/skill/1e3222fa-724d-41f0-9b0a-e88d1003cd35,réaliser une étude de faisabilité sur le refroidissement par absorption solaire,-0.18747286,-2.8670304
+COMPETENCE,http://data.europa.eu/esco/skill/456e263a-fad8-4171-a6ad-50941dad887a,traitement UHT,-0.7573117,-3.1584213
+COMPETENCE,http://data.europa.eu/esco/skill/f36d3d7e-359f-420d-a22b-d0d2e0ebfa08,gérer des équipements funéraires,-1.3293846,-1.7157525
+COMPETENCE,http://data.europa.eu/esco/skill/7ffae77a-93ce-40a3-af99-fae5729e8b15,assembler des robots,1.0308896,-2.457075
+COMPETENCE,http://data.europa.eu/esco/skill/cccf3cf0-8971-4034-b2eb-35c819c3bdb2,enregistrer les visiteurs,-0.88014,-1.0794722
+COMPETENCE,http://data.europa.eu/esco/skill/83c88276-6eb9-4749-94e5-5155bd475d51,adapter un enregistrement vocal à un document audio,-1.9822433,-1.1881996
+COMPETENCE,http://data.europa.eu/esco/skill/fdfa44f7-2f10-4fba-8ade-df0a1fb77abd,calculer le taux de croissance de ressources aquatiques,0.33649704,-1.9075543
+COMPETENCE,http://data.europa.eu/esco/skill/882f9d71-662f-4dfa-9e1c-d2991c34f887,employer des techniques de chiropractie sur les animaux,0.819337,-1.3331217
+COMPETENCE,http://data.europa.eu/esco/skill/84c52ee9-3eed-4f6c-983c-456e818c65f3,déchiffrer des poinçons,-1.1765307,-3.6200545
+COMPETENCE,http://data.europa.eu/esco/skill/44672641-e4b9-4a93-b64f-d8700149d772,exigences en matière de sécurité alimentaire pour la viande de gibier sauvage,-0.054038353,-0.5294654
+COMPETENCE,http://data.europa.eu/esco/skill/97c84652-d5ec-4beb-85c3-1a910341758b,transporter des visiteurs,0.3033764,-4.555332
+COMPETENCE,http://data.europa.eu/esco/skill/e6973d21-e920-4f20-81a2-8a7b2a7c4c8b,types d’extracteurs de miel,0.95405596,-3.414936
+COMPETENCE,http://data.europa.eu/esco/skill/f82b05a7-128b-4a72-a815-044ff6062f62,donner des conseils sur les procédures de gestion des déchets,-0.59468544,0.03950907
+COMPETENCE,http://data.europa.eu/esco/skill/6b6c1537-58c1-45e1-b4e4-f5193fb0a6dc,tester des produits médicaux,0.4073386,-1.5102959
+COMPETENCE,http://data.europa.eu/esco/skill/cc222240-08d9-44a6-acbe-ffc6f030f9ab,contrôler l’identité de visiteurs,-1.0582292,-1.0620314
+COMPETENCE,http://data.europa.eu/esco/skill/211e4a02-69a6-494e-b94a-93741e2a3a0b,démonter des appareils mobiles,-0.67396,-2.0246098
+COMPETENCE,http://data.europa.eu/esco/skill/be566f3e-6c21-4799-a7d0-fa4abbcb71cd,assurer la conformité d’aéronefs avec la réglementation,0.4303882,-4.397541
+COMPETENCE,http://data.europa.eu/esco/skill/aba33944-7bc3-42ea-9b37-03d7482231c7,inspecter de l’asphalte,-1.0375377,-2.7822
+COMPETENCE,http://data.europa.eu/esco/skill/c7520bd6-4aa9-4a35-9efb-c65b1c0e2181,superviser la sécurité des opérations ferroviaires,-0.107266195,-0.9505757
+COMPETENCE,http://data.europa.eu/esco/skill/9fb35964-03f9-442e-96c0-989ab8b018e4,réaliser un mélange de moulage,-1.3263756,-3.4097404
+COMPETENCE,http://data.europa.eu/esco/skill/fae27053-8924-4bfd-b565-c9fe502044c9,conception des systèmes,-2.2586207,2.1932585
+COMPETENCE,http://data.europa.eu/esco/skill/d70cab7b-ad8c-4be8-84f0-c5f3f9501818,entretenir les équipements d’intégration des médias,-2.3603182,-1.487843
+COMPETENCE,http://data.europa.eu/esco/skill/6b643893-0a1f-4f6c-83a1-e7eef75849b9,développer à l’aide des services d’informatique en nuage,-2.2760255,2.438775
+COMPETENCE,http://data.europa.eu/esco/skill/adab096c-66d0-4ae6-9f3d-8a925de4c2a7,installer des systèmes de dégivrage électrothermiques,0.14783174,-3.148962
+COMPETENCE,http://data.europa.eu/esco/skill/45bef06d-dba9-4192-9805-2f7d27523638,utiliser un appareil de découpe au laser,-1.0405393,-3.7656608
+COMPETENCE,http://data.europa.eu/esco/skill/248951cc-3b10-447f-a4b2-0037e6e7a9ab,aider les patients ayant des besoins particuliers,0.61085147,-0.6304166
+COMPETENCE,http://data.europa.eu/esco/skill/200a8387-d67c-43e4-9cdc-44ab592c299e,assurer la conformité réglementaire dans les infrastructures de pipelines,1.5740218,-4.934038
+COMPETENCE,http://data.europa.eu/esco/skill/af0bbc31-b54d-4e8d-82b1-2e91a1115523,mécanique des trains,0.93807197,-3.9026985
+COMPETENCE,http://data.europa.eu/esco/skill/ca8c5849-2655-44b3-b2fa-c4c0e2a04aeb,remplacer une machine,-0.5927379,-3.5185094
+COMPETENCE,http://data.europa.eu/esco/skill/49a5effb-e497-4dba-afb9-c6c354882b22,viande halal,-0.97269547,-2.806453
+COMPETENCE,http://data.europa.eu/esco/skill/44711112-14b3-4625-bed3-8f07c3e85348,utiliser une pince,-0.88042265,-3.3299556
+COMPETENCE,http://data.europa.eu/esco/skill/ef089514-1221-4e6a-a9ff-08dbc96afcde,nettoyer des pièces de joaillerie,-1.8304677,-2.3683424
+COMPETENCE,http://data.europa.eu/esco/skill/47d2f266-aaf2-4852-9c66-607e76b1fa8b,détecter des défauts dans un produit,-0.476978,-2.3932798
+COMPETENCE,http://data.europa.eu/esco/skill/8f1efe4e-5f92-43b0-a329-3c17c1460a37,comprendre l'azéri écrit,-2.0470827,-1.0674828
+COMPETENCE,http://data.europa.eu/esco/skill/7d320e6c-a45f-477e-be95-47248f79485a,gérer des contrats de forage,-0.7831435,0.22006491
+COMPETENCE,http://data.europa.eu/esco/skill/670c79e9-aa33-41ae-9858-573ade0adb89,interroger des groupes cibles,-1.9710653,-0.5904109
+COMPETENCE,http://data.europa.eu/esco/skill/96ab25a3-c89b-43ea-833b-26b637c3b6ed,comprendre le néerlandais écrit,-2.0681853,-1.1223948
+COMPETENCE,http://data.europa.eu/esco/skill/43bdb744-8072-4db9-b6e8-beea2171de1b,types de matériaux de plâtrage,-1.3277528,-2.6915145
+COMPETENCE,http://data.europa.eu/esco/skill/3204e6a3-676d-4824-806d-b34c6b798f31,comprendre la dimension émotionnelle d'une représentation,-2.872003,-1.946865
+COMPETENCE,http://data.europa.eu/esco/skill/c3c2420c-ce9a-4371-8eed-1db479c3a562,rédiger des publications scientifiques,-2.4363568,-0.734942
+COMPETENCE,http://data.europa.eu/esco/skill/d7b66759-c40c-44de-9f31-9418f84e10c5,évaluer des facteurs de risque,-1.9274668,-0.5420702
+COMPETENCE,http://data.europa.eu/esco/skill/e043adc7-e5e6-4c26-8c97-cb3a5f4bf119,élaborer des programmes de mobilité,-1.8257438,-0.15680711
+COMPETENCE,http://data.europa.eu/esco/skill/f7940b22-764a-43f0-9642-f60f5897109b,conseiller des étudiants,-4.425505,0.11337964
+COMPETENCE,http://data.europa.eu/esco/skill/1910b022-fc63-4f3d-b742-f9d62d4382b6,tenir un inventaire de fournitures de nettoyage de véhicules,-1.3675938,-1.8340786
+COMPETENCE,http://data.europa.eu/esco/skill/a53211a6-9495-4a9b-8730-31f48afd0edf,évaluer une équipe d’encadrement dans un programme d’arts communautaires,-2.9057477,-1.9363708
+COMPETENCE,http://data.europa.eu/esco/skill/91306a20-9b81-4f3d-97eb-f5368b607da7,assurer la gestion de clients,0.654063,0.36016545
+COMPETENCE,http://data.europa.eu/esco/skill/820795ff-170b-48a0-93e3-326c4e2db201,créer des figurines en argile,-1.8879658,-2.2892735
+COMPETENCE,http://data.europa.eu/esco/skill/f371606f-9b45-4340-9e92-ebd91d14ab29,tenir un inventaire des outils,-1.4572163,-1.8457974
+COMPETENCE,http://data.europa.eu/esco/skill/9227266e-36c5-4e34-99da-caba3bd44d02,dérouiller des véhicules à moteur,-1.3596944,-3.1539516
+COMPETENCE,http://data.europa.eu/esco/skill/82d83fd3-bd6b-4e09-8291-2e0f83e323f9,entretenir les attractions d’un parc de loisirs,-0.7166489,-1.2530807
+COMPETENCE,http://data.europa.eu/esco/skill/82bdfb3f-9950-473c-8b47-43d6b7c34b6f,sécuriser des panneaux de parquet,-1.263934,-2.1215646
+COMPETENCE,http://data.europa.eu/esco/skill/a5bfd7c2-44cd-4ff5-aeb5-248de606ee17,gérer les rapports financiers d’un magasin,-0.98437935,-0.35595253
+COMPETENCE,http://data.europa.eu/esco/skill/a7a47148-732f-48bc-a7ce-18afe0d7f259,nettoyer un entrepôt,-1.3396205,-1.2034136
+COMPETENCE,http://data.europa.eu/esco/skill/09dd7302-368e-4b3e-b644-7c03a2aae4a2,participer à la conception d’unités de production dans l’industrie alimentaire,0.06808819,-2.589743
+COMPETENCE,http://data.europa.eu/esco/skill/1b7c716e-af95-4cda-a42f-6479c8b139f5,MDX,-2.4218037,2.5134842
+COMPETENCE,http://data.europa.eu/esco/skill/5bb28770-52a9-4a1a-8299-30a969495c47,assurer le bien-être d’animaux lors du transport,0.39034656,-0.8659308
+COMPETENCE,http://data.europa.eu/esco/skill/d1e78795-b3ed-40f4-abb0-21b689fa4ae5,séparer les métaux de minerais,0.5264987,-3.141628
+COMPETENCE,http://data.europa.eu/esco/skill/5c81d08b-5a60-4582-87dd-7ad82d9c57b5,traiter des ongles,-1.4738739,-2.2602997
+COMPETENCE,http://data.europa.eu/esco/skill/9920e559-e66c-44a8-b853-bf5c66f123fe,surveiller des systèmes de biofiltre,0.388948,-2.2360914
+COMPETENCE,http://data.europa.eu/esco/skill/b5936963-0d12-4aa1-ae85-ad2686750427,systèmes de classification des gemmes,-3.0422368,-1.2461969
+COMPETENCE,http://data.europa.eu/esco/skill/283b5e03-571e-4d58-b087-e7c9b2a45128,effectuer des contrôles de compétence de pilotage,0.48442426,-4.3401794
+COMPETENCE,http://data.europa.eu/esco/skill/d54d7c00-87c4-4f78-af8d-e84577372974,wallon,-1.9427904,-1.9074651
+COMPETENCE,http://data.europa.eu/esco/skill/b83669f2-bf53-47ed-af9f-397c5f2dfd4d,s’occuper des départs dans une structure d’hébergement,-1.4156238,-0.5562913
+COMPETENCE,http://data.europa.eu/esco/skill/6d3edede-8951-4621-a835-e04323300fa0,anglais,-1.8947282,-1.9164106
+COMPETENCE,http://data.europa.eu/esco/skill/90c0e266-c9ea-4036-802e-475ea50b9c7b,enseigner les principes de la musique,-2.633931,-1.9447453
+COMPETENCE,http://data.europa.eu/esco/skill/3d0a644e-d056-46cb-aa0e-fbf6f88fcbb1,enquêter sur des accidents miniers,-0.3749063,-2.6353426
+COMPETENCE,http://data.europa.eu/esco/skill/7add3681-17b6-4027-8a9d-ee92d2b96a42,gérer des processus de travail,0.2712519,-2.7950592
+COMPETENCE,http://data.europa.eu/esco/skill/29891a32-64aa-4f64-b6eb-1fa990659375,improviser de la musique,-2.660405,-2.0625882
+COMPETENCE,http://data.europa.eu/esco/skill/206f5738-e91f-4390-84a2-fcb864bc11b1,utiliser des modèles informatiques spécialisés pour les prévisions météorologiques,-2.9740012,-1.0997394
+COMPETENCE,http://data.europa.eu/esco/skill/39b00008-3c6b-4395-b5dd-9d325283a885,instructions du fabricant d'appareils électroménagers,0.10163889,-3.0652373
+COMPETENCE,http://data.europa.eu/esco/skill/0157feec-52c2-4764-b83d-2d017ce8e49d,préparer des huiles,-1.3360921,-1.9685105
+COMPETENCE,http://data.europa.eu/esco/skill/21039101-4706-4fe0-a423-e63077cf36d9,maintenir l’ordre dans un tribunal,-1.3279365,0.027051512
+COMPETENCE,http://data.europa.eu/esco/skill/47ba3c04-2039-42d1-be10-d6325fdfafad,entretenir un sol carrelé,-1.4232746,-2.2633474
+COMPETENCE,http://data.europa.eu/esco/skill/b36176ec-3499-4235-a15c-cb485a386dc6,assembler des séquences vidéo,-1.9045229,-1.437402
+COMPETENCE,http://data.europa.eu/esco/skill/2c06746f-0dbf-4319-a50b-ea46ad103af4,examiner des pare-brises endommagés,-0.9180061,-2.4482157
+COMPETENCE,http://data.europa.eu/esco/skill/fff0e2cd-d0bd-4b02-9daf-158b79d9688a,traitement automatique du langage naturel,-2.1269176,2.332392
+COMPETENCE,http://data.europa.eu/esco/skill/99981dbd-6f0f-495d-a67f-20ad0f9ef6f3,supports d'impression,-2.1686804,-2.5981896
+COMPETENCE,http://data.europa.eu/esco/skill/d350bfa6-ae99-433a-a138-1a16f8f93d33,utiliser du matériel de transformation des viandes,-0.6896585,-2.8780706
+COMPETENCE,http://data.europa.eu/esco/skill/4417fc7d-e189-4c35-bbc0-f57725a8dab4,étiqueter des courroies,-1.4457641,-2.5064738
+COMPETENCE,http://data.europa.eu/esco/skill/2d5cb9a6-0ad0-4686-8de5-e22cc9abc76f,assurer la liaison avec les organisations sportives,-2.1968968,0.06414041
+COMPETENCE,http://data.europa.eu/esco/skill/8a326ee1-169c-4c44-b38b-8f1bb20ec79b,détecter des erreurs comptables,-0.24405265,-2.3777502
+COMPETENCE,http://data.europa.eu/esco/skill/162c2e87-3d6f-4f7e-ab3c-97694c2f6f08,programmer des approvisionnements en écloserie,-1.5341656,-0.5387911
+COMPETENCE,http://data.europa.eu/esco/skill/e286eddc-75e5-4ae3-966b-ec89c1c046ba,anatomie des animaux,0.6508717,-1.2775424
+COMPETENCE,http://data.europa.eu/esco/skill/20afa37b-4b6d-49c1-81c6-2941dd2762ab,utiliser du matériel d’éclairage,-2.3103704,-1.6356176
+COMPETENCE,http://data.europa.eu/esco/skill/c796e1fa-cbbd-4639-b8d9-cbcdc130c7a2,traiter le matériel électrique reçu,-0.008830214,-3.3245118
+COMPETENCE,http://data.europa.eu/esco/skill/5254410a-5817-4da8-a93f-0c29a908b2be,types de pelliculeuses,-1.0529853,-3.0840104
+COMPETENCE,http://data.europa.eu/esco/skill/e0ae07ce-d601-407c-b351-17d11ab8e846,installer des équipements de sécurité de navires,0.095298685,-0.70493996
+COMPETENCE,http://data.europa.eu/esco/skill/a933a46f-d4d8-4e96-a7f7-345725111bfa,rédiger des rapports d’analyse de la contrainte-allongement,-1.2795866,-1.2118428
+COMPETENCE,http://data.europa.eu/esco/skill/946034bf-be2b-4568-b3d5-5988735e26e8,avoir une bonne diction,-1.0913563,-1.6797124
+COMPETENCE,http://data.europa.eu/esco/skill/1a489f62-88ea-490f-a46e-864161ed6ca2,gérer les ressources d’une gare de triage,0.6841729,-4.166591
+COMPETENCE,http://data.europa.eu/esco/skill/3013c7d0-b22b-43b0-9318-c0e8eca25c78,superviser le mouvement des passagers,-0.73134184,-1.4489517
+COMPETENCE,http://data.europa.eu/esco/skill/bdc65e93-5949-4682-9b75-d36f4bf084c2,processus de brassage,-0.2738275,-2.9194114
+COMPETENCE,http://data.europa.eu/esco/skill/64c626b1-0078-4958-bbde-86b5cf2b18fa,préparer du matériel de récolte,-0.8315214,-3.6100004
+COMPETENCE,http://data.europa.eu/esco/skill/0f2eee6f-2203-4cc8-9d79-854d2d5d8131,utiliser des techniques de questionnement,-2.3286521,1.3123027
+COMPETENCE,http://data.europa.eu/esco/skill/feda7c1a-7339-4d1a-a705-4123e4a2df3e,peser les ingrédients d’un vernis,-0.8586343,-2.4275622
+COMPETENCE,http://data.europa.eu/esco/skill/a1d24f87-230e-4b4c-8107-dccf81316364,évaluer des projets de développement minier,0.60094386,-3.1698627
+COMPETENCE,http://data.europa.eu/esco/skill/4b04a0ea-d5a8-4fab-9ff7-c1befe2a57f1,effectuer un massage des tissus en profondeur,0.33081836,-1.2508754
+COMPETENCE,http://data.europa.eu/esco/skill/4c08e39a-1a4b-4ab9-98f8-97d975850fb1,utiliser des couteaux de sculpture sur bois,-1.9065267,-2.6286993
+COMPETENCE,http://data.europa.eu/esco/skill/8496d258-bf95-4041-a3d7-1cc19b629d14,se mettre en relation avec des experts de l’industrie,1.0187497,-2.5081081
+COMPETENCE,http://data.europa.eu/esco/skill/727aeb22-40ef-45af-822d-3c72263a2bd9,techniques de fabrication de bougies,-0.97116756,-3.5552213
+COMPETENCE,http://data.europa.eu/esco/skill/f3f15fe4-3e74-4cc2-b0ac-71a330885e3e,identifier les marchandises endommagées avant leur expédition,-0.9001807,-2.3018892
+COMPETENCE,http://data.europa.eu/esco/skill/23d124d7-d9a7-421f-ab7a-fb077c430956,entretenir des noyaux,-1.8250132,-2.1934855
+COMPETENCE,http://data.europa.eu/esco/skill/1db2b4ac-9459-48c6-9cb4-3759e5af39eb,gérer l’affectation des lignes de bus,0.0769396,-4.0888386
+COMPETENCE,http://data.europa.eu/esco/skill/2a456cc5-683f-4eeb-ba20-5a523ac56112,offrir des échantillons gratuits de produits cosmétiques,-0.43925318,-2.146473
+COMPETENCE,http://data.europa.eu/esco/skill/02c71cde-f513-43da-8952-0974763c7568,interpréter les diagrammes de circuits,1.1254045,-2.422944
+COMPETENCE,http://data.europa.eu/esco/skill/34d734d5-2179-49e7-b641-96121f49231c,transférer de la cire,0.3345667,-3.7526033
+COMPETENCE,http://data.europa.eu/esco/skill/05cd9341-0d92-4bcc-983c-bf47132ac3f8,superviser les employés d’usines de production alimentaire,0.081251785,-2.3822336
+COMPETENCE,http://data.europa.eu/esco/skill/c9026b8f-7c5c-44b4-9e59-ae1e72fb29c0,ouvrages en bois,-0.63011336,-2.5779622
+COMPETENCE,http://data.europa.eu/esco/skill/7ff2c668-0e86-418a-a962-4958262ee337,utiliser des techniques de communication,-2.62466,1.7406435
+COMPETENCE,http://data.europa.eu/esco/skill/fba972bf-7c08-4deb-a2dc-b157886097fe,planifier une improvisation chorégraphique,-2.9059517,-2.0086222
+COMPETENCE,http://data.europa.eu/esco/skill/0afb2715-a6ee-4ad9-ac8a-fb904dd99b61,participer à des appels d’offres publics,-2.1931298,-0.6736105
+COMPETENCE,http://data.europa.eu/esco/skill/eab3bafa-eebb-47bf-85ce-e336c5019108,consolidation d'équipe,-0.54996693,-1.8932495
+COMPETENCE,http://data.europa.eu/esco/skill/2abea522-a74c-41b5-ab06-2a6e73665782,vérifier des bobines de film,-2.1079876,-1.7866124
+COMPETENCE,http://data.europa.eu/esco/skill/18508acd-a561-4d3a-bc93-9261021edc10,accoupler des wagons,0.903195,-4.3696647
+COMPETENCE,http://data.europa.eu/esco/skill/7bf4539a-3f2e-4485-876b-1c9306b181af,John The Ripper (outil de test d’intrusion),-2.0555973,1.8057764
+COMPETENCE,http://data.europa.eu/esco/skill/0dd4d328-f015-463d-9a7e-06b7041f0b26,industrie des biens de consommation,0.014407182,-2.5800717
+COMPETENCE,http://data.europa.eu/esco/skill/89db623e-e1fc-4ec2-9a0f-7b72b4c35303,collecter des données expérimentales,-2.247824,-0.7964335
+COMPETENCE,http://data.europa.eu/esco/skill/61a9e90d-9013-4323-b114-fb4bc7e6729e,donner des conseils en maintenance des équipements,-0.31686828,-1.991656
+COMPETENCE,http://data.europa.eu/esco/skill/cab28271-5965-4fcf-9d64-0acb43d51cb6,ajuster des équipements sportifs,-1.6101992,-1.6919259
+COMPETENCE,http://data.europa.eu/esco/skill/72cde4b2-b2ee-41b2-a72f-ab3a970c0b8f,expliquer la législation aux usagers des services sociaux,-1.1940764,0.20892572
+COMPETENCE,http://data.europa.eu/esco/skill/53b12b36-d27d-4ae9-8681-36d1cf697939,utiliser des outils de gréement,-2.7133763,1.5378191
+COMPETENCE,http://data.europa.eu/esco/skill/2ebf1482-ea10-4d69-a5ca-50cdacbe2d95,ajuster les prix de carburants selon les procédures de l'entreprise,-0.88331485,-2.1126616
+COMPETENCE,http://data.europa.eu/esco/skill/f8cd217b-b870-42aa-9bbe-d36b672cbb65,utiliser des équipements de traitement d’emballages,-0.30029547,-3.2942967
+COMPETENCE,http://data.europa.eu/esco/skill/5763deb6-4a0e-4a2b-b519-7b48be1b6be3,utiliser une machine d’étirage de tubes,-0.91271824,-3.4351006
+COMPETENCE,http://data.europa.eu/esco/skill/138aecdf-1b02-4ffc-81c4-0a0461b4f3c0,mener une analyse structurelle métallurgique,-1.1023788,-3.7094145
+COMPETENCE,http://data.europa.eu/esco/skill/77505a2a-b6a7-4571-9509-b45448167c0e,négocier des contrats avec des prestataires de services,-1.2517802,-0.58569217
+COMPETENCE,http://data.europa.eu/esco/skill/d0898934-7335-480f-a986-b9b05b54c718,comprendre le russe parlé,-1.9780123,-1.2013041
+COMPETENCE,http://data.europa.eu/esco/skill/7c5b66c6-36a1-4e03-bb57-64e8688b8f58,faire fonctionner un commutateur téléphonique privé,-2.9469876,1.747393
+COMPETENCE,http://data.europa.eu/esco/skill/48f9797c-a39e-4a27-a9d1-f4c32cf9c9bf,évaluer le régime alimentaire d’un animal,0.710608,-1.2994771
+COMPETENCE,http://data.europa.eu/esco/skill/23072dbb-e93b-48ab-8756-c64f74aaab26,appliquer une législation forestière,-0.9344017,-0.13271138
+COMPETENCE,http://data.europa.eu/esco/skill/ce5598ec-5ca4-4f3e-92a2-c55c90ce6038,droit de la concurrence,-1.3238583,0.23741496
+COMPETENCE,http://data.europa.eu/esco/skill/b1359d89-c691-442f-ab75-792a67dcbcc9,stocker des bobines de film,-1.8224772,-1.739232
+COMPETENCE,http://data.europa.eu/esco/skill/c2b376e9-023a-4e87-aa51-66eb61922c41,faire chauffer des métaux,-1.2166831,-2.8056808
+COMPETENCE,http://data.europa.eu/esco/skill/c10d0ba2-e22b-4b4f-8f6c-1b6fa8587fbc,contrôler l’ouverture et la fermeture des portes d’un train,0.6663175,-4.006546
+COMPETENCE,http://data.europa.eu/esco/skill/3664c22d-ade8-4bdf-9827-95f0d2fe3131,installer un plafond suspendu,-1.0467328,-2.916742
+COMPETENCE,http://data.europa.eu/esco/skill/4fd7909c-9600-476d-b1f0-615f9cc1260e,systèmes de découpage automatiques pour les articles chaussants et les articles en cuir,-0.96185786,-3.3475363
+COMPETENCE,http://data.europa.eu/esco/skill/6bc58e91-1827-4dc7-a9cf-2311edcba0ec,croate,-1.7248605,-2.16584
+COMPETENCE,http://data.europa.eu/esco/skill/35b8ed9a-8649-41a7-9dac-013e9b3bbde1,préparer les offres de voyage,0.314601,-4.6268673
+COMPETENCE,http://data.europa.eu/esco/skill/34035545-4c38-42f2-8138-2fc5cefa4d1f,contrôler la sécurité de puits,1.0736172,-3.9045992
+COMPETENCE,http://data.europa.eu/esco/skill/f7582089-04a6-4de8-92e1-b11d79769ab7,garantir la sécurité dans l'aviation internationale,-0.18692191,-0.6893352
+COMPETENCE,http://data.europa.eu/esco/skill/81f03b64-4f82-4bc4-b67d-894ddc97985b,appliquer les règles de sécurité ferroviaire,-0.10700165,-0.6125323
+COMPETENCE,http://data.europa.eu/esco/skill/66ea3249-a079-45ad-b4f2-e6a79b59f10f,équipements de protection individuelle,-1.4461755,-2.0641491
+COMPETENCE,http://data.europa.eu/esco/skill/91a6da8d-24dc-4453-9821-de305864677c,science des sols,-2.7772088,-0.8607412
+COMPETENCE,http://data.europa.eu/esco/skill/41730268-d97a-42dd-b6e0-b117d9432eb5,fournir un environnement enrichissant à des animaux,-0.6256304,-1.595283
+COMPETENCE,http://data.europa.eu/esco/skill/be0afbfa-2d39-47d0-8d5c-81df2a27d250,interpréter les feux de signalisation,-1.0201913,-1.3247905
+COMPETENCE,http://data.europa.eu/esco/skill/7e55b56a-5671-4a35-9cf0-57c959e65984,utiliser des outils manuels pour des travaux forestiers,-0.40820742,-1.8765447
+COMPETENCE,http://data.europa.eu/esco/skill/b55f1863-706b-4587-a756-5100c3c7ce5c,examiner les questions de conservation,-1.0814004,-2.1360836
+COMPETENCE,http://data.europa.eu/esco/skill/2ec7edc2-f184-4c7d-bcd1-52b9d994934c,gérer un laboratoire en unité de production alimentaire,-0.07136624,-2.4856918
+COMPETENCE,http://data.europa.eu/esco/skill/ed32dff3-051f-4a94-b0a8-16377600503a,régler une machine de vulcanisation,-0.9870851,-3.3485425
+COMPETENCE,http://data.europa.eu/esco/skill/55d46c76-385c-4a86-bc8c-328b6e2f8824,analyser du jus de pomme pour la production de cidre,-0.4405303,-2.2925365
+COMPETENCE,http://data.europa.eu/esco/skill/70aacc9d-30cc-4df1-a37f-a660b1331b25,garantir le respect des contrats de garantie,-1.3076022,-1.4296474
+COMPETENCE,http://data.europa.eu/esco/skill/ff52e69a-8873-4827-b140-958dee5a62bb,comprendre le norvégien parlé,-1.9530034,-1.2893175
+COMPETENCE,http://data.europa.eu/esco/skill/fd311456-d8d2-43ca-b6be-a66bbff90302,gérer des tâches de manière indépendante,-2.0641317,1.3298966
+COMPETENCE,http://data.europa.eu/esco/skill/d6a58927-b8e0-4863-b4e0-de0e63cf7661,capter l’attention des gens,-1.9501855,-1.0630053
+COMPETENCE,http://data.europa.eu/esco/skill/f0318969-d484-4065-87d3-90f71c63e51e,assister les clients pour l'utilisation de distributeurs de tickets,-0.6675295,-0.18794267
+COMPETENCE,http://data.europa.eu/esco/skill/989c8483-1da2-49ff-a2e8-4ddaba7f7f46,déterminer les mesures de sécurité opérationnelle d'un train,0.75995326,-3.905101
+COMPETENCE,http://data.europa.eu/esco/skill/55e286cf-b8a0-40bd-9e87-276cbc0284b9,types d'avions,-1.3135208,-2.0499394
+COMPETENCE,http://data.europa.eu/esco/skill/7505bd68-9b3c-4b77-ace2-f2fb04e97c7a,assembler des munitions,-1.4411099,-3.0636177
+COMPETENCE,http://data.europa.eu/esco/skill/63819d42-0f85-4f3c-a93d-cd84686be2ec,peser la quantité de feuilles par cigare,-1.4049422,-2.4444034
+COMPETENCE,http://data.europa.eu/esco/skill/435d1751-8667-41ec-8b32-865b7cd3c684,gérer une entreprise de production,-0.63928866,0.41336408
+COMPETENCE,http://data.europa.eu/esco/skill/43805fb4-8bbf-4960-b7d6-8bc275390cac,analyser des fluides corporels,0.20509513,-2.3927786
+COMPETENCE,http://data.europa.eu/esco/skill/86d2e2ea-1ba2-4aa6-b465-8a1f9abc81b8,appliquer des politiques de sécurité de l’information,-0.34142974,-0.21520019
+COMPETENCE,http://data.europa.eu/esco/skill/ad6df7dc-b78a-413f-a10d-da929d7a9225,fabriquer des plats préparés,-0.7803495,-2.942887
+COMPETENCE,http://data.europa.eu/esco/skill/b5b00d74-1425-4dd5-b2d3-f45fb8ef1410,affections orthopédiques,0.7234396,-0.87618166
+COMPETENCE,http://data.europa.eu/esco/skill/e44a0396-77e2-4d57-8c80-36796238f80c,encourager des artistes,-2.931812,-2.083859
+COMPETENCE,http://data.europa.eu/esco/skill/10f64f45-ab79-4fdb-aef7-3c47fe8ffabc,surveiller les tendances de croissance dans l’aéronautique,0.48741353,-4.451555
+COMPETENCE,http://data.europa.eu/esco/skill/17b418d5-4c53-42b6-8f68-804411be83d2,utiliser une presse à granules,-0.769253,-3.5976713
+COMPETENCE,http://data.europa.eu/esco/skill/9b4ed5f2-0cf8-47d6-b2cf-4b447978b4bf,utiliser un laminoir à chaud,-1.1860422,-3.7135897
+COMPETENCE,http://data.europa.eu/esco/skill/e2161b42-46f4-4b62-8136-c190edce56fc,garder une trace des dépenses,-0.9881395,-1.6774496
+COMPETENCE,http://data.europa.eu/esco/skill/5d09da0d-ac68-40a1-9c21-cd6d9413358d,articuler une proposition artistique,-2.8794656,-1.8908262
+COMPETENCE,http://data.europa.eu/esco/skill/920764e7-43c6-42c0-b2a6-2cbcc07fafc2,surveiller l’état des équipements,-0.9914974,-3.2539852
+COMPETENCE,http://data.europa.eu/esco/skill/9f0e78ef-bbe4-4d25-a5a9-f0e98ee99da2,évaluer le comportement à risque de délinquants,-1.4646075,-0.6587556
+COMPETENCE,http://data.europa.eu/esco/skill/e8a33a3f-5f1e-4148-a2f3-d8d3c9a3f36a,cirer des meubles,-1.2011677,-2.583556
+COMPETENCE,http://data.europa.eu/esco/skill/34147067-562c-4e5f-8dec-40972ccf29b6,contribution des plantes au climat intérieur et aux conditions sanitaires,-0.14201656,-1.9772836
+COMPETENCE,http://data.europa.eu/esco/skill/1b270383-b30c-4092-a9ed-b1637ecf2b79,utiliser des informations météorologiques,-3.0246034,-1.0771246
+COMPETENCE,http://data.europa.eu/esco/skill/c54b03a9-fe20-42af-9e8a-f8896af4a4f9,ajuster ses priorités,-1.3180785,-1.4698255
+COMPETENCE,http://data.europa.eu/esco/skill/b9aad733-959a-4178-984f-53e4bd05b420,maintenir la configuration IP,-2.525285,2.1070263
+COMPETENCE,http://data.europa.eu/esco/skill/aaffe2b8-60b7-468c-8b21-477ef753c390,préparer des demandes de permis de construire,-0.26208487,-1.9874772
+COMPETENCE,http://data.europa.eu/esco/skill/0d7529b6-4691-4ca2-96c1-54e478bad3dc,effectuer une fouille,-1.4255457,-1.2021525
+COMPETENCE,http://data.europa.eu/esco/skill/8a5d67b6-4abf-4fae-bedf-78c8882d7d47,types de moteurs de véhicules,-0.35629457,-4.105952
+COMPETENCE,http://data.europa.eu/esco/skill/4ad83664-21a9-4f96-8834-0fc8f671be9c,répartir le traitement des commandes,0.44511107,-4.6862397
+COMPETENCE,http://data.europa.eu/esco/skill/70d9b308-f8f2-4a4f-b4d9-54b5c8648c05,biologie synthétique,1.246315,-1.5981033
+COMPETENCE,http://data.europa.eu/esco/skill/e1ebf53c-8800-402c-9e61-e19ac072c52d,comprendre le hindi parlé,-1.9685599,-1.1864154
+COMPETENCE,http://data.europa.eu/esco/skill/1d6c7de4-350e-4868-a47b-333b4b0d9650,"évaluer des données, des informations et des contenus numériques",-1.4911245,1.2660092
+COMPETENCE,http://data.europa.eu/esco/skill/44da96fe-26a3-4a32-9a0f-c49614bb7298,gérer les relations entre élèves,-1.1952432,-0.93229836
+COMPETENCE,http://data.europa.eu/esco/skill/0d6924a5-ce6b-4496-94ce-7e18b59ce964,utiliser des poêles,-1.1030049,-2.7213013
+COMPETENCE,http://data.europa.eu/esco/skill/4cc05029-c110-423b-a7bf-1fac965a8353,manipuler une scie en toute sécurité,-0.9669568,-1.479272
+COMPETENCE,http://data.europa.eu/esco/skill/6f8f86f8-0ef9-4dd6-8e29-7d790e65706b,calculer des coûts de production,-0.4441739,-2.8290098
+COMPETENCE,http://data.europa.eu/esco/skill/f2aa1495-e0f0-4bc0-bfb8-76273e93ef93,fournir des soins chiropratiques pédiatriques,0.83142084,-1.1098664
+COMPETENCE,http://data.europa.eu/esco/skill/3c0574e1-3931-43a5-9c2c-21eced1f1a12,trouver de nouveaux types d’aliments et de boissons,-1.4816008,-2.4095857
+COMPETENCE,http://data.europa.eu/esco/skill/2bf1ff15-0448-4b4e-9d18-56e047817b4a,matériel de camping,-0.6893265,0.8876283
+COMPETENCE,http://data.europa.eu/esco/skill/debef2fc-7af4-4bff-ac92-4d0317915a84,communication électronique,-2.7403753,1.6570213
+COMPETENCE,http://data.europa.eu/esco/skill/b54545e6-637c-43a2-8ab2-9efd5f9e2d38,règlementation relative au transport de passagers,0.6951339,-4.982079
+COMPETENCE,http://data.europa.eu/esco/skill/0240c5a8-d8ec-4cd5-948f-4649334c01b8,faire des recherches dans des archives,-2.3091123,-1.1756618
+COMPETENCE,http://data.europa.eu/esco/skill/b3e7751d-2502-4bff-9293-b4ce212a894a,assurer la manutention de produits forestiers,-0.39699456,-2.2497542
+COMPETENCE,http://data.europa.eu/esco/skill/4c9746f4-3a75-48a0-b0d2-99e14aff2ddc,entretenir une installation de raffinage de sucre,-0.6293174,-3.4594324
+COMPETENCE,http://data.europa.eu/esco/skill/66120d64-6f0f-4b89-8c4f-cd271f8cb7ca,comprendre le romani parlé,-1.9888531,-1.1602001
+COMPETENCE,http://data.europa.eu/esco/skill/7c794fa9-7b30-40a4-a3c8-a34c6bdc367a,évaluer la qualité sonore,-2.473062,-2.0039737
+COMPETENCE,http://data.europa.eu/esco/skill/46d20520-381c-40c9-9de5-f635d0755923,comprendre le bulgare écrit,-1.9926398,-1.28349
+COMPETENCE,http://data.europa.eu/esco/skill/6e4c479c-2206-4375-bf45-160f8f4711c3,recueillir des commentaires concernant des produits,-0.41722915,-2.206561
+COMPETENCE,http://data.europa.eu/esco/skill/8c4b7305-4b83-4586-9d42-2817f96c60ea,poser des questions en se référant à des documents,-2.219951,-0.925247
+COMPETENCE,http://data.europa.eu/esco/skill/25d8dedb-a557-441a-8aeb-2d618b79abe9,gérer les devis des expéditeurs éventuels,0.26707327,-4.4020753
+COMPETENCE,http://data.europa.eu/esco/skill/fbbcb9ab-4b95-4e57-a756-30d08b7da7a5,maintenir un système de TIC,-2.1117775,2.1195345
+COMPETENCE,http://data.europa.eu/esco/skill/f23ced50-862a-49d8-b7f6-a5c4bd6b49af,rédiger un rapport d'enquête,-1.3648913,-1.24077
+COMPETENCE,http://data.europa.eu/esco/skill/78ecad49-4579-4e6d-932e-edeaada0fdfe,conseiller des clients sur l’utilisation de produits cosmétiques,-0.33966884,-2.0519102
+COMPETENCE,http://data.europa.eu/esco/skill/38509fa4-7c06-4a4b-9622-f521f03c37b8,photographie,-2.729454,-2.008885
+COMPETENCE,http://data.europa.eu/esco/skill/95f76ea5-ffec-4baf-9c84-e36148b17e5b,produire des copies d’objets de valeur,-1.9511781,-2.2858944
+COMPETENCE,http://data.europa.eu/esco/skill/a4e31589-3632-4926-91d0-15b889c90b9b,IBM WebSphere,-2.2544384,2.3909755
+COMPETENCE,http://data.europa.eu/esco/skill/559441b1-15fe-471f-a4b9-6534a390bbc8,légender des documents,-2.7694864,-1.6796184
+COMPETENCE,http://data.europa.eu/esco/skill/56e30a60-0a87-4631-85ea-c69bc8bd0519,étudier des cultures,-4.2734675,-0.014459023
+COMPETENCE,http://data.europa.eu/esco/skill/bbec4ed2-d4b7-4e73-847f-b8731ca97cf8,actionner les équipements de surveillance du système d’un tramway,-0.4955495,-0.5646756
+COMPETENCE,http://data.europa.eu/esco/skill/27d1012f-0ad8-42fb-b342-0e7ef12d22d1,établir un inventaire détaillé d'une collection,-1.702532,-1.9027398
+COMPETENCE,http://data.europa.eu/esco/skill/61c6d39a-727c-42f3-9044-8f3b68915e7b,préparer des effets de scène,-2.2298882,-1.7135614
+COMPETENCE,http://data.europa.eu/esco/skill/d6c84f20-db10-47d3-971f-384114f0b6c2,s’occuper de la gestion des adhésions,-0.41967198,-1.0353993
+COMPETENCE,http://data.europa.eu/esco/skill/933e7ccf-5d56-46ba-aca4-857f826a6b3a,gérer des rendez-vous,-1.7071719,-1.0149097
+COMPETENCE,http://data.europa.eu/esco/skill/d94cdb45-ce0c-4e1e-8149-1998127f627c,travailler avec l’entourage des usagers de soins médicaux,0.99044526,-0.6812851
+COMPETENCE,http://data.europa.eu/esco/skill/8f8e16a0-a5d5-4bce-b2fa-d8177a26c43b,entretenir du matériel d’exploitation forestière,-0.38769028,-1.8479424
+COMPETENCE,http://data.europa.eu/esco/skill/c44b3ddd-1a5a-4a3d-9dc2-a1f0b0d5e25f,examiner les plaintes des consommateurs concernant des produits alimentaires,-0.285528,-2.1531446
+COMPETENCE,http://data.europa.eu/esco/skill/756e7f39-d48d-4f42-a900-b09e0c34aa8c,infections alimentaires,0.43310803,-1.4921372
+COMPETENCE,http://data.europa.eu/esco/skill/fc1eae96-01cb-4d97-b594-d5040913675e,tenir à jour un inventaire de pièces,-1.4435416,-1.3768986
+COMPETENCE,http://data.europa.eu/esco/skill/8b2841a0-3674-448c-8551-047443f4f7a5,élever des autruches,-0.4536307,-2.0460098
+COMPETENCE,http://data.europa.eu/esco/skill/4a2a8a89-0b26-4456-90d2-222d1313e12e,utiliser une machine à tailler des roues dentées,-0.77540416,-3.4753406
+COMPETENCE,http://data.europa.eu/esco/skill/4873bd09-dea6-4041-b77a-27572ae99dda,prévenir le séchage prématuré,-1.4945029,-1.6215672
+COMPETENCE,http://data.europa.eu/esco/skill/c08ec608-48cd-4cd5-ac39-171fce1c0ce5,évaluer des évènements,-1.3828118,-1.4769223
+COMPETENCE,http://data.europa.eu/esco/skill/70165e8b-322c-489c-b436-66af6190afa3,gérer une habilitation de sécurité,-0.092811175,-0.50154895
+COMPETENCE,http://data.europa.eu/esco/skill/4cc90549-8871-4d9a-bf40-8bcf36947f26,inspecter des bouteilles de gaz,-0.67183495,-2.6460183
+COMPETENCE,http://data.europa.eu/esco/skill/0d6ad185-dc2c-46e7-b7f7-a01681c9fddb,inspecter des composants de semi-conducteurs,0.17808372,-3.5883715
+COMPETENCE,http://data.europa.eu/esco/skill/542b09e0-b198-4a04-b0f8-6b07ccd80ae8,effectuer le contrôle de la qualité des véhicules finis,0.19840726,-1.9745561
+COMPETENCE,http://data.europa.eu/esco/skill/1f62da1b-5968-4336-a2c0-5f05581ebe00,astrologie,-3.0852947,-1.134874
+COMPETENCE,http://data.europa.eu/esco/skill/4dafe480-f2ae-46b5-bd5e-8d4e538f50c7,identifier les besoins de formation,-2.7857885,0.15187547
+COMPETENCE,http://data.europa.eu/esco/skill/41ef4b15-1c8c-488e-9abc-6731d8011312,examiner des spécimens de cellules au microscope,0.11711764,-2.6662471
+COMPETENCE,http://data.europa.eu/esco/skill/0a48d064-dd04-47fb-a00d-85e9b4874033,principes de gestion d'entreprise,-0.80098367,0.320667
+COMPETENCE,http://data.europa.eu/esco/skill/3dd3dfa7-51c0-40ef-af46-e2df300489f6,contrôler la conformité des paramètres dans les projets de construction,-0.09081021,-2.0326295
+COMPETENCE,http://data.europa.eu/esco/skill/a7478d09-585e-4fac-9ee0-14755f4afa48,préparer l’espace-bar,-0.8378243,-1.3208549
+COMPETENCE,http://data.europa.eu/esco/skill/28a8aa5e-b4e7-4ff7-93eb-dcc28b5e59af,adapter des accessoires,-1.062343,-2.6478508
+COMPETENCE,http://data.europa.eu/esco/skill/306a1555-9fa2-47af-b996-a0a8833cbe81,vendre des produits supplémentaires,-0.41558617,-2.1564965
+COMPETENCE,http://data.europa.eu/esco/skill/382ed835-8958-4d86-8471-cff55c6df3e7,organiser les déplacements du personnel,-0.18278359,-4.203456
+COMPETENCE,http://data.europa.eu/esco/skill/5eb57e46-51c3-4265-a4dd-1f38e7fcf07a,surveiller la satisfaction des clients d’un casino,-1.2861116,-0.8038742
+COMPETENCE,http://data.europa.eu/esco/skill/f9afd21f-7d11-4bd4-b624-cd25701b2dee,couler des couvertures de cellules,-1.3098588,-3.020833
+COMPETENCE,http://data.europa.eu/esco/skill/a69841b3-3607-4ede-b6e1-972d70cda24c,gérer des ressources physiques,-1.5525273,-1.4588176
+COMPETENCE,http://data.europa.eu/esco/skill/abf620f3-9fa5-4dba-9a37-74eb3efb143d,faire la démonstration des procédures d’urgence,-1.0903176,-1.4982789
+COMPETENCE,http://data.europa.eu/esco/skill/e7f63440-6007-486b-948f-ea124839c418,conduire des véhicules à deux roues,0.21866289,-4.4750276
+COMPETENCE,http://data.europa.eu/esco/skill/4fb7f781-9362-426a-9eb6-65c360f83e31,mener des opérations de nettoyage dans le respect de l’environnement,-0.08094591,-2.2096653
+COMPETENCE,http://data.europa.eu/esco/skill/f5acdfb9-0e81-4732-a658-e13c03d3c51b,polir une peinture terminée,-1.8912226,-2.8896728
+COMPETENCE,http://data.europa.eu/esco/skill/d494454c-7317-430a-9346-0d55a667c6d1,rédiger des rapports sur les tests neurologiques,0.63843983,-0.5674757
+COMPETENCE,http://data.europa.eu/esco/skill/ecd368bc-6383-4a03-9b61-46e0a94750f7,donner des consignes sur les techniques permettant d’économiser l’énergie,-0.6555726,-0.5860324
+COMPETENCE,http://data.europa.eu/esco/skill/57fb98c5-6862-4969-8bf4-a74ff14c4750,gérer la paperasse associée aux stocks d’un entrepôt,-1.3472699,-1.3041582
+COMPETENCE,http://data.europa.eu/esco/skill/99c4c69a-025c-464f-adda-874c7f107a31,dialoguer avec les parties prenantes,-1.49727,-0.30813718
+COMPETENCE,http://data.europa.eu/esco/skill/93b22bbf-ece1-4e2d-8d47-0c9392c5a4fd,développer la technologie de la blockchain,-2.1342907,2.4882944
+COMPETENCE,http://data.europa.eu/esco/skill/75f650d0-9096-4b8f-bbd6-ad05ee3f6121,documenter des résultats d’analyse,0.45158705,-2.554791
+COMPETENCE,http://data.europa.eu/esco/skill/d915420b-3083-4740-b196-32749111069e,estimer la valeur de bijoux et de montres d'occasion,-1.9931825,-2.1644564
+COMPETENCE,http://data.europa.eu/esco/skill/04bcb522-62a9-4fc1-8ea9-b7ccff10147e,coordonner les horaires de vol,-1.2036742,-1.5628855
+COMPETENCE,http://data.europa.eu/esco/skill/ee3c5d5e-d454-4ac4-beeb-9848c54dc15b,négocier avec des artistes,-2.854131,-2.0701761
+COMPETENCE,http://data.europa.eu/esco/skill/7c2c81fe-b5f5-4691-a58d-7fd0a8b6c0e1,empêcher les pertes de chaleur dans un four,-1.1688114,-1.8318661
+COMPETENCE,http://data.europa.eu/esco/skill/da896663-08b3-409d-aa3d-31f39a8e8d2b,réaliser une étude de faisabilité sur les systèmes de biomasse,-0.121395335,-2.5679064
+COMPETENCE,http://data.europa.eu/esco/skill/699d61dd-7e3f-40e6-87d5-2bd609055761,composition des produits alimentaires,-0.3891339,-2.407786
+COMPETENCE,http://data.europa.eu/esco/skill/334e3e49-fb02-4051-809a-f06adfdc1c40,effectuer un dépannage,-1.3428723,-1.0388709
+COMPETENCE,http://data.europa.eu/esco/skill/c51c5fec-84f4-42bd-a5c7-a77766dfe6d4,stades alcalins des procédés de raffinage des huiles comestibles,-1.3515195,-2.6163116
+COMPETENCE,http://data.europa.eu/esco/skill/31587950-8b69-4a15-91c2-74dae22d38a4,aider à l'installation d'un système audio,-1.7893318,-0.9729831
+COMPETENCE,http://data.europa.eu/esco/skill/5d1a7c14-188d-4d90-9fcc-51bc1748c58e,assurer le bon déroulement des opérations à bord,-0.06329743,-4.20391
+COMPETENCE,http://data.europa.eu/esco/skill/6717f75b-1c16-4e5f-80c2-b7c02280f87f,choisir les matériaux pour les appareils d’orthodontie,-1.09223,-2.2332861
+COMPETENCE,http://data.europa.eu/esco/skill/69bbd53f-fbb0-4476-b4b2-ef7844464e28,programmation web,-2.2527428,2.467481
+COMPETENCE,http://data.europa.eu/esco/skill/1368c06f-202d-4776-8153-93aed512cc64,rédiger des rapports sur les marchés et évaluer les marchés,-1.3128282,-1.2866211
+COMPETENCE,http://data.europa.eu/esco/skill/de4bd326-332c-4e03-9d61-1b810d4a3e8e,alimenter une bétonnière,-1.3833909,-2.9647624
+COMPETENCE,http://data.europa.eu/esco/skill/c440bd51-6fc2-49dc-91d1-d34d417f5e2f,examen pour la conception de prothèses et orthèses,0.17893395,-1.5494053
+COMPETENCE,http://data.europa.eu/esco/skill/99010eb3-c40d-4e30-bd64-fa62518b28f0,vendre des articles vestimentaires à des clients,-1.6894583,-0.960914
+COMPETENCE,http://data.europa.eu/esco/skill/90ccd1bc-af3f-4c04-b2dd-bef2ba62905d,donner des conseils sur la santé mentale,0.5549153,-0.5992428
+COMPETENCE,http://data.europa.eu/esco/skill/a68d4de0-99a3-4c26-b84a-040e706e4714,démolir des structures,-0.33711797,-2.1018283
+COMPETENCE,http://data.europa.eu/esco/skill/913a0c87-5482-4765-a085-03cad1b42ec2,composition mécanique des tramways,0.9700651,-3.8657355
+COMPETENCE,http://data.europa.eu/esco/skill/7fafdbcc-01e5-41df-b269-37dffc49c678,esthétique d'une pièce,-1.9807245,-2.1028733
+COMPETENCE,http://data.europa.eu/esco/skill/d53b04fb-1bbb-4a25-92f8-8ceb308d276f,définir des normes d’organisation,-0.70757407,0.6135797
+COMPETENCE,http://data.europa.eu/esco/skill/14f6c275-5a3c-4016-8be0-53c40b4bfbc5,effectuer un processus de traitement thermique,-0.3297457,-2.6105528
+COMPETENCE,http://data.europa.eu/esco/skill/a0e23745-6ba4-45e2-9510-df6e71ed1230,appliquer ses connaissances sur le comportement humain,-1.8466464,-0.47867367
+COMPETENCE,http://data.europa.eu/esco/skill/d6cdef49-b669-4507-91d1-3f959cf98e47,maintenir les performances d’une base de données,-1.4491675,1.3786076
+COMPETENCE,http://data.europa.eu/esco/skill/ee9aaba9-cf60-41f3-bde2-62ced9c16243,transporter du matériel de bureau,0.24483657,-4.400424
+COMPETENCE,http://data.europa.eu/esco/skill/2847f2cd-36e2-42f2-91bc-ede7aacdfaaf,tester les circuits,0.8534825,-2.5125082
+COMPETENCE,http://data.europa.eu/esco/skill/78143be8-5479-45ad-bc18-716a1e925011,déplacer les corps de personnes décédées,-0.08314214,-4.339705
+COMPETENCE,http://data.europa.eu/esco/skill/166dec78-52ef-428d-abf9-f026db1428a6,transférer des briques,0.24808007,-4.117778
+COMPETENCE,http://data.europa.eu/esco/skill/82312096-4df8-49ce-9cdd-a6e08af56b45,évaluer des services d’information en utilisant des indicateurs chiffrés,-2.3273776,-0.970587
+COMPETENCE,http://data.europa.eu/esco/skill/ea99e1f2-ad03-4bb3-8960-1227fc76bb2a,interpréter les interfaces graphiques de communication,-2.5431592,1.5323169
+COMPETENCE,http://data.europa.eu/esco/skill/d5111703-c344-484d-bef1-9565a278166a,prix du marché,-1.4571898,-1.7939085
+COMPETENCE,http://data.europa.eu/esco/skill/79ecb6aa-a865-4444-9dfc-9f23232fdc45,épigraphie,-2.5193353,-1.8893265
+METIER,http://data.europa.eu/esco/occupation/763f82c2-81e3-48d2-9cdf-f532b5016a1f,conseiller en amincissement/conseillère en amincissement,0.22943424,0.4590244
+METIER,http://data.europa.eu/esco/occupation/d515e82a-ca9f-4be4-9823-33694dff7304,concepteur de produits en maroquinerie/conceptrice de produits en maroquinerie,0.78236604,-2.8246286
+METIER,http://data.europa.eu/esco/occupation/c3959398-a5d7-4b26-abcf-ef7af87e5822,conducteur/conductrice d’installations de production d’énergie géothermique,0.25302905,-3.7012336
+METIER,http://data.europa.eu/esco/occupation/adf9257e-78cb-467d-b259-59ed65bd7aed,technicien de préparation essais résistance au feu/technicienne de préparation essais résistance au feu,1.565031,-2.1867933
+METIER,http://data.europa.eu/esco/occupation/33cd8ff4-62f2-4a3f-b053-6e009ecef6da,spécialiste en import-export de viandes et de produits à base de viande,-0.06794164,-2.5794547
+METIER,http://data.europa.eu/esco/occupation/d5c4ab26-c293-4f4d-ad89-fe776f49a67f,artiste numérique,-2.8736749,-2.0645742
+METIER,http://data.europa.eu/esco/occupation/1fce1be0-bf52-449b-9a2b-3f2cc710290a,responsable rémunérations,0.38907173,2.1869214
+METIER,http://data.europa.eu/esco/occupation/653374a9-a96e-4c5b-849f-62ae67b0ed62,instructeur technique pénitentiaire/instructrice technique pénitentiaire,0.10319757,-0.80522144
+METIER,http://data.europa.eu/esco/occupation/96a0d8d3-d4a6-473d-80d6-b5dbadde940a,équipier polyvalent de restauration rapide/équipière polyvalente de restauration rapide,-0.5074994,1.5332837
+METIER,http://data.europa.eu/esco/occupation/8a87e8b3-aecf-48a7-9837-4e022c3b9bb9,chromatographiste,0.474049,-2.3128421
+METIER,http://data.europa.eu/esco/occupation/955ae83a-4d91-4db8-a5d6-bd489e5058df,mécanicien d’engins de mine/mécanicienne d’engins de mine,1.2637602,-3.5211573
+METIER,http://data.europa.eu/esco/occupation/59cfa27b-874f-48b7-8880-b65420239559,pyrotechnicien/pyrotechnicienne,-2.8514886,-2.094584
+METIER,http://data.europa.eu/esco/occupation/2a04a1df-a3b9-403e-a245-e7f93fdddd44,assistant de direction/assistante de direction,0.90754807,1.0637461
+METIER,http://data.europa.eu/esco/occupation/21ae429f-a152-46a6-a73c-9ec65c7803f0,promoteur/promotrice,-2.771607,-1.9840354
+METIER,http://data.europa.eu/esco/occupation/ba1e5427-46e0-4b6c-b196-5312d136dd3b,"spécialiste en import-export de machines pour l’extraction, la construction et le génie civil",0.2773319,-3.021036
+METIER,http://data.europa.eu/esco/occupation/44b0f118-2a70-4eec-b301-89d7fd84a3d0,opérateur de séchoirs à bois/opératrice de séchoirs à bois,-0.60049844,-3.3913715
+METIER,http://data.europa.eu/esco/occupation/7052fd94-f563-46a9-8e2d-cba6c20f3e71,monteur de lignes aériennes/monteuse de lignes aériennes,-0.3316442,-3.5261374
+METIER,http://data.europa.eu/esco/occupation/f14194e2-8e7f-4fc9-9c8c-78d9ae2e7284,ingénieur nucléaire/ingénieure nucléaire,1.1950146,-2.5873425
+METIER,http://data.europa.eu/esco/occupation/3a75b477-e151-40fb-9909-b3641401bfed,opérateur d’inspection optique automatisée/opératrice d’inspection optique automatisée,1.3326032,-2.296108
+METIER,http://data.europa.eu/esco/occupation/33ae2ba9-9835-410f-8ea6-e5ac991f5975,moine/moniale,-1.7988617,-2.211652
+METIER,http://data.europa.eu/esco/occupation/57a09d3f-e3d6-49ad-8c88-d879fc4d0870,conducteur livreur de béton prêt à l’emploi/conductrice livreuse de béton prêt à l’emploi,-0.33503723,-3.9746923
+METIER,http://data.europa.eu/esco/occupation/d0341f2c-f797-4306-b847-411dee1058a9,modèle,-2.8115535,-2.2552435
+METIER,http://data.europa.eu/esco/occupation/0b15375e-dfdd-4047-9efb-096e0aaee7d2,employé de magasin/employée de magasin,-0.5705894,-0.40302515
+METIER,http://data.europa.eu/esco/occupation/c07ab008-79c1-4516-8dcc-8289f797dc34,électricien d’exploitation minière/électricienne d’exploitation minière,0.8729723,-3.2244537
+METIER,http://data.europa.eu/esco/occupation/0bf68df5-e808-4c27-abf2-6f85440f2d7f,standardiste,-2.8732452,1.721196
+METIER,http://data.europa.eu/esco/occupation/06461fc3-1274-40a1-9322-dfc2753f5eea,technicien en filature/technicienne en filature,1.7337329,-2.0803976
+METIER,http://data.europa.eu/esco/occupation/6ce3c372-408b-4c46-86d8-ad6b9255d686,chef de produit tourisme,-0.5348149,-1.3241647
+METIER,http://data.europa.eu/esco/occupation/2104ee38-2fd1-4647-8f60-d2200f069805,chef de culture viticole,-0.334652,-0.96251035
+METIER,http://data.europa.eu/esco/occupation/be2896db-9ab7-4719-a558-96b18c93027d,chiropracteur animalier,0.8987092,-1.1745031
+METIER,http://data.europa.eu/esco/occupation/9a26d76b-b9e3-46ae-ab4b-057a1262138b,enseignant référent pour la scolarisation des élèves handicapés/enseignante référente pour la scolarisation des élèves handicapés,-2.1285264,0.6528397
+METIER,http://data.europa.eu/esco/occupation/88589d68-b870-440e-8444-32e9935cbbbc,mécanicien de marine/mécanicienne de marine,1.7767006,-3.6551068
+METIER,http://data.europa.eu/esco/occupation/c84a055d-00fe-4789-a054-f4a62914ff6e,déménageur/déménageuse,-0.05096951,-4.18576
+METIER,http://data.europa.eu/esco/occupation/17e39591-7137-4960-94c8-8169f7a5d67b,chef de quart/cheffe de quart,-0.29823485,-0.9825389
+METIER,http://data.europa.eu/esco/occupation/0663da10-e42c-41e8-992c-07d00ac97bea,technicien qualité en fabrication d’articles textiles/technicienne qualité en fabrication d’articles textiles,0.7145439,-2.539676
+METIER,http://data.europa.eu/esco/occupation/45170a38-b3ae-4a96-90ff-eb45e55600b6,arrangeur musical/arrangeuse musicale,-2.6599813,-2.0169685
+METIER,http://data.europa.eu/esco/occupation/e1416610-ad08-4f37-8b46-9f99632a5c0f,ébéniste,-1.1674261,-2.818758
+METIER,http://data.europa.eu/esco/occupation/31cc4199-703c-4f8a-9b46-a2070a6d35df,technicien biologiste/technicienne biologiste,1.4918003,-1.7461699
+METIER,http://data.europa.eu/esco/occupation/5e4d156a-1f05-4b2c-b0f0-5abb82d52ed6,gestionnaire de compte,0.7684548,0.39565402
+METIER,http://data.europa.eu/esco/occupation/3027abf6-bc54-4709-8dc1-4f20b772ac70,classeur de panneaux de particules/classeuse de panneaux de particules,0.24948172,-2.89
+METIER,http://data.europa.eu/esco/occupation/8befd482-70e2-4d1e-8a09-091e15fe85c3,instituteur en école Freinet/institutrice en école Freinet,-2.1768923,0.52436703
+METIER,http://data.europa.eu/esco/occupation/f96e3735-405c-4ca9-8a86-d37f64ea7164,facteur d’instruments de musique à vent/factrice d’instruments de musique à vent,-2.4617298,-2.1311135
+METIER,http://data.europa.eu/esco/occupation/dfb93ddb-ce34-4d2e-a178-541d45a7d98b,responsable d’atelier de blanchisserie industrielle,-0.034383837,-2.7768497
+METIER,http://data.europa.eu/esco/occupation/50af07f0-7a75-424e-a66d-5a9deea10f4c,testeur d’accessibilité/testeuse d’accessibilité,-2.1393673,2.3399022
+METIER,http://data.europa.eu/esco/occupation/c5902c47-0c2e-45aa-94dd-951ad641449c,mouleur en fonderie/mouleuse en fonderie,-1.2934588,-3.4965928
+METIER,http://data.europa.eu/esco/occupation/ec238461-93b6-4516-a251-52d1153b53ac,régleur machines à compression de matières plastiques et caoutchouc/régleuse machines à compression de matières plastiques et caoutchouc,-0.5686465,-3.6135867
+METIER,http://data.europa.eu/esco/occupation/7f46db3a-754b-4bda-b287-5932fa062ee9,ingénieur en électronique de puissance/ingénieure en électronique de puissance,1.1518079,-2.6328301
+METIER,http://data.europa.eu/esco/occupation/bb609566-3ab6-44dd-8f48-cf0b15b96827,ingénieur en automatismes/ingénieure en automatismes,1.1547045,-2.677325
+METIER,http://data.europa.eu/esco/occupation/6b304370-0112-4881-a1bd-27d8df645d00,formateur en sécurité intérieure/formatrice en sécurité intérieure,0.04721174,-0.394236
+METIER,http://data.europa.eu/esco/occupation/a6e8a6bf-9209-4d19-a131-a8b6431e0f75,responsable de l’acquisition de talents,0.31791458,2.3939757
+METIER,http://data.europa.eu/esco/occupation/d5a43cd3-230e-46d0-ba05-d67d61e5cfbb,concepteur de médias numériques/conceptrice de médias numériques,-2.6081247,-1.5186496
+METIER,http://data.europa.eu/esco/occupation/c4071145-a774-4cf4-aefa-ae18a385cca4,ingénieur logistique/ingénieure logistique,1.4122953,-5.2674766
+METIER,http://data.europa.eu/esco/occupation/9faaae26-804d-48f3-97b0-84f7e1aceae8,responsable import-export de boissons,-0.0078168325,-2.9768894
+METIER,http://data.europa.eu/esco/occupation/a4dd6eae-ca75-456f-829d-333671a7c186,aumônier/aumônière,-1.2621715,-0.8406143
+METIER,http://data.europa.eu/esco/occupation/2b6bb2d1-54b0-4feb-8c6c-8ba20adde1df,professeur de langues anciennes/professeure de langues anciennes,-2.2935393,0.6688586
+METIER,http://data.europa.eu/esco/occupation/53a362a4-4c83-4ce2-837f-d1faba4cd247,responsable recrutement,-1.0237588,0.15611175
+METIER,http://data.europa.eu/esco/occupation/1a9d99ba-4c08-4864-8f6a-1b0f2b4cf883,ouvrier horticole/ouvrière horticole,-0.2517659,-1.6911769
+METIER,http://data.europa.eu/esco/occupation/8a925aca-f636-437c-8962-5deae170e246,technicien en conditionnement alimentaire/technicienne en conditionnement alimentaire,1.6719097,-2.0905747
+METIER,http://data.europa.eu/esco/occupation/c5d36eef-df20-47a8-a332-5b4358fa83e3,analyste des télécommunications,-2.966394,2.0939062
+METIER,http://data.europa.eu/esco/occupation/23993e79-a0a0-4155-9f62-68e14ee65dab,chef de quart en industrie minière,0.547669,-2.8581858
+METIER,http://data.europa.eu/esco/occupation/c76566f1-97a1-43e9-a7d8-155db0e56987,préparateur de vernis/préparatrice de vernis,-0.5946717,-2.576974
+METIER,http://data.europa.eu/esco/occupation/b66eb697-e65d-4bbb-b51c-d847f6875f1a,gérant de magasin de loisirs créatifs/gérante de magasin de loisirs créatifs,-1.0479428,-0.5238332
+METIER,http://data.europa.eu/esco/occupation/6f8f1da1-9160-4b9f-ba30-e3396d3b2f92,maquettiste de modèles réduits,-2.5976827,-2.3369622
+METIER,http://data.europa.eu/esco/occupation/2555a1bc-9f30-4371-9499-64793e48cd55,technicien d'essais de circuits imprimés/technicienne d'essais de circuits imprimés,1.511053,-2.10029
+METIER,http://data.europa.eu/esco/occupation/0a3c2d5b-e1f9-4200-9288-62bf3fed3310,gestionnaire des adhérents,-1.0389099,-0.656204
+METIER,http://data.europa.eu/esco/occupation/778c1d37-69f2-4184-ac98-03b7dbfba332,ingénieur en photonique/ingénieure en photonique,1.20244,-2.6317854
+METIER,http://data.europa.eu/esco/occupation/0c041d1e-1841-4acb-b0a1-2c387a61bf65,assistant en cabinet médical/assistante en cabinet médical,0.70003027,-0.33669725
+METIER,http://data.europa.eu/esco/occupation/cb3432f8-bad7-4703-ba66-dc980a4ce4f7,opérateur de traitement des déchets métalliques/opératrice de traitement des déchets métalliques,-1.2214024,-3.7448094
+METIER,http://data.europa.eu/esco/occupation/9ebaf3f0-0be0-47b7-b2b1-b3b04130fa81,développeur de jeux numériques/développeuse de jeux numériques,-2.758409,-1.319142
+METIER,http://data.europa.eu/esco/occupation/976cbfcc-8958-4800-a435-71d15405a42a,enseignant spécialisé/enseignante spécialisée,-1.9079102,0.9947116
+METIER,http://data.europa.eu/esco/occupation/a6a0b60f-08da-4faa-bf54-942987efb471,analyste de système informatique,-2.228772,2.1852314
+METIER,http://data.europa.eu/esco/occupation/aaf732b5-ee19-4c82-a08f-700fb98f5ca7,agent du service de l’état civil/agente du service de l’état civil,0.30947977,-4.754167
+METIER,http://data.europa.eu/esco/occupation/98e58946-3227-4f6c-a5d1-5892fe76883d,technicien SAV/technicienne SAV,1.8360894,-1.9856972
+METIER,http://data.europa.eu/esco/occupation/2dc86f3d-a90e-4e7a-8a94-0bd728f22d7b,fabricant de cadres/fabricante de cadres,-1.7205027,-2.8025575
+METIER,http://data.europa.eu/esco/occupation/c302791c-6864-4ec5-9a6c-2fca38764f0e,inspecteur de conformité en sécurité incendie/inspectrice de conformité en sécurité incendie,0.06671442,-0.69440144
+METIER,http://data.europa.eu/esco/occupation/8bc845cb-0702-47e4-aabc-4036032b0a8d,agent maritime/agente maritime,0.43613914,-4.812313
+METIER,http://data.europa.eu/esco/occupation/779d13be-60b4-48f3-a339-fe483be96c7f,chef de service juridique,-0.44112033,-0.6004668
+METIER,http://data.europa.eu/esco/occupation/ac80b511-fd22-4edf-8570-e531704778bd,blogueur/blogueuse,-2.230331,-0.633617
+METIER,http://data.europa.eu/esco/occupation/f3eb330a-03b5-4537-ac0e-bcee5c67bcff,chef avion,-0.4126635,-0.9407654
+METIER,http://data.europa.eu/esco/occupation/16b974f4-cb8c-436c-8c05-a16957c40131,conducteur/conductrice d’installation de production d’énergie fossile,0.1443636,-3.726634
+METIER,http://data.europa.eu/esco/occupation/92b7776f-5d90-413d-b05f-51e429e28346,employé de camping/employée de camping,-0.7652201,0.7512741
+METIER,http://data.europa.eu/esco/occupation/4fef1907-cf82-413b-841a-02ef57e299a6,technicien de laboratoire scientifique/technicienne de laboratoire scientifique,1.4942424,-1.8879181
+METIER,http://data.europa.eu/esco/occupation/de80bbf0-447d-4a6a-845a-fdba4e0dc30c,chef de marque,-0.5553435,-0.80566084
+METIER,http://data.europa.eu/esco/occupation/3a15ec1b-9250-41a0-9344-feb2956481b7,conducteur de trolleybus/conductrice de trolleybus,0.23288335,-4.309637
+METIER,http://data.europa.eu/esco/occupation/7d4266b3-2108-4330-b27b-430a96012c21,opérateur de machine à coudre/opératrice de machine à coudre,-0.51103896,-3.4221685
+METIER,http://data.europa.eu/esco/occupation/68ffc53b-6067-4fe7-bd85-c96f4a6c1e45,spécialiste en biotechnologie alimentaire,1.2380382,-1.6635344
+METIER,http://data.europa.eu/esco/occupation/03b55cb5-9735-4582-8e20-2b1cb76635cb,gérant de magasin d'équipement audiologique/gérante de magasin d'équipement audiologique,-1.2240456,-0.70844954
+METIER,http://data.europa.eu/esco/occupation/d2df16f3-87d7-4c6e-a640-95cee39a8f4e,expert en cidre/experte en cidre,0.9709504,-2.31828
+METIER,http://data.europa.eu/esco/occupation/133ab775-f08d-4bc7-8629-89d286180f4e,responsable en organisation en entreprise,-1.0925304,0.54997224
+METIER,http://data.europa.eu/esco/occupation/bfc1b4e9-624c-4fba-89f2-d218bba9e257,régisseur effets spéciaux volants/régisseuse effets spéciaux volants,-1.6901513,-1.6241503
+METIER,http://data.europa.eu/esco/occupation/e6eea1ed-e982-4583-bafe-a0ac796f6cf1,trieur de cuirs et peaux/trieuse de cuirs et peaux,0.106685944,-2.5244431
+METIER,http://data.europa.eu/esco/occupation/7259dc48-004a-4ceb-aa4e-5bbd548c2397,technicien chauffagiste/technicienne chauffagiste,1.835913,-2.2183924
+METIER,http://data.europa.eu/esco/occupation/f4f671d5-208f-4423-a250-c049de8d9adc,hydrothérapiste animalier/hydrothérapiste animalière,0.8687358,-1.0908761
+METIER,http://data.europa.eu/esco/occupation/7e08d38d-30c9-4a6f-b88e-b28e87c0b259,opérateur de machine à percer le bois/opératrice de machine à percer le bois,-0.620446,-3.5728345
+METIER,http://data.europa.eu/esco/occupation/0a7e24a8-19bd-4b45-83f0-f05d8fedf62d,riveteur/riveteuse,-1.2702397,-3.718681
+METIER,http://data.europa.eu/esco/occupation/d5eb6150-bbff-4a9c-9d0c-21eab4dbe2b6,gérant de restaurant/gérante de restaurant,-0.5186212,1.3058053
+METIER,http://data.europa.eu/esco/occupation/9487f835-b5a9-4742-8ecf-35520911e28c,masseur kinésithérapeute/masseuse kinésithérapeute,0.46436256,-1.0212675
+METIER,http://data.europa.eu/esco/occupation/b5d1912e-89c7-4a66-ab96-0dc5f4f6c426,immunologiste,0.86805063,-1.0533378
+METIER,http://data.europa.eu/esco/occupation/a30734bb-2f10-4747-a94c-75f5ec3c63a4,brancardier/brancardière,0.31474018,-1.0983511
+METIER,http://data.europa.eu/esco/occupation/30870ea4-5e8e-4b92-a9d5-65e3b97a9b30,réceptionnaire de matières premières,-1.368396,-1.2954328
+METIER,http://data.europa.eu/esco/occupation/691d30cc-6b2c-4025-89b4-3e719fe664c7,responsable des expositions,-2.659744,-1.868397
+METIER,http://data.europa.eu/esco/occupation/b5eaf231-77ad-4a86-8e54-15cc4398aad2,ingénieur process/ingénieure process,1.0975083,-2.6639597
+METIER,http://data.europa.eu/esco/occupation/d1b8c046-3867-423a-84fd-41f7be3a6d29,assistant en psychologie clinique/assistante en psychologie clinique,0.47548097,-0.34558174
+METIER,http://data.europa.eu/esco/occupation/e1c72b5f-4c5c-487c-a6df-e84b64a51dae,concepteur de systèmes informatiques/conceptrice de systèmes informatiques,-2.2918463,2.2822883
+METIER,http://data.europa.eu/esco/occupation/76a950cb-3def-47f4-895d-555ad138657e,éducateur Montessori/éducatrice Montessori,-2.0279348,0.5490668
+METIER,http://data.europa.eu/esco/occupation/874a2080-a9b6-46a9-8662-c9b7d4208f73,scénographe,-2.9149706,-2.0590177
+METIER,http://data.europa.eu/esco/occupation/68ad860f-c5cd-420f-840f-993e3e813508,contrôleur qualité de biens de consommation/contrôleuse qualité de biens de consommation,0.4556941,-1.8948365
+METIER,http://data.europa.eu/esco/occupation/7ed2e153-8da8-4c0d-b4c5-3402c623f34b,facteur/factrice,-2.062756,-1.7619354
+METIER,http://data.europa.eu/esco/occupation/09a9a956-db70-436f-8398-d85a17f6cdfe,animateur/animatrice,-2.441069,-1.5028055
+METIER,http://data.europa.eu/esco/occupation/21f4eb29-f6e5-4623-acb9-f3ff9c2f525d,coach prise de parole en public,-2.016019,-0.12612413
+METIER,http://data.europa.eu/esco/occupation/c25b3700-6095-42b7-99fc-b87dc326c044,scientifique agricole,1.1515174,-2.3224409
+METIER,http://data.europa.eu/esco/occupation/4d6d9057-5167-4158-8bc1-cc2f89d73fd7,professeur d’esthétique en lycée professionnel/professeure d’esthétique en lycée professionnel,-2.2519624,0.6239667
+METIER,http://data.europa.eu/esco/occupation/e20816a9-51d0-410b-b2c6-cbc22c1c4256,barman spécialisé en cocktails/barmaid spécialisée en cocktails,-0.57466567,1.251254
+METIER,http://data.europa.eu/esco/occupation/acf462a3-9c34-46cb-952a-c612c38299f4,procureur/procureure,-0.455789,0.023383811
+METIER,http://data.europa.eu/esco/occupation/acf69cab-8629-45c8-ae10-c8fb15f474b6,anthropologue,-3.0390105,-1.4588891
+METIER,http://data.europa.eu/esco/occupation/6ccb925a-264a-4e00-aa3a-503e53c5db2b,finisseur de courroies trapézoïdales/finisseuse de courroies trapézoïdales,-0.563543,-3.4891956
+METIER,http://data.europa.eu/esco/occupation/82fe0140-7069-47f9-a7d4-d63a611cb5bd,agent électoral/agente électorale,-1.269385,0.123087905
+METIER,http://data.europa.eu/esco/occupation/2ef000b1-8058-4e5a-9646-c5d4e7dbfdae,agent de maintenance des infrastructures de télécommunications/agente de maintenance des infrastructures de télécommunications,-2.9214044,2.1230814
+METIER,http://data.europa.eu/esco/occupation/47b747bb-5bbf-40d5-aa3e-8d4a79238502,gérant de magasin bijouterie-horlogerie/gérante de magasin bijouterie-horlogerie,-0.9785736,-0.55873346
+METIER,http://data.europa.eu/esco/occupation/18cff178-4ef0-46c9-a6e5-f6f38179cdcb,superviseur de carreleurs/superviseuse de carreleurs,-0.0685643,-1.6360899
+METIER,http://data.europa.eu/esco/occupation/1c948509-4015-40b0-b380-105fc85782a5,conservateur de zoo/conservatrice de zoo,0.5090518,-1.3391721
+METIER,http://data.europa.eu/esco/occupation/67f12d6c-295f-4315-8c5c-8e477c7f7019,extracteur de miel,0.7455653,-3.1646018
+METIER,http://data.europa.eu/esco/occupation/61e278a3-2c27-4c18-a827-11e2326b33ae,artiste de rue,-2.979579,-2.0441837
+METIER,http://data.europa.eu/esco/occupation/4f7e7482-39e7-4f3a-bf11-763620f4b8e0,opérateur de presse à gaufrer/opératrice de presse à gaufrer,-0.7206047,-3.7398608
+METIER,http://data.europa.eu/esco/occupation/ac036ea7-883a-4265-96d5-c02bbe6667e1,chef d’exploitation aquacole,0.35958353,-1.8201727
+METIER,http://data.europa.eu/esco/occupation/cd3f5356-a16f-4aca-9d4b-ceba2b2afec5,tapissier d’ameublement/tapissière d’ameublement,-1.8396804,-2.0607684
+METIER,http://data.europa.eu/esco/occupation/2bef94db-0088-4507-982a-2ca717529adb,architecte d’entreprise,-2.3477633,1.9037538
+METIER,http://data.europa.eu/esco/occupation/075e4d25-74b3-46fb-9b6e-6b53cdb196e7,analyste prêt bancaire,0.1161502,1.0851402
+METIER,http://data.europa.eu/esco/occupation/7639a601-6db0-41ed-9fb0-813d9b8beb05,technicien en imagerie médicale et radiologie thérapeutique/technicienne en imagerie médicale et radiologie thérapeutique,1.5487247,-1.5955597
+METIER,http://data.europa.eu/esco/occupation/24a170fc-be68-43a5-93f1-7a5c31c6062b,assembleur-monteur d’instruments médicaux/assembleuse-monteuse d’instruments médicaux,1.3300768,-1.0544951
+METIER,http://data.europa.eu/esco/occupation/53ed8787-3423-4843-8c63-7be1877d29e2,maître d’hôtel/maîtresse d’hôtel,-0.5086929,1.3740077
+METIER,http://data.europa.eu/esco/occupation/ec21ce88-ce14-49b6-be0a-cc53cf5a3a67,ingénieur chimiste/ingénieure chimiste,1.090593,-2.5927627
+METIER,http://data.europa.eu/esco/occupation/02eb0ae6-ecdd-4602-9c8e-60ffe6dbe1e2,ingénieur de télécommunications/ingénieure de télécommunications,-2.9851522,2.0491395
+METIER,http://data.europa.eu/esco/occupation/e047b8f5-9491-4da2-8816-7aa37ad2370d,ingénieur brevets/ingénieure brevets,1.0935334,-2.5387607
+METIER,http://data.europa.eu/esco/occupation/b89ba3a8-f03a-46b8-ac54-c87d7204aad0,porte-parole,-1.9359455,-0.051498953
+METIER,http://data.europa.eu/esco/occupation/7f0fe7d3-54c6-41e9-88ba-9d4f0f1a46b4,ingénieur microsystèmes/ingénieure microsystèmes,1.1623904,-2.755312
+METIER,http://data.europa.eu/esco/occupation/d2e63d7e-2605-4af1-bb7d-b1ed9ad08825,assistant statisticien/assistante statisticienne,-2.1548982,-0.24354547
+METIER,http://data.europa.eu/esco/occupation/ebe42b55-4801-493f-af18-04a35ebfbb9c,opérateur sur perceuse/opératrice sur perceuse,-0.5782756,-3.5728219
+METIER,http://data.europa.eu/esco/occupation/48318e0f-b54b-4654-b296-47c8e544da23,conducteur d’encolleuses en industrie du bois/conductrice d’encolleuses en industrie du bois,-0.11226974,-3.6647022
+METIER,http://data.europa.eu/esco/occupation/6afe39e2-2674-45db-b05c-a6cab02fe25b,formateur de la formation continue/formatrice de la formation continue,-2.7756472,0.027709417
+METIER,http://data.europa.eu/esco/occupation/062d666b-8b5f-4ff2-9047-113831eb3e9f,poissonnier/poissonnière,-0.35547975,-2.2395802
+METIER,http://data.europa.eu/esco/occupation/106f79e4-6264-45f1-9e7a-297435cd684b,testeur de logiciels/testeuse de logiciels,-2.2998104,2.2444046
+METIER,http://data.europa.eu/esco/occupation/4dceca8d-9faf-487b-b342-c9d7dc209533,assistant animateur technicien - loisirs de pleine nature/assistante animatrice technicienne - loisirs de pleine nature,1.6773245,-1.7748994
+METIER,http://data.europa.eu/esco/occupation/b2f5ed56-c83f-40d0-b861-f5253cd3d1d9,vitrailliste,-1.8080713,-2.5189064
+METIER,http://data.europa.eu/esco/occupation/81f8d141-3f67-4fb0-a349-db0147ef7b3a,professeur d’enseignement professionnel/professeure d’enseignement professionnel,-2.2740595,0.6219707
+METIER,http://data.europa.eu/esco/occupation/e14548c8-c2b9-4ef8-8670-d5967d7ad804,urbaniste,-3.2544584,-1.3347181
+METIER,http://data.europa.eu/esco/occupation/884beda8-d242-4fc3-a097-dc11098a7c3d,teinturier en industrie textile/teinturière en industrie textile,-0.013310902,-2.9721754
+METIER,http://data.europa.eu/esco/occupation/55f001af-fa48-4c0c-a7e5-fc69babe3d45,botaniste,0.9428596,-1.6908815
+METIER,http://data.europa.eu/esco/occupation/066a9d8f-3948-409c-a3cf-ed8ed37cfe22,ouvrier d’atelier de séchage du tabac/ouvrière d’atelier de séchage du tabac,-1.2748387,-2.5815296
+METIER,http://data.europa.eu/esco/occupation/bc61e0de-2d72-471c-90c1-a9fe371020f9,opérateur de presse de forge mécanique/opératrice de presse de forge mécanique,1.485906,-3.6883185
+METIER,http://data.europa.eu/esco/occupation/59ee6b71-a48d-4940-bdf1-e806ca60245c,opérateur de remplissage de bouteilles de gaz/opératrice de remplissage de bouteilles de gaz,-0.7989834,-3.462976
+METIER,http://data.europa.eu/esco/occupation/97dd9a0c-dd6b-416d-9537-655a08dd2895,facteur de pianos/factrice de pianos,-2.3541176,-2.23046
+METIER,http://data.europa.eu/esco/occupation/1ad4012e-30e3-492c-b42c-09cff3047574,professeur de matières scientifiques/professeure de matières scientifiques,-2.353826,0.7003338
+METIER,http://data.europa.eu/esco/occupation/5ee264b2-9bc5-40f6-9db3-c87143af6b2d,infirmier préleveur/infirmière préleveuse,0.963308,-0.65969604
+METIER,http://data.europa.eu/esco/occupation/7642cbcc-9839-47fb-b2cf-d4bb831d6c93,technicien audiovisuel/technicienne audiovisuel,1.755849,-1.8181729
+METIER,http://data.europa.eu/esco/occupation/21cba86a-68c5-456c-aec2-cc04840b3c0e,technicien hygiéniste/technicienne hygiéniste,1.5555934,-1.7425648
+METIER,http://data.europa.eu/esco/occupation/79082f76-4b11-4594-8437-2db567331f41,applicateurs de marquage routier/applicatrice de marquage routier,0.72223246,-4.572766
+METIER,http://data.europa.eu/esco/occupation/cb446db8-e8b3-418c-a21c-2d10faea42a5,directeur de centrale électrique/directrice de centrale électrique,0.4493571,-3.6072335
+METIER,http://data.europa.eu/esco/occupation/a5dc92b4-9712-4bc5-a08a-f6efa07b855f,ingénieur sciences et techniques des équipements agricoles/ingénieure sciences et techniques des équipements agricoles,1.103224,-2.1803286
+METIER,http://data.europa.eu/esco/occupation/58ff0ec2-08ba-4b21-b765-babb6d76ca36,steward/hôtesse,0.33613312,-4.7266407
+METIER,http://data.europa.eu/esco/occupation/f4a25243-b06a-42a9-9c69-246853df63ad,homme à tout faire/femme à tout faire,-1.4329747,-2.9136393
+METIER,http://data.europa.eu/esco/occupation/463a687a-c7e9-469a-bb38-dcdfe1e7e35f,gérant de magasin d'équipement audio et vidéo/gérante de magasin d'équipement audio et vidéo,-1.5125946,-0.78925145
+METIER,http://data.europa.eu/esco/occupation/5a551d36-0e14-40ab-84a2-7aa9b37dc528,restaurateur de meubles/restauratrice de meubles,-1.1657088,-2.7715514
+METIER,http://data.europa.eu/esco/occupation/e01719f4-d7dd-42fe-b504-93128520f84a,spécialiste en publicité,-1.588947,-0.4500705
+METIER,http://data.europa.eu/esco/occupation/38d9c76b-1a7b-4d65-879b-733ae7e9364e,conseiller en investissements/conseillère en investissements,0.2880257,0.723521
+METIER,http://data.europa.eu/esco/occupation/c9191f7f-28b5-4df8-991d-804c53009b83,ouvrier agricole/ouvrière agricole,0.0153996255,-1.967689
+METIER,http://data.europa.eu/esco/occupation/35e67944-231e-4bc9-8c69-560f203167ff,spécialiste renseignement d'origine électromagnétique,-2.212892,0.58070856
+METIER,http://data.europa.eu/esco/occupation/4cc98057-8ed5-4b45-855b-7a67bc2e5bae,correspondant de presse/correspondante de presse,-2.238486,-0.68028986
+METIER,http://data.europa.eu/esco/occupation/632e61c8-4e4b-44c7-b213-6dd5a174b143,responsable de la logistique distribution,1.0036831,-5.677878
+METIER,http://data.europa.eu/esco/occupation/ed976196-3d5d-4121-9367-e1022af603fa,technicien de laboratoire contrôle qualité dans la fabrication d’articles chaussants/technicienne de laboratoire contrôle qualité dans la fabrication d’articles chaussants,0.6820863,-2.2782388
+METIER,http://data.europa.eu/esco/occupation/eb7e42d0-9b3f-49ad-81f1-b9ee8491bf39,journaliste politique,-2.1222842,-0.54174197
+METIER,http://data.europa.eu/esco/occupation/572c9810-e1ee-4f7a-a71f-820f17c0c25b,tôlier/ tôlière,-1.371113,-3.4820023
+METIER,http://data.europa.eu/esco/occupation/364cb5ca-3002-425f-b815-aefa513df78a,dessinateur en architecture/dessinatrice en architecture,-2.2785733,1.6230457
+METIER,http://data.europa.eu/esco/occupation/f1783e61-38b7-468e-b495-9c3c92f5ab0d,abatteur en abattage halal/abatteuse en abattage halal,-0.5197987,-3.0521233
+METIER,http://data.europa.eu/esco/occupation/fd6a1c18-b0ff-419f-a36a-e05957452d55,conducteur d’installations de traitement de déchets solides/conductrice d’installations de traitement de déchets solides,0.17685297,-3.7972414
+METIER,http://data.europa.eu/esco/occupation/86c49d9c-b37d-4a14-8e9d-d0357005a48d,homme de surface/femme de surface,1.0514123,-3.9963148
+METIER,http://data.europa.eu/esco/occupation/d63b95e6-cf44-479e-bea2-e93498d171d0,conducteur de défonceuses en industrie du bois/conductrice de défonceuses en industrie du bois,-0.09542124,-3.571799
+METIER,http://data.europa.eu/esco/occupation/cae71f3f-ad4d-480e-b501-bff22827e60c,conducteur de bulldozer/conductrice de bulldozer,0.025852293,-3.7131088
+METIER,http://data.europa.eu/esco/occupation/4c89c65c-4e35-44e3-8fa0-5d73e9e15325,assistant familial/assistante familiale,0.29185766,0.05177129
+METIER,http://data.europa.eu/esco/occupation/a76a05bb-e04d-4be8-953e-1ffd691dd58d,assistant social en santé mentale/assistante sociale en santé mentale,0.55650383,-0.4284052
+METIER,http://data.europa.eu/esco/occupation/dc9b98da-c389-4caf-a21a-c6f8c530c0bf,réparateur en chaussures/réparatrice en chaussures,-1.0800029,-3.220617
+METIER,http://data.europa.eu/esco/occupation/e997358a-f6ed-4b5d-bebe-2a33b01ea3d2,responsable import-export d'appareils électroménagers,0.06566646,-3.0268419
+METIER,http://data.europa.eu/esco/occupation/04b52c04-0620-4558-8f89-e252de2963ff,directeur de maison de ventes aux enchères/directrice de maison de ventes aux enchères,0.20848368,0.22884957
+METIER,http://data.europa.eu/esco/occupation/6aa78e46-ce22-421f-8a75-e915ac63c9d0,superviseur de centre d’appels/superviseuse de centre d’appels,0.033485148,-1.7713058
+METIER,http://data.europa.eu/esco/occupation/149062d6-6496-4004-9c23-93c78b29b5db,briquetier mouleur à la main/briquetière mouleuse à la main,-1.3003708,-3.3054085
+METIER,http://data.europa.eu/esco/occupation/d48d4949-73a2-40d7-8350-329cda6b5a9a,officier en second - transport aérien/officière en second - transport aérien,0.5097198,-4.6783466
+METIER,http://data.europa.eu/esco/occupation/a330b7b6-696e-455c-b6d5-f39f82c1489f,responsable de systèmes aquacoles en recirculation,0.45629266,-2.0223606
+METIER,http://data.europa.eu/esco/occupation/7d9c060a-f280-441d-baf9-7d4a6b520a2a,"responsable import-export d’ordinateurs, équipements informatiques périphériques et logiciels",0.01145714,-2.9585295
+METIER,http://data.europa.eu/esco/occupation/4a375b68-88a0-4e5f-99ce-9b01341dfb81,ingénieur matériaux/ingénieure matériaux,0.9578116,-2.630665
+METIER,http://data.europa.eu/esco/occupation/99ebf2c2-1811-4c77-b2e6-7008cba29ea0,technicien vétérinaire/technicienne vétérinaire,1.3861803,-1.2681775
+METIER,http://data.europa.eu/esco/occupation/fd0801c9-809a-4cfd-98ed-6c5860c163f2,assistant en investissements financiers/assistante en investissements financiers,0.39990184,0.591748
+METIER,http://data.europa.eu/esco/occupation/719f101d-1866-49d3-8d5c-2256f606a8b9,gestionnaire de la transformation numérique,-0.8414776,0.70835584
+METIER,http://data.europa.eu/esco/occupation/509f9452-ed18-4fbf-8a4c-d45de85aa2f7,applicateur de pesticides/applicatrice de pesticides,0.41841,-2.117124
+METIER,http://data.europa.eu/esco/occupation/59088d93-bd71-4fd7-a39e-8cc9dd37dfae,fabricant de copies de meubles anciens/fabricante de copies de meubles anciens,-1.2892394,-2.5353012
+METIER,http://data.europa.eu/esco/occupation/66542dd6-05a6-4d9e-97ff-3f4858c31ff9,photographe,-2.6898172,-1.8136696
+METIER,http://data.europa.eu/esco/occupation/8b97d85f-4a7a-4908-aa72-9c947c0cb0cd,artisan créateur de tapis/artisane créatrice de tapis,-1.9808925,-2.6057687
+METIER,http://data.europa.eu/esco/occupation/562dd713-5745-4457-929e-5b909da084ca,gestionnaire du transport par pipelines,1.5231028,-4.9416566
+METIER,http://data.europa.eu/esco/occupation/1bcc6461-4cc2-4732-a6d0-901687046443,conducteur d’engin de déneigement/conductrice d’engin de déneigement,-0.023576178,-3.8857388
+METIER,http://data.europa.eu/esco/occupation/5bca96fd-4203-400b-be58-9e9b50bc98da,député/députée,-1.0838288,0.14437644
+METIER,http://data.europa.eu/esco/occupation/93b11f0f-69af-4ece-b9da-f29aab7d38d3,ingénieur conception et développement de contenants/ingénieur conception et développement de contenants,0.7988174,-2.5336232
+METIER,http://data.europa.eu/esco/occupation/6474e4d4-e3a6-4e88-83ee-971ebbf954e9,timonier/timonière,0.3392326,-4.8959723
+METIER,http://data.europa.eu/esco/occupation/1ee1b792-4d5f-4555-be4e-ce7e4c05d1a9,soigneur d’animaux/soigneuse d’animaux,0.557388,-1.2385339
+METIER,http://data.europa.eu/esco/occupation/49e28648-4fa8-4b36-ac4d-781c108547bf,dispatcheur transport de marchandises/dispatcheuse transport de marchandises,0.4011539,-4.6981115
+METIER,http://data.europa.eu/esco/occupation/518348e6-0095-4f37-ad46-5ef1b8b5ee2f,responsable d’exploitation en industrie textile,-0.055924077,-3.039937
+METIER,http://data.europa.eu/esco/occupation/d23fbcdc-d5e9-4724-a83f-99a0cfa8adb0,directeur de répétition/directrice de répétition,-2.8008378,-2.1124341
+METIER,http://data.europa.eu/esco/occupation/ed256ed0-0432-4969-8544-3e5e01a517a9,ministre du culte,-1.3349559,-0.6884975
+METIER,http://data.europa.eu/esco/occupation/2be85651-c94a-4531-9df8-3cc56932960e,opérateur de thermoscellage/opératrice de thermoscellage,-0.5450722,-3.4749265
+METIER,http://data.europa.eu/esco/occupation/4ea620f2-5c75-49ee-85a0-b2fb6bbf3624,responsable d'exploitation transport routier,0.78749704,-4.63382
+METIER,http://data.europa.eu/esco/occupation/933a0762-1201-4855-909c-94403f6867a9,négociant grossiste en vaisselle et verrerie/négociante grossiste en vaisselle et verrerie,-1.3808062,-2.0387108
+METIER,http://data.europa.eu/esco/occupation/33960bab-4423-4808-af6c-ec2b485dba41,électricien du bâtiment/électricienne du bâtiment,1.3314289,-3.1064692
+METIER,http://data.europa.eu/esco/occupation/3d7a1284-824c-47d9-8387-b8e1cd5888b5,maître de conférences des universités-praticien hospitalier d’odontologie/maîtresse de conférences des universités-praticienne hospitalière d’odontologie,0.644595,-0.90322375
+METIER,http://data.europa.eu/esco/occupation/d18deca3-3063-4970-9ddc-e3c70404a28c,hygiéniste dentaire,0.42336586,-1.1937649
+METIER,http://data.europa.eu/esco/occupation/1242d99a-47f1-4a62-b884-33746db8a6ca,responsable du service d’assistance informatique,-2.68342,2.2403226
+METIER,http://data.europa.eu/esco/occupation/9e4269d5-e10e-4f49-ac99-65c833f933a2,gouverneur de la banque centrale/gouverneure de la banque centrale,-0.35523537,0.4296477
+METIER,http://data.europa.eu/esco/occupation/7556c748-15b4-4e44-97d9-00d885d4cd7d,conservateur/conservatrice,-2.1648922,-1.7644112
+METIER,http://data.europa.eu/esco/occupation/e6023abf-ced3-4ac9-9437-cc79e4396e3e,zoothérapeute,0.5012372,-1.1445401
+METIER,http://data.europa.eu/esco/occupation/60b9b847-d964-4a8a-a756-904080b0f35f,emboutisseur/emboutisseuse,-0.7829956,-3.7446017
+METIER,http://data.europa.eu/esco/occupation/8f71761e-6fa5-4237-a240-4d0c7feff026,conducteur/conductrice de four à coke,-0.00356034,-3.7088618
+METIER,http://data.europa.eu/esco/occupation/716df735-77eb-47c8-8c06-d86e46903989,ingénieur en domotique/ingénieure en domotique,1.1006489,-2.71783
+METIER,http://data.europa.eu/esco/occupation/b91034a0-1d3e-40e4-aced-07052ee0f9e9,opérateur de l'alimentation animale/opératrice de l'alimentation animale,-0.37217876,-3.1509197
+METIER,http://data.europa.eu/esco/occupation/de31a27f-c6ba-4d4f-87cd-b405e1852121,responsable de comptoir en location de voitures,-0.23871535,0.082851194
+METIER,http://data.europa.eu/esco/occupation/91f93dc4-1b71-4053-b6fb-c579ec19303a,gestionnaire au sein du service des marchés publics,-0.70837134,-0.4754761
+METIER,http://data.europa.eu/esco/occupation/b9711647-463f-4991-a858-d5de66ff2f83,directeur de développement immobilier/directrice de développement immobilier,0.63139796,-2.4125173
+METIER,http://data.europa.eu/esco/occupation/b09acdda-6680-49d1-a411-129610ee3bc0,analyste de risques institutionnels,-0.03314669,1.0443808
+METIER,http://data.europa.eu/esco/occupation/d2af4f6b-c990-4d8e-bb17-befca23a307a,technicien en ingénierie optomécanique/technicienne en ingénierie optomécanique,1.5455785,-2.2367945
+METIER,http://data.europa.eu/esco/occupation/84dfc210-db07-4a83-87fe-d6131907ea83,ouvrier boucher/ouvrière bouchère,-0.5821387,-3.467559
+METIER,http://data.europa.eu/esco/occupation/0ededdc2-050a-4ec3-8e70-6295105fcd19,agent de centre d’appels/agente de centre d’appels,-0.15177836,0.36936235
+METIER,http://data.europa.eu/esco/occupation/cb4f98c8-6b8d-41d8-87eb-a2a2033a3a25,spécialiste des marchés publics,-1.0273298,0.11262811
+METIER,http://data.europa.eu/esco/occupation/7dea476a-dffe-4919-9ee2-fb222e283f41,enseignant-chercheur en psychologie/enseignante-chercheuse en psychologie,-2.2215273,0.6851539
+METIER,http://data.europa.eu/esco/occupation/523ab5a0-5e72-418d-9d61-a6126a446123,pilote de l’aviation commerciale,0.4268544,-4.561146
+METIER,http://data.europa.eu/esco/occupation/6f7c1e84-8162-4c20-a575-b57ff624eef5,chauffeur de taxi/chauffeuse de taxi,0.28096303,-4.387011
+METIER,http://data.europa.eu/esco/occupation/6d72138d-2ebb-4a89-b2b2-8c22365b89bf,braseur/braseuse,-1.2170905,-3.7314317
+METIER,http://data.europa.eu/esco/occupation/03632d98-0ae3-4dd2-941c-3b48de9a0219,directeur de production de spectacles/directrice de production de spectacles,-2.6270113,-2.0176582
+METIER,http://data.europa.eu/esco/occupation/e297ec12-4712-40a4-ad98-ba004cacb205,directeur des données/directrice des données,-1.3172467,1.4358022
+METIER,http://data.europa.eu/esco/occupation/8249697a-3dc8-417d-9acf-3a7e0864069a,superviseur de carreleurs spécialisés en terrazzo/superviseuse de carreleurs spécialisés en terrazzo,0.029750202,-1.6317838
+METIER,http://data.europa.eu/esco/occupation/51c7015c-dc81-4fcb-b15f-619a4656a9fe,technicien électromécanicien/technicienne électromécanicienne,1.7001444,-2.42934
+METIER,http://data.europa.eu/esco/occupation/4be03a63-0423-4e50-acbf-aec405bb0741,agent du service de l’information aéronautique/agente du service de l’information aéronautique,-2.0594125,1.8306742
+METIER,http://data.europa.eu/esco/occupation/4eada7b3-5026-4030-936b-4a80aed37252,professeur de tourisme/professeure de tourisme,-0.7071677,-1.0885834
+METIER,http://data.europa.eu/esco/occupation/3b755cda-c4b0-4fa1-8621-372f28ccc2e9,professeur des écoles Steiner-Waldorf/professeure des écoles Steiner-Waldorf,-2.210836,0.68844116
+METIER,http://data.europa.eu/esco/occupation/bcc199fe-f7df-42a5-bd45-e33ae6160f26,plongeur secouriste/plongeuse secouriste,-0.57747203,-1.4016516
+METIER,http://data.europa.eu/esco/occupation/02609ece-cea3-43fa-bf38-b6fb821f28b2,responsable d’organisateurs de voyages,-0.705762,-1.1001067
+METIER,http://data.europa.eu/esco/occupation/0f7c84c5-1c0d-4fc1-8949-07dbe8bd34ef,designer textile/designeuse textile,-2.6693933,-2.4841454
+METIER,http://data.europa.eu/esco/occupation/dcfeb6e4-f39d-49fb-96cd-23292fb3e037,technicien en génie optoélectronique/technicienne en génie optoélectronique,1.4836782,-2.1728206
+METIER,http://data.europa.eu/esco/occupation/b0cb4f78-c361-48cf-97aa-25104ac2647c,opérateur de traitement des bois/opératrice de traitement des bois,-0.82839096,-3.0077503
+METIER,http://data.europa.eu/esco/occupation/7d9242d3-2a55-45e3-9d67-be76f879de0b,opérateur sur tour à métaux/opératrice sur tour à métaux,-0.62411565,-3.690454
+METIER,http://data.europa.eu/esco/occupation/aaeec9a7-dc57-4485-890c-86b3eef735f9,agent de service d’assistance informatique/agente de service d’assistance informatique,-2.6312766,2.2958539
+METIER,http://data.europa.eu/esco/occupation/612430b3-dd43-4786-b823-0466c4953f66,agent de billetterie/agente de billetterie,-0.21287724,0.48440632
+METIER,http://data.europa.eu/esco/occupation/5d5fde2c-47ce-4dcd-99f0-ba651b7b908f,audiotypiste médical/audiotypiste médicale,1.0206307,-0.7998913
+METIER,http://data.europa.eu/esco/occupation/36095ccd-c62d-4f1f-8af7-1fd10618b044,mixeur/mixeuse,-2.5847375,-1.7459474
+METIER,http://data.europa.eu/esco/occupation/19c2acbf-766c-4728-b960-b91252a95fd1,gérant de magasin d'appareils ménagers/gérante de magasin d'appareils ménagers,-0.98026544,-0.5234166
+METIER,http://data.europa.eu/esco/occupation/928dd410-c74b-4dab-94b8-fcbdcf541bd1,coupeur tailleur/coupeuse tailleuse,-1.5574617,-2.6179578
+METIER,http://data.europa.eu/esco/occupation/c5328083-eda0-4ca8-b9cb-99a46e73a9bc,spécialiste en botanique,0.9097017,-1.8332812
+METIER,http://data.europa.eu/esco/occupation/4a215d87-8363-4db2-a661-3c0d816b2a70,mineur de surface/mineuse de surface,0.6400891,-3.2341642
+METIER,http://data.europa.eu/esco/occupation/02bd7cac-8263-4425-b03d-19001ffe8787,responsable d’écloserie,0.3646865,-1.9099286
+METIER,http://data.europa.eu/esco/occupation/5d0e1510-7248-4eca-abe4-13de830d1614,responsable d’atelier de tissage,-0.07857603,-3.023118
+METIER,http://data.europa.eu/esco/occupation/87e644b2-8bc1-42d4-bb14-cc4abb0bc715,pupitreur régie lumière/pupitreuse régie lumière,-2.966827,-2.0911582
+METIER,http://data.europa.eu/esco/occupation/d3edb8f8-3a06-47a0-8fb9-9b212c006aa2,analyste de données,-1.4212141,1.4719957
+METIER,http://data.europa.eu/esco/occupation/50609eb5-9957-4cbf-9b91-6f46ce49cfad,contrôleur des transports terrestres/contrôleuse des transports terrestres,0.69512624,-4.8043323
+METIER,http://data.europa.eu/esco/occupation/d3c1c718-a093-4e2e-80a0-2bd331266a8b,motoriste en installation de forage,1.8114914,-1.9785526
+METIER,http://data.europa.eu/esco/occupation/ee646fa1-3f09-4e43-9275-3aa958ca00ae,commandant/commandante,-0.48880935,-0.24310102
+METIER,http://data.europa.eu/esco/occupation/725090a7-9943-4dae-8079-a6999d21ddba,responsable de la relation clientèle,1.4180331,0.3518522
+METIER,http://data.europa.eu/esco/occupation/c94f3565-d987-431f-a46b-6f4e018e0bd7,directeur de projets/directrice de projets,-0.09760021,-1.7191697
+METIER,http://data.europa.eu/esco/occupation/6e0e068b-cd5c-4400-8899-54056087fa14,opticien/opticienne,1.5424558,-2.044429
+METIER,http://data.europa.eu/esco/occupation/b9b47087-6045-405d-b769-6a0c94e2eb84,responsable des services culturels aux visiteurs,-1.4957113,-0.7039345
+METIER,http://data.europa.eu/esco/occupation/5baffa9d-1607-4665-be94-662bad26b9ff,superviseur de distillerie/superviseuse de distillerie,0.05210901,-2.5584877
+METIER,http://data.europa.eu/esco/occupation/b37d15b3-402e-4792-8292-f18c0de7aca6,technicien des appareils mobiles/technicienne des appareils mobiles,1.8275781,-1.9051238
+METIER,http://data.europa.eu/esco/occupation/44508e7b-f56b-4bfb-9cd6-879838aecd94,chef de projet aménagement,-0.26109037,-1.4274563
+METIER,http://data.europa.eu/esco/occupation/37b15470-3b2d-4ae0-816c-c7c06ed15c99,aide-bibliothécaire,0.17560403,0.13446319
+METIER,http://data.europa.eu/esco/occupation/865adac9-9bb7-4680-a13d-62b2942974ac,conducteur opérateur de scierie/conductrice opératrice de scierie,-0.033689924,-3.7589128
+METIER,http://data.europa.eu/esco/occupation/b3855886-bfee-4fd9-827e-2a0b6b4b4441,ingénieur en ventilation minière/ingénieure en ventilation minière,0.72456896,-3.2203968
+METIER,http://data.europa.eu/esco/occupation/b05f53db-b6b0-49bc-aa0c-1790c8c7012b,monteur/monteuse,-0.46375608,-3.4359527
+METIER,http://data.europa.eu/esco/occupation/98b261ec-def2-4871-b062-56cdd290c844,assistant de service social de la défense/ assistante de service social de la défense,0.5368849,-0.1948948
+METIER,http://data.europa.eu/esco/occupation/75fb7771-0403-4116-9c01-9c5717bec600,gérant de magasin de meubles/gérante de magasin de meubles,-1.0306684,-0.51060534
+METIER,http://data.europa.eu/esco/occupation/b06a1dde-e5a1-4219-9491-2bedd0282e4b,écrivain/écrivaine,-2.0100129,-1.6104529
+METIER,http://data.europa.eu/esco/occupation/96186698-f79d-423a-9652-a2a58085d5f1,peintre sur bois,-1.7482278,-2.7279146
+METIER,http://data.europa.eu/esco/occupation/cb60beab-7afb-4e99-8162-221abea68e6d,conseiller en droit de la consommation/conseillère en droit de la consommation,-1.3619816,0.3311001
+METIER,http://data.europa.eu/esco/occupation/ff42d44c-34f8-46be-ad3a-2aad9a5e43f0,pâtissier/pâtissière,-1.5746117,-2.6845224
+METIER,http://data.europa.eu/esco/occupation/fa30c1cb-dbc5-409c-8124-7284592b123c,élagueur/élagueuse,-0.9631381,-3.3991747
+METIER,http://data.europa.eu/esco/occupation/00c8d1cf-24f2-47d1-9f10-765e1c102811,technicien d’engins agricoles/technicienne d’engins agricoles,1.7276305,-2.0060968
+METIER,http://data.europa.eu/esco/occupation/802d3a2f-b966-42e3-94df-683adfcff20c,technicien de production de juvéniles/technicienne de production de juvéniles,0.7288099,-2.0699172
+METIER,http://data.europa.eu/esco/occupation/ce594060-b05a-45d8-ac41-1cf3bb980085,bottier/bottière,-1.1717098,-3.1252325
+METIER,http://data.europa.eu/esco/occupation/4a5ceaae-0f05-4091-bdbf-59f250ce6374,conducteur de traitement thermique/conductrice de traitement thermique,-0.024463102,-3.647028
+METIER,http://data.europa.eu/esco/occupation/4a13bafa-a2ac-4864-a278-176ea5969280,attaché technico-commercial en quincaillerie et fournitures pour plomberie et chauffage/attachée technico-commerciale en quincaillerie et fournitures pour plomberie et chauffage,1.8673346,-1.9474074
+METIER,http://data.europa.eu/esco/occupation/589efb6c-9080-40b2-ab6a-144955675967,bedeau/bedelle,-1.5493289,-2.7325976
+METIER,http://data.europa.eu/esco/occupation/09a40a9a-2b60-422c-abe4-96d829bc27df,restaurateur d’objets d’art/restauratrice d’objets d’art,-1.7954069,-2.6276994
+METIER,http://data.europa.eu/esco/occupation/972ef593-89c3-468b-aad5-81bc575feb58,responsable import-export de machines en industrie textile,-0.024390467,-3.0921123
+METIER,http://data.europa.eu/esco/occupation/57b89801-0e43-4b19-bf29-ef9a51d65155,opérateur de four de recuit/opératrice de four de recuit,-1.0256468,-3.770998
+METIER,http://data.europa.eu/esco/occupation/3d999108-f37a-4087-a936-b2911240b8c2,gestionnaire des bénévoles,-1.2262467,-0.9106751
+METIER,http://data.europa.eu/esco/occupation/c56bb750-db0b-487b-89f4-82dee6dcab09,testeur COVID/testeuse COVID,0.79850155,-0.6686283
+METIER,http://data.europa.eu/esco/occupation/2eac08c2-a81a-46fc-8d75-eb0e0f3e0f6d,directeur ventes et relations clientèle/directrice ventes et relations clientèle,0.5626873,0.3039489
+METIER,http://data.europa.eu/esco/occupation/002da35b-7808-43f3-83bf-63596b8b351f,gestionnaire de recettes dans le secteur Horeca,-0.4624225,1.4369407
+METIER,http://data.europa.eu/esco/occupation/4b6b09e6-e1f6-46d8-b16a-d3522c367983,opérateur de rectifieuse cylindrique/opératrice de rectifieuse cylindrique,-0.94294417,-3.722146
+METIER,http://data.europa.eu/esco/occupation/99492920-e5a5-4dba-9e5a-93193147198c,économiste,-1.7655818,0.046311356
+METIER,http://data.europa.eu/esco/occupation/6188bf20-5cdb-4702-af72-2cb67ec39810,technicien d’équipements de parcs d’attractions/technicienne d’équipements de parcs d’attractions,1.7418277,-1.9429357
+METIER,http://data.europa.eu/esco/occupation/00ab29a3-6d4a-4df9-b46d-de31069e36e8,géomètre minier/géomètre minière,0.67747307,-3.235841
+METIER,http://data.europa.eu/esco/occupation/f9cbdeb4-1559-4d45-b2d7-edf8aebe400b,technicien qualité en aquaculture/technicienne qualité en aquaculture,0.5423316,-1.9981234
+METIER,http://data.europa.eu/esco/occupation/f3fc11ca-9a72-40da-bf0f-b2aab7e33079,maçon pierre/maçonne pierre,-4.007672,-4.981508
+METIER,http://data.europa.eu/esco/occupation/4b72d306-9781-434d-8522-1fcaf892cdce,transporteur non exploitant/transporteuse non exploitante de navire,0.44061977,-4.680012
+METIER,http://data.europa.eu/esco/occupation/d07e6a57-a339-4cfd-bf22-a951713148a3,agent de maintenance des équipements de télécommunication/agente de maintenance des équipements de télécommunication,-2.898511,2.0451198
+METIER,http://data.europa.eu/esco/occupation/6e6e44ba-d9f0-403b-93d4-a8d4bd67787a,veilleur de nuit/veilleuse de nuit,-0.38751975,1.5719184
+METIER,http://data.europa.eu/esco/occupation/a04eedcf-8424-475a-8dc5-f30a9da4b151,commissaire aux comptes,0.22524223,1.1221452
+METIER,http://data.europa.eu/esco/occupation/5684182e-7b4c-4eea-97d9-4c2b88b9f906,matelot polyvalent navigation maritime/matelot polyvalente navigation maritime,0.43280858,-4.923699
+METIER,http://data.europa.eu/esco/occupation/52d5edc9-7902-4cd3-8b06-6bd77c98d440,testeur de systèmes informatiques/testeuse de systèmes informatiques,-2.2435567,2.180305
+METIER,http://data.europa.eu/esco/occupation/a1ba7574-cc28-446c-9741-12d7fbb325cb,chargé de mission marché du travail/chargée de mission marché du travail,-1.634935,-0.17094791
+METIER,http://data.europa.eu/esco/occupation/6a7212c9-40da-4346-a190-3896bdd9a925,agent de probation/agente de probation,-0.5781878,0.12943101
+METIER,http://data.europa.eu/esco/occupation/e19fe26f-0759-4bb1-af71-5bbecf3df69f,conseiller en immigration/conseillère en immigration,-1.4079232,0.16405731
+METIER,http://data.europa.eu/esco/occupation/444c9aa9-578d-4a9a-9949-99ef1bacb20e,technicien en ingénierie automobile/technicienne en ingénierie automobile,1.7764877,-2.1118758
+METIER,http://data.europa.eu/esco/occupation/2bdf0696-776c-47e6-9259-6460af224dac,releveur de compteurs/releveuse de compteurs,1.069837,-3.0720909
+METIER,http://data.europa.eu/esco/occupation/ab5a5073-453c-4a93-aff7-345a19f8b954,rédacteur de prêts hypothécaires /rédactrice de prêts hypothécaires ,-1.1580049,-1.1930324
+METIER,http://data.europa.eu/esco/occupation/98588703-5f5c-41c6-a240-3411b6518b83,spécialiste en import-export de produits pharmaceutiques,0.2635681,-1.5763131
+METIER,http://data.europa.eu/esco/occupation/e6dfc67e-331e-4468-a249-347a08decbdb,ingénieur des matériaux en microélectronique/ingénieure des matériaux en microélectronique,1.1636648,-2.6835608
+METIER,http://data.europa.eu/esco/occupation/107d21c6-973b-411c-89fd-69da48d29ada,directeur de mine/directrice de mine,0.6283724,-3.18546
+METIER,http://data.europa.eu/esco/occupation/c94dc5b2-6b23-4915-8de5-a4e6ae86d802,pilote de l'armée de l'air,0.5243425,-4.4021993
+METIER,http://data.europa.eu/esco/occupation/5bf823c5-d3fd-46f6-9577-9331de10759f,opérateur de coupeuse de caoutchouc/opératrice de coupeuse de caoutchouc,-0.1952746,-3.4100661
+METIER,http://data.europa.eu/esco/occupation/026401a9-7d56-4d7b-8052-38985ddbeafa,apiculteur/apicultrice,-0.04841831,-2.5488858
+METIER,http://data.europa.eu/esco/occupation/ed41ca50-bb2a-41e2-a332-9b2df83040c1,opérateur de machine à raffiner/opératrice de machine à raffiner,-0.6774348,-3.5744734
+METIER,http://data.europa.eu/esco/occupation/0b1d8dcb-d941-4d79-99bf-fc10c1806c43,capitaine de frégate,-0.41328195,-0.34423384
+METIER,http://data.europa.eu/esco/occupation/978ae3a2-0831-415a-8396-b84dde656fc5,tailleur/tailleuse,-1.5093071,-2.5569196
+METIER,http://data.europa.eu/esco/occupation/d7a9f9e0-e2f5-4804-a0e0-b21ebb1403ee,coordinateur d’inventaire/coordinatrice d’inventaire,-0.094564654,-2.6384175
+METIER,http://data.europa.eu/esco/occupation/cc844eb8-c81d-40ff-af3d-119700e60f23,acheteur-costumier/acheteuse-costumière,-2.05599,-2.5336998
+METIER,http://data.europa.eu/esco/occupation/a98f93a6-b1df-4759-88a9-3234f334afad,imprimeur sérigraphe/imprimeuse sérigraphe,-2.731248,-1.9745389
+METIER,http://data.europa.eu/esco/occupation/a1e1a788-2352-4172-8fcf-1f985a6968b0,esthéticien/esthéticienne,-1.2011154,-2.2177348
+METIER,http://data.europa.eu/esco/occupation/ac37627c-a999-4779-997e-9795cc4f9a3d,ingénieur études transport-distribution/ingénieure études transport-distribution,0.809113,-3.8675785
+METIER,http://data.europa.eu/esco/occupation/a464015d-a622-44aa-a4fe-bf01e412e120,contrôleur qualité des assemblages en construction navale/contrôleuse qualité des assemblages en construction navale,0.14406084,-1.884005
+METIER,http://data.europa.eu/esco/occupation/1fb92021-9576-4c85-8759-f6918e9f0ad4,diplomate,-0.93020654,0.07797134
+METIER,http://data.europa.eu/esco/occupation/a2fa73d0-7e51-456f-95c6-90f126f52ab8,régulateur du réseau ferré/régulatrice du réseau ferré,0.78962684,-4.344241
+METIER,http://data.europa.eu/esco/occupation/6140be85-2d45-44b2-b0ba-412aadcead1e,généticien/généticienne,1.3468646,-1.6618426
+METIER,http://data.europa.eu/esco/occupation/4bdc4e52-1c9c-4d80-898a-18522d905fee,éducateur de la protection judiciaire de la jeunesse/éducatrice de la protection judiciaire de la jeunesse,-1.2722375,0.2959388
+METIER,http://data.europa.eu/esco/occupation/021663ca-a367-472e-a1f0-6d8ab5b2d860,tuteur/tutrice,-1.0158945,-0.46438232
+METIER,http://data.europa.eu/esco/occupation/4c6b3657-316e-43b5-872a-ea763411190d,représentant des ventes d’électricité/représentante des ventes d’électricité,1.2953192,-3.2169268
+METIER,http://data.europa.eu/esco/occupation/72628f3a-fd49-499a-9741-870b0a1fcef2,mathématicien/mathématicienne,1.1825498,-2.3391802
+METIER,http://data.europa.eu/esco/occupation/484ca14a-8e11-4ae1-ba9c-901cd86df56b,négociant grossiste en produits pharmaceutiques/négociante grossiste en produits pharmaceutiques,0.201173,-1.6831577
+METIER,http://data.europa.eu/esco/occupation/e8b93ce7-e39b-4261-a25a-9b84764eb724,professeur de philosophie/professeure de philosophie,-2.2387433,0.7148491
+METIER,http://data.europa.eu/esco/occupation/13427968-250b-4967-a682-afac5cd0af4f,démarcheur politique/démarcheuse politique,-1.6559836,-0.17812872
+METIER,http://data.europa.eu/esco/occupation/bdfd018a-aae1-407e-a88c-471e50b0695d,superviseur en première transformation du bois/superviseuse en première transformation du bois,0.021235142,-2.7283998
+METIER,http://data.europa.eu/esco/occupation/bca063d2-a904-45db-b3f4-0fd7e681753e,fabricant d’instruments chirurgicaux/fabricante d’instruments chirurgicaux,0.31893963,-2.8479881
+METIER,http://data.europa.eu/esco/occupation/d9ab0f3d-078d-42a7-a502-3e739e0aeff6,technicien avionique/technicienne avionique,1.7224017,-1.8557923
+METIER,http://data.europa.eu/esco/occupation/92dc335d-a116-416f-ad2b-257e5382e574,matelassier/matelassière,-1.5175648,-2.5800467
+METIER,http://data.europa.eu/esco/occupation/34c57104-ff9b-4003-809e-56eece3cb4d5,designer en bijouterie/designeuse en bijouterie,-2.739241,-2.433686
+METIER,http://data.europa.eu/esco/occupation/a02a1117-212f-4a49-b21a-d3b971e00e48,pizzaiolo,-0.56981105,1.2219819
+METIER,http://data.europa.eu/esco/occupation/140613c4-8c3c-43c5-8525-2f63231c95b0,opérateur de machine de fabrication de semi-conducteurs/opératrice de machine de fabrication de semi-conducteurs,0.19234796,-3.494179
+METIER,http://data.europa.eu/esco/occupation/c2d36adb-ecf4-4823-980b-d84b0f11b2c8,ingénieur en simulation pour les batteries/ingénieure en simulation pour les batteries,1.1597242,-2.7020547
+METIER,http://data.europa.eu/esco/occupation/05a06850-d465-481e-9d68-792d4ad1da3e,vendeur en devises/vendeuse en devises,-1.1038536,-0.84577674
+METIER,http://data.europa.eu/esco/occupation/1e2aaeff-5bf1-4649-9f09-9ebbd5cc3501,dessinateur en électromécanique/dessinatrice en électromécanique,1.5392978,-2.6743867
+METIER,http://data.europa.eu/esco/occupation/b6c851d1-bf09-40aa-aa50-47dde84e7d50,animateur des arts du cirque/animatrice des arts du cirque,-2.5578778,-1.5892359
+METIER,http://data.europa.eu/esco/occupation/a79e7622-2307-44e2-94cc-d1ff1caf655a,coordonnateur de programmes pour les jeunes/coordinatrice de programmes pour les jeunes,-1.9433947,-0.17190343
+METIER,http://data.europa.eu/esco/occupation/30b25ee4-da97-4167-8592-460217f6bdcc,chef d'équipe animation,-2.5196078,-1.5838585
+METIER,http://data.europa.eu/esco/occupation/5f9e0588-e819-42f7-9975-f53198666c07,monteur techniverrier/monteuse techniverrière,1.5007641,-1.7387689
+METIER,http://data.europa.eu/esco/occupation/16e65196-3449-4c88-b379-0aa98f43db2b,infirmier anesthésiste/infirmière anesthésiste,1.0609045,-0.6306565
+METIER,http://data.europa.eu/esco/occupation/0e09c42d-bff2-4c35-8e1f-639a6dddaa5d,aléseur/aléseuse,-0.63056856,-3.5702531
+METIER,http://data.europa.eu/esco/occupation/0a5001af-ce4b-4787-92e8-62af70089e53,monteur à la main/monteuse à la main,-1.1511186,-3.2908874
+OFFRE_EMPLOI,OFFRE_005734_8174935f34ac,Chef De Service Du Contentieux Et Du Greffe,0.2501257,3.6967714
+OFFRE_EMPLOI,OFFRE_006837_8ff15afda857,Offre D'emploi: 05 LIVREURS/VENDEURS EXPERIMENTES,0.26769355,3.9132702
+OFFRE_EMPLOI,OFFRE_011052_a7bb6b374ccf,Administrateur de Bases de Données - Douala,-1.3805288,1.5572157
+OFFRE_EMPLOI,OFFRE_007095_63d21fc18ff5,"02 STAGIAIRES CONTRÔLEURS DE GESTION – Yaoundé, Douala",0.27811798,3.4479048
+OFFRE_EMPLOI,OFFRE_004219_00a7a6dceeaa,RAYONNISTE-VENDEUR,0.22352633,3.9579728
+OFFRE_EMPLOI,OFFRE_000440_480866ae3941,Cadre administratif,7.700326,-0.5747543
+OFFRE_EMPLOI,OFFRE_008528_168c2b86f4b8,TELECONSEILLER COMMERCIAL,-0.50698364,3.6375453
+OFFRE_EMPLOI,OFFRE_000655_2f1ce556cdfa,Cadre administratif,7.7063165,-0.55688715
+OFFRE_EMPLOI,OFFRE_004786_c69c705597c9,SALES REPRESENTATIVES,-0.3475251,3.6339402
+OFFRE_EMPLOI,OFFRE_010522_eaefebf38940,SUPERVISEUR - MINIER H/F,0.34885633,2.7274678
+OFFRE_EMPLOI,OFFRE_009451_7125e82fc263,Comptable Fournisseurs Senior,0.8382962,2.376487
+OFFRE_EMPLOI,OFFRE_009615_ac15ae0d6c5b,Contrôleur de Gestion H/F,1.8114847,1.7980484
+OFFRE_EMPLOI,OFFRE_003154_da43082a8a78,ASSISTANT(E) PROGRAMME,-0.8929114,4.887603
+OFFRE_EMPLOI,OFFRE_010226_76782d1fce70,Cadre de la Comptabilité (H/F),0.6993672,2.1137655
+OFFRE_EMPLOI,OFFRE_009536_131923069b93,Designer Graphique,-1.9438064,2.7381053
+OFFRE_EMPLOI,OFFRE_002432_f8f9d65c70d2,Gestionnaire des ressources humaines,7.417444,-0.7032083
+OFFRE_EMPLOI,OFFRE_008488_bb54202b8f16,Account Assistant,0.51516694,3.919489
+OFFRE_EMPLOI,OFFRE_009918_003418219b73,Développeur Python Junior ou Senior - Douala,-2.0508559,2.553886
+OFFRE_EMPLOI,OFFRE_009876_96b92c1b4a9a,Environmental Monitoring Technician,-0.15052946,2.7580667
+OFFRE_EMPLOI,OFFRE_001302_89fbdb1fe1e5,Cadre comptable,7.9086103,-0.7310419
+OFFRE_EMPLOI,OFFRE_008279_7deba850fab7,RESPONSABLE D’ACTIVITÉS RRC,0.4333643,3.3637075
+OFFRE_EMPLOI,OFFRE_002418_eac676ae9395,Enseignant du Secondaire,-3.8515816,14.566662
+OFFRE_EMPLOI,OFFRE_004439_6bbc6ff1cb1a,04 CONTRÔLEURS Projet GIZ/Pro-PASSaR - Opérations Chèque Santé,-0.9402475,4.944257
+OFFRE_EMPLOI,OFFRE_010179_f749c7980845,IFS-Finance Intern,-0.85471565,2.928933
+OFFRE_EMPLOI,OFFRE_010833_b878c6abfa03,Ingénieur Technico-commercial H/F,-0.66101456,3.2849782
+OFFRE_EMPLOI,OFFRE_003113_b6475126c610,Country Finance Director,0.567586,3.2820408
+OFFRE_EMPLOI,OFFRE_007864_1d88b304a0bc,Manager - SME Indirect Channels,-0.64005876,3.7075717
+OFFRE_EMPLOI,OFFRE_004495_55271f023ed3,Serveuse Snack,0.41972974,3.9254622
+OFFRE_EMPLOI,OFFRE_003708_2b609ad4b7bb,PROGRAMS ASSISTANT,0.35759062,3.2785313
+OFFRE_EMPLOI,OFFRE_004038_6570c7fbb588,SOUS-DIRECTEUR DU CONTENTIEUX,0.29405183,3.6730146
+OFFRE_EMPLOI,OFFRE_008015_b6af958b7123,CONSEILLERS CLIENTELES,0.3553187,3.547327
+OFFRE_EMPLOI,OFFRE_009392_87fd8e15667e,STAGE PROFESSIONNEL - Ingénieur Electricien,1.3488284,-2.6719277
+OFFRE_EMPLOI,OFFRE_000569_132064663fa6,Employé de Ménage,9.210771,-1.8269494
+OFFRE_EMPLOI,OFFRE_004141_db99a158ca38,ASSISTANT(E) CHARGE(E) DES ACHATS,0.96752316,-5.6669583
+OFFRE_EMPLOI,OFFRE_002191_ab27b48c36d2,Enseignant du Secondaire,-3.85156,14.566584
+OFFRE_EMPLOI,OFFRE_003091_5a5375f1def5,(Agent Commercial – Ventes),-0.1851038,3.5525064
+OFFRE_EMPLOI,OFFRE_008332_49be9a3b52f3,PSYCHOLOGUE,-0.9398246,4.9373555
+OFFRE_EMPLOI,OFFRE_010606_888288d54e61,Developpeur symfony 3+,-2.1680157,2.5586414
+OFFRE_EMPLOI,OFFRE_006541_1ae5342d75d4,AGENT COMPTABLE,0.902746,2.5524924
+OFFRE_EMPLOI,OFFRE_001765_baac39f42d0a,Agent d'entretien,9.255028,-1.8722771
+OFFRE_EMPLOI,OFFRE_009465_22e3d9c6edac,Développeur Web,-1.927508,2.7487922
+OFFRE_EMPLOI,OFFRE_007606_424895bb5535,CHARGE DES VENTES,-0.021450104,3.849987
+OFFRE_EMPLOI,OFFRE_004097_545db4c43bc5,Communication Coordinator,-0.39643216,4.2063694
+OFFRE_EMPLOI,OFFRE_009486_dcad08bd45b9,Gérant (e) pour un Restaurant - Douala,-0.41465756,1.8547598
+OFFRE_EMPLOI,OFFRE_012478_4fe149f7b2ae,Directeur General Et Technique,3.076582,-2.2185516
+OFFRE_EMPLOI,OFFRE_003057_b4f7c77e6ee9,RESPONSABLE SHOWROOM (MAGASIN) (H/F),-0.3448618,3.399038
+OFFRE_EMPLOI,OFFRE_000713_770b9480d6b0,Employé de Ménage,9.255753,-1.8709896
+OFFRE_EMPLOI,OFFRE_011224_b6cfb472c07f,Directeur Administratif Et Financier,3.090948,-1.8260844
+OFFRE_EMPLOI,OFFRE_002068_3d3a7742b6d1,Employé de Ménage,9.241077,-1.8570088
+OFFRE_EMPLOI,OFFRE_006596_85e4bb4b012f,ARCHIVISTE DOCUMENTALISTE,-0.18398868,4.0207047
+OFFRE_EMPLOI,OFFRE_003895_86f032cacc97,Chargés (Es) Clientèle (Agents De Crédits),-0.47447157,4.048702
+OFFRE_EMPLOI,OFFRE_010879_65587d3a0bda,Deputy General Manager - Douala,0.32624227,1.412067
+OFFRE_EMPLOI,OFFRE_011989_443e918a7566,Spécialiste Process,3.0323575,-2.3862553
+OFFRE_EMPLOI,OFFRE_013516_1eada6e048b1,Superintendant De Production,2.8363092,-2.514695
+OFFRE_EMPLOI,OFFRE_000004_fa9c78153738,Comptable,7.997576,-0.81338155
+OFFRE_EMPLOI,OFFRE_010840_7d455a2e3d7b,INGÉNIEUR IT PROJETS ET SOLUTIONS H/F - CAMEROUN,-2.1345322,2.4849668
+OFFRE_EMPLOI,OFFRE_001724_30575fc28194,Contrôleur du travail,4.230043,-2.3295805
+OFFRE_EMPLOI,OFFRE_001258_6a7b3c5e8bb1,Enseignant du Secondaire,-3.8515186,14.566487
+OFFRE_EMPLOI,OFFRE_007005_e3ce3a83820d,Joint Livelihoods And Self - Reliance Consultant,0.5460422,3.8986814
+OFFRE_EMPLOI,OFFRE_002840_7c980f8b0e39,Education Assistant Cameroon Buea,0.56710917,3.8765028
+OFFRE_EMPLOI,OFFRE_013548_1bdd8fb9be80,Superviseur Qualité Peinture ( Painting Quality Supervisor),3.1398914,-2.4091866
+OFFRE_EMPLOI,OFFRE_004710_ccdf9733391f,A Food And Hygiene Coordinator,0.43901294,3.8898335
+OFFRE_EMPLOI,OFFRE_010083_da5ba82a7559,Chief Acountant - Jumia,-0.85280955,2.92746
+OFFRE_EMPLOI,OFFRE_009732_afec3166ebee,RESPONSABLE DE PLAIDOYER-COMMUNICATION - Yaoundé,-0.84493387,3.0037334
+OFFRE_EMPLOI,OFFRE_007554_1d564656e9fa,03 Commerciaux,-0.5171159,3.6672647
+OFFRE_EMPLOI,OFFRE_011858_17f3c9dde411,Conseiller Service Centre,3.1797311,-1.3608828
+OFFRE_EMPLOI,OFFRE_000601_ca9be1b21204,Scieur,9.277166,-1.8962116
+OFFRE_EMPLOI,OFFRE_012443_35cc6e34e21b,Directeur Des Activités,3.283416,-1.4096974
+OFFRE_EMPLOI,OFFRE_008895_33dc623867f1,Deputy Chief of Party I Operations- KIDSS Project,-0.8380128,2.88091
+OFFRE_EMPLOI,OFFRE_007636_daada076eb8c,Consultant Expert,-0.12568359,3.5735478
+OFFRE_EMPLOI,OFFRE_001951_5b89539ba85c,"Cadre Sécurité, Hygiène et Environnement",7.7251782,-0.5910114
+OFFRE_EMPLOI,OFFRE_001075_3173917778ee,Cadre administratif,7.6366863,-0.555457
+OFFRE_EMPLOI,OFFRE_011090_4f5e40a6ba77,Responsable d'Exploitation d'un Hôtel - Douala,-0.37182626,1.8018688
+OFFRE_EMPLOI,OFFRE_003902_5bc8782e0e4d,Commercial,-0.49040908,3.6965182
+OFFRE_EMPLOI,OFFRE_011903_1a1461bae353,Comptable Général,3.0747383,-2.0116212
+OFFRE_EMPLOI,OFFRE_007610_d06b3b3067e9,DROP IN CENTER MANAGER (DIC MANAGER),0.29869196,3.425096
+OFFRE_EMPLOI,OFFRE_003846_53cbc29f4408,ÉLECTROTECHNICIENS,0.09104068,3.2142692
+OFFRE_EMPLOI,OFFRE_011627_6fdcbfe4ccd4,Technicien Maintenance Informatique,-2.8642187,2.654041
+OFFRE_EMPLOI,OFFRE_012271_91e6567a978d,Technicien Superieur En Fibre Optique,-2.869482,2.7164545
+OFFRE_EMPLOI,OFFRE_011056_03f81ea8a671,Assistant(e) de Direction - Douala/ Yaoundé/ Kribi/ Ebolowa,0.7144613,0.8670706
+OFFRE_EMPLOI,OFFRE_000345_09ada21f65c3,"Cadre Sécurité, Hygiène et Environnement",7.8085184,-0.6128702
+OFFRE_EMPLOI,OFFRE_006243_0ae05baf494e,FULL STACK DEVELOPPER ANALYST,-1.7747399,3.338182
+OFFRE_EMPLOI,OFFRE_007439_a5465543c654,Offre D'emploi: Technicien De Génie,0.050613366,3.322284
+OFFRE_EMPLOI,OFFRE_001092_d74ac1f0b7cc,Gestionnaire des ressources humaines,7.4894304,-0.6638998
+OFFRE_EMPLOI,OFFRE_011035_fa4d5bfa0f55,Stagiaire en Marketing Non-Rémunéré (H/F) - Douala et Yaoundé,-0.46636835,4.0770407
+OFFRE_EMPLOI,OFFRE_004196_a0b38d0669d7,"STAGIAIRES EN COMPTABILITÉ / FINANCE, En CONTRÔLE DE GESTION Et En TRANSPORT & LOGISTIQUE H/F",0.9241373,2.5162113
+OFFRE_EMPLOI,OFFRE_007996_689447940ecd,Project Accountant And Administrative Assistant-ICRAF - The World Agroforestry Centre,0.54178697,3.9370832
+OFFRE_EMPLOI,OFFRE_008006_631b0d0f7df0,Gender Equality And Inclusion Specialist-Plan International,0.55085987,3.894715
+OFFRE_EMPLOI,OFFRE_004512_2e4b6219ab74,Senior Credit Analyst,0.91772467,2.7796736
+OFFRE_EMPLOI,OFFRE_005517_d876cc18f27d,Développeur Big Data,-1.7872608,3.3460968
+OFFRE_EMPLOI,OFFRE_003258_bbf1167cb714,Assistant Administratif Et Financier – Profil Orienté Finance,-0.114634454,3.2501693
+OFFRE_EMPLOI,OFFRE_009079_aac352a715be,Agent de Sécurité de Jour - Yaoundé,-1.8452004,2.7379472
+OFFRE_EMPLOI,OFFRE_003659_1c536217e9b1,"ELECTRONICIENS, ADMINISTRATEUR SYSTÈME, ADMINISTRATEUR RÉSEAUX",-1.8122194,3.342402
+OFFRE_EMPLOI,OFFRE_010516_375d21693200,Enseignant (H/F),-0.928609,3.2735722
+OFFRE_EMPLOI,OFFRE_000578_43b841ac56d4,Agent d'entretien,9.265781,-1.8823297
+OFFRE_EMPLOI,OFFRE_010944_2d1641d0758b,Infirmier(ère) - Pk 27 (Carrefour Guiness),1.2429967,-0.5319347
+OFFRE_EMPLOI,OFFRE_010482_c731ad6be657,Assistant Ressources Humaines (H/F),1.1817046,-5.4671693
+OFFRE_EMPLOI,OFFRE_006215_6ed611e1ed7f,01 Directeur(Trice)/Gestionnaire Et 02 Marketistes/Communicateurs(Trices) H/F,-0.46109512,3.4965231
+OFFRE_EMPLOI,OFFRE_004606_1b56dd5894a9,CHAUFFEUR UNDSS,0.86966985,-5.3768578
+OFFRE_EMPLOI,OFFRE_007386_9513c0c077b5,GESTIONNAIRE D'OPÉRATIONS,0.94320357,-5.684007
+OFFRE_EMPLOI,OFFRE_007372_da54dcceec08,DISPATCHER EQUIPEMENTS PORTUAIRES(4) H/F,0.9481522,-5.614382
+OFFRE_EMPLOI,OFFRE_008795_15d977a4b5ec,Responsable RH,0.71633786,2.446173
+OFFRE_EMPLOI,OFFRE_007394_2d5d726df681,07 CONDUCTEURS D’ENGINS LOURDS ICM,0.80812204,-5.3501024
+OFFRE_EMPLOI,OFFRE_009718_dcced87565f7,RESPONSABLE DE CENTRE D’AFFAIRES H/F,0.7318724,2.2531912
+OFFRE_EMPLOI,OFFRE_006093_29699b062c01,Réceptionniste Bilingue,-0.371863,2.1037042
+OFFRE_EMPLOI,OFFRE_012388_d441d93c5b80,Usineur,3.0047486,-2.3431785
+OFFRE_EMPLOI,OFFRE_010796_6e5cc04ba12f,Support Office (Janitor),-0.9148433,2.9392583
+OFFRE_EMPLOI,OFFRE_003674_0f334010872e,STAGIAIRE PROFESSIONNEL(LE) En Comptabilité Et Gestion,0.90851235,2.5288696
+OFFRE_EMPLOI,OFFRE_004087_375ee853df33,Business Intelligence Engineer,-1.789508,3.3649433
+OFFRE_EMPLOI,OFFRE_013762_abfb2338beeb,Pool Remodel Salesman,-0.54770434,3.8174706
+OFFRE_EMPLOI,OFFRE_011749_b82fb3175c82,Responsable De La Filiere Production Et Sante Animale,2.1757076,-1.5128859
+OFFRE_EMPLOI,OFFRE_006371_7fcb05cf0883,Business Analyst,0.9132721,2.5257869
+OFFRE_EMPLOI,OFFRE_007245_0037fff85c17,Chargés De Clientèle,0.40107375,3.5836742
+OFFRE_EMPLOI,OFFRE_008832_ac5886b027ca,Traffic Manager - Douala,-0.8515033,3.3615074
+OFFRE_EMPLOI,OFFRE_001352_bc2f5a6cdea7,"Cadre Sécurité, Hygiène et Environnement",7.7431593,-0.60570425
+OFFRE_EMPLOI,OFFRE_013340_6d357cd6469a,Chauffeur,2.2452855,-4.855013
+OFFRE_EMPLOI,OFFRE_000698_2b28e3521f22,Agent d'entretien,9.266775,-1.8835135
+OFFRE_EMPLOI,OFFRE_002076_1d7f59cc9f1e,Scieur,9.283658,-1.900199
+OFFRE_EMPLOI,OFFRE_007004_56d8807df460,Area Sales Manager (H/F),0.28383243,3.9591265
+OFFRE_EMPLOI,OFFRE_000177_ebea02e0f196,Enseignant du Secondaire,-3.8477817,14.556781
+OFFRE_EMPLOI,OFFRE_013914_c3b83dbbd0cc,People Experience Expert niveau II,0.5889793,1.4410503
+OFFRE_EMPLOI,OFFRE_013875_7ab589d148d0,Maintenance Tech pour Luxury Property,1.7918048,-1.8009388
+OFFRE_EMPLOI,OFFRE_006310_fd4b90cf63e1,Infographe-ICENC,-1.8250269,3.3179505
+OFFRE_EMPLOI,OFFRE_011293_54a90fc13591,Concierge,3.3035288,-1.3443238
+OFFRE_EMPLOI,OFFRE_012711_e7abf31d870b,Assistant Technique Marine,2.9933388,-2.362444
+OFFRE_EMPLOI,OFFRE_008052_99a1e53c45fe,REGIONAL SITE SUPERVISOR,1.5377282,-2.862235
+OFFRE_EMPLOI,OFFRE_004378_02744ad8242d,Responsable Commercial,-0.50267214,3.6837912
+OFFRE_EMPLOI,OFFRE_012459_6e12bf57deb8,Vendeur Conseil,3.2300951,-1.3989952
+OFFRE_EMPLOI,OFFRE_013452_51abda0b938c,Assistantadministratif Et Rh,1.1280279,1.2308321
+OFFRE_EMPLOI,OFFRE_012158_29440521ab28,Electricien Foreman,1.5365638,-3.123905
+OFFRE_EMPLOI,OFFRE_011843_4bad8187bac7,Agent Customer Registration (Kyc),3.2586434,-1.3182751
+OFFRE_EMPLOI,OFFRE_005569_64f68a5f58aa,Responsable Maintenancier Junior,0.6097775,3.938334
+OFFRE_EMPLOI,OFFRE_009842_28a0cdcddb5a,Recrutement pour le Serrvice Administratif et Technique,1.4724991,1.0681728
+OFFRE_EMPLOI,OFFRE_012918_1f0622cf370f,Mécanicien Entetien Centrifugeur Hq,2.0203369,-3.584772
+OFFRE_EMPLOI,OFFRE_012016_8811409b991e,Magasinier,2.8798246,-2.4638348
+OFFRE_EMPLOI,OFFRE_007935_be114080e3cd,CHEF D’AGENCE,0.88903666,2.7621105
+OFFRE_EMPLOI,OFFRE_011540_ae0c65bd1950,Agentdes Espaces Publics,3.3169847,-1.3414572
+OFFRE_EMPLOI,OFFRE_000735_6a308a9ba08b,Vendeur en magasin,9.688685,-2.2722764
+OFFRE_EMPLOI,OFFRE_004722_92a1bedc63ac,Un (E) RECEPTIONNISTE,-0.33484936,2.2072144
+OFFRE_EMPLOI,OFFRE_013512_6cd486e9b9e6,Responsable Du Lot De Maintenance,2.8648624,-2.5206473
+OFFRE_EMPLOI,OFFRE_003727_205b8f2c6778,HEAD Of OPERATIONS,0.93331075,2.5451255
+OFFRE_EMPLOI,OFFRE_001349_105ddfd1b71f,Employé de Ménage,9.255115,-1.8707395
+OFFRE_EMPLOI,OFFRE_009713_9b3a25cb56b3,Commercial (H/F) - Douala,-0.71078724,3.3394945
+OFFRE_EMPLOI,OFFRE_009142_3ac149e769f4,Agent Commercial Prospecteur H/F,-0.7463516,3.3459668
+OFFRE_EMPLOI,OFFRE_005078_3e246c71088c,Employee Success Manager,0.52776796,3.2723873
+OFFRE_EMPLOI,OFFRE_011047_4e7cceb4f31a,Développeur - Yaoundé,-2.2900202,2.5285606
+OFFRE_EMPLOI,OFFRE_009408_6ed7ddbb87ef,Collaborateur Gestionnaire de Projet,0.22756445,2.9466078
+OFFRE_EMPLOI,OFFRE_010769_4a862153d120,TECHNICO COMMERCIAL (ENGINS LOURD),-0.679508,3.3928416
+OFFRE_EMPLOI,OFFRE_009238_e7bc2b5dfe68,Sales Manager -Doula,-0.6398168,3.4478455
+OFFRE_EMPLOI,OFFRE_006697_5bea846d90a6,Offre D'emploi: (01) Assistant(E),0.67678237,3.9485297
+OFFRE_EMPLOI,OFFRE_002537_ca398d071d6e,Développeur Backend JAVA,-2.2242818,2.5804455
+OFFRE_EMPLOI,OFFRE_008327_a23064ee6421,ADVISOR FOR THE SEMBE I PROJECT,-0.93809426,4.939152
+OFFRE_EMPLOI,OFFRE_013648_b1b971260dad,Projet Estimator,-1.443194,1.5815421
+OFFRE_EMPLOI,OFFRE_003006_7bc77592f9a1,Sale Supervisor Glass,-0.44595242,3.68215
+OFFRE_EMPLOI,OFFRE_010440_d05c3e238548,Assistant Développement Web PHP,-2.0797052,2.603007
+OFFRE_EMPLOI,OFFRE_013209_edd5303d9523,Responsable Zootechnicien,1.9528675,-1.6469331
+OFFRE_EMPLOI,OFFRE_006846_a671f172d0aa,Offre D'emploi: DEVELOPPEUR IOS/ANDROID,-1.81902,3.3614857
+OFFRE_EMPLOI,OFFRE_013502_55049c525c0e,Technicien Instrumentation,2.869067,-2.3671763
+OFFRE_EMPLOI,OFFRE_007398_ba430403a438,02 Médecins Généralistes,-0.9542263,4.9523525
+OFFRE_EMPLOI,OFFRE_005656_c213338460e5,Stage Agent Commercial,0.2625919,3.9132059
+OFFRE_EMPLOI,OFFRE_012499_0bd0220ef474,Responsable Des Operations En Agences,3.2485142,-1.4583519
+OFFRE_EMPLOI,OFFRE_000260_8c6775bd93c4,Cadre administratif,7.668113,-0.54979604
+OFFRE_EMPLOI,OFFRE_011002_8ba0586e45f7,Stagiaire Académique en Agronomie - Douala,-1.1415188,1.746271
+OFFRE_EMPLOI,OFFRE_006378_77ceb19ff085,RÉCEPTIONNISTES BILINGUES (ANGLAIS & FRANÇAIS),-0.34632114,2.1768603
+OFFRE_EMPLOI,OFFRE_012343_0309bbf8d0bf,Mécanicien Oq,1.9731466,-3.628033
+OFFRE_EMPLOI,OFFRE_001032_23d784a2307a,Gestionnaire des ressources humaines,7.4175544,-0.7235586
+OFFRE_EMPLOI,OFFRE_009191_992ca0a35123,Infographiste (H/F),-1.2393918,3.1987345
+OFFRE_EMPLOI,OFFRE_010665_977f7c2333ba,CHARGE DES OPÉRATIONS DE GUICHET,0.5822478,2.4401083
+OFFRE_EMPLOI,OFFRE_009856_12c80d9475bf,Responsable Commercial,-0.4380002,3.3630936
+OFFRE_EMPLOI,OFFRE_007696_335d88f164d4,Offre D'emploi: CHEFS STATIONS SERVICES,-0.24606325,3.77357
+OFFRE_EMPLOI,OFFRE_003506_241b0ff720f5,"TECHNICIEN(ES) VSAT, Débutants Ou Confirmés",0.57640153,3.9099514
+OFFRE_EMPLOI,OFFRE_009868_889197ac269d,Marketing Officer,-0.6077741,3.596258
+OFFRE_EMPLOI,OFFRE_004734_a3bf41316c76,02 Assistantes Commerciales,-0.50804263,3.6315775
+OFFRE_EMPLOI,OFFRE_011303_3d5f3109815c,Superviseur Réservations,3.2720208,-1.3815724
+OFFRE_EMPLOI,OFFRE_001812_0a06d18b75e8,Scieur,9.340108,-1.9563648
+OFFRE_EMPLOI,OFFRE_002728_cf4a2d9c1c44,PROCUREMENT OFFICER,0.3354189,1.4669849
+OFFRE_EMPLOI,OFFRE_006740_b8ed0663f0aa,01 RESPONSABLE ELECTRIQUE,-0.059255343,3.2811952
+OFFRE_EMPLOI,OFFRE_005878_fc59e7838563,Engineer Supervisor,0.46197885,3.76963
+OFFRE_EMPLOI,OFFRE_003052_74e331adaa3a,Relationship Manager SME,0.5250462,3.1555676
+OFFRE_EMPLOI,OFFRE_009619_31be951f7681,Technico-Commercial (H/F),1.0118608,-2.80768
+OFFRE_EMPLOI,OFFRE_001519_a0b45973351c,Cadre administratif,7.681814,-0.543534
+OFFRE_EMPLOI,OFFRE_008599_aa72a93b3f66,Commercial H/F - Douala - Cameroun,-0.72376895,3.0813475
+OFFRE_EMPLOI,OFFRE_002078_34397f08925f,Vendeur en magasin,9.677972,-2.261512
+OFFRE_EMPLOI,OFFRE_000976_2423d1f3233e,Cuisinier Domestique,7.825352,-0.62157375
+OFFRE_EMPLOI,OFFRE_008567_680c24bfcb37,Project Supervisor H/F - Douala,0.4845891,1.9278325
+OFFRE_EMPLOI,OFFRE_013642_29df5298f937,Sécurité Professional,0.053203356,3.226524
+OFFRE_EMPLOI,OFFRE_006305_59bbd67d3a35,Deux (02) Boulangers/Pâtissiers,-0.41846213,2.0573046
+OFFRE_EMPLOI,OFFRE_004762_39580b64e3fc,"02 Profils Chargés De La Clientèle, 02 Chargé De Televente Et 02 Chargé De Recrutement Tuteur",0.58365446,3.2961338
+OFFRE_EMPLOI,OFFRE_002417_835bda56cd99,Contrôleur du travail,4.2150774,-2.3341532
+OFFRE_EMPLOI,OFFRE_010878_adcc219d34ab,Vendeur Ambulant - Yaoundé et Bertoua,-0.42113936,1.7821301
+OFFRE_EMPLOI,OFFRE_000896_383d80778d68,"Cadre Sécurité, Hygiène et Environnement",7.746837,-0.56789625
+OFFRE_EMPLOI,OFFRE_012287_e342c51c3eb4,Agent Ressources Humaines,3.1198013,-1.2739065
+OFFRE_EMPLOI,OFFRE_002452_b2c118ddcdf8,"Cadre Sécurité, Hygiène et Environnement",7.693034,-0.55074584
+OFFRE_EMPLOI,OFFRE_008320_c96c0080b79d,Driver,0.86344934,-5.3702245
+OFFRE_EMPLOI,OFFRE_005159_484adc20584f,106 Agents Opérationnels De Sûreté (AOS)-Cameroon Civil Aviation Authority (CCAA),0.2187228,4.065979
+OFFRE_EMPLOI,OFFRE_012888_c6e14c1ba20a,Agent De Nettoyage Matière Auxilliaire Op,2.2734046,-3.325343
+OFFRE_EMPLOI,OFFRE_002173_3240ba824770,Employé de Ménage,9.238771,-1.854174
+OFFRE_EMPLOI,OFFRE_007493_d26aaf655ba3,CHARGES DE CLIENTELE,-0.2573583,3.7923167
+OFFRE_EMPLOI,OFFRE_001869_bb6a7186eb5a,Enseignant du Secondaire,-3.8514323,14.566308
+OFFRE_EMPLOI,OFFRE_004116_a7b4bbe53eed,Opérateur De Saisie,0.22062165,3.9188335
+OFFRE_EMPLOI,OFFRE_000834_006aa0d8f393,Cadre comptable,7.8856297,-0.70818776
+OFFRE_EMPLOI,OFFRE_004765_379f3f33fff4,CHIEF OF SECTION,0.7125061,2.8771389
+OFFRE_EMPLOI,OFFRE_007423_fa5f8231ba01,Conseillers Financiers Ngaoundéré Garoua Maroua Douala Limbe Bertoua Ebolowa Yaoundé Kribi Bafoussam Bamenda,-0.46010908,4.017884
+OFFRE_EMPLOI,OFFRE_011051_ff92b13ad65c,Assistante de Direction - Yaoundé,0.71191996,1.1272238
+OFFRE_EMPLOI,OFFRE_003614_769a6f85f471,ASSISTANTIE) ACHAT ET LOGISTIQUE,0.96270055,-5.68316
+OFFRE_EMPLOI,OFFRE_001811_a833e013c243,Gestionnaire des ressources humaines,7.4728527,-0.68267524
+OFFRE_EMPLOI,OFFRE_012861_392e0ed1cb47,Driller,2.9391062,-2.443098
+OFFRE_EMPLOI,OFFRE_005691_be125a9a0aa0,Directeur Financier,0.86742985,2.7790916
+OFFRE_EMPLOI,OFFRE_001877_dffa3074ae8a,Cadre comptable,7.875116,-0.699945
+OFFRE_EMPLOI,OFFRE_006128_70f54cd050ae,Rédacteur (Trice) De Contenu,-0.35139698,4.0710335
+OFFRE_EMPLOI,OFFRE_007931_50954226fc91,Financial Advisor-Ngaoundéré - Maroua - Garoua,0.84616244,2.8356817
+OFFRE_EMPLOI,OFFRE_010792_8acb2514442f,Head of Programmes,-0.89358443,3.0040338
+OFFRE_EMPLOI,OFFRE_005976_ab6da31820bb,Agent Commercial H/F,0.27461046,3.9552662
+OFFRE_EMPLOI,OFFRE_010648_ecb1bf4b7425,DIRECTEUR TECHNIQUE (grands chantiers),0.80891466,-2.4682987
+OFFRE_EMPLOI,OFFRE_003174_429b959268bd,CONTROLEUR DE GESTION,0.9273306,2.532698
+OFFRE_EMPLOI,OFFRE_005143_cd025b90a606,"HR Assistant,",0.30175924,3.6594777
+OFFRE_EMPLOI,OFFRE_005428_00727425edbd,DIRECTEUR MARKETING DIGITAL,-0.40563518,3.7854478
+OFFRE_EMPLOI,OFFRE_006657_29352b727023,Compliance Coordinator (YAOUNDE),0.5194756,3.9344578
+OFFRE_EMPLOI,OFFRE_012556_bdc7a77b297a,Responsable Surété,3.0232744,-2.2715406
+OFFRE_EMPLOI,OFFRE_006148_c5591b1c171d,03 Managers De Rayons Hypermarché Carrefour,-0.3601112,2.5534453
+OFFRE_EMPLOI,OFFRE_009122_fc33f0416e24,Télé-opérateur avec ou sans expérience dans le domaine,-0.83704174,3.5038404
+OFFRE_EMPLOI,OFFRE_003132_35989c4ccf48,03 Contrôleurs Internes,0.88835657,2.7680154
+OFFRE_EMPLOI,OFFRE_003135_4de9710ac610,ASSISTANT RH,0.34268096,3.6545703
+OFFRE_EMPLOI,OFFRE_006129_a4cf86adb607,Consultant En Charge De L'Appui Technique À La Mise En Œuvre De La Carte Scolaire,-1.7862633,3.3667512
+OFFRE_EMPLOI,OFFRE_009540_403c53461b5b,Informaticien Webmaster Développeur,-1.0331839,3.3560221
+OFFRE_EMPLOI,OFFRE_008170_31d25c525f14,CHEFS D’EQUIPES COMMERCIALES (H/F),-0.15634482,3.4854522
+OFFRE_EMPLOI,OFFRE_003499_536539665852,"03 STAGIAIRES En Marketing, Communication, Design",-0.45624697,4.0965724
+OFFRE_EMPLOI,OFFRE_001313_8f82a7459a60,Employé de Ménage,9.220901,-1.8373555
+OFFRE_EMPLOI,OFFRE_005406_215cffa7ce2f,Commis De Salle Résidence Privée,0.5718878,3.2620277
+OFFRE_EMPLOI,OFFRE_003407_0a055c4e31d9,Assistance De Direction,0.68202746,3.9070785
+OFFRE_EMPLOI,OFFRE_011259_b070be987d05,Comptable,3.1001742,-1.938117
+OFFRE_EMPLOI,OFFRE_006022_ad4624504ebb,Infirmier Santé Au Travail,-0.94327116,4.9423137
+OFFRE_EMPLOI,OFFRE_002483_017c2432bca0,Vendeur en magasin,9.673832,-2.257471
+OFFRE_EMPLOI,OFFRE_001586_026a29ac9e58,Vendeur en magasin,9.734766,-2.3179092
+OFFRE_EMPLOI,OFFRE_011345_d50a18146b78,Coordinateur Commerciale & Marketing,3.2915416,-1.3057293
+OFFRE_EMPLOI,OFFRE_009343_655c92bdf285,"Manager détaillants, Direction de la Distribution",-0.9502222,3.1921399
+OFFRE_EMPLOI,OFFRE_004492_fd1f694d50db,Chargée De Projet - Programmes À Haut Impact,-0.14744969,4.0841966
+OFFRE_EMPLOI,OFFRE_010852_7de32812bed0,Hôte(sse) Vente,-0.77000284,3.299229
+OFFRE_EMPLOI,OFFRE_002012_4f6ae90452dc,Contrôleur du travail,4.2269893,-2.3300042
+OFFRE_EMPLOI,OFFRE_001441_403393a8b1e5,Scieur,9.294032,-1.9094961
+OFFRE_EMPLOI,OFFRE_004290_168c41419a2d,TECHNICAL STAFF,0.363135,3.3565867
+OFFRE_EMPLOI,OFFRE_011449_ed78add75920,Soudeur,2.9525177,-2.436467
+OFFRE_EMPLOI,OFFRE_009135_dce876a36b63,Technicien ou Ingénieur en Energie Solaire,-0.14289525,2.8232896
+OFFRE_EMPLOI,OFFRE_009864_fb5e69a228c2,Production Manager,-0.023835346,2.8676
+OFFRE_EMPLOI,OFFRE_012080_a420386a0f04,Agent De Communication,3.2785227,-1.3739601
+OFFRE_EMPLOI,OFFRE_010642_285555757627,Electromécanicien,-0.13634136,2.801172
+OFFRE_EMPLOI,OFFRE_010371_ab3db2344c4e,Cadre Commercial (H/F),-0.7301486,3.406604
+OFFRE_EMPLOI,OFFRE_003191_a65a0e720fb9,Assistante D'Accueil Et Relations Publiques,0.66158634,3.9441206
+OFFRE_EMPLOI,OFFRE_013220_64e0c7c430b4,Caissier,3.2663302,-1.3469219
+OFFRE_EMPLOI,OFFRE_003085_1082cb93e75e,COMMERCIAUX FTTx,0.0363075,3.845129
+OFFRE_EMPLOI,OFFRE_013070_efff6765ebfc,Chauffeur Coursier,2.2397432,-4.935274
+OFFRE_EMPLOI,OFFRE_009196_5625d1e687c7,Ingénieur Réseau SVA & Applications,-1.97279,2.687691
+OFFRE_EMPLOI,OFFRE_005770_8b9067199ae7,TECHNICO-COMMERCIAL,0.27267313,3.967422
+OFFRE_EMPLOI,OFFRE_009237_5696e77182b7,Ingénieur Agronome - Douala,0.47256568,2.207648
+OFFRE_EMPLOI,OFFRE_004970_8095bf8b0870,Contrôleur Des Engagements (01) Analyste De Crédit (01),0.92938304,2.483087
+OFFRE_EMPLOI,OFFRE_002262_5bca7d18edb3,Enseignant du Secondaire,-3.8514245,14.566255
+OFFRE_EMPLOI,OFFRE_013013_7d8254bf1648,Assistant Du Chef De Service Logistique Et Transit,1.6182489,-5.1614723
+OFFRE_EMPLOI,OFFRE_002325_0b125c280f4a,Scieur,9.310232,-1.9251918
+OFFRE_EMPLOI,OFFRE_003216_d955b211e1c8,Infirmièr(E) Spécialisé,-0.94551796,4.9454436
+OFFRE_EMPLOI,OFFRE_007886_863364b2866d,CAISSIER,0.43848628,4.0315504
+OFFRE_EMPLOI,OFFRE_010628_44af01d1671b,Program Field Assistant BMZ,-0.97348976,4.869844
+OFFRE_EMPLOI,OFFRE_005386_92c418d2dd8a,Hôtesse Terrain Uniquement,-0.34776032,2.1950252
+OFFRE_EMPLOI,OFFRE_007513_deab8d30035d,Professeur Particulier,0.33160552,4.020892
+OFFRE_EMPLOI,OFFRE_011817_512c7909a72a,Magasinier,3.0918965,-1.657754
+OFFRE_EMPLOI,OFFRE_003706_c0292b2262ba,"DRIVER GS2, FT",0.85320485,-5.3720336
+OFFRE_EMPLOI,OFFRE_006643_d5ba2740c1b8,Stage Service Visa Et Immigration-Ease Travel Services,0.5519417,3.9099984
+OFFRE_EMPLOI,OFFRE_012197_5fa787dc65ad,Motoriste Et Système Mécanique,1.859246,-3.8705325
+OFFRE_EMPLOI,OFFRE_010692_99f47b1e5e59,Agent de Recouvrement (H/F),-0.8013623,3.3276043
+OFFRE_EMPLOI,OFFRE_009840_69ddde29bb0d,FORMATEUR TECHNIQUE - POIDS LOURDS (Concessionnaire automobile),1.1831604,-3.063489
+OFFRE_EMPLOI,OFFRE_013522_25ef7fcc2857,Mécanicien,1.9734366,-3.6827157
+OFFRE_EMPLOI,OFFRE_003520_31fe2ddcf972,Personnel Qualifié En Cuisine,-0.46079132,3.7368586
+OFFRE_EMPLOI,OFFRE_010569_043f596abe80,Agent de fabrication (Contre-maître),-0.18812121,2.7114825
+OFFRE_EMPLOI,OFFRE_000496_07b4d70e37bb,Vendeur en magasin,9.682715,-2.266474
+OFFRE_EMPLOI,OFFRE_007498_58eedb7a3371,CANDIDATURES SPONTANEES - STAGES ET EMPLOIS,0.62589544,2.8876734
+OFFRE_EMPLOI,OFFRE_009189_65a7a83f1ae6,Graphic Designer - Infographiste,-0.81668043,3.5373313
+OFFRE_EMPLOI,OFFRE_007883_039f60997fb6,Statisticien Économiste,0.76721793,2.8280487
+OFFRE_EMPLOI,OFFRE_007412_89c7fb22442b,"03 Techniciens (Froid Et Climatisation,Plombier,Électricien)",0.1019854,3.286049
+OFFRE_EMPLOI,OFFRE_000049_bed4bd52107b,Vendeur en magasin,9.683845,-2.267495
+OFFRE_EMPLOI,OFFRE_010928_5ffc0d6dc411,Responsable en Charge des VBG (H/F) - Edéa,0.3680931,1.4464656
+OFFRE_EMPLOI,OFFRE_008243_3bb043bced5c,ASSISTANT(E) FINANCE,0.881368,2.5930526
+OFFRE_EMPLOI,OFFRE_006217_b61b21544734,RÉDACTEUR,-0.26725355,4.1489635
+OFFRE_EMPLOI,OFFRE_003723_e6726c93256d,Directeur Administratif Et Financier,0.9555931,2.5130844
+OFFRE_EMPLOI,OFFRE_003177_ea8be0c6755d,Recrutement De Quatre (04) Psychologues,-0.9416204,4.9413667
+OFFRE_EMPLOI,OFFRE_011464_360ee1336841,Professeur Des Ecoles,3.2464478,-1.4018234
+OFFRE_EMPLOI,OFFRE_007662_697b347e9778,"RECRUTEMENT MASSIF - DOUALA, YAOUNDE, BAFFOUSSAM, BANGAM, BAMENDJOU",0.26655275,3.891027
+OFFRE_EMPLOI,OFFRE_009901_76bbef69dd20,Conseiller Commercial (H/F),-0.57513136,3.3984582
+OFFRE_EMPLOI,OFFRE_012800_ad38b5838c7a,Directeur Général,3.2803476,-1.4217865
+OFFRE_EMPLOI,OFFRE_010384_f18f9c7d8289,FEMME DE MENAGE A NEWBELL- PHOTO GOLDEN,-0.8088416,2.888852
+OFFRE_EMPLOI,OFFRE_000583_9aead5dc5400,Cadre administratif,7.6638794,-0.53880227
+OFFRE_EMPLOI,OFFRE_012598_7ad3beb86098,Responsablegestion Budget Et Reporting,3.117309,-1.8725951
+OFFRE_EMPLOI,OFFRE_002832_c34a88583dbc,Gestionnaire De Comptes,0.3478024,3.798017
+OFFRE_EMPLOI,OFFRE_013228_0ebfc3dd23ae,Auditeur Interne,3.0977216,-1.9793849
+OFFRE_EMPLOI,OFFRE_013619_671da89ebf98,Chef de Client Relations,-0.48126245,4.0488124
+OFFRE_EMPLOI,OFFRE_005675_37daddadacd0,Human Resources And Organisational Development Manager,0.35556874,3.70528
+OFFRE_EMPLOI,OFFRE_004209_a2173370e935,06 Archivist Interns,0.38705078,3.4976454
+OFFRE_EMPLOI,OFFRE_008851_8f3e3bce6c63,EMPLOIS EN CHAUDRONNERIE (SOUDURE),-0.8920365,2.8901691
+OFFRE_EMPLOI,OFFRE_000609_5dc61c05471f,Contrôleur du travail,4.2324376,-2.331195
+OFFRE_EMPLOI,OFFRE_002585_1383f36eaa37,03 DÉVELOPPEURS IT,-2.1915264,2.693675
+OFFRE_EMPLOI,OFFRE_010038_3147eab6a0f5,IT Assistant,-0.8541955,2.897279
+OFFRE_EMPLOI,OFFRE_010354_d80d949a61e0,commercial de terrain,-0.8162036,3.136665
+OFFRE_EMPLOI,OFFRE_007890_ce38bafbd047,Caissier(E) Du Projet CaSeVe À Voko,0.9338209,2.5291808
+OFFRE_EMPLOI,OFFRE_008225_f6fb52cb4582,02 MONITEURS (TRICES) COMMUNAUTAIRES,0.60278916,3.0017364
+OFFRE_EMPLOI,OFFRE_005336_fdeebb828968,AVIS D’APPEL A CANDIDATURE POUR LE RECRUTEMENT DEUX (02) CONSULTANTS OPERATEURS DE SAISIE DES DONNEES POUR LE PASSR,0.6223171,3.2186518
+OFFRE_EMPLOI,OFFRE_003495_682845a03e6b,Recrutement Massif,-0.34601936,3.5443828
+OFFRE_EMPLOI,OFFRE_006857_651db7edbfb9,Offre D'emploi: Assistant (E) Technique,0.8392195,2.8972611
+OFFRE_EMPLOI,OFFRE_003794_5ec2cf25757a,RECRUTEMENT PRESSING,-0.14577965,3.3851805
+OFFRE_EMPLOI,OFFRE_002371_26e489589f86,Enseignant du Secondaire,-3.851386,14.566113
+OFFRE_EMPLOI,OFFRE_012326_97b3328aed41,Echantillonneur,2.9595363,-1.5342209
+OFFRE_EMPLOI,OFFRE_006882_a027f7dedd17,Offre D'emploi: CHEF DE MISSION,0.59849083,3.2398672
+OFFRE_EMPLOI,OFFRE_002019_f7c6ea032d41,Cuisinier Domestique,7.828895,-0.61041456
+OFFRE_EMPLOI,OFFRE_006536_49d3a1db4ba3,"2021 Banking Internship, Cameroon (SSA)",0.57217,3.8544192
+OFFRE_EMPLOI,OFFRE_011250_47157e7e85ef,Ouvrier Forestier,2.953295,-2.3823798
+OFFRE_EMPLOI,OFFRE_011311_7d732ab094dc,Employer Aux Comptes Clients,3.2935376,-1.4122968
+OFFRE_EMPLOI,OFFRE_005165_6f9fba2b6092,10 Agents Commerciaux,-0.1404238,3.5369713
+OFFRE_EMPLOI,OFFRE_013411_1cf9e57ea93e,Charge De La Tresorerie,3.271788,-1.5062112
+OFFRE_EMPLOI,OFFRE_001588_378bc422bb6f,Employé de Ménage,9.21579,-1.8314797
+OFFRE_EMPLOI,OFFRE_009625_eaf50dc7544d,Commercial B2B - Yaoundé,-0.7630647,3.4708128
+OFFRE_EMPLOI,OFFRE_012156_94945af95f38,Mécanicien Foreman,1.8988632,-3.6659184
+OFFRE_EMPLOI,OFFRE_004560_ecc14b6c6a4f,Commerciaux,-0.28081524,3.7199643
+OFFRE_EMPLOI,OFFRE_007945_8dc6b0a012c9,"Community Development Intern, Faro National Park (Open To Cameroon Nationals Only)",0.5677795,3.8153126
+OFFRE_EMPLOI,OFFRE_010967_a92f425db529,Administrateur des Ventes (H/F) - Douala,0.41833943,1.374682
+OFFRE_EMPLOI,OFFRE_002363_f1e920353b71,Vendeur en magasin,9.698428,-2.2817428
+OFFRE_EMPLOI,OFFRE_011703_d75ee32d7d8e,Géologue Principal,3.115373,-2.1980422
+OFFRE_EMPLOI,OFFRE_006897_707a514202a3,Développeur Web,-1.7960709,3.3508794
+OFFRE_EMPLOI,OFFRE_011325_d4e1fc04ce2b,Bagagiste,3.334905,-1.4080292
+OFFRE_EMPLOI,OFFRE_011316_4bbf5b761776,Responsable Formation,3.1989305,-1.3399491
+OFFRE_EMPLOI,OFFRE_013396_cf90d5af996c,Technicien Qualifié De Laboratoire,2.0436454,-1.6271623
+OFFRE_EMPLOI,OFFRE_009620_4621d34e80ad,Commercial (H/F),-0.8248583,3.3107316
+OFFRE_EMPLOI,OFFRE_003782_44bfaf1629db,RECRUTEMENT DES TELEVENDEURS,-0.5421069,4.0052223
+OFFRE_EMPLOI,OFFRE_004681_dea3716d8613,05 Vendeurs (H/F),-0.3656024,3.807079
+OFFRE_EMPLOI,OFFRE_007150_58dfdde28806,02 CHARGE D’AFFAIRES H/F,-0.24395742,3.8868072
+OFFRE_EMPLOI,OFFRE_004267_fb1d3bac5354,N°00045/4/2024 Un-E Responsable Achats,0.97637403,-5.537767
+OFFRE_EMPLOI,OFFRE_012168_a535aa2a15f5,Cariste,1.6802173,-4.6663966
+OFFRE_EMPLOI,OFFRE_007362_0429843b1b0c,SUPERVISEUR PARC A CONTENEURS H/F,0.95744497,-5.684261
+OFFRE_EMPLOI,OFFRE_006644_b60ca8904933,(10) Commerciaux,0.004956622,3.584962
+OFFRE_EMPLOI,OFFRE_001779_fedfaba8a955,Cuisinier Domestique,7.8748965,-0.6423291
+OFFRE_EMPLOI,OFFRE_007035_7d2560ce7c4c,Offre: STAGIAIRE EN DEVELOPPEMENT COMMERCIAL,-0.48151946,4.0075517
+OFFRE_EMPLOI,OFFRE_011726_1b2a347d43e7,Stagiaire Juridique Et Fiscal,-1.3771079,0.58913946
+OFFRE_EMPLOI,OFFRE_007369_8fe503b9494d,TECHNICIEN Polyvalent (H/F),0.6162355,3.9164765
+OFFRE_EMPLOI,OFFRE_010933_edd16d980e07,Téléopérateur Bilingue (H/F) - Yaoundé,0.988171,-5.2561164
+OFFRE_EMPLOI,OFFRE_002402_e4689ef6b90f,Cadre comptable,7.890553,-0.7409595
+OFFRE_EMPLOI,OFFRE_012318_0bee668da806,Aide Laborantin,2.818642,-1.452398
+OFFRE_EMPLOI,OFFRE_006075_ea3e2dae12bd,RESPONSABLE COMMERCIALE,-0.1759191,3.566055
+OFFRE_EMPLOI,OFFRE_002808_b76503769519,"HEALTH OFFICER (Emergency), NO-2",-0.9150251,4.97677
+OFFRE_EMPLOI,OFFRE_000576_a7c64653a2a7,Gestionnaire des ressources humaines,7.4705253,-0.6912326
+OFFRE_EMPLOI,OFFRE_011762_9014fda7af3d,Plombier,3.300519,-1.3685458
+OFFRE_EMPLOI,OFFRE_001712_7729289118a0,Contrôleur du travail,4.2466187,-2.352284
+OFFRE_EMPLOI,OFFRE_012637_4622e6413385,Assistant Social,3.2391937,-1.4184748
+OFFRE_EMPLOI,OFFRE_006660_10604af7658c,Logistics Manager Cameroon ( National Position) | NRC - Norwegian Refugee Council,0.5855471,3.9300594
+OFFRE_EMPLOI,OFFRE_012559_d75bf3eae419,Technicien Achats Matériels Et Services Exploitation,2.9495425,-2.2482297
+CANDIDAT,PPPNR2509260045241,Électricien,1.576673,-3.0488236
+CANDIDAT,PPBZV2506180032631,Gestionnaire comptable et financière,2.2560744,1.499436
+CANDIDAT,PPPNR2509300045664,Chauffeur de poids lourd,2.6549113,-5.9274473
+CANDIDAT,PPBZV2511190051912,Agent d'escale,1.6159117,-5.2718873
+CANDIDAT,PPPNR2506190032771,Magasinier,2.3484328,-3.5873783
+CANDIDAT,PPPNR2508310040345,Electricité Indistruel,1.8130383,-3.0016658
+CANDIDAT,PPPNR2508200039212,Chauffeur,2.165718,-5.107294
+CANDIDAT,PPPNR2503130022809,Agent Commercial,2.391623,0.23210917
+CANDIDAT,PPPNR2507160035663,Réseaux et télécommunication -,-3.0607395,2.4145453
+CANDIDAT,PPPNR2509110042335,Logistique Transite et Commerce International,1.5931704,-5.2994404
+CANDIDAT,PPPNR2507010033982,Informaticien,-2.8696444,2.6032603
+CANDIDAT,PPBZV2505190028976,Mécanicien automobile,1.8720926,-3.7058227
+CANDIDAT,PPBZV2502130020218,Informaticien,-2.9134705,2.7104356
+CANDIDAT,PPPNR2509250044939,maintenance industrielle,2.1617944,-2.888296
+CANDIDAT,PPPNR2512090054561,PRODUCTION PETROLIERE,1.699306,-3.6563315
+CANDIDAT,PPLIK2504170026181,Maçon,-4.0591183,-4.987269
+CANDIDAT,PPBZV2509090041568,Agent Technicien,2.059637,-2.7118895
+CANDIDAT,PPPNR2510070046817,Chauffeur grumier,2.1160948,-4.946502
+CANDIDAT,PPPNR2503170023093,Chauffeur,2.1712503,-4.837454
+CANDIDAT,PPBZV2506120031954,gestion de clients,1.8635986,0.23799111
+CANDIDAT,PPPNR2501140017015,Etudiante,-4.5384617,0.14985016
+CANDIDAT,PPPNR2510210048325,Peintre / Echafaudeur,-4.4153337,-4.8452005
+CANDIDAT,PPBZV2501070016145,Caissier(e),2.2169573,1.6012127
+CANDIDAT,PPBZV2508130038531,Manœuvre,-4.670885,-5.5335507
+CANDIDAT,PPPNR2506240033170,Logistique et transport,1.5161977,-5.267797
+CANDIDAT,PPPNR2503240023786,OPERATEUR GRUTIER,2.2552502,-3.2374434
+CANDIDAT,PPBZV2502060019630,Chef Comptable,2.2937465,1.4900405
+CANDIDAT,PPBZV2506110031752,Manœuvre,-4.660575,-5.5031548
+CANDIDAT,PPBZV2511110050932,Conseiller client,2.05716,0.2739076
+CANDIDAT,PPPNR2511220052284,Administration et des Ressources Humaines,1.0539882,1.3168745
+CANDIDAT,PPBZV2512180056160,Pisciculteur,2.3468688,-3.2513497
+CANDIDAT,PPBZV2506040031111,Agent Commercial,2.3688297,0.24173032
+CANDIDAT,PPBZV2505220029479,Chauffeur,2.2244904,-5.082033
+CANDIDAT,PPBZV2510160047727,Agent de sécurité,0.92618924,0.10170454
+CANDIDAT,PPBZV2501040015852,Agent d'opération à la clientèle,2.2870834,0.32758927
+CANDIDAT,PPBZV2505300030202,Etudiant,-4.5246654,0.13152947
+CANDIDAT,PPBZV2506230033014,Manœuvre,-4.651725,-5.5451417
+CANDIDAT,PPBZV2510210048447,"Cadre Finances, Comptabilité et Gestion",2.3292203,1.4540944
+CANDIDAT,PPPNR2504110025487,APS,1.0284824,0.18440686
+CANDIDAT,PPPNR2512100054793,QHSE,1.548633,0.51239884
+CANDIDAT,PPPNR2505150028591,Manœuvre,-4.8614216,-4.838105
+CANDIDAT,PPPNR2511160051490,ASSISTANT (E) RESSOURCES HUMAINES (H/F),1.1179785,1.2216591
+CANDIDAT,PPPNR2503270024148,Comptabilité,2.1844072,1.639282
+CANDIDAT,PPPNR2511110050835,Génie Electrique,1.5180775,-3.112366
+CANDIDAT,PPBZV2503120022674,Assistante Ressources Humaines,1.1438196,1.2232361
+CANDIDAT,PPBOU2507230036375,Applicateur de produits phytosanitaires (herbicides),0.44787902,-2.2456908
+CANDIDAT,PPBZV2501060016052,Assistante comptable,2.2936153,1.491539
+CANDIDAT,PPPNR2503030021689,APS,1.0354773,0.21102408
+CANDIDAT,PPBZV2508260039826,Manœuvre,-4.828294,-4.8592525
+CANDIDAT,PPBZV2511210052195,Gestionnaire de Stock,2.183893,-4.839568
+CANDIDAT,PPPNR2502020019165,Grutier,2.1173925,-4.5823507
+CANDIDAT,PPBOU2508200039240,Aide ferrailleur,2.1792142,-3.2946997
+CANDIDAT,PPBOU2511270052876,Chauffeur de poids lourd,2.5875683,-5.9365406
+CANDIDAT,PPPNR2502250021229,"Qualité, Hygiène, Sécurité et Environnement",1.4217075,0.26784337
+CANDIDAT,PPBZV2508130038482,Logisticien,1.6517001,-5.3766694
+CANDIDAT,PPBZV2509270045345,Commerciale,2.3010511,0.12955669
+CANDIDAT,PPBZV2512110055125,Agriculteur,2.4359336,-3.241028
+CANDIDAT,PPPNR2510070046796,Opérateur pétrolier,1.4308227,-3.7926886
+CANDIDAT,PPBZV2504080025231,Etudiante,-4.5761747,0.20802195
+CANDIDAT,PPBZV2507190035986,Agent Administratif,1.3616174,1.0246114
+CANDIDAT,PPPNR2511130051313,maintenance industrielle,2.1477833,-2.950498
+CANDIDAT,PPBZV2511260052677,Agent Commercial,2.3799376,0.35841516
+CANDIDAT,PPBZV2510060046503,Chauffeur/Mécanicien,2.0734992,-4.6792684
+CANDIDAT,PPBZV2512160055656,Administrateur Systèmes Informatique,-3.020193,2.65911
+CANDIDAT,PPBZV2509010040408,Manœuvre,-4.6615243,-5.5570974
+CANDIDAT,PPBZV2512080054260,Juriste,-1.3940972,0.60391104
+CANDIDAT,PPBZV2506030030715,Administration du personnel,0.94206846,1.3386132
+CANDIDAT,PPPNR2502170020447,Technicien,1.9640433,-2.6220818
+CANDIDAT,PPBZV2511030049938,Électricien,1.5664775,-3.055512
+CANDIDAT,PPBZV2505050027395,Ferrailleur,-4.465052,-4.8674216
+CANDIDAT,PPPNR2507280036811,Marketing,2.349743,0.24499433
+CANDIDAT,PPPNR2509010040440,chauffeur de poid lourd,2.6371658,-5.8858213
+CANDIDAT,PPPNR2501310019116,Informaticien,-2.9199526,2.7060068
+CANDIDAT,PPPNR2506170032429,Géologue,-4.29223,-4.773065
+CANDIDAT,PPPNR2508180038980,Informaticien,-2.894078,2.602083
+CANDIDAT,PPBZV2510170047924,Manœuvre,-4.859996,-4.842495
+CANDIDAT,PPBZV2505090027872,Plombier,-4.4671836,-5.0588717
+CANDIDAT,PPPNR2510240048899,Assistant Chef de Projet,-0.2057276,-1.0691198
+CANDIDAT,PPPNR2509290045560,Cariste,1.6152506,-5.1174436
+CANDIDAT,PPBZV2506100031620,Comptabilité et Gestion Financière,2.0441003,1.7169155
+CANDIDAT,PPPNR2511140051345,Chauffeur Semi-Remorque,2.3404374,-5.1886864
+CANDIDAT,PPBZV2509290045626,assurance banque et finance,2.2528865,1.3603885
+CANDIDAT,PPBZV2512190056270,Administrateur,1.3317605,1.0738748
+CANDIDAT,PPBZV2510130047534,Manœuvre,-4.664778,-5.5298343
+CANDIDAT,PPBZV2506290033799,Géographe,-3.3025925,-1.5805781
+CANDIDAT,PPPNR2509040040991,Manutentionnaire,1.4684532,-5.047964
+CANDIDAT,PPPNR2510060046591,Comptable,2.333121,1.4841919
+CANDIDAT,PPBZV2506170032373,Maçon,-4.0468316,-4.9555078
+CANDIDAT,PPBZV2512030053753,Ingénieur procédés industriels,1.4574422,-2.7553005
+CANDIDAT,PPPNR2509180043770,Assistant comptable,2.1900406,1.6153227
+CANDIDAT,PPPNR2502060019638,Infirmier,1.3839504,-0.5744266
+CANDIDAT,PPPNR2502180020694,Soudeur,2.3373432,-3.273772
+CANDIDAT,PPPNR2501300018850,Ingénieur,1.4294406,-2.6868346
+CANDIDAT,PPNIA2512090054493,Pisciculteur,2.413056,-3.3580859
+CANDIDAT,PPBZV2508260039821,Etudiant,-4.5574613,0.1658367
+CANDIDAT,PPBZV2502250021252,Maçon Coffrage,-4.137398,-4.991112
+CANDIDAT,PPBZV2506120031869,Manœuvre,-4.86344,-4.8221574
+CANDIDAT,PPBZV2509100042041,Administrateur réseau telecom,-3.1052444,2.4298573
+CANDIDAT,PPPNR2507250036622,Juriste,-1.4008135,0.61213756
+CANDIDAT,PPBZV2510130047498,Peintre,-4.412858,-4.844095
+CANDIDAT,PPBZV2503130022865,Manœuvre,-4.6664057,-5.525614
+CANDIDAT,PPBZV2504130025614,Mécanicien,1.9070029,-3.6404529
+CANDIDAT,PPBZV2509160043315,Comptable,2.330639,1.4462159
+CANDIDAT,PPPNR2509260045135,Bâtiment,-4.4416947,-4.8321657
+CANDIDAT,PPPNR2504040024926,Tuyauteur/Chaudronnier,2.1212797,-3.5060115
+CANDIDAT,PPPNR2501050015889,Ingénieur de production,1.4254727,-2.7619894
+CANDIDAT,PPPNR2502200020896,Management Commercial,2.355655,0.23877177
+CANDIDAT,PPPNR2507150035531,Technicien en assurance,2.0694873,1.1493198
+CANDIDAT,PPBZV2512080054126,vendeur/vendeuse en pharmacie.,1.8486989,-0.20517229
+CANDIDAT,PPPNR2512050053942,Informaticien,-2.8924375,2.6173549
+CANDIDAT,PPBZV2503190023345,Gestionnaire comptable et financière,2.057327,1.6774726
+CANDIDAT,PPPNR2512020053434,Informaticien,-2.9592614,2.7038796
+CANDIDAT,PPBZV2511110050890,Logisticien,1.7155305,-5.36394
+CANDIDAT,PPPNR2505170028882,Cariste,1.6255447,-5.1111465
+CANDIDAT,PPBZV2508180038854,Chauffeur,2.180479,-5.035507
+CANDIDAT,PPPNR2502120020144,Commerciale,2.271678,0.14363208
+CANDIDAT,PPBZV2505020027210,Chauffeur,2.15093,-4.870666
+CANDIDAT,PPPNR2509210044192,Assistant(e) HSE,1.4904844,0.74485093
+CANDIDAT,PPBZV2512220056477,Assistante de direction,1.0072087,1.1557997
+CANDIDAT,PPBZV2506040031048,Maçon Coffrage,-4.1114645,-4.991921
+CANDIDAT,PPPNR2508300040307,Génie Industriel Maintenance et Production,2.0402448,-3.0513933
+CANDIDAT,PPPNR2509300045758,Douanier maritime,1.2082849,-5.1748195
+CANDIDAT,PPPNR2508140038670,Mécanique Auto,1.8634006,-3.7217228
+CANDIDAT,PPPNR2509290045520,Administrateur de systèmes et réseaux,-3.0484133,2.4364154
+CANDIDAT,PPKOU2505150028535,APS,1.0228586,0.19550583
+CANDIDAT,PPBZV2511180051805,Assistant(e) logistique et transport,1.5555447,-5.2620845
+CANDIDAT,PPBOU2504290026907,Aide Magasinier,2.0530822,-4.4595027
+CANDIDAT,PPBZV2505090027788,Etudiant,-4.555964,0.18735342
+CANDIDAT,PPPNR2511120051146,Secrétariat,1.3365443,1.061777
+CANDIDAT,PPBZV2511060050350,Etudiant,-4.555585,0.1654016
+CANDIDAT,PPBZV2501100016593,Logistique et transport,1.5269017,-5.3056417
+CANDIDAT,PPPNR2506120031904,chauffeur de poid lourd,2.5559998,-5.8452153
+CANDIDAT,PPBZV2509260045133,Marketing,2.3258584,0.17988138
+CANDIDAT,PPBZV2506230033120,Agent Commercial,2.3320923,0.39298257
+CANDIDAT,PPPNR2506180032649,Gestionnaire relation client,1.9364775,0.25558463
+CANDIDAT,PPPNR2504290026914,APS,1.0601671,0.18528152
+CANDIDAT,PPPNR2507220036230,Commercial,2.262678,0.15196235
+CANDIDAT,PPPNR2510240048849,Secrétaire,0.9185149,0.9157697
+CANDIDAT,PPPNR2503180023255,Agent Logistique,1.6027684,-5.455417
+CANDIDAT,PPPNR2508230039674,chauffeur de poid lourd,2.6175582,-5.881863
+CANDIDAT,PPBZV2503060022208,Administration du personnel,1.1342344,1.2381837
+CANDIDAT,PPBZV2501030015813,Greser huile,2.3280363,-3.304941
+CANDIDAT,PPPNR2506120031884,Echafaudeur,-4.4551454,-4.8901567
+CANDIDAT,PPPNR2508110038308,Etudiant,-4.6053257,0.19426371
+CANDIDAT,PPPNR2506170032443,Tuyauteur/Chaudronnier,2.233602,-3.335298
+CANDIDAT,PPPNR2511120051053,ASSISTANT (E) RESSOURCES HUMAINES (H/F),1.1311384,1.2008449
+CANDIDAT,PPBOU2509300045681,Manœuvre,-4.864857,-4.827424
+CANDIDAT,PPPNR2505150028448,Chauffeur,2.2330513,-4.7162013
+CANDIDAT,PPPNR2502060019598,SONDEUR,1.7255723,-3.7531745
+CANDIDAT,PPBZV2509180043751,Comptabilité et gestion d'entreprise,2.0688264,1.7455676
+CANDIDAT,PPBZV2512030053721,Comptabilité,2.2471905,1.5842347
+CANDIDAT,PPBZV2502240021097,machiniste,2.1458051,-3.0014436
+CANDIDAT,PPSAN2512190056331,Chefs d'Equipe / Superviseurs (H/F),-0.22624302,-0.848098
+CANDIDAT,PPBOU2512260056803,Opérateur conditionneuse 1 kilo,2.203388,-2.9322197
+CANDIDAT,PPPNR2507290037104,comptable et contrôle de gestion,2.0381832,1.7472283
+CANDIDAT,PPBZV2508290040228,Manœuvre,-4.8569975,-4.8334403
+CANDIDAT,PPKOU2510140047706,Secrétaire de direction,1.1833041,1.1370802
+CANDIDAT,PPBZV2502100019822,Manœuvre,-4.766443,-5.3206663
+CANDIDAT,PPPNR2504300027072,Dessinateur projeteur,-4.5474205,-5.3369737
+CANDIDAT,PPPNR2508210039482,Technicien en mécanique industrielle,2.0298235,-2.986972
+CANDIDAT,PPLEK2508220039527,Ménagère,-4.8256445,-4.729272
+CANDIDAT,PPBZV2512160055711,Call center,2.3362212,0.48607495
+CANDIDAT,PPPNR2503170023077,Mécanicien,1.8974313,-3.611805
+CANDIDAT,PPPNR2510060046528,Juriste,-1.3946033,0.5887904
+CANDIDAT,PPPNR2505060027468,Opérateur pétrolier,1.4479152,-3.7598033
+CANDIDAT,PPPNR2502140020318,Technicien de maintenance,2.1360812,-2.894873
+CANDIDAT,PPBZV2510010045985,maintenancier,2.2145495,-2.9935634
+CANDIDAT,PPBZV2501310019081,Électricien,1.5505167,-3.0584629
+CANDIDAT,PPPNR2509110042284,Gérant,2.089406,0.13442929
+CANDIDAT,PPBZV2512180056118,Manœuvre,-4.688318,-5.5452466
+CANDIDAT,PPBZV2505170028857,Juriste,-1.3759558,0.55856377
+CANDIDAT,PPLIK2502260021305,Manœuvre,-4.668308,-5.530188
+CANDIDAT,PPPNR2508220039657,Instrumentiste,2.176955,-2.8734536
+CANDIDAT,PPBOU2507180035878,Glanage agricole,2.3945293,-3.4083967
+CANDIDAT,PPBZV2505280030036,Etudiant,-4.5512195,0.1586421
+CANDIDAT,PPAUT2508020037499,Aide - Mécanicien,2.043738,-3.601447
+CANDIDAT,PPPNR2508280040107,Logistique et transport,1.6107998,-5.349348
+CANDIDAT,PPPNR2505200029188,Etudiante,-4.5593166,0.2065452
+CANDIDAT,PPPNR2508200039259,Chauffeur,2.1574078,-4.8864803
+CANDIDAT,PPBOU2507040034463,coupeur,2.3672705,-3.422392
+CANDIDAT,PPPNR2510140047603,Chauffeur de poids lourd,2.6500988,-5.914757
+CANDIDAT,PPBZV2508130038481,Chauffeur,1.9938486,-4.8638625
+CANDIDAT,PPBZV2511040050074,Informaticien,-2.8319979,2.6174142
+CANDIDAT,PPPNR2504290027002,Chauffeur,2.2010484,-5.1031303
+CANDIDAT,PPPNR2510030046297,Chauffeur de poids lourd,2.6031353,-5.8793144
+CANDIDAT,PPBZV2505280030121,Ouvrier,-4.551712,-5.2058797
+CANDIDAT,PPBZV2505120027993,chauffeur poids lourds,2.6764836,-5.9391804
+CANDIDAT,PPBZV2506050031128,Agent Technicien,-2.867952,2.2873993
+CANDIDAT,PPLEK2503110022519,Peintre en bâtiment,-4.406992,-4.9280486
+CANDIDAT,PPPNR2510030046281,Logistique et transport,1.4914147,-5.2755904
+CANDIDAT,PPBZV2512080054266,Assistant des ressources humaines,1.1737708,1.2185843
+CANDIDAT,PPPNR2512290056976,Technicien de maintenance,2.121026,-2.8665385
+CANDIDAT,PPBZV2509020040622,Assistant administratif et financier,1.7020601,1.3702272
+CANDIDAT,PPBZV2501030015829,Caissière,2.2322707,1.6018693
+CANDIDAT,PPPNR2509090041685,Chauffeur,2.1912227,-4.8597445
+CANDIDAT,PPBZV2502100019904,Ferailleur,-4.3662558,-4.81752
+CANDIDAT,PPBZV2505160028697,Diplômé sans emploi,-4.58375,0.12626259
+CANDIDAT,PPBZV2503140022938,Coffreur,-4.451879,-4.951323
+CANDIDAT,PPBZV2503190023344,Administrateur réseau,-3.125564,2.4723356
+CANDIDAT,PPPNR2508120038435,Logistique et transport,1.4517059,-5.2132473
+CANDIDAT,PPPNR2509160043191,Cuisiner,-0.45971957,1.4616491
+CANDIDAT,PPPNR2506030030644,chauffeur poids lourds,2.547868,-5.824729
+CANDIDAT,PPBZV2506070031522,Informaticien,-2.9714382,2.7371678
+CANDIDAT,PPPNR2509230044430,Etudiante,-4.5887456,0.19883189
+CANDIDAT,PPBZV2511300053118,Informaticien,-2.9080296,2.5178285
+CANDIDAT,PPPNR2506270033754,Assistant comptable,2.2337337,1.4538648
+CANDIDAT,PPPNR2502270021478,Acheteur,2.1459615,-5.433606
+CANDIDAT,PPPNR2512150055543,Tuyauteur/Chaudronnier,2.154819,-3.4471488
+CANDIDAT,PPPNR2506280033771,Assistant administratif et financier,1.7243443,1.3420075
+CANDIDAT,PPBZV2512090054519,Chargé de communication,-2.6742632,1.3549467
+CANDIDAT,PPBZV2511210052166,Commercial & Marketing Manager,2.3484962,0.2233389
+CANDIDAT,PPPNR2512090054387,Réseaux et télécommunication -,-3.0135994,2.3769054
+CANDIDAT,PPPNR2510210048357,Marin,1.7178106,-4.951598
+CANDIDAT,PPBZV2511300053123,Banque et finance,2.3101158,1.4037064
+CANDIDAT,PPBZV2505190029028,Technicienne,2.016192,-2.701676
+CANDIDAT,PPPNR2505070027568,Agent de sécurité,0.99093777,0.154404
+CANDIDAT,PPBZV2512150055463,Manœuvre,-4.8730235,-4.840725
+CANDIDAT,PPPNR2502130020236,Soudeur,2.33224,-3.23941
+CANDIDAT,PPBZV2501280018727,Diplômé sans emploi,-4.5584106,0.1591639
+CANDIDAT,PPLEK2503180023220,Carreleur,-4.430671,-4.83746
+CANDIDAT,PPPNR2508050037839,Agent d'entretien,0.82910866,0.19770767
+CANDIDAT,PPPNR2509160043096,Chauffeur de poids lourd,2.6623104,-5.934935
+CANDIDAT,PPBZV2501240018206,Manœuvre,-4.871989,-4.8387384
+CANDIDAT,PPBZV2511060050300,Magasinier,2.1775267,-3.4892612
+CANDIDAT,PPPNR2511240052367,Administrateur,1.1903245,1.1114492
+CANDIDAT,PPNIA2512110054999,Agents de santé communautaire,0.6260118,-0.4612398
+CANDIDAT,PPBZV2512230056645,Administration et des Ressources Humaines,1.0543572,1.2658565
+CANDIDAT,PPPNR2511100050683,Ressource Humaine,1.0772192,1.2790364
+CANDIDAT,PPPNR2507140035365,Secrétaire,1.0226353,1.0506165
+CANDIDAT,PPBZV2510200048232,Manœuvre,-4.8694243,-4.8261485
+CANDIDAT,PPBZV2511250052528,Responsable Technique,2.1961322,-2.9132864
+CANDIDAT,PPBZV2502260021367,Environnement sécurité,1.2725841,0.073834516
+CANDIDAT,PPPNR2502110019971,Mécanicien,1.8681097,-3.651535
+CANDIDAT,PPPNR2506250033463,Automaticien,2.160673,-2.817546
+CANDIDAT,PPPNR2503280024255,Homme de pont,1.0107934,-4.671481
+CANDIDAT,PPBZV2511240052389,Magasinier,2.374242,-3.4662907
+CANDIDAT,PPPNR2509160043386,Informaticien,-2.9757817,2.7616878
+CANDIDAT,PPBOU2512100054784,Mécanicien moteur,1.8940736,-3.5961394
+CANDIDAT,PPSAN2508230039700,Magasinier,2.3175256,-3.3834765
+CANDIDAT,PPPNR2509050041190,Comptabilité et Gestion Financière,2.1254454,1.6174692
+CANDIDAT,PPPNR2506120031915,Instrumentiste,2.170525,-2.83337
+CANDIDAT,PPPNR2506200032897,vendeur/vendeuse en pharmacie.,1.8051512,-0.25787634
+CANDIDAT,PPBOU2507290037074,Conducteur d'engins,0.21151273,-3.8355515
+CANDIDAT,PPPNR2509020040584,HSE Superintendent,1.5274107,0.7319348
+CANDIDAT,PPBZV2501170017465,Administrateurs de systèmes,-3.0543494,2.505506
+CANDIDAT,PPBZV2501060015953,Pompiste,2.769197,-5.683703
+CANDIDAT,PPBOU2512310057165,Soudeur,2.3018556,-3.330388
+CANDIDAT,PPBOU2511070050511,Électricien,1.6263758,-3.0909257
+CANDIDAT,PPBZV2501240018287,Chauffeur,2.0335233,-4.8307242
+CANDIDAT,PPBZV2504070025065,Chauffeur,2.1970901,-5.0804043
+CANDIDAT,PPBZV2509180043877,Management d'Entreprise,-0.5045722,0.779232
+CANDIDAT,PPBZV2501290018736,Administrateur réseau,-3.1630027,2.3459237
+CANDIDAT,PPPNR2507250036612,Enseignant(e),-2.2684817,0.69746035
+CANDIDAT,PPBZV2504060025028,Électricien,1.480069,-3.0469458
+CANDIDAT,PPBZV2502130020257,Comptabilité et Gestion Financière,2.2632341,1.4248357
+CANDIDAT,PPLEK2508220039518,Maçon / Ferailleur,-4.0911193,-4.974476
+CANDIDAT,PPBZV2506240033265,Secrétaire de direction,1.1340593,1.207796
+CANDIDAT,PPBZV2502210020923,APS,1.0086843,0.18760361
+CANDIDAT,PPBZV2501270018408,Banque et microfinance,2.2904763,1.4238237
+CANDIDAT,PPBZV2509030040734,Manœuvre,-4.728997,-5.4503775
+CANDIDAT,PPBZV2510280049266,Vendeuse,2.1281357,0.042946763
+CANDIDAT,PPPNR2503270024091,Chauffeur de poids lourd,2.629929,-5.902238
+CANDIDAT,PPPNR2504290026934,Chauffeur,2.1651013,-4.888652
+CANDIDAT,PPBZV2511270052906,Agent Commercial,2.416459,0.28000662
+CANDIDAT,PPPNR2508260039757,chauffeur de poid lourd,2.5839517,-5.8528414
+CANDIDAT,PPPNR2503060022117,Qualité Hygiène sécurité et Environnement,1.4866377,0.47640678
+CANDIDAT,PPPNR2506180032542,chauffeur de poid lourd,2.6239817,-5.9025383
+CANDIDAT,PPBZV2506180032536,Agent back office,2.2121954,1.0285491
+CANDIDAT,PPBZV2504130025607,agent de comptoir,-0.28205857,1.4635565
+CANDIDAT,PPPNR2503130022824,Etudiant(e),-4.5061455,0.121948175
+CANDIDAT,PPBZV2505210029232,Maçon,-4.1256895,-4.999788
+CANDIDAT,PPPNR2508200039291,Infirmière,1.3885366,-0.56066716
+CANDIDAT,PPBZV2512090054501,Comptable,2.3031015,1.4990125
+CANDIDAT,PPPNR2512100054755,chauffeur de poid lourd,2.602688,-5.8829336
+CANDIDAT,PPPNR2506160032355,Agent Administratif,1.3682688,1.0385711
+CANDIDAT,PPPNR2506250033383,Dessinateur projeteur,-4.5205264,-5.2702446
+CANDIDAT,PPPNR2504140025692,Technicien Fibre,-2.913803,2.7004547
+CANDIDAT,PPPNR2507280036827,chauffeur de poid lourd,2.5924513,-5.8609333
+CANDIDAT,PPPNR2510060046660,Administrateur réseau telecom,-3.1403704,2.446644
+CANDIDAT,PPPNR2508010037431,Réceptionniste,-0.44642422,1.5726262
+CANDIDAT,PPPNR2505130028170,Administrateur,1.1146779,1.0762084
+CANDIDAT,PPPNR2506060031421,Laborantin,2.2101417,-2.7669861
+CANDIDAT,PPBZV2510130047557,Agent QHSE,1.5392617,0.59927744
+CANDIDAT,PPBZV2505150028613,Développeur web,-2.2585082,2.6643605
+CANDIDAT,PPPNR2511050050216,Agent Administratif,1.3256782,1.0649108
+CANDIDAT,PPBZV2509200044148,Agent Commercial,2.3827503,0.26571366
+CANDIDAT,PPBZV2503270024173,Comptabilité et Gestion Financière,2.1278324,1.6649282
+CANDIDAT,PPPNR2511050050178,chauffeur de poid lourd,2.5806437,-5.844217
+CANDIDAT,PPBZV2511250052616,Economiste,-1.5203303,0.4607957
+CANDIDAT,PPBZV2506020030393,Chimiste,1.5472395,-0.58410114
+CANDIDAT,PPBZV2507250036677,Manœuvre,-4.686404,-5.548589
+CANDIDAT,PPBZV2502190020819,Logisticien,1.6127361,-5.355731
+CANDIDAT,PPBZV2508290040127,Community manager,0.76883215,1.1235751
+CANDIDAT,PPBZV2510300049553,Pharmacien / Vendeur en pharmacie,1.5256506,-0.5357864
+CANDIDAT,PPBZV2502010019131,aide maçon,-4.0440836,-4.963649
+CANDIDAT,PPPNR2501290018778,Logisticienne,1.7265134,-5.4147425
+CANDIDAT,PPPNR2511190051850,Electricien (H/F),1.6129019,-3.014235
+CANDIDAT,PPBZV2506020030587,Agent de Prévention et de Sécurité,0.96469855,0.13629712
+CANDIDAT,PPPNR2505210029328,Chauffeur,2.2516594,-4.9761252
+CANDIDAT,PPBOU2510100047162,chhauffeur mecanicien,2.0087724,-4.7105193
+CANDIDAT,PPPNR2507210036113,Technicien en génie civil,1.9390697,0.9482823
+CANDIDAT,PPBZV2501220018023,Agent Commercial,2.4175575,0.25393686
+CANDIDAT,PPPNR2510010045904,Logistique et transport,1.503041,-5.245124
+CANDIDAT,PPCUV2508050037813,Informaticien,-2.9527764,2.7507408
+CANDIDAT,PPPNR2509280045404,Chef de Rong,2.445365,-3.3977513
+CANDIDAT,PPPNR2512310057205,Electromécanique,1.8102695,-2.8112602
+CANDIDAT,PPPNR2505130028110,Technicien de fibre optique,-2.9110792,2.7456489
+CANDIDAT,PPPNR2508030037523,Agent de banque,2.2921133,1.2962202
+CANDIDAT,PPBZV2510130047436,Peintre,-4.4443846,-4.8252354
+CANDIDAT,PPBZV2511100050750,Manœuvre,-4.852269,-4.8415236
+CANDIDAT,PPBOU2512170055949,Mécanicien,1.8035692,-3.583473
+CANDIDAT,PPBZV2507280036790,Technicien de surface,1.8552423,-2.4245741
+CANDIDAT,PPPNR2509030040720,Soudeur,2.3799484,-3.2374284
+CANDIDAT,PPPNR2511120051006,Chauffeur de poids lourd,2.6503654,-5.9173775
+CANDIDAT,PPBZV2509300045815,Gestionnaire de portefeuille,2.0132241,1.7819364
+CANDIDAT,PPPNR2501130016814,Technicienne NOC,-2.8817585,2.656419
+CANDIDAT,PPBZV2510090047111,Serveuse,-0.45316464,1.4670575
+CANDIDAT,PPBZV2504090025322,Gestionnaire comptable et financière,2.2450202,1.4386231
+CANDIDAT,PPPNR2505140028403,Chauffeur,2.2209682,-4.890354
+CANDIDAT,PPBZV2512050053978,Chauffeur,2.2635965,-4.9501905
+CANDIDAT,PPBZV2503010021640,Assistant de direction,1.0930575,1.1867936
+CANDIDAT,PPPNR2506170032432,Chauffeur,2.1871986,-5.0541515
+CANDIDAT,PPBZV2501220018051,Chauffeur livreur,2.1866148,-4.85784
+CANDIDAT,PPBZV2508110038306,Pompiste,2.666443,-5.8023615
+CANDIDAT,PPBZV2506020030507,Administrateur réseau,-3.1228576,2.5549414
+CANDIDAT,PPBZV2501170017444,Manœuvre,-4.6899786,-5.540387
+CANDIDAT,PPBZV2510040046452,Etudiante,-4.5854936,0.16746154
+CANDIDAT,PPBZV2501210017913,Manœuvre,-4.6814604,-5.5070105
+CANDIDAT,PPBZV2501160017439,Assistant HSE,1.5244257,0.7412356
+CANDIDAT,PPBZV2502240021159,Agent Commercial,2.4524534,0.2970822
+CANDIDAT,PPLIK2502020019155,Maçon,-4.0430956,-5.0002394
+CANDIDAT,PPBZV2509240044801,Agent de sécurité,0.973611,0.15025692
+CANDIDAT,PPBZV2506170032387,Agent de sécurité,1.0151231,0.15435725
+CANDIDAT,PPBZV2509050041243,Agent d'Accueil,-0.3221184,1.4189268
+CANDIDAT,PPBZV2503050021961,Electromécanique,1.810884,-2.8602293
+CANDIDAT,PPBZV2507240036448,Agent Administratif,1.3430133,1.0661324
+CANDIDAT,PPPNR2511260052716,Réseaux et télécommunication -,-3.0505338,2.3241918
+CANDIDAT,PPBZV2503030021782,Chargée de relation client,2.0584044,0.23599198
+CANDIDAT,PPBZV2506180032661,Administrateur de systèmes et réseaux,-3.1116738,2.501033
+CANDIDAT,PPPNR2509160043126,Tuyauteur / Echaffaudeur / Peintre,2.216466,-3.324895
+CANDIDAT,PPBZV2503280024291,Technicien en génie civil,1.9165909,0.9529601
+CANDIDAT,PPPNR2501080016314,Agent d'entretien,0.8322084,0.07514001
+CANDIDAT,PPPNR2507160035671,Logistique et transport,1.4692856,-5.2639103
+CANDIDAT,PPBZV2503110022574,Agent de sécurité,0.932882,0.22184716
+CANDIDAT,PPBZV2509100041891,Agent QHSE,1.5454273,0.6617328
+CANDIDAT,PPPNR2511270052860,Chauffeur,2.1656768,-5.0964594
+CANDIDAT,PPPNR2506200032864,maintenance industrielle,2.2067084,-2.9356759
+CANDIDAT,PPPNR2509250044865,Informaticien,-2.995106,2.6387827
+CANDIDAT,PPBZV2508120038370,Réceptionniste,-0.4559518,1.5983751
+CANDIDAT,PPBZV2511040050063,Juriste,-1.4212574,0.6137843
+GROUPE_BASE_MEPC,4402,Travailleurs du secteur des sports et des activités de remise en forme,-2.186762,-0.031091433
+GROUPE_BASE_MEPC,6408,Autres conducteurs de machines et d'installations fixes,-0.03377005,-3.7094495
+GROUPE_BASE_MEPC,7210,Plombiers en bâtiment,-1.9438729,-2.9504483
+GROUPE_BASE_MEPC,7303,Tôlier-Chaudronnier,-1.2605008,-3.7282808
+GROUPE_BASE_MEPC,3202,Cadres infirmiers et sages-femmes,0.9095389,-0.5928419
+GROUPE_BASE_MEPC,1203,Eleveurs de porcins,-1.5258415,-2.2288358
+GROUPE_BASE_MEPC,3106,Autres personnels spécialistes des sciences et techniques,-2.4893115,0.12768832
+GROUPE_BASE_MEPC,4203,Praticiens des médecines traditionnelles et des médecines complémentaires,0.9592519,-0.6936882
+GROUPE_BASE_MEPC,7301,Soudeur/cuviste,-1.2826413,-3.7713854
+GROUPE_BASE_MEPC,1301,Pécheurs de la pêche artisanale,-1.7136029,-2.4838934
+GROUPE_BASE_MEPC,5103,Opérateurs sur clavier,-2.5908432,-1.7957973
+GROUPE_BASE_MEPC,7701,Menuisiers,-1.3379511,-2.769022
+GROUPE_BASE_MEPC,3503,Autres spécialistes des technologies de l'information et des communications,-2.7884107,1.7959012
+GROUPE_BASE_MEPC,3201,Médecins et assimilés,0.94870645,-0.71153945
+GROUPE_BASE_MEPC,3401,Spécialistes en finances,0.26285723,1.1254258
+GROUPE_BASE_MEPC,7702,Ebénistes,-1.3705442,-2.5715866
+GROUPE_BASE_MEPC,8301,Cadres des généraux,-0.32353377,0.006756434
+GROUPE_BASE_MEPC,2305,Directeurs et Cadres de Direction des services spécialisés non compris ailleurs,-0.5963659,0.5639485
+GROUPE_BASE_MEPC,2203,Dirigeants et cadres supérieurs d'organisation professionnelle des employeurs,-0.996542,0.24218425
+GROUPE_BASE_MEPC,6607,Matelots de pont et assimilés,-1.5698583,-1.9806418
+GROUPE_BASE_MEPC,7803,Tailleurs,-1.5463034,-1.961256
+GROUPE_BASE_MEPC,6602,Conducteurs de motocycles,0.14720832,-4.4609356
+GROUPE_BASE_MEPC,8304,Gardien chef de Prison,-0.37651333,-0.0034357589
+GROUPE_BASE_MEPC,4304,Secrétaires d'administration et secrétaires spécialisés,0.11514044,0.3794131
+GROUPE_BASE_MEPC,6407,Conducteurs d'installations pour la fabrication du papier et pour le travail du bois,0.0060119736,-3.6483715
+GROUPE_BASE_MEPC,3601,Juristes,-1.2673084,0.3134076
+GROUPE_BASE_MEPC,6606,Conducteurs de matériels et engins mobiles,0.09872776,-3.9600077
+GROUPE_BASE_MEPC,7606,Bouchers,-1.4298239,-2.0528972
+GROUPE_BASE_MEPC,8103,Inspecteur de Police,-0.47053587,0.080101445
+GROUPE_BASE_MEPC,2409,Dirigeants et Gérants des Petites Entreprises non compris ailleurs,-0.85932845,-0.036011178
+GROUPE_BASE_MEPC,3301,Professeurs d'université et d'établissements d'enseignement supérieur,-2.1353555,0.57006884
+GROUPE_BASE_MEPC,3205,Praticiens paramédicaux,0.83327705,-0.61974823
+GROUPE_BASE_MEPC,7403,Stéréotypeurs,-2.2603009,-2.5580728
+GROUPE_BASE_MEPC,1501,Chasseurs/collecteurs et assimilés (non compris cueilleurs de vin),-1.3534783,-2.036487
+GROUPE_BASE_MEPC,7604,Laitiers,-0.61064637,-2.5101314
+GROUPE_BASE_MEPC,2101,Membres de l'Exécutif,-0.379203,0.4949823
+GROUPE_BASE_MEPC,1504,Autres professions fauniques non comprises ailleurs (Captureurs),-1.0748181,-1.7392833
+GROUPE_BASE_MEPC,6604,Conducteurs d'autobus et de tramways,0.23968332,-4.4075933
+GROUPE_BASE_MEPC,7103,Artisans et ouvriers de la vannerie,-1.8646034,-2.4576235
+GROUPE_BASE_MEPC,4103,"Conducteurs, techniciens et contrôleurs de processus industriels",0.36652026,-3.6167326
+GROUPE_BASE_MEPC,6603,Chauffeurs de taxi et conducteurs d'automobiles et de camionnettes,0.13246493,-4.4053435
+GROUPE_BASE_MEPC,8104,Gardien de la Paix,-0.3242437,0.07913058
+GROUPE_BASE_MEPC,3605,Artistes créateurs et exécutants,-2.9417415,-2.0365813
+GROUPE_BASE_MEPC,3303,"Professeurs, enseignement secondaire général et normal",-2.304872,0.6319163
+GROUPE_BASE_MEPC,2303,"Directeurs et Cadres de Direction, Agriculture, Pisciculture",-0.6663382,-0.024719257
+GROUPE_BASE_MEPC,4105,Contrôleurs et techniciens des moyens de transport maritime et aérien,0.5694711,-4.777407
+GROUPE_BASE_MEPC,2202,Dirigeants et cadres supérieurs d'organisation professionnelle de travailleurs,-0.9223776,0.35251403
+GROUPE_BASE_MEPC,7101,Artisans et ouvriers du textile,-1.8550229,-2.5876791
+GROUPE_BASE_MEPC,3502,Spécialistes des bases de données et des réseaux d'ordinateurs,-1.329177,1.2719225
+GROUPE_BASE_MEPC,4201,Techniciens de la médecine et de la pharmacie,1.406916,-1.2684693
+GROUPE_BASE_MEPC,3104,Ingénieurs de l'électrotechnique et des télécommunications,1.3041097,-2.5724266
+GROUPE_BASE_MEPC,2304,"Directeurs et Cadres de Direction, Industrie Manufacturière, Mines et Distribution",0.57384205,-3.191098
+GROUPE_BASE_MEPC,7106,"Artisans et ouvriers du cuir (cordonnier, maroquinier, réparateur de chaussure/sac)",-1.6592413,-2.7118485
+GROUPE_BASE_MEPC,3404,Spécialistes en gestion des projets,-0.5188119,-0.479549
+GROUPE_BASE_MEPC,6107,Aides-personnes âgées,-0.107220106,-0.019426787
+GROUPE_BASE_MEPC,6105,Gouvernantes et concierges,-0.31820425,0.65783817
+GROUPE_BASE_MEPC,3501,Concepteurs et Analystes de logiciels et de multimédia,-2.265244,2.3768206
+GROUPE_BASE_MEPC,4106,Contrôleurs et techniciens des moyens de transport terrestre,0.7886735,-4.7055764
+GROUPE_BASE_MEPC,6601,Conducteurs de locomotives et assimilés,0.23369749,-4.3475494
+GROUPE_BASE_MEPC,7202,Charpentiers,-1.5627047,-2.7649813
+GROUPE_BASE_MEPC,6605,Conducteurs de poids lourds et de camions,0.059866693,-4.3776956
+GROUPE_BASE_MEPC,7603,Charcutiers,-1.2229124,-2.6349583
+GROUPE_BASE_MEPC,6402,Conducteurs d'installations de transformation et de traitement superficiel des métaux,-0.02042136,-3.7728314
+GROUPE_BASE_MEPC,4101,Professions intermédiaires des sciences physiques et techniques,1.4238219,-1.816508
+GROUPE_BASE_MEPC,2404,Dirigeants et Gérants des petites entreprises dans le commerce de gros et de détail,-0.78778076,0.29993832
+GROUPE_BASE_MEPC,2407,Dirigeants et Gérants des petites entreprises d'intermédiation et de services aux entreprises,-0.81451035,0.24787878
+GROUPE_BASE_MEPC,3604,"Auteurs, journalistes et linguistes",-2.2350338,-0.84584874
+GROUPE_BASE_MEPC,7203,Tôliers (poseurs de tôles et de tuiles),-1.5442692,-2.9190652
+GROUPE_BASE_MEPC,4401,"Professions intermédiaires des services juridiques, des services sociaux et des religions",0.16356604,-0.08430187
+GROUPE_BASE_MEPC,3702,Conseillers et animateurs de la jeunesse,-1.8505057,-0.29672313
+GROUPE_BASE_MEPC,7406,Sérigraphes,-2.676989,-1.8660176
+GROUPE_BASE_MEPC,4305,Professions intermédiaires de l'application de la loi et assimilées,-0.06061597,0.8193161
+GROUPE_BASE_MEPC,7804,Chapeliers,-1.464678,-2.3633146
+GROUPE_BASE_MEPC,5301,Employés des services comptables et financiers,-0.081398405,0.8210362
+GROUPE_BASE_MEPC,7504,Monteurs et réparateurs de lignes électriques,-0.21026094,-3.5126402
+GROUPE_BASE_MEPC,2401,"Dirigeants et Gérants des petites entreprises dans l'agriculture, la chasse et la pêche",-0.8155884,0.068392776
+GROUPE_BASE_MEPC,6403,Conducteurs d'installations et de machines pour la fabrication des produits chimiques et photographiques,0.104928784,-3.562022
+GROUPE_BASE_MEPC,3405,Autres spécialistes en administration des entreprises,-0.43513584,0.8547667
+GROUPE_BASE_MEPC,7108,"Métiers de creusage (creuseurs de puits, fosses…)",-1.6700746,-2.3764997
+GROUPE_BASE_MEPC,1401,Exploitants forestiers,-0.33477125,-1.8309166
+GROUPE_BASE_MEPC,4301,Professions intermédiaires de la finance et des mathématiques,-0.09368651,1.1111774
+GROUPE_BASE_MEPC,7107,"Artisans et ouvriers de l'alimentation, des boissons et du tabac (y.c. cueilleurs de vin)",-1.642562,-2.4653475
+GROUPE_BASE_MEPC,7208,Carreleur,-1.6087732,-2.407773
+GROUPE_BASE_MEPC,4102,"Contremaitres, mines, industries manufacturières et bâtiment",0.6123006,-3.185868
+GROUPE_BASE_MEPC,2104,Chefs traditionnels,-0.41809544,-0.7122896
+GROUPE_BASE_MEPC,7302,Mouleur fondeur,-1.3472565,-3.6111197
+GROUPE_BASE_MEPC,3206,Vétérinaires,0.8073959,-0.7879657
+GROUPE_BASE_MEPC,1202,Eleveurs de caprins et ovins,-1.3696377,-2.1502738
+GROUPE_BASE_MEPC,4602,Personnel de rang des eaux et forêts,-0.97987837,0.23241746
+GROUPE_BASE_MEPC,1206,Bergers et autres ouvriers de l'élevage,-1.1045375,-1.8050481
+GROUPE_BASE_MEPC,3302,"Professeurs, enseignement secondaire technique et professionnel",-2.327702,0.7086404
+GROUPE_BASE_MEPC,4303,Agents de services commerciaux,-0.26198986,0.46057838
+GROUPE_BASE_MEPC,3802,Spécialistes des services postaux,-0.6849967,-0.79217815
+GROUPE_BASE_MEPC,1503,Taxidermiste ou empailleur,-1.1255171,-2.8207686
+GROUPE_BASE_MEPC,8101,Commissaire de Police,-0.29994905,0.15023519
+GROUPE_BASE_MEPC,2103,Directeurs Généraux et Cadres Supérieurs de l'Administration Publique (y compris ceux des EPA),-0.35249853,0.60734165
+GROUPE_BASE_MEPC,3602,"Archivistes, bibliothécaires, documentalistes et assimilés",-2.2889569,-0.75683814
+GROUPE_BASE_MEPC,2201,Dirigeants et cadres supérieurs de parti politique,-1.1592516,0.089551985
+GROUPE_BASE_MEPC,8302,Cadres des administrateurs de Prison,-0.3725106,0.2210937
+GROUPE_BASE_MEPC,7104,Artisans et ouvriers du plastique,-1.9330183,-2.6027927
+GROUPE_BASE_MEPC,3204,Spécialistes des médecines traditionnelles et des médecines complémentaires,1.0170937,-0.8139832
+GROUPE_BASE_MEPC,5304,Manœuvres des transports et de l'entreposage,0.14847866,-4.425731
+GROUPE_BASE_MEPC,2204,"Dirigeants et cadres supérieurs d'organisation humanitaire, d'ONG et d'associations",-1.010989,0.26891392
+GROUPE_BASE_MEPC,6301,Vigiles et agents de sécurité privée,-0.1281097,-0.24242224
+GROUPE_BASE_MEPC,5102,Secrétaires (fonctions générales),0.68158174,0.9182575
+GROUPE_BASE_MEPC,4204,Techniciens et assistants vétérinaires,1.3077339,-1.1829785
+GROUPE_BASE_MEPC,5303,Employés du service de transports,-0.015098542,-4.262252
+GROUPE_BASE_MEPC,4601,Personnel de rang de la douane,-0.58583766,0.4875875
+GROUPE_BASE_MEPC,7305,Forgerons/outilleurs,-1.2414685,-3.763227
+GROUPE_BASE_MEPC,8204,Sous officiers,-0.69431144,-0.31721047
+GROUPE_BASE_MEPC,2408,"Dirigeants et Gérants des petites entreprises de services de soins personnels, de nettoyage et de services similaires",-0.7683084,0.19710833
+GROUPE_BASE_MEPC,1205,"Autres éleveurs (apiculteurs, aviculteurs, aulacodiculteurs, etc.)",-1.4399459,-2.0170841
+GROUPE_BASE_MEPC,7306,Mécaniciens/réparateurs des machines et d'engins,0.2506571,-3.354612
+GROUPE_BASE_MEPC,4501,"Techniciens, opérations et soutien aux utilisateurs des technologies de l'information et des communications",-2.7109582,2.0202658
+GROUPE_BASE_MEPC,8205,Militaires du rang,-0.6668626,-0.2601918
+GROUPE_BASE_MEPC,5202,Employés chargés d'informer la clientèle/usagers,-1.1825445,0.9165195
+GROUPE_BASE_MEPC,2402,Dirigeants et Gérants des petites entreprises dans les industries manufacturières,-0.7795927,0.23019889
+GROUPE_BASE_MEPC,1201,Eleveurs de bovins,-1.3905487,-2.191841
+GROUPE_BASE_MEPC,3603,Spécialistes des sciences sociales et du clergé,-1.7509718,0.00081928505
+GROUPE_BASE_MEPC,7206,Marbrier/Carriers,-1.5774459,-2.6393573
+GROUPE_BASE_MEPC,5101,"Employés de bureau, fonctions générales",-1.6833197,1.3483014
+GROUPE_BASE_MEPC,6109,"Laveurs de véhicules et de vitres, laveurs de linge et autres nettoyeurs manuels",-1.9256898,-1.3785126
+GROUPE_BASE_MEPC,3801,Logisticien,1.4400423,-5.4397664
+GROUPE_BASE_MEPC,7602,Confiseurs,-1.4848294,-2.3841817
+GROUPE_BASE_MEPC,6202,"Commerçants, vendeurs en magasin",-0.9509214,-0.6200397
+GROUPE_BASE_MEPC,2102,"Membres des Corps Législatifs (Parlement : Sénat, Assemblée Nationale)",-0.87203,0.33958635
+GROUPE_BASE_MEPC,6401,Conducteurs d'installations d'exploitation minière et d'extraction des minéraux,0.58037364,-3.301758
+GROUPE_BASE_MEPC,6104,"Coiffeurs, esthéticiens et assimilés",-1.3796426,-2.2741456
+GROUPE_BASE_MEPC,3402,Spécialistes des fonctions administratives,0.07534432,1.0596393
+GROUPE_BASE_MEPC,7404,Imprimeurs,-2.5494637,-2.1382368
+GROUPE_BASE_MEPC,3403,"Spécialistes des ventes, de la commercialisation et des relations publiques",0.5239461,0.07165165
+GROUPE_BASE_MEPC,3701,Conseillers d'orientation,-2.3947535,0.23710492
+GROUPE_BASE_MEPC,8305,Gardien de Prison,-0.29707295,0.0760071
+GROUPE_BASE_MEPC,2302,"Directeurs et Cadres de Direction des services de vente, commercialisation et développement",0.1465198,0.29792827
+GROUPE_BASE_MEPC,6110,Autres personnels des services directs aux particuliers,-1.1082225,-0.054886535
+GROUPE_BASE_MEPC,1304,Ouvriers de la pêche et de l'aquaculture,0.24311693,-1.8748502
+GROUPE_BASE_MEPC,7805,Artisans et ouvriers de la chaussure et assimilés,-1.6333282,-2.2905684
+GROUPE_BASE_MEPC,6302,Autres personnels civils de protection et de sécurité privée,-0.19668429,-0.013112806
+GROUPE_BASE_MEPC,2205,Dirigeants et cadres supérieurs d'organismes spécialisés non classés ailleurs,-0.9512859,0.09541299
+GROUPE_BASE_MEPC,7502,Mécaniciens et ajusteurs d'appareils électroniques,0.43853518,-2.8945255
+GROUPE_BASE_MEPC,4208,Formation continue,-2.7310796,-0.057865877
+GROUPE_BASE_MEPC,1101,Exploitants agricoles,-0.23839872,-1.8513458
+GROUPE_BASE_MEPC,7401,Relieurs,-1.7802199,-1.9993812
+GROUPE_BASE_MEPC,7105,Artisans et ouvriers de la céramique et poterie,-1.8732113,-2.4856098
+GROUPE_BASE_MEPC,8102,Officier de Police,-0.36942387,0.0696211
+GROUPE_BASE_MEPC,7405,Graveurs,-1.9501991,-2.6559339
+GROUPE_BASE_MEPC,6406,Conducteurs de machines pour la fabrication de denrées alimentaires et de produits connexes,-0.0052946517,-3.5272312
+GROUPE_BASE_MEPC,3102,"Mathématiciens, actuaires, statisticiens et démographes",-2.761623,-0.5020612
+GROUPE_BASE_MEPC,5401,Autres employés de type administratif,-1.7924867,0.54573005
+GROUPE_BASE_MEPC,1302,Pécheurs de la pêche industrielle,0.3988367,-3.1759408
+GROUPE_BASE_MEPC,7205,Ferrailleurs,-1.5696106,-3.2960577
+GROUPE_BASE_MEPC,7204,Peintres en bâtiment,-1.9672616,-2.9917638
+GROUPE_BASE_MEPC,4202,"Personnel infirmier, aide-soignant et sages-femmes",0.91950417,-0.60068136
+GROUPE_BASE_MEPC,8202,Officiers supérieurs,-0.6570566,-0.2848171
+GROUPE_BASE_MEPC,2406,"Dirigeants et Gérants des petites entreprises dans les transports, l'entreposage et les communications",-0.8293052,0.25160718
+GROUPE_BASE_MEPC,5201,"Guichetiers, encaisseurs et assimilés",-1.4905722,-1.98801
+GROUPE_BASE_MEPC,7802,Brodeurs,-1.5203056,-2.6905153
+GROUPE_BASE_MEPC,6106,Gardes d'enfants et aides-enseignants,-1.98178,0.38634142
+GROUPE_BASE_MEPC,8201,Officiers généraux,-0.7191159,-0.43537325
+GROUPE_BASE_MEPC,7501,Mécaniciens et ajusteurs d'appareils électriques,-0.11055645,-3.117959
+GROUPE_BASE_MEPC,4104,"Techniciens et travailleurs assimilés des sciences de la vie, de la terre et assimilés",1.5736504,-1.735811
+GROUPE_BASE_MEPC,7207,Vitrier,-1.5926663,-1.9586524
+GROUPE_BASE_MEPC,2403,Dirigeants et Gérants des petites entreprises dans les travaux publics,-0.8725095,0.12663421
+GROUPE_BASE_MEPC,5302,Employés d'approvisionnement et de classification spatio-temporelle,-1.2567587,-0.7076541
+GROUPE_BASE_MEPC,4209,"Education sportive, sport professionnel",-2.2147913,0.013756936
+GROUPE_BASE_MEPC,7402,Compositeurs typographes (Monteurs),-2.7252588,-1.8013548
+GROUPE_BASE_MEPC,1303,Aquaculteurs,0.09735644,-1.9728615
+GROUPE_BASE_MEPC,6404,"Conducteurs de machines pour la fabrication de produits en caoutchouc, en matières plastiques et en papeterie",-0.14058883,-3.5719788
+GROUPE_BASE_MEPC,7201,Maçons,-3.969763,-4.9997897
+GROUPE_BASE_MEPC,2405,Dirigeants et Gérants des petites entreprises dans la restauration et l'hôtellerie,-0.6124209,0.98955745
+GROUPE_BASE_MEPC,7605,Poissonniers,-1.0269505,-2.2771683
+GROUPE_BASE_MEPC,4403,"Professions intermédiaires de la culture, de la création artistique et des activités culinaires",-2.8585703,-2.1466258
+GROUPE_BASE_MEPC,3105,"Architectes, urbanistes, géomètres, ingénieur de Génie civil et assimilés",-3.2095685,-1.4303646
+GROUPE_BASE_MEPC,4207,"Autres personnels d'enseignement, personnels d'éducation",-2.2049103,0.50677824
+GROUPE_BASE_MEPC,6102,"Cuisiniers, aides de cuisine et assimilés",-0.5729216,1.2494371
+GROUPE_BASE_MEPC,3101,"Physiciens, chimistes et assimilés (sauf ingénieur de l'électrotechnique cf. 3104)",1.1811187,-2.4334323
+GROUPE_BASE_MEPC,6204,Autres vendeurs et autres professions auxiliaires à la vente,-0.8937639,-0.5699025
+GROUPE_BASE_MEPC,3103,"Spécialistes des sciences de la vie, de la terre et assimilés (sauf spécialistes de la santé)",0.9747394,-0.8612505
+GROUPE_BASE_MEPC,1204,Eleveurs de volailles et des oiseaux,-1.3941529,-1.9916633
+GROUPE_BASE_MEPC,4210,"Documentation, patrimoine",-2.218212,-0.9352003
+GROUPE_BASE_MEPC,7503,Monteurs et réparateurs d'installations télégraphiques et téléphoniques,-2.8088672,1.7039816
+GROUPE_BASE_MEPC,3203,Ingénieurs et techniciens médicaux-sanitaires,1.4312578,-1.3612803
+GROUPE_BASE_MEPC,7801,Couturiers,-1.370197,-2.8986857
+GROUPE_BASE_MEPC,6101,Agents d'accompagnement et assimilés,-0.60040534,-0.9960755
+GROUPE_BASE_MEPC,7212,Métiers du bâtiment et assimilés non classés ailleurs,-1.5380049,-1.8223048
+GROUPE_BASE_MEPC,8203,Officiers subalternes,-0.7373865,-0.19777966
+GROUPE_BASE_MEPC,6103,Serveurs et barmen,-0.6322121,1.0448139
+GROUPE_BASE_MEPC,1102,Ouvriers agricoles,-0.07096198,-2.0319166
+GROUPE_BASE_MEPC,6203,Commerçants sur Call box des produits de téléphonie,-2.879852,1.6534013
+GROUPE_BASE_MEPC,7211,Staffeurs/Plâtrier,-1.7002571,-2.784769
+GROUPE_BASE_MEPC,2301,"Présidents Directeurs Généraux, Directeurs Généraux, Directeurs et Cadres de Direction des Affaires Générales (Administratives, Financières ; Ressources Humaines)",0.14864519,1.0518154
+GROUPE_BASE_MEPC,8303,Intendant de Prison,-0.35679153,0.14739722
+GROUPE_BASE_MEPC,6201,Vendeurs sur les marchés et vendeurs ambulants de comestibles,-0.9762786,-0.72654015
+GROUPE_BASE_MEPC,7209,Fendeurs de pierre / Tailleurs de pierre,-1.4492956,-2.4347463
+GROUPE_BASE_MEPC,6405,Conducteurs de machines pour la fabrication de produits textiles et d'articles en fourrure et en cuir,0.06670115,-3.3801482
+GROUPE_BASE_MEPC,4302,"Agents de vente et d'achat, courtiers",-0.25088522,0.3680984
+GROUPE_BASE_MEPC,3304,Autres spécialistes de l'enseignement,-2.3785481,0.7034144
+GROUPE_BASE_MEPC,7102,Artisans et ouvriers du bois,-1.934584,-2.634571
+GROUPE_BASE_MEPC,4205,Autres professions intermédiaires de la santé,0.72893196,-0.5053419
+GROUPE_BASE_MEPC,3207,Autres spécialistes des professions de la santé,0.864943,-0.6692124
+GROUPE_BASE_MEPC,4206,Professions intermédiaires de l'enseignement primaire et pré-primaire,-2.2249544,0.6428983
+GROUPE_BASE_MEPC,6500,Ouvriers de l'assemblage,-0.306818,-2.1796126
+GROUPE_BASE_MEPC,7601,Boulangers / Pâtissiers,-1.5813758,-2.7939982
+GROUPE_BASE_MEPC,1402,"Exploitants des produits forestiers non ligneux, les cueilleurs et assimilés",-0.35286915,-1.9599847
+GROUPE_BASE_MEPC,1502,"Guides de chasse, pisteurs",-0.78207594,-1.3693129
+GROUPE_BASE_MEPC,4502,Techniciens des télécommunications et de la radio diffusion,-2.7805457,1.8517778
+GROUPE_BASE_MEPC,7806,Teinturiers,-1.0143892,-2.8055444
+GROUPE_BASE_MEPC,6108,Aides de ménage et agents d'entretien,-0.22250141,0.45280188
+GROUPE_BASE_MEPC,7304,Monteur de charpentes métalliques,-1.2891902,-3.6814995
+DOMAINE_DETAILLE_NCF,9105,Techniques du génie sanitaire,0.084095255,-0.44531882
+DOMAINE_DETAILLE_NCF,5504,Sciences actuarielles,-1.8336979,-0.5921164
+DOMAINE_DETAILLE_NCF,4301,Magistrature,-1.2822851,0.13897878
+DOMAINE_DETAILLE_NCF,7107,"Maintenance des véhicules à moteur (aéronautique civile, maritime, ferroviaire et routier, …)",1.9069717,-3.4536147
+DOMAINE_DETAILLE_NCF,9104,"Techniques biomédicales et techniques médico-sanitaires (imagerie médicale, laboratoire, etc.)",1.2245188,-1.1626629
+DOMAINE_DETAILLE_NCF,7104,Ingénierie de l'eau et de l'environnement,0.50744516,-2.4358225
+DOMAINE_DETAILLE_NCF,8309,Autres formations en halieutique n.c.a,-3.1054206,0.12827562
+DOMAINE_DETAILLE_NCF,7202,"Traitement et transformation de matériaux (Sable, pétrole, caoutchouc/latex, bois, …)",-0.18747617,-2.9696662
+DOMAINE_DETAILLE_NCF,7209,Autres formations en industries de transformation et de traitement n.c.a,-3.0887315,0.20034195
+DOMAINE_DETAILLE_NCF,7108,"Exploration pétrolière et gazière, prospection géologique et minière, transport et stockage de pétrole et gaz",1.2764306,-3.898235
+DOMAINE_DETAILLE_NCF,10509,Autres formations en services de la poste n.c.a,-3.0825765,0.1984895
+DOMAINE_DETAILLE_NCF,6106,Administration des systèmes et réseaux,-2.503252,2.0519216
+DOMAINE_DETAILLE_NCF,7309,"Autres formations en architecture, bâtiment et travaux publics n.c.a",-3.032069,0.1492734
+DOMAINE_DETAILLE_NCF,9101,Odontologie,0.5909567,-1.137859
+DOMAINE_DETAILLE_NCF,10403,Transport ferroviaire,0.83471185,-4.536113
+DOMAINE_DETAILLE_NCF,5102,"Biologie animale (bactériologie, toxicologie, zoologie, entomologie, ornithologie, génétique, physiologie animale…)",1.050414,-1.3167976
+DOMAINE_DETAILLE_NCF,5409,"Autres formations en sciences de la terre, de l'atmosphère et des fonds marins n.c.a",-3.15832,-1.2132365
+DOMAINE_DETAILLE_NCF,10209,Autres formations en services de sécurité n.c.a,-3.0453818,0.18332879
+DOMAINE_DETAILLE_NCF,5301,Chimie minérale,0.32380727,-2.337357
+DOMAINE_DETAILLE_NCF,6105,Conception et administration des systèmes d'informations,-2.2912848,2.0384617
+DOMAINE_DETAILLE_NCF,4307,Formation en droit privé fondamental,-1.3975456,0.21764264
+DOMAINE_DETAILLE_NCF,4101,"Finance, banque, assurance, analyse des investissements",-0.016400604,0.9638455
+DOMAINE_DETAILLE_NCF,8101,Agronomie et techniques de production agricoles,0.7193184,-2.0035167
+DOMAINE_DETAILLE_NCF,5309,Autres formations en sciences physiques n.c.a,-2.9279969,-0.20764495
+DOMAINE_DETAILLE_NCF,4204,Techniques administratives,0.20832865,1.1977785
+DOMAINE_DETAILLE_NCF,2102,"Stylisme, Modélisme, esthétique, décoration et design industriel",-2.6823394,-2.5041072
+DOMAINE_DETAILLE_NCF,8102,Elevage,0.4852251,-1.4641733
+DOMAINE_DETAILLE_NCF,4202,Régies financières,-0.19282237,0.62390417
+DOMAINE_DETAILLE_NCF,5304,Chimie physique,0.25003454,-2.3964305
+DOMAINE_DETAILLE_NCF,3105,Gérontologie,-1.4455564,-0.62208104
+DOMAINE_DETAILLE_NCF,4102,Approvisionnement et stocks,-1.349016,-0.20695625
+DOMAINE_DETAILLE_NCF,5109,Autres formations en sciences biologiques et apparentées,-2.9183364,-0.38040924
+DOMAINE_DETAILLE_NCF,3108,Techniques audiovisuelles,-2.5174944,-1.6084497
+DOMAINE_DETAILLE_NCF,5209,Autres formations en environnement n.c.a,-3.1332624,0.13826545
+DOMAINE_DETAILLE_NCF,8306,Transformation et contrôle de qualité des produits halieutiques,0.28428668,-2.2213054
+DOMAINE_DETAILLE_NCF,5503,"Statistiques et autres sciences apparentées (économétrie,...)",-2.3642352,-0.34361583
+DOMAINE_DETAILLE_NCF,5403,Tectonophysique,-3.088734,-1.2209373
+DOMAINE_DETAILLE_NCF,1109,Formation des moniteurs d'auto-école,-2.5884888,-0.0753894
+DOMAINE_DETAILLE_NCF,10103,Hôtellerie et restauration,-0.54489154,1.325918
+DOMAINE_DETAILLE_NCF,1101,Formation des enseignants de maternelle/primaire,-2.3078713,0.6282081
+DOMAINE_DETAILLE_NCF,2202,Histoire et archéologie,-1.9941214,-0.60349476
+DOMAINE_DETAILLE_NCF,5401,Minéralogie,0.3771252,-2.7905827
+DOMAINE_DETAILLE_NCF,8307,Arts nautiques,0.42886016,-4.9676423
+DOMAINE_DETAILLE_NCF,8402,Santé publique vétérinaire,0.73472434,-0.8297029
+DOMAINE_DETAILLE_NCF,6107,Informatique industrielle,-2.2247295,2.3601806
+DOMAINE_DETAILLE_NCF,6103,Maintenance des systèmes et réseaux,-2.4106085,1.8271695
+DOMAINE_DETAILLE_NCF,8103,Horticulture et jardinage,-0.28633675,-1.8716522
+DOMAINE_DETAILLE_NCF,6119,Technologies de l'information et de la communication non classées ailleurs,-2.834998,1.7528225
+DOMAINE_DETAILLE_NCF,6203,Réseaux et télécommunication,-2.9492016,1.9886155
+DOMAINE_DETAILLE_NCF,4308,Formation en droit public,-1.3111113,0.3053013
+DOMAINE_DETAILLE_NCF,7302,Urbanisme,-3.2716384,-1.4671104
+DOMAINE_DETAILLE_NCF,6110,Conception et administration des bases de données,-1.399196,1.4556209
+DOMAINE_DETAILLE_NCF,6109,Sécurité informatique,-2.3611965,2.2202115
+DOMAINE_DETAILLE_NCF,5104,Biochimie,1.2041912,-1.6406019
+DOMAINE_DETAILLE_NCF,2103,"Beaux-arts (dessin, peinture, sculpture, art plastique, …)",-2.8558693,-2.2152426
+DOMAINE_DETAILLE_NCF,2209,Autres formations en lettres et sciences humaines n.c.a,-2.9594018,-0.09719352
+DOMAINE_DETAILLE_NCF,5402,Géologie,-3.1485684,-1.501686
+DOMAINE_DETAILLE_NCF,1209,Autres formations des autres éducateurs n.c.a,-3.1324708,0.15315416
+DOMAINE_DETAILLE_NCF,10301,"Défense (militaires, gendarmes, etc.)",-0.14128952,-0.281052
+DOMAINE_DETAILLE_NCF,4206,Administration et Management,-0.06862368,0.96643484
+DOMAINE_DETAILLE_NCF,10303,Administration pénitentiaire,-0.15829316,0.13524675
+DOMAINE_DETAILLE_NCF,3102,Sciences politiques,-1.7791846,-0.02911451
+DOMAINE_DETAILLE_NCF,5302,Chimie organique,0.027311232,-2.3995948
+DOMAINE_DETAILLE_NCF,9202,Soins aux enfants et aux jeunes,-0.09246395,-0.15585509
+DOMAINE_DETAILLE_NCF,4105,"Métrologie (prix, poids et mesure, etc.)",-0.94351685,-2.3181958
+DOMAINE_DETAILLE_NCF,6108,Audit des systèmes d'information,-2.2838233,2.009788
+DOMAINE_DETAILLE_NCF,4306,Formation en droit des affaires,-1.4152088,0.3390458
+DOMAINE_DETAILLE_NCF,3104,"Sociologie et études culturelles (genre et développement, anthropologie à l'exception de l'anthropologie physique, ethnologie, futurologie, etc.)",-2.0872903,-0.39440984
+DOMAINE_DETAILLE_NCF,2205,Géographie humaine,-3.2130604,-1.533553
+DOMAINE_DETAILLE_NCF,8405,Pharmacie vétérinaire,1.1872412,-0.8468216
+DOMAINE_DETAILLE_NCF,5201,"Sciences environnementales (changements climatiques, QSE, évaluation environnementale, développement durable, Biodiversité, assainissement et déchets)",0.2135258,-2.1682484
+DOMAINE_DETAILLE_NCF,8304,Océanographie,-3.189497,-1.4438859
+DOMAINE_DETAILLE_NCF,2204,Education civique et morale,-2.052244,0.051691357
+DOMAINE_DETAILLE_NCF,2201,Religion et théologie,-1.6834849,-0.02875069
+DOMAINE_DETAILLE_NCF,2107,"Art Graphique (Infographie, Sérigraphie, imprimerie, …)",-3.0067327,-1.8791732
+DOMAINE_DETAILLE_NCF,10302,"Protection des biens et des personnes (police, ..)",-0.22767219,-0.13703433
+DOMAINE_DETAILLE_NCF,3203,Formation de techniciens de musées et d'établissements analogues,-2.2255723,-1.7086314
+DOMAINE_DETAILLE_NCF,10101,Services domestiques,-1.7991804,-0.047128987
+DOMAINE_DETAILLE_NCF,1203,Formation des encadreurs et animateurs des centres d'alphabétisation fonctionnels et des centres préscolaires communautaires,-2.6623197,0.18798289
+DOMAINE_DETAILLE_NCF,9204,Santé et sécurité au travail,0.2130908,-0.7409733
+DOMAINE_DETAILLE_NCF,5408,Cartographie,-3.0595064,-1.7217478
+DOMAINE_DETAILLE_NCF,1104,Formation des enseignants de l'enseignement secondaire général,-2.4020975,0.68468297
+DOMAINE_DETAILLE_NCF,9106,Pharmacie,1.2760067,-0.7903999
+DOMAINE_DETAILLE_NCF,5202,"Environnements naturels, faune et flore",-0.503954,-2.1201015
+DOMAINE_DETAILLE_NCF,8404,Médecine vétérinaire,0.9191302,-0.98528236
+DOMAINE_DETAILLE_NCF,5103,Microbiologie,1.0575289,-1.3027955
+DOMAINE_DETAILLE_NCF,10202,Sécurité aérienne,0.5165606,-4.352699
+DOMAINE_DETAILLE_NCF,5501,"Mathématiques (y compris la recherche opérationnelle, l'analyse numérique, sciences informatiques)",-2.7057269,-0.54137814
+DOMAINE_DETAILLE_NCF,1119,Autres formations des enseignants n.c.a,-2.995541,0.13398549
+DOMAINE_DETAILLE_NCF,3106,Géographie et démographie (à l'exception de la géographie physique),-3.1590436,-1.4741199
+DOMAINE_DETAILLE_NCF,10304,"Agent de Sécurité privé (gardien, vigile, …)",-0.098644435,-0.24624638
+DOMAINE_DETAILLE_NCF,8305,Limnologie,-2.8051996,-0.6196197
+DOMAINE_DETAILLE_NCF,8403,Immunologie vétérinaire,0.97115767,-1.0664425
+DOMAINE_DETAILLE_NCF,10105,Tourisme et loisirs,-0.70360255,-1.1488764
+DOMAINE_DETAILLE_NCF,3201,Journalisme et reportage,-2.2123091,-0.68164617
+DOMAINE_DETAILLE_NCF,1202,"Formation des éducateurs spécialisés (handicap physique, handicap moral, handicap mental, etc.)",-1.6650429,1.0544549
+DOMAINE_DETAILLE_NCF,6102,Maintenance des ordinateurs,-1.7934446,1.5112104
+DOMAINE_DETAILLE_NCF,8209,Autres formations en foresterie n.c.a,-3.1349087,0.14800331
+DOMAINE_DETAILLE_NCF,7205,"Exploitation des mines, carrières et extraction",0.62275136,-3.2323365
+DOMAINE_DETAILLE_NCF,8109,Autres formations en agriculture n.c.a,-3.1739514,0.17508899
+DOMAINE_DETAILLE_NCF,7301,Architecture,-3.0758874,-1.1629542
+DOMAINE_DETAILLE_NCF,4201,"Comptabilité, fiscalité, audit et contrôle de gestion",0.24963704,1.0927668
+DOMAINE_DETAILLE_NCF,3103,Psychologie,0.43734175,-0.37292796
+DOMAINE_DETAILLE_NCF,5105,"Biotechnologie (bioinformatique, modification technologique, etc.)",1.2024837,-1.6764385
+DOMAINE_DETAILLE_NCF,10401,Transport maritime,0.5826464,-4.8753347
+DOMAINE_DETAILLE_NCF,4109,Autres formations en commerce n.c.a,-3.083169,0.21693496
+DOMAINE_DETAILLE_NCF,3109,Autres formations en sciences sociales et du comportement n.c.a,-2.8377392,-0.15653668
+DOMAINE_DETAILLE_NCF,6204,Management des télécommunications,-2.9594762,2.0830386
+DOMAINE_DETAILLE_NCF,4207,Montage et Evaluation des projets,-0.06632655,-2.2098534
+DOMAINE_DETAILLE_NCF,9201,Soins gérontologiques et aux adultes handicapés,-0.03095987,-0.21667163
+DOMAINE_DETAILLE_NCF,4303,Formation des huissiers,-1.1180242,0.10638809
+DOMAINE_DETAILLE_NCF,7206,Génie minier,0.73004377,-3.2139328
+DOMAINE_DETAILLE_NCF,10409,Autres formations en services de transport n.c.a,-3.082812,0.13263115
+DOMAINE_DETAILLE_NCF,2109,Autres formations en art et artisanat n.c.a,-3.1349192,0.14566417
+DOMAINE_DETAILLE_NCF,4304,Formation des avocats,-1.3577886,0.10486206
+DOMAINE_DETAILLE_NCF,9108,"Formation de délégué médical, vendeur en pharmacie, secrétaires médicaux",1.238723,-0.71043175
+DOMAINE_DETAILLE_NCF,7102,Technologie de la protection de l'environnement,0.26518014,-2.23389
+DOMAINE_DETAILLE_NCF,6209,Autres formations en télécommunications n.c.a,-3.07729,1.0313768
+DOMAINE_DETAILLE_NCF,9209,Autres formations en protection sociale n.c.a,-3.1191318,0.08736768
+DOMAINE_DETAILLE_NCF,2105,Artisanat,-0.26236194,-2.461053
+DOMAINE_DETAILLE_NCF,5404,Vulcanologie,-3.0341692,-1.281234
+DOMAINE_DETAILLE_NCF,7101,Ingénierie chimique et processus,0.9906062,-2.596038
+DOMAINE_DETAILLE_NCF,7201,"Transformation, conservation des aliments et boissons et chimie alimentaire",-0.4285275,-2.484231
+DOMAINE_DETAILLE_NCF,5303,Chimie analytique,0.18897253,-2.4625845
+DOMAINE_DETAILLE_NCF,7303,Géomatique,-3.1997015,-1.473669
+DOMAINE_DETAILLE_NCF,8401,Pathologie et microbiologie vétérinaire,0.946114,-1.0850159
+DOMAINE_DETAILLE_NCF,4305,Formation des notaires,-1.407396,0.2675786
+DOMAINE_DETAILLE_NCF,7203,Transformation des produits forestiers,-0.3325444,-2.5038216
+DOMAINE_DETAILLE_NCF,7204,"Traitement et transformation des matières premières du textile (coton, laine, cuir, etc.)",-0.42238668,-3.0181692
+DOMAINE_DETAILLE_NCF,7109,Autres formations en ingénierie et techniques apparentées n.c.a,-3.120904,0.13273042
+DOMAINE_DETAILLE_NCF,1201,Sciences de l'éducation,-2.1429956,0.22196138
+DOMAINE_DETAILLE_NCF,5406,Paléontologie,-3.2365046,-1.3070208
+DOMAINE_DETAILLE_NCF,3204,Edition,-2.5517168,-1.4981667
+DOMAINE_DETAILLE_NCF,2101,"Production multimédia (photographie, cinématographie, production musicale, …)",-2.5661874,-1.6345549
+DOMAINE_DETAILLE_NCF,4205,Comptabilité-matières,-1.1899543,-1.5540398
+DOMAINE_DETAILLE_NCF,8409,Autres formations en science/médecine vétérinaire n.c.a,-2.8112435,-0.36611205
+DOMAINE_DETAILLE_NCF,8303,Gestion des pêches,-0.50336635,-1.5152663
+DOMAINE_DETAILLE_NCF,2301,Acquisition d'une langue,-2.2030864,1.154015
+DOMAINE_DETAILLE_NCF,3107,"Formation sur la paix et les conflits, droits de l'homme",-1.5520475,0.2326182
+DOMAINE_DETAILLE_NCF,10501,Techniques d'exploitation en matière postale,-0.53090596,-0.67984885
+DOMAINE_DETAILLE_NCF,7103,Électricité et énergie,1.1767794,-3.2507427
+DOMAINE_DETAILLE_NCF,9107,Médecine et thérapies traditionnelles et complémentaires,0.9579229,-0.81497085
+DOMAINE_DETAILLE_NCF,7207,Raffinage et pétrochimie,-0.5514762,-3.465377
+DOMAINE_DETAILLE_NCF,3209,Autres formations en communication et information n.c.a,-3.0419357,0.665191
+DOMAINE_DETAILLE_NCF,9103,Soins infirmiers et formation de sages-femmes,0.69796765,-0.585324
+DOMAINE_DETAILLE_NCF,4302,Greffe,-0.83109355,-0.0070334016
+DOMAINE_DETAILLE_NCF,5509,Autres formations en mathématiques et statistiques n.c.a,-2.8897026,-0.16222465
+DOMAINE_DETAILLE_NCF,6101,Utilisation d'un ordinateur et bureautique,-1.7211405,1.3341607
+DOMAINE_DETAILLE_NCF,6205,Technologies de télécommunication non classées ailleurs,-2.9767196,1.8607696
+DOMAINE_DETAILLE_NCF,8302,Gestion des écosystèmes aquatiques,0.23060203,-1.8146409
+DOMAINE_DETAILLE_NCF,9109,Autres formations en santé humaine n.c.a,-3.1667912,0.111770056
+DOMAINE_DETAILLE_NCF,7306,"Construction et génie civil (maçonnerie, menuiserie, charpente, carrelage, Plomberie, …)",-0.4812617,-1.9524691
+DOMAINE_DETAILLE_NCF,10203,Sécurité maritime et fluviale,0.44529197,-4.778633
+DOMAINE_DETAILLE_NCF,1105,Formation des enseignants de l'enseignement normal,-2.3304238,0.69035393
+DOMAINE_DETAILLE_NCF,1204,Formation des Conseillers de jeunesse et d'animation,-1.8254851,-0.36249363
+DOMAINE_DETAILLE_NCF,2309,Autres formations en langues et littérature n.c.a,-3.0710144,0.08362508
+DOMAINE_DETAILLE_NCF,1205,Formation des conseillers d'orientation,-1.9907925,0.245334
+DOMAINE_DETAILLE_NCF,5305,Physique,-2.6923203,-1.1463976
+DOMAINE_DETAILLE_NCF,10109,Autres formations en services aux particuliers n.c.a,-3.1220367,0.19704923
+DOMAINE_DETAILLE_NCF,5101,"Biologie végétale (botanique, génétique, biophysique, physiologie végétale)",1.0654131,-1.5647233
+DOMAINE_DETAILLE_NCF,7106,Mécanique et techniques apparentées,0.8392,-2.875189
+DOMAINE_DETAILLE_NCF,7305,Topographie et cadastre,-3.1510124,-1.6850328
+DOMAINE_DETAILLE_NCF,2106,"Arts du spectacle (Musique, théâtre, danse, cirque)",-2.8753088,-1.9582474
+DOMAINE_DETAILLE_NCF,4103,"Marketing, relations publiques et publicité",-2.1926134,-0.42483404
+DOMAINE_DETAILLE_NCF,6201,Radio communication,-2.701492,1.7880056
+DOMAINE_DETAILLE_NCF,3202,"Formation à la gestion des bibliothèques, de la documentation et de l'archivage",-2.2133925,-0.8838836
+DOMAINE_DETAILLE_NCF,10402,Transport aérien,0.52372706,-4.616878
+DOMAINE_DETAILLE_NCF,10405,Transport et logistique,1.2616376,-5.2527456
+DOMAINE_DETAILLE_NCF,1107,Ingénierie de formation,-2.8175437,0.09146335
+DOMAINE_DETAILLE_NCF,1108,Formation des maîtres d'apprentissage et maîtres d'artisans,-0.61557496,-1.9479063
+DOMAINE_DETAILLE_NCF,10201,Sécurité publique,-0.110281646,-0.416531
+DOMAINE_DETAILLE_NCF,3101,Économie,-1.7288843,-0.05220134
+DOMAINE_DETAILLE_NCF,1102,Formation des enseignants de l'enseignement secondaire technique,-2.3812792,0.6962108
+DOMAINE_DETAILLE_NCF,10404,Transport routier,0.68713856,-4.621577
+DOMAINE_DETAILLE_NCF,9203,"Travail social (service social, rééducation, réhabilitation, éducation sociale spécialisée, administration des affaires sociales)",0.43908644,-0.48385453
+DOMAINE_DETAILLE_NCF,5405,Océanographie,-3.1166854,-1.4705498
+DOMAINE_DETAILLE_NCF,4208,Planification,-2.97565,-1.0155178
+DOMAINE_DETAILLE_NCF,2104,Gestion et conservation du patrimoine culturel,-1.4414082,-1.0805284
+DOMAINE_DETAILLE_NCF,5502,Informatique fondamentale,-2.384211,2.28283
+DOMAINE_DETAILLE_NCF,10104,Sports,-2.1384065,0.000999258
+DOMAINE_DETAILLE_NCF,10309,Autres formations en services de sûreté n.c.a,-3.0710876,0.19119233
+DOMAINE_DETAILLE_NCF,1106,Formation des enseignants d'Education Physique et Sportive (EPS),-2.2993498,0.24091436
+DOMAINE_DETAILLE_NCF,4309,Autres formations en droit n.c.a,-1.5274388,0.35450256
+DOMAINE_DETAILLE_NCF,8301,Aquaculture,0.38571897,-1.8890868
+DOMAINE_DETAILLE_NCF,6202,Informatique et réseaux des télécommunications,-2.7317574,2.2666698
+DOMAINE_DETAILLE_NCF,7304,Génie rural,0.8339586,-2.2641912
+DOMAINE_DETAILLE_NCF,8201,Sylviculture et exploitation forestière,-0.3462994,-1.7252591
+DOMAINE_DETAILLE_NCF,4104,Commerce international,-0.66890055,2.8947484
+DOMAINE_DETAILLE_NCF,7307,Conduite des grues,-0.48653877,-1.8184355
+DOMAINE_DETAILLE_NCF,6104,Génie logiciel,-2.2604117,2.3489597
+DOMAINE_DETAILLE_NCF,2302,"Littérature et linguistique (interprétariat, traduction, …)",-2.4394958,1.3891495
+DOMAINE_DETAILLE_NCF,5407,Météorologie,-3.179725,-1.2428339
+DOMAINE_DETAILLE_NCF,2203,Philosophie,-1.8671956,-0.095151246
+DOMAINE_DETAILLE_NCF,4203,Gestion des Ressources humaines,-1.4825695,-0.23151463
+DOMAINE_DETAILLE_NCF,10204,Sécurité industrielle et minière,0.6519367,-3.2033184
+DOMAINE_DETAILLE_NCF,10106,"Blanchisserie, nettoyage et teinture",-0.55939394,-2.7243
+DOMAINE_DETAILLE_NCF,1103,"Formation des instituteurs de l'enseignement technique (SAR/SM, Centres de Formation aux Métiers, …)",-2.4094763,0.6326805
+DOMAINE_DETAILLE_NCF,4209,Autres formations en gestion de services administratifs n.c.a,-2.956371,0.12834455
+DOMAINE_DETAILLE_NCF,10102,Soins de beauté et de coiffure,-1.1927625,-2.3621864
+DOMAINE_DETAILLE_NCF,9102,Médecine humaine,0.97540396,-0.8508826
+DOMAINE_DETAILLE_NCF,7105,Électronique et automatisation,-2.6005845,1.941186

@@ -1,0 +1,16 @@
+{
+  "metier_competences_top_mean": 124.4,
+  "competence_offres_top_mean": 590.16,
+  "skill_gap_mean": 5.295404002965159,
+  "skill_gap_median": 6.0,
+  "ncf_same_level_rate": 0.13285714285714287,
+  "coverage": {
+    "n_offres": 13957,
+    "n_offres_avec_comp": 10729,
+    "taux_offres_avec_comp": 0.7687182059181773,
+    "n_candidats": 41298,
+    "n_candidats_avec_comp": 38841,
+    "taux_candidats_avec_comp": 0.9405055934912102
+  },
+  "figure": "rapport/figures/generated/evaluation/functional_graph_evaluation.png"
+}

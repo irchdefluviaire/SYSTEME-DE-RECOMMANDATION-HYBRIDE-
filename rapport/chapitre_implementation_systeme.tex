@@ -318,15 +318,19 @@ La capture du terminal de fine-tuning doit montrer le chargement du modèle, le 
   \source{\texttt{src/02\_finetune\_st/train\_sentence\_transformer.py} et \texttt{models/st\_finetuned/evaluation\_metrics.json}}
 \end{table}
 
+Ces hyperparamètres ne sont pas des valeurs arbitraires. Ils traduisent un compromis imposé par les ressources disponibles : le fine-tuning devait rester exécutable localement, sans infrastructure GPU lourde ni entraînement long. Le modèle \texttt{all-MiniLM-L6-v2} a donc été conservé parce qu'il produit des vecteurs de 384 dimensions, moins coûteux à encoder, stocker et rechercher dans pgvector. Le batch de 32 limite la consommation mémoire tout en conservant assez d'exemples négatifs implicites pour la \textit{MultipleNegativesRankingLoss}. Le nombre de cinq époques évite un entraînement excessif sur un corpus de paires encore imparfait. Le \textit{learning rate} de $2\times10^{-5}$, avec \textit{warmup} puis décroissance, permet une adaptation progressive du modèle sans déstabiliser les représentations déjà apprises.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/04_finetuning_courbes.png}
-  \caption{Évolution de la perte, pertes finales par split, métriques de validation et learning rate}
+  \caption{Diagnostic du fine-tuning : perte, généralisation, métriques de validation et calendrier du learning rate}
   \label{fig:implementation_finetuning_courbes}
   \source{\texttt{models/st\_finetuned/evaluation\_metrics.json} et \texttt{outputs/memoire\_stats/implementation\_deep\_current/04\_finetuning\_loss\_par\_split.csv}}
 \end{figure}
 
-L'entraînement dure cinq époques, avec un \textit{learning rate} maximal de $2\times10^{-5}$, 100 étapes de \textit{warmup}, un batch de 32 et une décroissance de type \textit{WarmupCosine}. La perte d'entraînement chute fortement au début, de 2,445 à moins de 0,5 avant la fin de la première époque, puis se stabilise. Pour contrôler la généralisation, la même perte contrastive a été recalculée après entraînement sur un échantillon fixe de 64 paires par split : 0,171 sur train, 0,285 sur validation et 0,433 sur test. Ces valeurs ne remplacent pas les métriques de classement, car la \textit{MultipleNegativesRankingLoss} dépend de la composition des batches ; elles indiquent surtout que les jeux non vus restent logiquement plus difficiles que le train.
+La figure \ref{fig:implementation_finetuning_courbes} se lit en quatre blocs. Le premier montre que la perte d'entraînement chute fortement au début, de 2,445 à 0,132 en fin d'entraînement : le modèle apprend rapidement à rapprocher les paires positives du domaine. Le deuxième bloc compare la perte finale sur un échantillon fixe de 64 paires par split : 0,171 sur train, 0,285 sur validation et 0,433 sur test. Cette hausse est normale : les jeux non vus sont plus difficiles que les exemples utilisés pendant l'apprentissage. Le troisième bloc montre que les métriques de validation progressent jusqu'aux dernières époques, avec un léger tassement final ; il n'y a donc pas de signal évident d'effondrement. Le quatrième bloc rappelle le choix de ressources : un \textit{learning rate} maximal de $2\times10^{-5}$, 100 étapes de \textit{warmup}, un batch de 32 et seulement cinq époques. Le protocole cherche donc un gain utile de classement, pas une optimisation coûteuse et difficile à reproduire.
+
+Ces valeurs ne remplacent pas les métriques de ranking, car la \textit{MultipleNegativesRankingLoss} dépend de la composition des batches. Elles servent surtout de contrôle de cohérence : si la perte train baissait mais que la validation stagnait ou chutait, le fine-tuning serait suspect. Ici, la baisse de perte et la progression du NDCG@10/MRR@10 indiquent que l'adaptation du modèle améliore bien le retrieval dans le domaine emploi--compétences.
 
 La validation atteint un NDCG@10 maximal de 0,6492 à l'époque 4, avant un léger recul à 0,6469 à l'époque 5. Ce profil est cohérent avec un apprentissage rapide suivi d'un plateau. Il serait donc fragile de prolonger l'entraînement sans contrôle : au-delà d'un certain point, le gain marginal devient faible et le risque de sur-adaptation augmente.
 
@@ -388,20 +392,26 @@ Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/07_espace_vectoriel_embeddings.png}
-  \caption{Projection PCA et distribution des similarités cosinus}
+  \caption{Projection UMAP des embeddings indexés}
   \label{fig:implementation_espace_vectoriel}
-  \source{Échantillon d'embeddings extrait de la table \texttt{embeddings}}
+  \source{\texttt{07\_espace\_vectoriel\_umap\_current.csv} et \texttt{07\_umap\_diagnostic.csv}}
 \end{figure}
 
-La projection PCA ne doit pas être interprétée comme une carte exacte du sens ; elle compresse un espace de 384 dimensions en deux axes. C'est précisément pour cela que la figure indique la variance expliquée. Dans l'échantillon indexé, le premier axe porte 5,8\,\% de l'information, le deuxième 4,4\,\%, soit seulement 10,2\,\% pour le plan factoriel. Le nuage 2D est donc un diagnostic de structure, pas une preuve complète de séparation sémantique. Il montre surtout que les entités ne sont pas totalement écrasées dans une masse indifférenciée, tout en rappelant que l'essentiel de l'information reste dans les dimensions non représentées. Pour le retrieval, les mesures de ranking et les similarités cosinus restent donc plus probantes que la seule projection PCA.
+La figure \ref{fig:implementation_espace_vectoriel} utilise UMAP pour représenter en deux dimensions un échantillon de 1\,810 embeddings indexés. UMAP ne doit pas être lu comme une carte géographique exacte du sens. Son rôle est plus simple : placer proches les objets qui ont des voisins proches dans l'espace vectoriel original. Les axes \og UMAP 1 \fg{} et \og UMAP 2 \fg{} n'ont donc pas de signification métier directe ; ce qui compte est la proximité entre points et la formation éventuelle de zones.
+
+La lecture du nuage est utile mais doit rester prudente. Les offres d'emploi forment une zone visible, avec quelques sous-groupes plus éloignés ; cela indique que certaines offres portent un vocabulaire ou des métadonnées plus spécifiques. Les candidats, compétences, métiers et domaines de formation se recouvrent davantage au centre. Ce recouvrement n'est pas un échec : le système cherche justement à projeter ces objets dans un même espace pour pouvoir les comparer. Si les candidats étaient totalement séparés des offres ou des compétences, le retrieval serait difficile. La présence de zones mixtes indique que l'encodeur place plusieurs familles d'objets dans un espace commun, exploitable par pgvector.
+
+Cette visualisation reste un diagnostic qualitatif. Elle ne prouve pas à elle seule que les recommandations sont bonnes. La preuve principale reste le benchmark de ranking présenté précédemment, notamment le NDCG@10, le MRR@10 et le recall@10. UMAP sert ici à rendre l'espace vectoriel compréhensible : il montre que les embeddings ne sont pas répartis au hasard et que les objets du système peuvent être rapprochés avant l'enrichissement par Neo4j.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/06_pgvector_indicateurs.png}
-  \caption{Indicateurs d'indexation pgvector}
-  \label{fig:implementation_pgvector_indicateurs}
-  \source{Base PostgreSQL \texttt{kmer\_ai}, tables \texttt{embeddings} et \texttt{doc\_chunks}}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/06_pgvector_retrieval_dashboard.png}
+  \caption{Dashboard pgvector : couverture, synchronisation graphe, latence et index}
+  \label{fig:implementation_pgvector_retrieval_dashboard}
+  \source{\texttt{06\_pgvector\_counts.csv}, \texttt{06\_pgvector\_latency\_summary.csv}, \texttt{06\_pgvector\_sizes.csv}, \texttt{06\_pgvector\_indexes.csv} et \texttt{06\_pgvector\_doc\_chunks.csv}}
 \end{figure}
+
+Ce graphique ne répète pas seulement les volumes du tableau suivant. Il donne quatre informations opérationnelles différentes : la taille du vivier vectorisé, la capacité à rejoindre Neo4j, la latence du top-10 HNSW et les familles d'index disponibles. La lecture est simple : pgvector couvre les entités utiles, toutes sont raccordables au graphe, la médiane de recherche reste autour de 31 ms, mais le maximum observé rappelle qu'une application interactive doit surveiller les cas lents. Le graphique sert donc à juger la brique comme outil de retrieval, pas comme simple base de stockage.
 
 \section{Implémentation de pgvector comme brique de retrieval}
 
@@ -632,7 +642,9 @@ La conclusion technique est nette : pgvector remplit les conditions minimales d'
 
 \section{Implémentation du graphe Neo4j comme base de connaissances}
 
-\subsection{Schéma du graphe de connaissances}
+\subsection{Schéma du graphe}
+
+\subsubsection{Diagramme Neo4j}
 
 \begin{figure}[H]
   \centering
@@ -642,7 +654,21 @@ La conclusion technique est nette : pgvector remplit les conditions minimales d'
   \source{Synthèse des labels et relations implémentés dans Neo4j}
 \end{figure}
 
-Le graphe relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Sa fonction principale n'est pas de remplacer l'embedding, mais de donner un contexte relationnel aux résultats vectoriels. Une offre proche vectoriellement peut ainsi être expliquée par ses compétences requises, son secteur, son niveau NCF ou son rattachement métier. Cette section ne décrit donc pas Neo4j en général ; elle interprète le graphe effectivement construit dans le projet.
+Le graphe Neo4j doit être lu comme la mémoire relationnelle du système. Il relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Son rôle n'est pas de remplacer les embeddings : pgvector retrouve d'abord des objets proches dans l'espace sémantique, tandis que Neo4j vérifie ensuite comment ces objets sont reliés. Une offre peut donc être proche du profil dans pgvector, puis être acceptée, rétrogradée ou expliquée à partir de ses compétences requises, de son secteur, de son niveau NCF ou de son rattachement métier. Cette section ne décrit donc pas Neo4j en général ; elle interprète le graphe effectivement construit dans le projet et son apport concret au matching emploi--compétences.
+
+La lecture correcte est la suivante : le graphe transforme une proximité textuelle en raisonnement contrôlable. Sans Neo4j, le système peut seulement dire qu'un profil et une offre se ressemblent dans un espace vectoriel. Avec Neo4j, il peut préciser par quelles relations cette proximité devient crédible : compétences possédées par le candidat, compétences exigées par l'offre, niveau de formation compatible ou non, secteur cohérent, et éventuel chemin vers une formation ou un métier de référence.
+
+\subsubsection{Description des noeuds}
+
+Les noeuds représentent les objets métier manipulés par le système. Les noeuds \texttt{Candidat} et \texttt{OffreEmploi} portent les deux pôles du matching : un profil disponible et une opportunité à classer. Les noeuds \texttt{Compétence} jouent le rôle de pivot explicatif, car ils permettent de comparer ce qu'un candidat possède avec ce qu'une offre requiert. Les noeuds \texttt{Métier}, \texttt{GroupeBaseMEPC}, \texttt{GroupeISCO}, \texttt{NiveauFormationNCF}, \texttt{DomaineDétailléNCF}, \texttt{Secteur} et \texttt{Localisation} ajoutent les dimensions de contrôle : métier de référence, famille professionnelle, niveau de qualification, domaine de formation, secteur d'activité et lieu. Les noeuds \texttt{DocChunk} et \texttt{DocumentReferentiel} relient le graphe aux sources documentaires utilisées par le GraphRAG.
+
+Cette organisation évite une erreur fréquente : interpréter une offre et un candidat comme deux textes isolés. Dans le graphe, ils deviennent deux ensembles de relations. Un candidat n'est pas seulement une phrase de profil ; il est relié à des compétences, un niveau, une filière et un secteur. Une offre n'est pas seulement un intitulé ; elle est reliée à des compétences exigées, un employeur, une localisation, un secteur et un niveau requis. C'est cette représentation relationnelle qui rend l'explication possible.
+
+\subsubsection{Description des relations}
+
+Les relations décrivent les contraintes et les preuves utilisées par la recommandation. \texttt{POSSEDE} relie un candidat aux compétences déclarées ou inférées à partir de son profil. \texttt{REQUIERT} relie une offre aux compétences attendues. \texttt{NECESSITE} relie un métier aux compétences de référence du référentiel. \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU} et \texttt{REQUIERT\_NIVEAU\_NCF} structurent la compatibilité de formation. \texttt{DANS\_SECTEUR}, \texttt{LOCALISEE\_A} et \texttt{PUBLIEE\_PAR} contextualisent l'offre. Enfin, les relations de référentiel, comme \texttt{PARTIE\_DE}, \texttt{CLASSIFIE\_DANS} ou \texttt{EXTRAIT\_DE}, permettent de passer d'un résultat opérationnel à une explication institutionnelle.
+
+Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'implémentation, les liens \texttt{REQUIERT} et \texttt{POSSEDE} vers les compétences ESCO sont matérialisés par correspondance lexicale et portent des métadonnées d'audit comme la méthode de rapprochement et le niveau de confiance. Leur fonction est donc opérationnelle : fournir un signal exploitable et vérifiable pour le matching. Une interprétation rigoureuse doit conserver cette limite, car une compétence mal extraite ou trop générique peut améliorer artificiellement le score d'une offre.
 
 \implementationScreenshot
   {fig:capture_neo4j_browser}
@@ -652,7 +678,9 @@ Le graphe relie les candidats, offres, compétences, métiers, référentiels ME
 
 La capture Neo4j doit être utilisée comme preuve visuelle de la base de connaissances. Elle doit montrer des noeuds et relations réels du projet, par exemple un chemin candidat--compétence--offre ou offre--métier--référentiel. Son interprétation doit rester sobre : une capture ne prouve pas la qualité globale du graphe, mais elle illustre la manière dont les entités sont reliées.
 
-\subsection{Analyse topologique du graphe}
+\subsection{Analyse structurelle}
+
+\subsubsection{Statistiques descriptives}
 
 \begin{figure}[H]
   \centering
@@ -662,7 +690,9 @@ La capture Neo4j doit être utilisée comme preuve visuelle de la base de connai
   \source{\texttt{scripts/generate\_neo4j\_network\_diagnostics.py}}
 \end{figure}
 
-Le graphe complet contient 90\,230 noeuds et 550\,542 relations, répartis en 18 labels et 18 types de relations. Sa densité dirigée globale est très faible, environ $6{,}76 \times 10^{-5}$, ce qui est normal pour un graphe hétérogène de connaissances : toutes les entités n'ont pas vocation à être reliées entre elles. Pour analyser la partie réellement mobilisée par le matching, une projection non orientée a été construite à partir des relations \texttt{POSSEDE}, \texttt{REQUIERT}, \texttt{NECESSITE}, \texttt{CORRESPOND\_MEPC}, \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU}, \texttt{DANS\_SECTEUR} et \texttt{LOCALISEE\_A}. Cette projection contient 72\,516 noeuds et 499\,080 arêtes ; elle forme une seule composante connexe. Ce résultat est important : les entités utiles au matching ne sont pas dispersées en sous-graphes indépendants, elles appartiennent à un même réseau de propagation candidat--offre--compétence.
+Le graphe complet contient 90\,230 noeuds et 550\,542 relations, répartis en 18 labels et 18 types de relations. Sa densité dirigée globale est très faible, environ $6{,}76 \times 10^{-5}$, ce qui est normal pour un graphe hétérogène de connaissances : toutes les entités n'ont pas vocation à être reliées entre elles. Cette faible densité ne signifie donc pas que le graphe est pauvre ; elle signifie qu'il encode des relations spécialisées plutôt qu'un réseau où tout serait connecté à tout.
+
+Pour analyser la partie réellement mobilisée par le matching, une projection non orientée a été construite à partir des relations \texttt{POSSEDE}, \texttt{REQUIERT}, \texttt{NECESSITE}, \texttt{CORRESPOND\_MEPC}, \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU}, \texttt{DANS\_SECTEUR} et \texttt{LOCALISEE\_A}. Cette projection contient 72\,516 noeuds et 499\,080 arêtes ; elle forme une seule composante connexe. Ce résultat est important : les entités utiles au matching ne sont pas dispersées en sous-graphes indépendants, elles appartiennent à un même réseau de propagation candidat--offre--compétence. En pratique, cela permet au GraphRAG de construire des chemins courts entre un profil, une offre, une compétence, un métier ou un niveau de formation.
 
 \begin{table}[H]
   \centering
@@ -721,9 +751,11 @@ Les principaux labels sont \texttt{Candidat} avec 41\,298 noeuds, \texttt{Groupe
   \source{\texttt{08\_neo4j\_node\_counts.csv} et \texttt{08\_neo4j\_relation\_counts.csv}}
 \end{table}
 
-Les relations dominantes sont \texttt{POSSEDE}, \texttt{NECESSITE} et \texttt{REQUIERT}. Elles concentrent 73,74\,\% des liens et forment le coeur du système : candidat--compétence, métier--compétence et offre--compétence. Les relations \texttt{DANS\_SECTEUR}, \texttt{PUBLIEE\_PAR}, \texttt{LOCALISEE\_A}, \texttt{A\_NIVEAU} et \texttt{REQUIERT\_NIVEAU} ajoutent des contraintes d'interprétation. Le graphe n'est donc pas seulement volumineux ; il encode les chemins nécessaires à l'explication d'une recommandation.
+Les relations dominantes sont \texttt{POSSEDE}, \texttt{NECESSITE} et \texttt{REQUIERT}. Elles concentrent 73,74\,\% des liens et forment le coeur du système : candidat--compétence, métier--compétence et offre--compétence. Cette concentration est cohérente avec l'objectif du mémoire, car le problème traité est d'abord un problème d'appariement emploi--compétences. Les relations \texttt{DANS\_SECTEUR}, \texttt{PUBLIEE\_PAR}, \texttt{LOCALISEE\_A}, \texttt{A\_NIVEAU} et \texttt{REQUIERT\_NIVEAU} ajoutent ensuite des contraintes d'interprétation. Le graphe n'est donc pas seulement volumineux ; il encode les chemins nécessaires à l'explication d'une recommandation.
 
-\subsection{Degrés, hubs et compétences centrales}
+Cette structure impose toutefois une lecture prudente. Comme les relations de compétences dominent fortement, le score final dépend beaucoup de leur qualité. Si une offre n'a pas de relation \texttt{REQUIERT}, Neo4j ne peut pas calculer correctement la couverture de compétences. Si une compétence générique devient trop connectée, elle peut créer un hub peu discriminant. L'apport du graphe existe donc à condition de contrôler la complétude et la précision des relations.
+
+\subsubsection{Distribution des degrés}
 
 \begin{figure}[H]
   \centering
@@ -760,6 +792,8 @@ La distribution des degrés est fortement asymétrique. L'estimation exploratoir
 
 Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
 
+\subsubsection{Centralités}
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/15_neo4j_centralites_competences.png}
@@ -791,7 +825,7 @@ Les centralités donnent trois lectures complémentaires. La centralité de degr
 
 La distinction entre degré, PageRank et intermédiarité est importante. Un noeud peut être très populaire sans être une bonne passerelle de recommandation. Pour le \textit{skill gap}, les compétences d'intermédiarité sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
 
-\subsection{Communautés, connectivité et robustesse}
+\subsubsection{Communautés}
 
 \begin{figure}[H]
   \centering
@@ -813,7 +847,7 @@ La détection de communautés a été réalisée avec Louvain sur un échantillo
 
 Le test de robustesse retire successivement les 1\,\%, 5\,\% et 10\,\% de noeuds les plus centraux selon le degré, puis mesure la taille de la composante géante restante. Ce test est sévère, car il cible les hubs au lieu de supprimer des noeuds au hasard. Son intérêt est de mesurer la dépendance du graphe à quelques entités très connectées. Si la composante géante s'effondre fortement après retrait des hubs, cela signifie que le système dépend excessivement de compétences ou niveaux génériques. Dans ce cas, le reranking doit pénaliser les hubs trop peu discriminants et valoriser les compétences spécifiques.
 
-\subsection{Analyse métier et skill gap}
+\subsubsection{Lecture métier et skill gap}
 
 \begin{figure}[H]
   \centering
@@ -851,7 +885,9 @@ L'analyse métier confirme le rôle pivot des compétences. Une offre exige en m
   \source{\texttt{17\_neo4j\_skill\_gap\_sample.csv}}
 \end{figure}
 
-Le \textit{skill gap} a été mesuré sur un échantillon de couples candidat--offre en comparant les compétences \texttt{REQUIERT} de l'offre aux compétences \texttt{POSSEDE} du candidat. Le déficit moyen est de 5,32 compétences, avec une médiane de 6 ; seulement 12,33\,\% des couples échantillonnés ont un déficit inférieur ou égal à trois compétences. Ce résultat est dur, mais utile : le graphe ne dit pas que la majorité des candidats sont immédiatement compatibles avec une offre prise au hasard. Il montre au contraire que le matching doit sélectionner, filtrer et reranker. C'est précisément la raison d'être du moteur hybride : utiliser pgvector pour présélectionner des couples plausibles, puis Neo4j pour mesurer finement les compétences acquises, manquantes et passerelles.
+Le \textit{skill gap} a été mesuré sur un échantillon de couples candidat--offre en comparant les compétences \texttt{REQUIERT} de l'offre aux compétences \texttt{POSSEDE} du candidat. Le déficit moyen est de 5,32 compétences, avec une médiane de 6 ; seulement 12,33\,\% des couples échantillonnés ont un déficit inférieur ou égal à trois compétences. Ce résultat est sévère, mais utile : le graphe ne dit pas que la majorité des candidats sont immédiatement compatibles avec une offre prise au hasard. Il montre au contraire que le matching doit sélectionner, filtrer et reranker. C'est précisément la raison d'être du moteur hybride : utiliser pgvector pour présélectionner des couples plausibles, puis Neo4j pour mesurer finement les compétences acquises, manquantes et passerelles.
+
+L'interprétation opérationnelle est directe. Lorsque le déficit est faible, l'offre peut être considérée comme accessible ou proche. Lorsque le déficit est moyen, la recommandation doit être accompagnée d'un plan de montée en compétences. Lorsque le déficit est élevé, le système doit éviter de présenter l'offre comme immédiatement réaliste. Le graphe apporte donc une information que la similarité vectorielle seule ne fournit pas : il distingue la ressemblance textuelle d'une compatibilité professionnelle argumentée.
 
 \begin{figure}[H]
   \centering
@@ -861,7 +897,9 @@ Le \textit{skill gap} a été mesuré sur un échantillon de couples candidat--o
   \source{\texttt{08\_neo4j\_patterns\_top.csv}}
 \end{figure}
 
-La matrice des liaisons confirme que le graphe n'est pas seulement une collection de tables importées. Les motifs les plus importants sont les chemins candidat--compétence--offre portés par \texttt{POSSEDE} et \texttt{REQUIERT}, avec respectivement 221\,413 relations candidat--compétence et 58\,519 relations offre--compétence, ainsi que 126\,051 relations métier--compétence portées par \texttt{NECESSITE}. Ces chemins sont directement exploitables : ils permettent de calculer un taux de couverture des compétences, d'identifier les compétences manquantes, de rattacher l'offre à un métier et de proposer une trajectoire de montée en compétences. Le graphe est donc riche, mais déséquilibré ; il est utile pour expliquer les recommandations à condition de contrôler les hubs génériques.
+La matrice des liaisons confirme que le graphe n'est pas seulement une collection de tables importées. Les motifs les plus importants sont les chemins candidat--compétence--offre portés par \texttt{POSSEDE} et \texttt{REQUIERT}, avec respectivement 221\,413 relations candidat--compétence et 58\,519 relations offre--compétence, ainsi que 126\,051 relations métier--compétence portées par \texttt{NECESSITE}. Ces chemins sont directement exploitables : ils permettent de calculer un taux de couverture des compétences, d'identifier les compétences manquantes, de rattacher l'offre à un métier et de proposer une trajectoire de montée en compétences.
+
+La conclusion à retenir est donc précise. Le graphe est riche parce qu'il relie les objets utiles au recrutement ; il est déséquilibré parce que certaines compétences et certains métiers concentrent beaucoup de relations ; il est décisionnel parce qu'il modifie le classement produit par pgvector ; il reste imparfait parce que les liens de compétences dépendent de la qualité de l'extraction et du rattachement lexical. Cette nuance est importante : Neo4j améliore l'explicabilité et le reranking, mais il ne doit pas être présenté comme une garantie automatique de vérité métier.
 
 \section{Implémentation du moteur hybride de recommandation}
 

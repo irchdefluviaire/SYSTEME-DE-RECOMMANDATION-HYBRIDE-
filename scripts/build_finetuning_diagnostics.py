@@ -103,36 +103,65 @@ def build_figure(losses: pd.DataFrame) -> None:
     mrr_col = [c for c in logs.columns if c.endswith("mrr@10")][0]
     eval_logs = logs[logs[ndcg_col].notna()]
 
-    fig, axes = plt.subplots(
-        4,
-        1,
-        figsize=(9.8, 8.8),
-        sharex=False,
-        gridspec_kw={"height_ratios": [1.0, 0.85, 0.85, 0.65]},
-    )
+    fig, axes = plt.subplots(2, 2, figsize=(12.2, 8.2))
+    ax_loss, ax_split, ax_metric, ax_lr = axes.ravel()
 
-    axes[0].plot(train_logs["epoch"], train_logs["loss"], color="#2457A6", marker="o", linewidth=1.8)
-    axes[0].set_ylabel("Loss train")
-    axes[0].set_title("Diagnostics du fine-tuning")
+    ax_loss.plot(train_logs["epoch"], train_logs["loss"], color="#2457A6", marker="o", linewidth=1.8)
+    ax_loss.set_ylabel("Loss train")
+    ax_loss.set_xlabel("Epoque")
+    ax_loss.set_title("1. Apprentissage : chute rapide puis stabilisation")
+    if not train_logs.empty:
+        start_loss = float(train_logs["loss"].iloc[0])
+        end_loss = float(train_logs["loss"].iloc[-1])
+        ax_loss.annotate(
+            f"{start_loss:.3f} -> {end_loss:.3f}",
+            xy=(train_logs["epoch"].iloc[-1], end_loss),
+            xytext=(-85, 25),
+            textcoords="offset points",
+            arrowprops={"arrowstyle": "->", "color": "#374151"},
+            fontsize=9,
+        )
 
     colors = ["#2457A6", "#E68619", "#3A7D44"]
-    axes[1].bar(losses["split"], losses["loss_mnrl"], color=colors[: len(losses)])
-    axes[1].set_ylabel("Loss finale")
-    axes[1].set_title("Loss contrastive finale par split (échantillon fixe)")
+    ax_split.bar(losses["split"], losses["loss_mnrl"], color=colors[: len(losses)])
+    ax_split.set_ylabel("Loss finale")
+    ax_split.set_title("2. Generalisation : splits non vus plus difficiles")
     for i, row in enumerate(losses.itertuples()):
-        axes[1].text(i, row.loss_mnrl, f"{row.loss_mnrl:.3f}", ha="center", va="bottom", fontsize=8)
+        ax_split.text(i, row.loss_mnrl, f"{row.loss_mnrl:.3f}", ha="center", va="bottom", fontsize=9)
+    ax_split.text(
+        0.02,
+        0.93,
+        "64 paires par split pour limiter le cout de reevaluation",
+        transform=ax_split.transAxes,
+        fontsize=8.5,
+        color="#374151",
+        va="top",
+    )
 
-    axes[2].plot(eval_logs["epoch"], eval_logs[ndcg_col], color="#3A7D44", marker="o", linewidth=2.0, label="NDCG@10 validation")
-    axes[2].plot(eval_logs["epoch"], eval_logs[mrr_col], color="#E68619", marker="s", linewidth=1.8, label="MRR@10 validation")
-    axes[2].set_ylim(0.54, 0.67)
-    axes[2].set_ylabel("Score")
-    axes[2].set_title("Métriques de classement validation")
-    axes[2].legend(loc="lower right")
+    ax_metric.plot(eval_logs["epoch"], eval_logs[ndcg_col], color="#3A7D44", marker="o", linewidth=2.0, label="NDCG@10")
+    ax_metric.plot(eval_logs["epoch"], eval_logs[mrr_col], color="#E68619", marker="s", linewidth=1.8, label="MRR@10")
+    ax_metric.set_ylim(0.54, 0.67)
+    ax_metric.set_ylabel("Score")
+    ax_metric.set_xlabel("Epoque")
+    ax_metric.set_title("3. Validation : le classement progresse")
+    ax_metric.legend(loc="lower right")
 
-    axes[3].plot(train_logs["epoch"], train_logs["learning_rate"], color="#B13E3E", linewidth=1.8)
-    axes[3].set_ylabel("LR")
-    axes[3].set_xlabel("Époque")
+    ax_lr.plot(train_logs["epoch"], train_logs["learning_rate"], color="#B13E3E", linewidth=2.0)
+    ax_lr.fill_between(train_logs["epoch"], train_logs["learning_rate"], color="#B13E3E", alpha=0.12)
+    ax_lr.set_ylabel("Learning rate")
+    ax_lr.set_xlabel("Epoque")
+    ax_lr.set_title("4. Calendrier leger : warmup puis decroissance")
+    ax_lr.text(
+        0.02,
+        0.93,
+        "LR max 2e-5, batch 32, 5 epoques : choix sobre pour ressources limitees",
+        transform=ax_lr.transAxes,
+        fontsize=8.5,
+        color="#374151",
+        va="top",
+    )
 
+    fig.suptitle("Fine-tuning SentenceTransformer : cout maitrise et gain de classement", fontsize=14, fontweight="bold")
     fig.tight_layout()
     fig.savefig(FIG / "04_finetuning_courbes.png", bbox_inches="tight")
 

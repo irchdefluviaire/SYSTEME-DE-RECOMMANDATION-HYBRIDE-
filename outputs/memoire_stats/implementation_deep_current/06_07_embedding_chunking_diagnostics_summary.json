@@ -1,9 +1,17 @@
 {
   "benchmark_rows": 7,
-  "pca": {
-    "pc1": 0.05770829499481329,
-    "pc2": 0.044098867599075164,
-    "pc1_pc2": 0.10180716259388845
+  "umap": {
+    "n_points": 1810,
+    "n_neighbors": 25,
+    "min_dist": 0.12,
+    "metric": "cosine"
+  },
+  "pgvector_retrieval": {
+    "available": true,
+    "n_embeddings": 72643,
+    "sync_pct_mean": 100.0,
+    "latency_p50_ms": 30.889899993781,
+    "latency_p90_ms": 64.41412000567655
   },
   "chunking": {
     "n_chunks": 142,

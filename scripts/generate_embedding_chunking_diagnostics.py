@@ -21,8 +21,8 @@ import pandas as pd
 import pdfplumber
 import psycopg
 from sentence_transformers import SentenceTransformer
-from sklearn.decomposition import PCA
 from sklearn.metrics.pairwise import cosine_similarity
+from umap import UMAP
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -268,6 +268,166 @@ def pca_embedding_diagnostics(conn) -> dict[str, float]:
     }
 
 
+def umap_embedding_diagnostics(conn) -> dict[str, float]:
+    sample, vectors = fetch_embedding_sample(conn)
+    reducer = UMAP(
+        n_components=2,
+        n_neighbors=25,
+        min_dist=0.12,
+        metric="cosine",
+        random_state=42,
+    )
+    coords = reducer.fit_transform(vectors)
+    sample["umap_1"] = coords[:, 0]
+    sample["umap_2"] = coords[:, 1]
+    sample.to_csv(OUT / "07_espace_vectoriel_umap_current.csv", index=False)
+
+    centroids = (
+        sample.groupby("entity_kind")[["umap_1", "umap_2"]]
+        .mean()
+        .reset_index()
+        .rename(columns={"umap_1": "centroid_umap_1", "umap_2": "centroid_umap_2"})
+    )
+    counts = sample["entity_kind"].value_counts().rename_axis("entity_kind").reset_index(name="n_points")
+    diagnostic = centroids.merge(counts, on="entity_kind")
+    diagnostic["umap_n_neighbors"] = 25
+    diagnostic["umap_min_dist"] = 0.12
+    diagnostic["umap_metric"] = "cosine"
+    diagnostic.to_csv(OUT / "07_umap_diagnostic.csv", index=False)
+
+    fig = plt.figure(figsize=(13.0, 5.4))
+    gs = fig.add_gridspec(1, 2, width_ratios=[1.35, 0.8])
+    ax = fig.add_subplot(gs[0, 0])
+    for kind, group in sample.groupby("entity_kind"):
+        ax.scatter(group["umap_1"], group["umap_2"], s=14, alpha=0.62, label=kind)
+    for row in diagnostic.itertuples(index=False):
+        ax.text(
+            row.centroid_umap_1,
+            row.centroid_umap_2,
+            str(row.entity_kind),
+            fontsize=8,
+            weight="bold",
+            color="#111827",
+        )
+    ax.set_xlabel("UMAP 1")
+    ax.set_ylabel("UMAP 2")
+    ax.set_title("Projection UMAP des embeddings indexés")
+    ax.grid(alpha=0.22)
+    ax.legend(fontsize=8, ncol=2)
+
+    ax2 = fig.add_subplot(gs[0, 1])
+    order = counts.sort_values("n_points")
+    bars = ax2.barh(order["entity_kind"], order["n_points"], color="#1f5aa6")
+    ax2.bar_label(bars, fmt="%.0f", padding=3, fontsize=8)
+    ax2.set_xlabel("Points échantillonnés")
+    ax2.set_title("Échantillon utilisé")
+    ax2.grid(axis="y", alpha=0.25)
+    ax2.text(
+        0.02,
+        -0.16,
+        "UMAP rapproche les voisins locaux ; les axes n'ont pas de sens métier direct.",
+        transform=ax2.transAxes,
+        fontsize=8.5,
+        color="#374151",
+        va="top",
+    )
+    fig.suptitle("Espace vectoriel : voisinages locaux révélés par UMAP", fontsize=14, fontweight="bold")
+    fig.tight_layout()
+    fig.savefig(FIG / "07_espace_vectoriel_embeddings.png", dpi=220, bbox_inches="tight")
+    plt.close(fig)
+
+    return {
+        "n_points": int(len(sample)),
+        "n_neighbors": 25,
+        "min_dist": 0.12,
+        "metric": "cosine",
+    }
+
+
+def pgvector_retrieval_dashboard() -> dict[str, float | bool]:
+    counts_path = OUT / "06_pgvector_counts.csv"
+    lat_path = OUT / "06_pgvector_latency_summary.csv"
+    sizes_path = OUT / "06_pgvector_sizes.csv"
+    indexes_path = OUT / "06_pgvector_indexes.csv"
+    docs_path = OUT / "06_pgvector_doc_chunks.csv"
+    if not all(path.exists() for path in [counts_path, lat_path, sizes_path, indexes_path, docs_path]):
+        return {"available": False}
+
+    counts = pd.read_csv(counts_path)
+    lat = pd.read_csv(lat_path)
+    sizes = pd.read_csv(sizes_path)
+    indexes = pd.read_csv(indexes_path)
+    docs = pd.read_csv(docs_path)
+
+    counts["sync_pct"] = counts["n_with_neo4j_id"] / counts["n"].replace(0, np.nan) * 100
+    index_family = indexes["indexdef"].str.extract(r"USING\s+(\w+)", expand=False).fillna("unknown").str.lower()
+    index_counts = index_family.value_counts().rename_axis("famille").reset_index(name="n")
+    lat_map = dict(zip(lat["index"], lat["latence_ms_top10"]))
+    hnsw_size = sizes.loc[sizes["objet"].str.contains("hnsw", case=False), "total_mb"].sum()
+    table_size = sizes.loc[~sizes["objet"].str.contains("hnsw", case=False), "total_mb"].sum()
+
+    fig, axes = plt.subplots(2, 2, figsize=(12.2, 8.0))
+    ax = axes[0, 0]
+    plot = counts.sort_values("n")
+    ax.barh(plot["entity_kind"], plot["n"], color="#1f5aa6")
+    ax.set_title("Couverture des entités vectorisées")
+    ax.set_xlabel("Embeddings")
+    ax.grid(axis="x", alpha=0.25)
+
+    ax = axes[0, 1]
+    ax.barh(plot["entity_kind"], plot["sync_pct"], color="#0f766e")
+    ax.set_xlim(0, 105)
+    ax.set_title("Synchronisation avec Neo4j")
+    ax.set_xlabel("% avec identifiant Neo4j")
+    ax.grid(axis="x", alpha=0.25)
+
+    ax = axes[1, 0]
+    latency_rows = pd.DataFrame(
+        {
+            "stat": ["p50", "p75", "p90", "max"],
+            "ms": [
+                lat_map.get("50%", np.nan),
+                lat_map.get("75%", np.nan),
+                lat_map.get("90%", np.nan),
+                lat_map.get("max", np.nan),
+            ],
+        }
+    )
+    ax.plot(latency_rows["stat"], latency_rows["ms"], marker="o", color="#b45309", linewidth=2.2)
+    ax.set_title("Latence top-10 HNSW")
+    ax.set_ylabel("ms")
+    ax.grid(axis="y", alpha=0.25)
+
+    ax = axes[1, 1]
+    bars = ax.bar(index_counts["famille"], index_counts["n"], color="#7c3aed")
+    ax.bar_label(bars, padding=3, fontsize=8)
+    ax.set_title("Familles d'index disponibles")
+    ax.set_ylabel("Nombre d'index")
+    ax.grid(axis="y", alpha=0.25)
+    ax.text(
+        0.42,
+        0.92,
+        f"Doc chunks synchronisés : {int(docs['n_with_neo4j_id'].sum())}/{int(docs['n'].sum())}\n"
+        f"Stockage tables : {table_size:.1f} Mo ; index HNSW : {hnsw_size:.1f} Mo",
+        transform=ax.transAxes,
+        fontsize=8.5,
+        color="#374151",
+        va="top",
+    )
+
+    fig.suptitle("pgvector : retrieval, synchronisation graphe et coût opérationnel", fontsize=14, fontweight="bold")
+    fig.tight_layout()
+    fig.savefig(FIG / "06_pgvector_retrieval_dashboard.png", dpi=220, bbox_inches="tight")
+    plt.close(fig)
+    return {
+        "available": True,
+        "n_embeddings": int(counts["n"].sum()),
+        "sync_pct_mean": float(counts["sync_pct"].mean()),
+        "latency_p50_ms": float(lat_map.get("50%", np.nan)),
+        "latency_p90_ms": float(lat_map.get("90%", np.nan)),
+    }
+
+
 def chunk_diagnostics(chunks: pd.DataFrame) -> dict[str, float]:
     stats = {
         "Nombre total de documents": int(chunks["source"].nunique()),
@@ -435,14 +595,16 @@ def main() -> None:
     with psycopg.connect(**cfg.PG_CONN) as conn:
         chunks = fetch_chunks(conn)
         chunks.to_csv(OUT / "06_chunking_chunks_detail.csv", index=False)
-        pca_info = pca_embedding_diagnostics(conn)
+        umap_info = umap_embedding_diagnostics(conn)
 
     chunk_info = chunk_diagnostics(chunks)
     coherence_info = chunk_semantic_coherence(chunks)
+    pgvector_info = pgvector_retrieval_dashboard()
 
     summary = {
         "benchmark_rows": int(len(benchmark)),
-        "pca": pca_info,
+        "umap": umap_info,
+        "pgvector_retrieval": pgvector_info,
         "chunking": chunk_info,
         "chunking_coherence": coherence_info,
     }

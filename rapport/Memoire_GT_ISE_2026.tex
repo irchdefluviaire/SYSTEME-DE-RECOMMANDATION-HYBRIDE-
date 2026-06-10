@@ -1279,9 +1279,16 @@ S_{hyb}(c,o)=\alpha S_{sem}(c,o)+\beta S_{graph}(c,o)+\gamma C_{ncf}(c,o)+\delta
 \]
 où $c$ désigne un candidat, $o$ une offre, $S_{sem}$ la similarité sémantique, $S_{graph}$ la couverture de compétences issue du graphe, $C_{ncf}$ la compatibilité de niveau de formation et $A_{sect}$ l'alignement sectoriel. Cette formulation traduit un choix méthodologique important : le système ne délègue pas toute la décision au \LLM{}. Le \LLM{} intervient pour synthétiser et expliquer, mais le classement repose sur des signaux calculables et auditables.
 
-Les pondérations ne doivent pas être fixées uniquement par intuition. La méthodologie retient donc une calibration statistique par optimisation bayésienne avec Optuna, en utilisant le \textit{Tree-structured Parzen Estimator} comme stratégie de recherche \cite{akiba2019optuna}. Dans l'expérience logicielle retenue, le score calibré est volontairement ramené à deux signaux observables dans les sorties d'évaluation : le score sémantique issu de pgvector et le score Neo4j issu de l'enrichissement graphe. Pour chaque essai, l'algorithme propose deux poids positifs, les normalise afin que leur somme soit égale à 1, recalcule le score hybride, rerange les offres par candidat, puis mesure la qualité du classement.
+Les pondérations ne doivent pas être fixées uniquement par intuition. La méthodologie retient donc une calibration statistique par optimisation bayésienne avec Optuna, en utilisant le \textit{Tree-structured Parzen Estimator} comme stratégie de recherche \cite{akiba2019optuna}. Dans l'expérience logicielle retenue, le score calibré est volontairement ramené à deux signaux observables dans les sorties d'évaluation : le score sémantique issu de pgvector et le score Neo4j issu de l'enrichissement graphe. Le problème optimisé est donc :
 
-Trois fonctions objectif sont testées afin de ne pas confondre un bon classement global avec une bonne première recommandation : le NDCG@10 seul, la moyenne NDCG@10--Recall@10--Precision@10 et la moyenne MRR@10--Precision@10. Le NDCG@10 valorise l'ordre complet du top 10 ; le rappel et la précision évaluent la couverture binaire des offres pertinentes ; le MRR@10 met davantage de pression sur le rang de la première offre pertinente. Cette calibration est volontairement séparée de la génération \LLM{}. Elle concerne seulement le moteur de classement. Elle inclut également un garde-fou : les poids proposés par Optuna sont comparés à des solutions de frontière, par exemple un score purement sémantique ou un score purement fondé sur les compétences. La calibration est donc utilisée comme un test empirique des pondérations, non comme une justification automatique du caractère hybride du système.
+\[
+S_{cal}(c,o)=w_{sem}S_{sem}(c,o)+w_{Neo4j}S_{Neo4j}(c,o),
+\qquad w_{sem}+w_{Neo4j}=1.
+\]
+
+Le principe d'Optuna est le suivant. A chaque essai, l'algorithme propose une valeur candidate de $w_{sem}$, en déduit $w_{Neo4j}=1-w_{sem}$, recalcule le score des offres candidates, rerange les offres pour chaque candidat, puis évalue ce nouveau classement avec une fonction objectif. Les essais précédents alimentent le modèle probabiliste du \textit{TPESampler} : les zones de poids ayant produit de bons scores sont explorées plus intensément que les zones peu prometteuses. La méthode ne cherche donc pas un coefficient \og vrai \fg{} au sens économique ; elle cherche la pondération qui maximise empiriquement une métrique de ranking sur l'échantillon d'évaluation.
+
+Trois fonctions objectif sont testées afin de ne pas confondre un bon classement global avec une bonne première recommandation : le NDCG@10 seul, la moyenne NDCG@10--Recall@10--Precision@10 et la moyenne MRR@10--Precision@10. Le NDCG@10 valorise l'ordre complet du top 10 ; le rappel et la précision évaluent la couverture binaire des offres pertinentes ; le MRR@10 met davantage de pression sur le rang de la première offre pertinente. Cette calibration est volontairement séparée de la génération \LLM{}. Elle concerne seulement le moteur de classement. Elle inclut également un garde-fou : les poids proposés par Optuna sont comparés à des solutions de frontière, par exemple un score purement sémantique ou un score purement fondé sur Neo4j. La calibration est donc utilisée comme un test empirique des pondérations, non comme une justification automatique du caractère hybride du système. Si les labels de pertinence sont des proxys et non des jugements humains, les coefficients obtenus doivent être interprétés comme optimaux dans le protocole expérimental courant, pas comme des paramètres définitifs du marché du travail.
 
 L'analyse de \textit{skill gap} complète le score. Elle distingue les compétences acquises, les compétences requises et les compétences manquantes. Cette distinction permet de produire un verdict opérationnel : candidat immédiatement compatible, candidat compatible après montée en compétence, candidat à conserver en vivier ou profil hors cible. Ce verdict est plus utile qu'un simple score numérique, car il transforme la recommandation en aide à la décision.
 
@@ -1607,7 +1614,7 @@ La force de cette implémentation tient dans son caractère hybride et traçable
 
 Ce chapitre évalue empiriquement le système implémenté au chapitre précédent. L'objectif n'est pas seulement de produire des scores globaux, mais de répondre à une question centrale du mémoire : l'ajout d'un graphe de connaissances Neo4j apporte-t-il une amélioration mesurable par rapport à une recherche vectorielle fondée uniquement sur pgvector ? Cette question est décisive, car le graphe ajoute une complexité technique réelle : modélisation des nœuds et relations, chargement Neo4j, requêtes Cypher, enrichissement des résultats, maintenance d'une base supplémentaire. Son intérêt doit donc être justifié par un gain observable en qualité de classement, en explicabilité ou en contrôle métier.
 
-L'évaluation a été conduite en trois niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau porte sur les limites opérationnelles observées, notamment la stabilité de la connexion Neo4j et la portée réelle des métriques utilisées.
+L'évaluation a été conduite en quatre niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau vérifie fonctionnellement le graphe : recherche métier--compétences, compétence--offres, skill gap et compatibilité \NCF{}. Le quatrième niveau calibre les pondérations du score hybride avec Optuna, puis discute les limites opérationnelles observées.
 
 Les résultats présentés dans ce chapitre proviennent d'artefacts exécutables : le benchmark d'embeddings sauvegardé dans \filevar{outputs/evaluation/embedding\_benchmark.json}, l'ablation \filevar{src/07\_evaluation/ablation\_pgvector\_graph.py} et la calibration \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py}. Les sorties d'ablation sont exportées dans \filevar{outputs/evaluation/pgvector\_vs\_graph}, les sorties Optuna dans \filevar{outputs/evaluation/hybrid\_weight\_optimization} et les figures dans \filevar{rapport/figures/generated/evaluation}. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties produites par le pipeline local.
 
@@ -1693,6 +1700,66 @@ La Precision@1 progresse également, de 0.5942 à 0.7536. Ce point est important
 \end{figure}
 
 La figure \ref{fig:eval_ablation_metrics} confirme cette lecture. La configuration \textit{pgvector + graphe} domine la configuration vectorielle seule sur les métriques principales de classement. Cela ne signifie pas que pgvector devient secondaire : pgvector reste le premier étage, chargé de produire rapidement le pool candidat. Le résultat indique plutôt que, dans ce pool, le graphe apporte une information métier suffisamment discriminante pour améliorer le reranking.
+
+\section{Évaluation fonctionnelle du graphe et du GraphRAG}
+
+L'ablation précédente mesure l'effet du graphe sur le classement. Elle ne suffit pas à vérifier que Neo4j joue correctement son rôle fonctionnel. Une évaluation complémentaire a donc été réalisée avec le script \filevar{scripts/generate\_neo4j\_functional\_evaluation.py}. Elle teste cinq scénarios directement liés aux usages du système : recherche métier vers compétences, recherche compétence vers offres, calcul de \textit{skill gap}, compatibilité \NCF{} et comparaison RAG contre GraphRAG.
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.92\textwidth]{figures/generated/evaluation/functional_graph_evaluation.png}
+\caption{Évaluation fonctionnelle des requêtes Neo4j utiles au GraphRAG}
+\label{fig:eval_functional_graph}
+\end{figure}
+
+\subsection{Recherche métier vers compétences}
+
+Le premier test vérifie que le graphe peut partir d'un métier et récupérer les compétences associées par la relation \filevar{NECESSITE}. Ce scénario correspond à une question de type : \og quelles compétences faut-il pour exercer ce métier ? \fg{}. Les métiers les plus riches du graphe contiennent un nombre important de compétences : par exemple \og médecin spécialiste \fg{} est relié à 178 compétences, \og opérateur sur machine à commande numérique \fg{} à 158, et \og enseignant-chercheur en informatique \fg{} à 140. Sur les 25 métiers les plus riches, la moyenne atteint 124,4 compétences.
+
+Cette richesse est utile pour l'orientation et la montée en compétences, mais elle impose une précaution : le métier porte un contexte large, pas une liste minimale d'exigences pour une offre précise. Dans le GraphRAG, les compétences métier doivent donc enrichir l'explication, tandis que les compétences \filevar{REQUIERT} d'une offre doivent rester prioritaires pour le matching opérationnel.
+
+\subsection{Recherche compétence vers offres}
+
+Le deuxième test part d'une compétence et récupère les offres qui la requièrent. C'est le scénario inverse : \og quelles offres demandent cette compétence ? \fg{}. La compétence \og comptabilité \fg{} est reliée à 748 offres, \og réaliser des activités de service après-vente \fg{} à 662 offres et \og planifier des campagnes de marketing sur les médias sociaux \fg{} à 626 offres. Sur les 25 compétences les plus présentes dans les offres, la moyenne atteint 590,16 offres.
+
+Ce résultat prouve que Neo4j peut servir de moteur de recherche relationnelle. Il montre aussi une limite importante : certaines compétences très fréquentes sont peu discriminantes ou relèvent davantage d'un domaine large que d'une compétence opérationnelle fine. Dans un système de recommandation, ces hubs ne doivent pas être récompensés mécaniquement. Ils doivent être pondérés avec le score sémantique, le niveau \NCF{}, le secteur et les compétences plus spécifiques.
+
+\begin{table}[H]
+\centering
+\small
+\caption{Synthèse de l'évaluation fonctionnelle du graphe}
+\label{tab:eval_functional_graph_summary}
+\begin{tabularx}{\textwidth}{XrrX}
+\toprule
+Test fonctionnel & Volume ou score & Lecture & Interprétation \\
+\midrule
+Offres avec compétence \filevar{REQUIERT} & 10\,729 / 13\,957 & 76,87\,\% & Couverture suffisante pour le reranking, mais 3\,228 offres restent pénalisées par absence de compétences matérialisées. \\
+Candidats avec compétence \filevar{POSSEDE} & 38\,841 / 41\,298 & 94,05\,\% & Le signal candidat est largement disponible pour calculer le taux de match. \\
+Top métiers vers compétences & 124,4 compétences & Moyenne top 25 & Les métiers fournissent un contexte riche, utile pour l'orientation. \\
+Top compétences vers offres & 590,16 offres & Moyenne top 25 & Les compétences fréquentes facilitent la recherche, mais créent des hubs à contrôler. \\
+Skill gap échantillonné & 5,30 & Moyenne & Une offre prise au hasard reste rarement immédiatement compatible. \\
+Compatibilité \NCF{} exacte & 13,29\,\% & Même niveau & Le niveau exact est discriminant ; il ne doit pas être remplacé par le seul texte. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Skill gap}
+
+Le \textit{skill gap} est calculé en comparant les compétences \filevar{REQUIERT} par l'offre et les compétences \filevar{POSSEDE} par le candidat. Sur l'échantillon fonctionnel, le déficit moyen est de 5,30 compétences et la médiane vaut 6. Ce résultat est cohérent avec l'objectif du système : il ne s'agit pas de supposer que tous les candidats sont proches de toutes les offres, mais d'identifier les couples où l'écart est acceptable et de transformer les autres cas en trajectoire de montée en compétences.
+
+Cette mesure est plus utile qu'un score opaque. Elle permet d'expliquer pourquoi une offre est classée : compétences déjà couvertes, compétences manquantes, et éventuellement compétences passerelles. Elle permet aussi de produire des verdicts différenciés : compatible, montée en compétence, vivier ou hors cible.
+
+\subsection{Compatibilité NCF}
+
+Le test de compatibilité \NCF{} vérifie si le niveau du candidat correspond au niveau requis par l'offre. Dans l'échantillon de couples candidat--offre évalué, 13,29\,\% des couples partagent exactement le même niveau. Ce taux relativement faible confirme que le niveau de formation est un filtre fort. Une recommandation purement textuelle peut rapprocher un candidat et une offre, mais elle ne garantit pas la cohérence institutionnelle du niveau attendu.
+
+La compatibilité \NCF{} ne doit cependant pas être utilisée comme un couperet mécanique. Un écart d'un niveau peut être acceptable selon l'expérience, les compétences et la nature de l'offre. C'est pourquoi le moteur hybride l'utilise comme composante pondérée plutôt que comme filtre absolu.
+
+\subsection{Comparaison RAG vs GraphRAG}
+
+La comparaison RAG contre GraphRAG est matérialisée par l'ablation \filevar{pgvector seul} contre \filevar{pgvector + graphe}. Dans ce protocole, le RAG vectoriel constitue un pool initial de 30 offres par candidat. Le GraphRAG conserve le même pool, mais ajoute les relations Neo4j pour recalculer le score et reranger les offres. La différence observée ne vient donc pas d'un corpus différent, mais de l'information relationnelle ajoutée au classement.
+
+Les résultats sont nets : le NDCG@10 passe de 0,5575 à 0,7392, le Recall@10 de 0,4491 à 0,6147, et le MRR@10 de 0,6908 à 0,8093. Le GraphRAG améliore donc l'ordre des recommandations et pas seulement leur explication. La conclusion correcte est précise : pgvector est efficace comme outil de rappel initial, tandis que Neo4j apporte un signal de décision plus discriminant lorsque les relations \filevar{POSSEDE}, \filevar{REQUIERT}, \filevar{A\_NIVEAU} et \filevar{REQUIERT\_NIVEAU} sont disponibles.
 
 \section{Analyse du reranking par le graphe}
 
