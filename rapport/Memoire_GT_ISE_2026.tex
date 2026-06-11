@@ -1947,6 +1947,30 @@ Ces résultats orientent directement les recommandations du chapitre suivant : r
 	\tableStyleEnd
 	\source{Auteur}
 \end{table}
+
+
+\begin{table}[H]
+	\centering
+	\caption{Pipeline général implémenté : étapes, entrées et sorties}
+	\label{tab:pipeline_general_implementation}
+	\tableStyleStart
+	\begin{tabularx}{\textwidth}{p{0.8cm}p{3.0cm}p{4.3cm}X}
+		\rowcolor{darkblue}
+		\tabheader{Ordre} & \tabheader{Étape} & \tabheader{Entrées principales} & \tabheader{Sorties concrètes} \\
+		\midrule
+		1 & ETL & Données brutes d'offres, candidats et référentiels & Fichiers normalisés, champs \texttt{text\_to\_embed}, paires \texttt{pairs\_train/val/test.jsonl}. \\
+		2 & Fine-tuning & Paires offre--description et modèle \texttt{all-MiniLM-L6-v2} & Modèle sauvegardé dans \filevar{models/st\_finetuned/final} et métriques d'entraînement. \\
+		3 & Indexation vectorielle & Entités nettoyées et encodeur fine-tuné & Table \texttt{embeddings}, table \texttt{doc\_chunks}, index HNSW et index textuels PostgreSQL. \\
+		4 & Graphe de connaissances & Offres, candidats, compétences, métiers, niveaux et référentiels & Noeuds Neo4j, relations métier-compétence-offre-candidat, contraintes et chemins explicatifs. \\
+		5 & GraphRAG hybride & Résultats pgvector, chemins Neo4j et règles métier & Contexte candidat--offre, score hybride, analyse de \textit{skill gap}, critic et Text2Cypher. \\
+		6 & Orchestration LangGraph & Question utilisateur et registre d'outils & État partagé, routage, exécution des outils, génération finale et traces du workflow. \\
+		7 & Exposition applicative & Workflow agentique et services locaux & API FastAPI, CLI de test et interface Streamlit. \\
+		\bottomrule
+	\end{tabularx}
+	\tableStyleEnd
+	\source{Auteur, à partir des scripts \texttt{src/} et \texttt{scripts/} du projet}
+\end{table}
+
 \markboth{Table des matières}{Table des matières}
 \begin{singlespace}
 \tableofcontents % Table des matières détaillée à la fin (Optionnel si sommaire au début)

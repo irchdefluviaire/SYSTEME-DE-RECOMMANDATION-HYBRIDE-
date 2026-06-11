@@ -1,0 +1,4 @@
+objective,objective_formula,best_trial,best_value,retained_weight_set,w_semantique,w_neo4j,optuna_ndcg,optuna_precision,optuna_recall,optuna_mrr
+ndcg,NDCG@10,53,0.967457,pur_neo4j,0.0,1.0,0.969713,0.5,1.0,0.810887
+ndcg_recall_precision,(NDCG@10 + Recall@10 + Precision@10) / 3,53,0.822486,pur_neo4j,0.0,1.0,0.969713,0.5,1.0,0.810887
+mrr_precision,(MRR@10 + Precision@10) / 2,54,0.659136,optuna_best,0.661532,0.338468,0.967428,0.5,1.0,0.818271

@@ -1,0 +1,2 @@
+n_pairs,n_candidates,rank_pgvector_mean,rank_optuna_mean,rank_shift_mean,rank_shift_median,rank_shift_p75,rank_shift_min,rank_shift_max,gain_pct,loss_pct,same_pct
+690,69,9.510145,5.5,4.010145,1.0,7.75,-9.0,28.0,59.86,13.77,26.38

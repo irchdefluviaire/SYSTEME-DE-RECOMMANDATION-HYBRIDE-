@@ -1,0 +1,81 @@
+{
+  "objective": "ndcg",
+  "objective_formula": "NDCG@10",
+  "optimizer": "Optuna TPESampler",
+  "n_trials": 500,
+  "seed": 42,
+  "relevance_source": "proxy",
+  "input_path": "outputs\\evaluation\\pgvector_vs_graph\\ablation_graph_rerank_details.csv",
+  "n_rows": 690,
+  "n_candidates": 69,
+  "components": {
+    "semantique": "score_sem",
+    "neo4j": "taux_match"
+  },
+  "best_trial": 53,
+  "best_value": 0.967457,
+  "retained_weight_set": "pur_neo4j",
+  "best_weights": {
+    "semantique": 0.0,
+    "neo4j": 1.0
+  },
+  "candidate_weight_set_objectives": {
+    "pur_neo4j": 0.969713,
+    "optuna_best": 0.967457,
+    "poids_egaux": 0.967041,
+    "pur_semantique": 0.948905
+  },
+  "candidate_weight_set_metrics": {
+    "optuna_best": {
+      "ndcg": 0.967457,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.817063
+    },
+    "poids_egaux": {
+      "ndcg": 0.967041,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.816339
+    },
+    "pur_semantique": {
+      "ndcg": 0.948905,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.695462
+    },
+    "pur_neo4j": {
+      "ndcg": 0.969713,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.810887
+    }
+  },
+  "metrics": {
+    "pgvector_semantique": {
+      "ndcg": 0.948905,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.695462
+    },
+    "score_hybride_actuel": {
+      "ndcg": 0.970364,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.799293
+    },
+    "score_hybride_optuna": {
+      "ndcg": 0.969713,
+      "precision": 0.5,
+      "recall": 1.0,
+      "mrr": 0.810887
+    }
+  },
+  "outputs": {
+    "trials_csv": "outputs\\evaluation\\hybrid_weight_optimization\\hybrid_weight_trials_ndcg.csv",
+    "details_csv": "outputs\\evaluation\\hybrid_weight_optimization\\optimized_ranking_details_ndcg.csv",
+    "trials_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_optimization_trials_ndcg.png",
+    "weights_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_best_ndcg.png",
+    "comparison_figure": "rapport\\figures\\generated\\evaluation\\hybrid_weights_ndcg_comparison_ndcg.png"
+  }
+}

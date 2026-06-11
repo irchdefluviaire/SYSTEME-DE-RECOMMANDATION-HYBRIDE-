@@ -1,9 +1,9 @@
 \chapter{Implémentation du système de recommandation}
 \vspace{-1.2cm}
 
-Ce chapitre présente la matérialisation opérationnelle de l'architecture méthodologique décrite précédemment. Il ne reprend donc pas les définitions générales des embeddings, du \RAG{}, du graphe de connaissances ou de l'orchestration agentique. Son objectif est différent : montrer ce qui a été effectivement construit, alimenté, indexé, relié et rendu exploitable dans le système de recommandation emploi-compétences.
+Ce chapitre présente la matérialisation opérationnelle de l'architecture méthodologique décrite précédemment.Son objectif est de montrer ce qui a été effectivement construit, alimenté, indexé, relié et rendu exploitable dans le système de recommandation emploi-compétences.
 
-La lecture du chapitre suit une logique d'ingénierie statistique. Chaque brique est examinée à partir de trois éléments : les artefacts produits, les indicateurs observés et les limites opérationnelles. Les résultats finaux de performance, le calibrage du \textit{critic} et l'évaluation détaillée des réponses générées sont volontairement réservés au chapitre d'évaluation.
+%La lecture du chapitre suit une logique d'ingénierie statistique. Chaque brique est examinée à partir de trois éléments : les artefacts produits, les indicateurs observés et les limites opérationnelles. Les résultats finaux de performance, le calibrage du \textit{critic} et l'évaluation détaillée des réponses générées sont volontairement réservés au chapitre d'évaluation.
 
 \newcommand{\implementationScreenshot}[4]{%
   \begin{figure}[H]
@@ -73,52 +73,7 @@ La vue d'ensemble de l'implémentation doit être lue comme une chaîne d'exécu
 
 La figure \ref{fig:pipeline_operationnel_implementation} distingue les flux principaux. Les données nettoyées alimentent deux familles de composants : d'une part le modèle d'embeddings et la base vectorielle ; d'autre part le graphe de connaissances. Le moteur GraphRAG se situe à l'intersection de ces deux sources : il récupère des voisins sémantiques dans pgvector, exploite les relations Neo4j pour contextualiser les résultats, puis transmet un contexte contrôlé au workflow LangGraph. L'interface n'est donc pas un composant isolé ; elle est le point d'accès à une chaîne déjà construite.
 
-\begin{table}[H]
-  \centering
-  \caption{Pipeline général implémenté : étapes, entrées et sorties}
-  \label{tab:pipeline_general_implementation}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{0.8cm}p{3.0cm}p{4.3cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Ordre} & \tabheader{Étape} & \tabheader{Entrées principales} & \tabheader{Sorties concrètes} \\
-    \midrule
-    1 & ETL & Données brutes d'offres, candidats et référentiels & Fichiers normalisés, champs \texttt{text\_to\_embed}, paires \texttt{pairs\_train/val/test.jsonl}. \\
-    2 & Fine-tuning & Paires offre--description et modèle \texttt{all-MiniLM-L6-v2} & Modèle sauvegardé dans \filevar{models/st\_finetuned/final} et métriques d'entraînement. \\
-    3 & Indexation vectorielle & Entités nettoyées et encodeur fine-tuné & Table \texttt{embeddings}, table \texttt{doc\_chunks}, index HNSW et index textuels PostgreSQL. \\
-    4 & Graphe de connaissances & Offres, candidats, compétences, métiers, niveaux et référentiels & Noeuds Neo4j, relations métier-compétence-offre-candidat, contraintes et chemins explicatifs. \\
-    5 & GraphRAG hybride & Résultats pgvector, chemins Neo4j et règles métier & Contexte candidat--offre, score hybride, analyse de \textit{skill gap}, critic et Text2Cypher. \\
-    6 & Orchestration LangGraph & Question utilisateur et registre d'outils & État partagé, routage, exécution des outils, génération finale et traces du workflow. \\
-    7 & Exposition applicative & Workflow agentique et services locaux & API FastAPI, CLI de test et interface Streamlit. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Auteur, à partir des scripts \texttt{src/} et \texttt{scripts/} du projet}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Séparation des couches techniques du système}
-  \label{tab:separation_couches_implementation}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.1cm}p{4.4cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Couche} & \tabheader{Artefacts} & \tabheader{Responsabilité dans le système} \\
-    \midrule
-    Données & \filevar{data/processed}, \filevar{data/finetune} & Porter les observations nettoyées, les variables normalisées et les jeux de paires utilisés pour l'apprentissage. \\
-    Modèle & \filevar{models/st\_finetuned}\\\filevar{/final} & Transformer textes, offres, candidats, compétences et référentiels en vecteurs comparables. \\
-    Index vectoriel & PostgreSQL \texttt{kmer\_ai}, pgvector & Stocker les embeddings, exécuter la recherche top-$K$ et conserver les liens vers Neo4j. \\
-    Graphe & Neo4j & Représenter les relations explicites entre candidats, offres, compétences, métiers, niveaux, secteurs et documents. \\
-    Moteur hybride & \filevar{src/05\_graphrag} & Combiner proximité vectorielle, relations du graphe, règles métier, skill gap et critic. \\
-    Orchestration & \filevar{src/08\_agentic}\\\filevar{\_graphrag/graph.py} & Router la requête, appeler les outils, construire le contexte, déclencher la génération et conserver les traces. \\
-    Interfaces & \filevar{src/06\_api/main.py}\\\filevar{chatbot\_app.py}, \filevar{cli.py} & Rendre le système utilisable via API, interface conversationnelle ou ligne de commande. \\
-    Outputs & \filevar{outputs/memoire}\\\filevar{\_stats}, \filevar{outputs/evaluation} & Fournir les tableaux, graphiques et diagnostics utilisés dans le mémoire. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Auteur, à partir de l'organisation du dépôt}
-\end{table}
-
-Cette séparation est le point central de l'implémentation. Les données ne sont pas confondues avec le modèle ; le modèle ne remplace pas la base vectorielle ; pgvector ne remplace pas Neo4j ; le graphe ne génère pas la réponse ; LangGraph ne calcule pas seul la recommandation ; l'interface n'est qu'une couche d'accès. Le système est donc auditable par couche : on peut vérifier les fichiers produits par l'ETL, le modèle sauvegardé, les tables pgvector, les noeuds Neo4j, les outils GraphRAG, les traces LangGraph et les réponses exposées à l'utilisateur.
+%Cette séparation est le point central de l'implémentation. Les données ne sont pas confondues avec le modèle ; le modèle ne remplace pas la base vectorielle ; pgvector ne remplace pas Neo4j ; le graphe ne génère pas la réponse ; LangGraph ne calcule pas seul la recommandation ; l'interface n'est qu'une couche d'accès. Le système est donc auditable par couche : on peut vérifier les fichiers produits par l'ETL, le modèle sauvegardé, les tables pgvector, les noeuds Neo4j, les outils GraphRAG, les traces LangGraph et les réponses exposées à l'utilisateur.
 
 \implementationScreenshot
   {fig:capture_streamlit_interface}
@@ -294,6 +249,8 @@ La capture du terminal de fine-tuning doit montrer le chargement du modèle, le 
 
 \subsection{Comportement du fine-tuning et gains sur le ranking}
 
+\subsubsection{Paramétrage contraint et dynamique d'apprentissage}
+
 \begin{table}[H]
   \centering
   \caption{Hyperparamètres du fine-tuning SentenceTransformer}
@@ -315,7 +272,7 @@ La capture du terminal de fine-tuning doit montrer le chargement du modèle, le 
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{\texttt{src/02\_finetune\_st/train\_sentence\_transformer.py} et \texttt{models/st\_finetuned/evaluation\_metrics.json}}
+  \source{\texttt{Auteur}}
 \end{table}
 
 Ces hyperparamètres ne sont pas des valeurs arbitraires. Ils traduisent un compromis imposé par les ressources disponibles : le fine-tuning devait rester exécutable localement, sans infrastructure GPU lourde ni entraînement long. Le modèle \texttt{all-MiniLM-L6-v2} a donc été conservé parce qu'il produit des vecteurs de 384 dimensions, moins coûteux à encoder, stocker et rechercher dans pgvector. Le batch de 32 limite la consommation mémoire tout en conservant assez d'exemples négatifs implicites pour la \textit{MultipleNegativesRankingLoss}. Le nombre de cinq époques évite un entraînement excessif sur un corpus de paires encore imparfait. Le \textit{learning rate} de $2\times10^{-5}$, avec \textit{warmup} puis décroissance, permet une adaptation progressive du modèle sans déstabiliser les représentations déjà apprises.
@@ -333,6 +290,8 @@ La figure \ref{fig:implementation_finetuning_courbes} se lit en quatre blocs. Le
 Ces valeurs ne remplacent pas les métriques de ranking, car la \textit{MultipleNegativesRankingLoss} dépend de la composition des batches. Elles servent surtout de contrôle de cohérence : si la perte train baissait mais que la validation stagnait ou chutait, le fine-tuning serait suspect. Ici, la baisse de perte et la progression du NDCG@10/MRR@10 indiquent que l'adaptation du modèle améliore bien le retrieval dans le domaine emploi--compétences.
 
 La validation atteint un NDCG@10 maximal de 0,6492 à l'époque 4, avant un léger recul à 0,6469 à l'époque 5. Ce profil est cohérent avec un apprentissage rapide suivi d'un plateau. Il serait donc fragile de prolonger l'entraînement sans contrôle : au-delà d'un certain point, le gain marginal devient faible et le risque de sur-adaptation augmente.
+
+\subsubsection{Preuve de gain sur le ranking sémantique}
 
 \begin{table}[H]
   \centering
@@ -364,27 +323,6 @@ Cette comparaison a été régénérée sur 953 paires de test après la mise à
   \label{fig:implementation_benchmark_embeddings}
   \source{\texttt{outputs/evaluation/embedding\_benchmark.csv}}
 \end{figure}
-
-\begin{table}[H]
-  \centering
-  \caption{Résultats de benchmark des représentations}
-  \label{tab:implementation_benchmark_embeddings}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{Xrrrr}
-    \rowcolor{darkblue}
-    \tabheader{Modèle} & \tabheader{Dim.} & \tabheader{NDCG@10} & \tabheader{MRR@10} & \tabheader{Latence ms} \\
-    \midrule
-    ST fine-tuné emploi-compétences & 384 & 0,6232 & 0,5874 & 89,5 \\
-    mE5-base multilingue & 768 & 0,3333 & 0,3015 & 637,9 \\
-    TF-IDF & 29\,169 & 0,3159 & 0,3016 & 1,3 \\
-    BM25 & -- & 0,2105 & 0,1771 & 0,1 \\
-    CamemBERT sentence & 768 & 0,2018 & 0,1755 & 349,1 \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/05\_benchmark\_modeles\_embeddings.csv}}
-\end{table}
-
 Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint un NDCG@10 de 0,6232, un MRR@10 de 0,5874 et un recall@10 de 0,7398. Le meilleur modèle généraliste dense testé, mE5-base, atteint seulement 0,3333 en NDCG@10 et 0,4355 en recall@10, avec une latence nettement plus élevée. TF-IDF reste très rapide et compétitif sur certains signaux lexicaux, mais son recall@10 reste inférieur à celui du modèle fine-tuné. L'intérêt du fine-tuning est donc empirique, pas seulement théorique. La bonne architecture n'oppose pas \og deep learning \fg{} et lexical ; elle utilise le modèle fine-tuné comme signal sémantique principal et conserve les signaux lexicaux comme complément.
 
 \subsection{Structure de l'espace vectoriel après fine-tuning}
@@ -397,11 +335,13 @@ Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint
   \source{\texttt{07\_espace\_vectoriel\_umap\_current.csv} et \texttt{07\_umap\_diagnostic.csv}}
 \end{figure}
 
-La figure \ref{fig:implementation_espace_vectoriel} utilise UMAP pour représenter en deux dimensions un échantillon de 1\,810 embeddings indexés. UMAP ne doit pas être lu comme une carte géographique exacte du sens. Son rôle est plus simple : placer proches les objets qui ont des voisins proches dans l'espace vectoriel original. Les axes \og UMAP 1 \fg{} et \og UMAP 2 \fg{} n'ont donc pas de signification métier directe ; ce qui compte est la proximité entre points et la formation éventuelle de zones.
+La figure \ref{fig:implementation_espace_vectoriel} utilise UMAP pour projeter en deux dimensions un échantillon de 1\,810 embeddings indexés : 350 candidats, 350 offres, 350 compétences, 350 métiers, 209 groupes de base MEPC et 201 domaines détaillés NCF. UMAP est ici un outil de lecture visuelle. Il ne reconstruit pas toute la géométrie des 384 dimensions du modèle ; il essaie surtout de préserver les voisinages locaux. Autrement dit, deux points proches sur la figure doivent être lus comme deux objets que le modèle tend à rapprocher, mais deux points éloignés ne permettent pas toujours de conclure à une opposition métier stricte. Les axes \og UMAP 1 \fg{} et \og UMAP 2 \fg{} n'ont donc pas de signification directe comme \og niveau \fg{}, \og secteur \fg{} ou \og expérience \fg{}.
 
-La lecture du nuage est utile mais doit rester prudente. Les offres d'emploi forment une zone visible, avec quelques sous-groupes plus éloignés ; cela indique que certaines offres portent un vocabulaire ou des métadonnées plus spécifiques. Les candidats, compétences, métiers et domaines de formation se recouvrent davantage au centre. Ce recouvrement n'est pas un échec : le système cherche justement à projeter ces objets dans un même espace pour pouvoir les comparer. Si les candidats étaient totalement séparés des offres ou des compétences, le retrieval serait difficile. La présence de zones mixtes indique que l'encodeur place plusieurs familles d'objets dans un espace commun, exploitable par pgvector.
+La première lecture porte sur la séparation partielle des familles d'objets. Les offres d'emploi apparaissent plus excentrées, avec un centroïde situé dans une zone différente de celle des autres types d'entités. C'est cohérent avec leur contenu : une offre combine titre, secteur, contrat, localisation, niveau et description, donc un vocabulaire plus contextuel. Les candidats, compétences, métiers, groupes MEPC et domaines NCF sont davantage rapprochés dans la partie centrale du nuage. Cette proximité n'est pas un défaut. Le système a précisément besoin que ces objets partagent un espace commun : un candidat doit pouvoir être rapproché de compétences, de métiers et d'offres, sinon pgvector ne pourrait pas servir de premier étage de retrieval.
 
-Cette visualisation reste un diagnostic qualitatif. Elle ne prouve pas à elle seule que les recommandations sont bonnes. La preuve principale reste le benchmark de ranking présenté précédemment, notamment le NDCG@10, le MRR@10 et le recall@10. UMAP sert ici à rendre l'espace vectoriel compréhensible : il montre que les embeddings ne sont pas répartis au hasard et que les objets du système peuvent être rapprochés avant l'enrichissement par Neo4j.
+La deuxième lecture concerne le recouvrement entre catégories. Le nuage ne montre pas des blocs parfaitement séparés, et il ne faut pas chercher cette séparation. Dans un système emploi--compétences, une compétence, un métier et un profil candidat peuvent partager les mêmes termes : \og comptabilité \fg{}, \og vente \fg{}, \og marketing \fg{}, \og informatique \fg{}. Le recouvrement visuel signifie donc que le modèle place dans une même région des objets qui parlent du même domaine, même s'ils n'ont pas le même type technique dans la base. C'est utile pour récupérer des voisins sémantiques ; c'est aussi la raison pour laquelle Neo4j reste nécessaire ensuite, car pgvector rapproche les textes mais ne vérifie pas à lui seul les relations \texttt{POSSEDE}, \texttt{REQUIERT} ou \texttt{NECESSITE}.
+
+La visualisation doit enfin être lue avec discipline. UMAP ne prouve pas que les recommandations sont bonnes et ne remplace pas le benchmark. Il sert à vérifier que l'espace vectoriel n'est pas incohérent : les offres ne sont pas mélangées au hasard, les objets référentiels restent raccordés aux profils et aux compétences, et les zones mixtes rendent possible la recherche sémantique. La preuve quantitative reste le ranking présenté en section précédente, notamment le NDCG@10, le MRR@10 et le recall@10.
 
 %\begin{figure}[H]
 %  \centering
@@ -619,11 +559,11 @@ La capture pgvector doit montrer les tables \texttt{embeddings} et \texttt{doc\_
 
 La conclusion technique est nette : pgvector remplit les conditions minimales d'une brique de retrieval. Il indexe toutes les entités utiles, conserve les liens Neo4j, dispose d'index vectoriels et lexicaux, et présente des latences compatibles avec une application interactive. Le point à surveiller pour l'évaluation n'est donc plus la disponibilité du stockage, mais la qualité du ranking produit par le retrieval et son amélioration par le graphe.
 
-\section{Implémentation du graphe Neo4j comme base de connaissances}
+\section{Neo4j, mémoire relationnelle du matching}
 
-\subsection{Organisation du graphe emploi-compétences}
+\subsection{Du voisinage vectoriel au chemin explicable}
 
-\subsubsection{Vue d'ensemble de l'ontologie et des flux du graphe}
+\subsubsection{Carte des entités reliées par la recommandation}
 
 \begin{figure}[H]
   \centering
@@ -633,17 +573,17 @@ La conclusion technique est nette : pgvector remplit les conditions minimales d'
   \source{Synthèse des labels et relations implémentés dans Neo4j}
 \end{figure}
 
-Le graphe Neo4j doit être lu comme la mémoire relationnelle du système. Il relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Son rôle n'est pas de remplacer les embeddings : pgvector retrouve d'abord des objets proches dans l'espace sémantique, tandis que Neo4j vérifie ensuite comment ces objets sont reliés. Une offre peut donc être proche du profil dans pgvector, puis être acceptée, rétrogradée ou expliquée à partir de ses compétences requises, de son secteur, de son niveau NCF ou de son rattachement métier. Cette section ne décrit donc pas Neo4j en général ; elle interprète le graphe effectivement construit dans le projet et son apport concret au matching emploi--compétences.
+Le graphe Neo4j doit être lu comme la mémoire relationnelle du système. Il relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Son rôle n'est pas de remplacer les embeddings : pgvector retrouve d'abord des objets proches dans l'espace sémantique, tandis que Neo4j vérifie ensuite comment ces objets sont reliés. Une offre peut donc être proche du profil dans pgvector, puis être acceptée, rétrogradée ou expliquée à partir de ses compétences requises, de son secteur, de son niveau NCF ou de son rattachement métier. La section ne présente donc pas un graphe au sens général ; elle montre comment le graphe construit sert à transformer un voisinage vectoriel en chemin de décision lisible.
 
 La lecture correcte est la suivante : le graphe transforme une proximité textuelle en raisonnement contrôlable. Sans Neo4j, le système peut seulement dire qu'un profil et une offre se ressemblent dans un espace vectoriel. Avec Neo4j, il peut préciser par quelles relations cette proximité devient crédible : compétences possédées par le candidat, compétences exigées par l'offre, niveau de formation compatible ou non, secteur cohérent, et éventuel chemin vers une formation ou un métier de référence.
 
-\subsubsection{Noeuds métier : candidats, offres, compétences et référentiels}
+\subsubsection{Noeuds qui portent la décision candidat--offre}
 
 Les noeuds représentent les objets métier manipulés par le système. Les noeuds \texttt{Candidat} et \texttt{OffreEmploi} portent les deux pôles du matching : un profil disponible et une opportunité à classer. Les noeuds \texttt{Compétence} jouent le rôle de pivot explicatif, car ils permettent de comparer ce qu'un candidat possède avec ce qu'une offre requiert. Les noeuds \texttt{Métier}, \texttt{GroupeBaseMEPC}, \texttt{GroupeISCO}, \texttt{NiveauFormationNCF}, \texttt{DomaineDétailléNCF}, \texttt{Secteur} et \texttt{Localisation} ajoutent les dimensions de contrôle : métier de référence, famille professionnelle, niveau de qualification, domaine de formation, secteur d'activité et lieu. Les noeuds \texttt{DocChunk} et \texttt{DocumentReferentiel} relient le graphe aux sources documentaires utilisées par le GraphRAG.
 
 Cette organisation évite une erreur fréquente : interpréter une offre et un candidat comme deux textes isolés. Dans le graphe, ils deviennent deux ensembles de relations. Un candidat n'est pas seulement une phrase de profil ; il est relié à des compétences, un niveau, une filière et un secteur. Une offre n'est pas seulement un intitulé ; elle est reliée à des compétences exigées, un employeur, une localisation, un secteur et un niveau requis. C'est cette représentation relationnelle qui rend l'explication possible.
 
-\subsubsection{Relations de matching, d'explication et de référentiel}
+\subsubsection{Relations qui prouvent, filtrent ou contextualisent le match}
 
 Les relations décrivent les contraintes et les preuves utilisées par la recommandation. \texttt{POSSEDE} relie un candidat aux compétences déclarées ou inférées à partir de son profil. \texttt{REQUIERT} relie une offre aux compétences attendues. \texttt{NECESSITE} relie un métier aux compétences de référence du référentiel. \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU} et \texttt{REQUIERT\_NIVEAU\_NCF} structurent la compatibilité de formation. \texttt{DANS\_SECTEUR}, \texttt{LOCALISEE\_A} et \texttt{PUBLIEE\_PAR} contextualisent l'offre. Enfin, les relations de référentiel, comme \texttt{PARTIE\_DE}, \texttt{CLASSIFIE\_DANS} ou \texttt{EXTRAIT\_DE}, permettent de passer d'un résultat opérationnel à une explication institutionnelle.
 
@@ -657,9 +597,9 @@ Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'imp
 
 La capture Neo4j doit être utilisée comme preuve visuelle de la base de connaissances. Elle doit montrer des noeuds et relations réels du projet, par exemple un chemin candidat--compétence--offre ou offre--métier--référentiel. Son interprétation doit rester sobre : une capture ne prouve pas la qualité globale du graphe, mais elle illustre la manière dont les entités sont reliées.
 
-\subsection{Topologie et hubs du graphe de connaissances}
+\subsection{Structure du graphe et risques de hubs}
 
-\subsubsection{Volumes, densité et connexité de la projection matching}
+\subsubsection{Taille réelle du graphe et couverture de la projection matching}
 
 \begin{figure}[H]
   \centering
@@ -734,7 +674,7 @@ Les relations dominantes sont \texttt{POSSEDE}, \texttt{NECESSITE} et \texttt{RE
 
 Cette structure impose toutefois une lecture prudente. Comme les relations de compétences dominent fortement, le score final dépend beaucoup de leur qualité. Si une offre n'a pas de relation \texttt{REQUIERT}, Neo4j ne peut pas calculer correctement la couverture de compétences. Si une compétence générique devient trop connectée, elle peut créer un hub peu discriminant. L'apport du graphe existe donc à condition de contrôler la complétude et la précision des relations.
 
-\subsubsection{Distribution des degrés}
+\subsubsection{Noeuds très connectés : signal utile ou bruit de popularité}
 
 \begin{figure}[H]
   \centering
@@ -771,7 +711,7 @@ La distribution des degrés est fortement asymétrique. L'estimation exploratoir
 
 Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
 
-\subsubsection{Compétences centrales : degré, PageRank et intermédiarité}
+\subsubsection{Compétences pivots selon degré, PageRank et intermédiarité}
 
 \begin{figure}[H]
   \centering
@@ -804,7 +744,7 @@ Les centralités donnent trois lectures complémentaires. La centralité de degr
 
 La distinction entre degré, PageRank et intermédiarité est importante. Un noeud peut être très populaire sans être une bonne passerelle de recommandation. Pour le \textit{skill gap}, les compétences d'intermédiarité sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
 
-\subsubsection{Communautés Louvain et distances opérationnelles}
+\subsubsection{Communautés Louvain et robustesse aux hubs}
 
 \begin{figure}[H]
   \centering
@@ -826,7 +766,7 @@ La détection de communautés a été réalisée avec Louvain sur un échantillo
 
 Le test de robustesse retire successivement les 1\,\%, 5\,\% et 10\,\% de noeuds les plus centraux selon le degré, puis mesure la taille de la composante géante restante. Ce test est sévère, car il cible les hubs au lieu de supprimer des noeuds au hasard. Son intérêt est de mesurer la dépendance du graphe à quelques entités très connectées. Si la composante géante s'effondre fortement après retrait des hubs, cela signifie que le système dépend excessivement de compétences ou niveaux génériques. Dans ce cas, le reranking doit pénaliser les hubs trop peu discriminants et valoriser les compétences spécifiques.
 
-\subsubsection{Lecture métier et skill gap}
+\subsubsection{Skill gap observé entre profils et offres}
 
 \begin{figure}[H]
   \centering
@@ -882,211 +822,89 @@ La conclusion à retenir est donc précise. Le graphe est riche parce qu'il reli
 
 \section{Implémentation du moteur hybride de recommandation}
 
-Le moteur hybride constitue le coeur décisionnel du système. Sans lui, l'application ne serait qu'un chatbot branché sur une recherche vectorielle. L'implémentation située dans \filevar{src/05\_graphrag/context\_builder.py} suit une logique en trois temps : pgvector présélectionne un ensemble d'offres candidates, Neo4j enrichit chaque couple candidat--offre avec des signaux relationnels, puis un score hybride réordonne les offres avant la génération. Le classement final n'est donc pas directement le score de similarité textuelle ; c'est une combinaison pondérée entre proximité sémantique, couverture des compétences, niveau de formation et cohérence sectorielle.
+Le moteur hybride constitue le coeur décisionnel du système. Sans lui, l'application ne serait qu'un chatbot branché sur une recherche vectorielle. L'implémentation suit une logique en trois temps : pgvector présélectionne un ensemble d'offres candidates, Neo4j enrichit chaque couple candidat--offre avec des signaux relationnels, puis un score hybride réordonne les offres avant la génération. Le classement final n'est donc pas directement le score de similarité textuelle ; c'est un arbitrage pondéré entre le score pgvector et le score Neo4j, calibré ensuite par Optuna.
 
 \subsection{Formalisation du score hybride}
 
-Pour chaque couple candidat--offre, le score implémenté est :
+Le score hybride utilisé pour le reranking ne doit pas être présenté comme une addition de nombreux critères indépendants. Dans la version évaluée ici, il combine deux signaux seulement. Le premier vient de pgvector : il mesure la proximité sémantique entre le profil ou la requête et l'offre candidate. Le second vient de Neo4j : il mesure la compatibilité relationnelle, principalement à travers la couverture des compétences requises par l'offre et possédées par le candidat. La formulation retenue est donc :
 
 \[
 S_{\text{hybride}} =
-0{,}35 S_{\text{sémantique}}
-+ 0{,}30 S_{\text{compétences}}
-+ 0{,}20 S_{\text{niveau NCF}}
-+ 0{,}15 S_{\text{secteur}}
+\alpha S_{\text{pgvector}} + \beta S_{\text{Neo4j}},
+\quad \alpha+\beta=1
 \]
 
-Le score sémantique provient du retrieval pgvector. Le score de compétences utilise le taux de compétences requises retrouvées dans le profil du candidat, puis applique une pénalité lorsque des compétences essentielles sont manquantes. Le score de niveau compare le niveau NCF du candidat au niveau NCF requis par l'offre. Le score sectoriel mesure le recouvrement lexical entre métier visé, secteur du candidat, formation et informations de l'offre. La localisation est utilisée comme information de contexte et d'affichage, notamment dans la sortie structurée, mais elle n'est pas encore intégrée comme composante pondérée du score. C'est une limite importante : le système peut expliquer la ville d'une offre, mais ne doit pas encore prétendre optimiser strictement la distance géographique.
-
-\begin{table}[H]
-  \centering
-  \caption{Composantes du score hybride implémenté}
-  \label{tab:implementation_moteur_hybride_score}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.2cm}p{2.0cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Composante} & \tabheader{Poids} & \tabheader{Interprétation décisionnelle} \\
-    \midrule
-    Similarité sémantique & 0,35 & Mesure la proximité dense entre le profil/requête et l'offre présélectionnée par pgvector. \\
-    Compétences & 0,30 & Mesure la couverture des compétences requises ; les compétences essentielles manquantes réduisent le score. \\
-    Niveau NCF & 0,20 & Vérifie si le niveau du candidat est compatible avec le niveau requis par l'offre. \\
-    Secteur métier & 0,15 & Contrôle la cohérence entre secteur/métier visé du candidat et domaine de l'offre. \\
-    Localisation & Non pondérée & Conservée dans le contexte et l'explication, mais non utilisée comme poids explicite dans la version actuelle. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\filevar{src/05\_graphrag/context\_builder.py}}
-\end{table}
-
-Le traitement du niveau NCF est volontairement non linéaire. Si le niveau du candidat est supérieur ou égal au niveau requis, la composante vaut 1. Si le candidat est inférieur d'un niveau, elle vaut 0,72 ; inférieur de deux niveaux, 0,45 ; inférieur de trois niveaux ou plus, 0,20, avec pénalité supplémentaire sur le score final. Cette règle évite une erreur classique : traiter une différence d'un niveau et une différence de quatre niveaux comme de simples écarts numériques comparables.
-
-\subsection{Skill gap et verdicts de décision}
-
-Le \textit{skill gap} est calculé à partir des relations du graphe : les compétences de l'offre sont séparées entre compétences acquises, compétences manquantes et compétences essentielles manquantes. Ce découpage est plus informatif qu'un score unique. Un candidat peut avoir un score moyen mais manquer une compétence essentielle ; inversement, un candidat légèrement sous le niveau requis peut être conservé si les compétences sont proches et si l'écart NCF est faible.
-
-\begin{table}[H]
-  \centering
-  \caption{Règles de verdict du moteur hybride}
-  \label{tab:implementation_moteur_hybride_verdicts}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{4.2cm}p{3.0cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Verdict implémenté} & \tabheader{Condition principale} & \tabheader{Lecture métier} \\
-    \midrule
-    Prêt à postuler & Score $\geq 0{,}72$, au plus une compétence essentielle manquante, pas d'écart NCF positif. & Profil immédiatement compatible. \\
-    Montée en compétence & Score $\geq 0{,}55$, au plus trois compétences essentielles manquantes, pas d'écart NCF bloquant. & Profil plausible, mais nécessitant un plan de montée en compétence. \\
-    Vivier à développer & Score $\geq 0{,}42$. & Profil à conserver, intéressant pour une trajectoire future ou une offre voisine. \\
-    Hors cible actuel & Score $< 0{,}42$. & Profil trop éloigné dans l'état actuel. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\filevar{src/05\_graphrag/context\_builder.py}}
-\end{table}
-
-Sur les 690 couples candidat--offre analysés dans le fichier d'ablation final, les verdicts restent prudents : 278 couples, soit 40,29\,\%, nécessitent une montée en compétence ; 213, soit 30,87\,\%, sont hors cible dans l'état actuel ; 133, soit 19,28\,\%, relèvent du vivier à développer ; 66 couples, soit 9,57\,\%, sont directement prêts à postuler. Cette distribution est rassurante : le moteur ne transforme pas mécaniquement toute proximité vectorielle en recommandation forte.
-
-\begin{table}[H]
-  \centering
-  \caption{Distribution statistique des verdicts sur les sorties de reranking}
-  \label{tab:implementation_moteur_hybride_distribution}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{Xrrrr}
-    \rowcolor{darkblue}
-    \tabheader{Verdict} & \tabheader{n} & \tabheader{Part} & \tabheader{Score moyen} & \tabheader{Taux match moyen} \\
-    \midrule
-    Montée en compétence & 278 & 40,29\,\% & 0,6671 & 0,9646 \\
-    Hors cible actuel & 213 & 30,87\,\% & 0,3632 & 0,1125 \\
-    Vivier à développer & 133 & 19,28\,\% & 0,4596 & 0,2218 \\
-    Prêt à postuler & 66 & 9,57\,\% & 0,7408 & 0,9873 \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}}
-\end{table}
-
-La corrélation entre le score sémantique et le score hybride vaut 0,4898, tandis que la corrélation entre le taux de match des compétences et le score hybride vaut 0,9118. Cela montre que le moteur ne se contente pas de recopier la similarité vectorielle : la compétence pèse fortement dans la décision finale. C'est cohérent avec l'objectif emploi--compétences et avec l'optimisation Optuna présentée au chapitre d'évaluation. En revanche, cette forte dépendance aux compétences exige de surveiller la qualité des compétences extraites : si certaines compétences sont trop génériques ou mal typées, elles peuvent influencer fortement le score.
-
-\subsection{Effet du reranking hybride}
-
-Le reranking hybride modifie fortement les rangs. Sur les 690 couples étudiés, 57,10\,\% gagnent des positions après intégration du graphe et des règles métier, 15,65\,\% perdent des positions et 27,25\,\% restent au même rang. Le déplacement moyen est de 4,01 rangs. Ce résultat doit être lu avec nuance : un déplacement de rang n'est pas automatiquement une amélioration, mais il prouve que le moteur hybride apporte une décision supplémentaire par rapport au retrieval vectoriel.
-
-\begin{table}[H]
-  \centering
-  \caption{Résumé statistique des scores et des rangs}
-  \label{tab:implementation_moteur_hybride_scores}
-  \tableStyleStart
-  \begin{tabularx}{0.94\textwidth}{Xrrrr}
-    \rowcolor{darkblue}
-    \tabheader{Indicateur} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p75} & \tabheader{Max} \\
-    \midrule
-    Score sémantique & 0,5225 & 0,5304 & 0,5738 & 0,7521 \\
-    Score hybride & 0,5404 & 0,5334 & 0,6793 & 0,7742 \\
-    Taux de match compétences & 0,5606 & 0,8330 & 1,0000 & 1,0000 \\
-    Rang pgvector initial & 9,5101 & 8,0 & 14,0 & 30,0 \\
-    Rang après graphe & 5,5000 & 5,5 & 8,0 & 10,0 \\
-    Déplacement de rang & 4,0101 & 1,0 & 7,0 & 28,0 \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}}
-\end{table}
-
-L'ablation confirme l'intérêt du moteur hybride : l'ajout du graphe augmente le recall@10 de 0,4491 à 0,6147 et le NDCG@10 de 0,5575 à 0,7392. La précision@1 progresse aussi, de 0,5942 à 0,7536. Le graphe améliore donc à la fois la couverture du top 10 et la première recommandation, à condition que les relations candidat--compétence et offre--compétence soient correctement raccordées.
-
-\subsection{Traçabilité du reranking : exemple candidat annoté}
-
-Le tableau suivant illustre une sortie intermédiaire avant génération. Il montre que le moteur expose les variables nécessaires à l'audit : score sémantique, score hybride, taux de match, verdict et déplacement de rang. Ce niveau de traçabilité est indispensable pour défendre le système comme recommandation robuste.
-
-\begin{table}[H]
-  \centering
-  \caption{Exemple de reranking hybride pour un candidat}
-  \label{tab:implementation_moteur_hybride_exemple}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{4.5cm}rrrrX}
-    \rowcolor{darkblue}
-    \tabheader{Offre} & \tabheader{Sem.} & \tabheader{Hybr.} & \tabheader{Match} & \tabheader{Rang} & \tabheader{Verdict} \\
-    \midrule
-    Administrateur Finances et RH & 0,6127 & 0,7033 & 0,833 & 2 $\rightarrow$ 1 & Montée en compétence \\
-    Stage professionnel en cabinet & 0,5468 & 0,6803 & 0,833 & 24 $\rightarrow$ 2 & Montée en compétence \\
-    Directeur d'agence VIP & 0,5411 & 0,6783 & 0,833 & 28 $\rightarrow$ 3 & Montée en compétence \\
-    Contrôleur de gestion & 0,5367 & 0,6767 & 0,833 & 29 $\rightarrow$ 4 & Montée en compétence \\
-    Directeur Général Banque & 0,5627 & 0,6298 & 0,833 & 3 $\rightarrow$ 5 & Montée en compétence \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_graph\_rerank\_details.csv}, candidat \texttt{PPBZV2501070016137}}
-\end{table}
-
-Cet exemple montre pourquoi le score hybride est nécessaire. Certaines offres initialement classées très bas par pgvector remontent fortement parce que leurs compétences et signaux métier correspondent mieux au profil. Mais le verdict reste \og montée en compétence \fg{} et non \og prêt à postuler \fg{} : le moteur ne se limite pas à reclasser, il qualifie la nature de la compatibilité. C'est précisément cette couche décisionnelle qui distingue le système d'un simple RAG conversationnel.
-
-\section{Orchestration LangGraph, génération contrôlée et interfaces}
-
-\subsection{Workflow LangGraph et traces d'exécution}
-
-L'orchestration Agentic RAG est implémentée autour de plusieurs étapes : analyse de la requête, routage vers les outils, recherche pgvector, interrogation Neo4j, construction du contexte, génération finale et passage par le \textit{critic}. Les outils disponibles couvrent la recherche sémantique, la recherche documentaire, les requêtes graphe, la recommandation hybride candidat--offre et les synthèses globales du graphe.
-
-\implementationScreenshot
-  {fig:capture_langgraph_studio}
-  {figures/captures/ch3_06_langgraph_studio.png}
-  {Workflow LangGraph dans l'environnement de développement}
-  {Capture d'écran de LangGraph Studio ou sortie \texttt{langgraph dev}}
-
-La capture LangGraph est la plus importante pour cette section. Elle doit montrer que l'agent n'est pas un simple chatbot, mais un workflow structuré en noeuds. L'intérêt méthodologique est la contrôlabilité : chaque étape peut être tracée, inspectée et corrigée. L'intérêt opérationnel est la modularité : ajouter un outil ou modifier le routage ne nécessite pas de réécrire tout le système.
-
-\begin{table}[H]
-  \centering
-  \caption{Diagnostic d'implémentation de la génération contrôlée}
-  \label{tab:implementation_agentic_generation}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.8cm}Xp{2.4cm}}
-    \rowcolor{darkblue}
-    \tabheader{Bloc} & \tabheader{Preuve d'implémentation} & \tabheader{Statut} \\
-    \midrule
-    Analyse requête & Noeud LangGraph \texttt{analyse\_request} & Implémenté \\
-    Routage outils & Registre d'outils pgvector, Neo4j, recommandation hybride et synthèse globale & Implémenté \\
-    Construction contexte & Agrégation des résultats avant réponse finale & Implémenté \\
-    Génération & Client LLM OpenRouter avec fallback local & Implémenté \\
-    Critic & Vérification de l'appui contextuel et possibilité d'élargir la recherche & Implémenté \\
-    Score génération & À mesurer avec questions annotées et RAGAS dans le chapitre d'évaluation & Non mesuré ici \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\texttt{outputs/memoire\_stats/implementation\_deep\_current/13\_agentic\_generation\_diagnostic.csv}}
-\end{table}
-
-Cette table fixe une frontière importante. Côté génération, le chapitre d'implémentation prouve que les composants sont raccordés. Il ne prouve pas encore que les réponses sont toujours factuelles, complètes ou utiles. Cette évaluation exige un jeu de questions, des critères annotés, RAGAS et une analyse statistique des seuils du \textit{critic}.
-
-\subsection{Retrieval enrichi par le graphe}
+\noindent où $S_{\text{pgvector}}$ correspond à la colonne \texttt{score\_sem} et $S_{\text{Neo4j}}$ à la colonne \texttt{taux\_match}. Cette écriture est volontairement simple : pgvector répond à la question \og les textes se ressemblent-ils ? \fg{}, alors que Neo4j répond à la question \og les compétences exigées sont-elles couvertes ? \fg{}. Les autres informations du graphe, comme le niveau NCF, le secteur ou la localisation, restent utiles pour l'explication et les verdicts, mais elles ne sont pas ajoutées comme poids autonomes dans cette calibration. Sinon, le score deviendrait difficile à défendre statistiquement et risquerait de compter plusieurs fois le même signal métier.
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=0.82\textwidth]{figures/generated/implementation_deep_current/12_agentic_retrieval_ablation.png}
-  \caption{Effet du reranking graphe sur le retrieval}
-  \label{fig:implementation_agentic_retrieval}
-  \source{\texttt{outputs/evaluation/pgvector\_vs\_graph/ablation\_metrics.csv}}
+  \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/13_distribution_scores_pgvector_neo4j.png}
+  \caption{Distribution comparée des scores pgvector et Neo4j utilisés dans le reranking}
+  \label{fig:implementation_distribution_scores_hybrides}
+  \source{\texttt{13\_distribution\_scores\_pgvector\_neo4j.csv}}
 \end{figure}
 
-L'ablation compare un retrieval pgvector seul à un retrieval pgvector enrichi par le graphe. Sur 69 requêtes évaluées, le passage à \texttt{pgvector\_plus\_graph} augmente le NDCG@10 de 0,5575 à 0,7392 et le recall@10 de 0,4491 à 0,6147. Le graphe améliore donc la couverture des éléments pertinents dans le top 10 et l'ordre du classement. La précision@1 progresse également de 0,5942 à 0,7536. Le calibrage du reranking doit néanmoins rester dépendant de l'usage cible : exploration d'opportunités, recommandation unique ou diagnostic de montée en compétences.
+La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les deux scores n'ont pas le même comportement. Le score pgvector est continu et relativement concentré : sa moyenne vaut 0,5225 et sa médiane 0,5304 sur les 690 couples candidat--offre évalués. Le score Neo4j est plus discontinu : sa moyenne vaut 0,5606, sa médiane 0,8330, mais 31,30\,\% des couples ont un score nul. Cette différence est normale. pgvector renvoie presque toujours une proximité textuelle, même moyenne ; Neo4j est plus sévère, car une offre peut être textuellement proche tout en n'ayant aucune compétence requise couverte par le candidat.
 
-\subsection{API FastAPI, CLI et interface Streamlit}
+\begin{table}[H]
+  \centering
+  \caption{Résultats de calibration des poids du score hybride}
+  \label{tab:implementation_moteur_hybride_score}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{3.2cm}p{2.1cm}rrr}
+    \rowcolor{darkblue}
+    \tabheader{Objectif optimisé} & \tabheader{Jeu retenu} & \tabheader{$\alpha$ pgvector} & \tabheader{$\beta$ Neo4j} & \tabheader{NDCG@10} \\
+    \midrule
+    NDCG@10 & Neo4j seul & 0,0000 & 1,0000 & 0,9697 \\
+    $(\text{NDCG@10}+\text{Recall@10}+\text{Precision@10})/3$ & Neo4j seul & 0,0000 & 1,0000 & 0,9697 \\
+    $(\text{MRR@10}+\text{Precision@10})/2$ & Mixte Optuna & 0,6615 & 0,3385 & 0,9674 \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{Auteur}}
+\end{table}
 
-\implementationScreenshot
-  {fig:capture_agent_response}
-  {figures/captures/ch3_07_agent_response.png}
-  {Exemple de réponse générée avec sources et traces}
-  {Capture d'écran de l'interface conversationnelle ou de la CLI}
+La calibration Optuna a été réalisée avec un \texttt{TPESampler}, 500 essais et une graine fixée à 42. Lorsque l'objectif est de maximiser le NDCG@10, le meilleur jeu retenu donne tout le poids au score Neo4j : $\alpha=0$ et $\beta=1$. Ce résultat ne signifie pas que pgvector est inutile. Il signifie que, sur le sous-ensemble déjà récupéré par pgvector, le reclassement est mieux ordonné lorsque la compatibilité graphe domine. La bonne lecture est donc séquentielle : pgvector sert à constituer le vivier de candidats plausibles ; Neo4j sert ensuite à départager ces candidats par couverture de compétences. Pour un objectif davantage centré sur le rang exact de la première bonne offre, le critère $(\text{MRR@10}+\text{Precision@10})/2$ retient au contraire un mélange, avec 0,6615 pour pgvector et 0,3385 pour Neo4j. Le choix final dépend donc du besoin applicatif : maximiser la qualité du top 10 ou privilégier la première recommandation.
+\subsection{Effet du reranking hybride}
 
-Cette capture doit illustrer une réponse complète : question utilisateur, outils mobilisés, contexte récupéré, réponse finale et, si possible, verdict du \textit{critic}. Elle doit être choisie avec prudence. Un exemple spectaculaire mais non vérifiable affaiblirait le mémoire ; il vaut mieux sélectionner une requête simple, reproductible et bien tracée.
+L'effet du reranking se mesure à deux niveaux. Le premier niveau regarde les rangs des couples candidat--offre déjà présents dans le vivier récupéré par pgvector. Le second niveau regarde les métriques de ranking lorsque l'on compare le système \texttt{pgvector\_only} au système \texttt{pgvector\_plus\_graph}. Cette distinction est importante : Neo4j ne remplace pas le retrieval vectoriel, il intervient après lui pour réordonner les offres candidates.
 
-\implementationScreenshot
-  {fig:capture_neo4j_pgvector_sync}
-  {figures/captures/ch3_08_sync_pgvector_neo4j.png}
-  {Synchronisation entre pgvector et Neo4j}
-  {Capture d'écran d'une requête SQL, Cypher ou d'un diagnostic terminal}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/13_effet_reranking_pgvector_neo4j.png}
+  \caption{Effet du reranking Neo4j sur les métriques et les déplacements de rang}
+  \label{fig:implementation_effet_reranking_neo4j}
+  \source{\texttt{13\_ablation\_pgvector\_neo4j\_reranking.csv} et \texttt{13\_effet\_reranking\_pgvector\_neo4j.csv}}
+\end{figure}
 
-Cette capture doit montrer la cohérence entre les deux bases : identifiants Neo4j présents dans pgvector, chunks documentaires reliés au graphe, ou exemple de passage d'un résultat vectoriel vers son noeud relationnel. Cette preuve est importante car le système hybride dépend précisément de cette articulation.
+La figure \ref{fig:implementation_effet_reranking_neo4j} montre un effet net du graphe sur l'ordre des résultats. Sur les 690 couples évalués, 59,86\,\% gagnent des positions après reranking, 13,77\,\% perdent des positions et 26,38\,\% restent au même rang. Le gain moyen est de 4,01 rangs, avec une médiane de 1 rang et un maximum de 28 rangs. Cette moyenne ne doit pas être interprétée comme une amélioration automatique de chaque offre : elle indique que le score Neo4j change réellement l'ordre produit par pgvector, en remontant surtout les offres dont les compétences requises sont mieux couvertes.
 
-\paragraph{Synthèse du chapitre.}
-L'implémentation aboutit à un système alimenté de bout en bout. Les données nettoyées couvrent 13\,957 offres et 41\,298 candidats. Le modèle SentenceTransformer fine-tuné domine les modèles de référence sur le classement sémantique. La base pgvector contient 72\,643 embeddings synchronisés avec Neo4j et des index adaptés à la recherche hybride. Le graphe reconstruit contient 90\,230 noeuds et 550\,542 relations, principalement structurés autour des candidats, offres, compétences et référentiels. Enfin, l'orchestration LangGraph relie retrieval, graphe, contexte, génération contrôlée et critic.
+\begin{table}[H]
+  \centering
+  \caption{Résumé du déplacement de rang après reranking Neo4j}
+  \label{tab:implementation_moteur_hybride_scores}
+  \tableStyleStart
+  \begin{tabularx}{0.92\textwidth}{Xr}
+    \rowcolor{darkblue}
+    \tabheader{Indicateur} & \tabheader{Valeur} \\
+    \midrule
+    Couples candidat--offre évalués & 690 \\
+    Candidats distincts & 69 \\
+    Rang moyen avant reranking pgvector & 9,51 \\
+    Rang moyen après reranking Neo4j/Optuna & 5,50 \\
+    Déplacement moyen de rang & +4,01 \\
+    Déplacement médian & +1,00 \\
+    Offres remontées & 59,86\,\% \\
+    Offres rétrogradées & 13,77\,\% \\
+    Offres inchangées & 26,38\,\% \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{\texttt{auteur}}
+\end{table}
 
-Les limites doivent être conservées dans la lecture du chapitre. Les descriptions Louma-Jobs sont très peu renseignées, les compétences mélangent encore plusieurs natures d'information, les hubs du graphe doivent être normalisés pour ne pas dominer le score, et la génération n'a pas encore été évaluée comme réponse finale. Le chapitre suivant devra donc se concentrer sur les seuils, le compromis rappel--précision, la calibration du \textit{critic}, et la mesure de factualité des réponses générées.
+L'ablation confirme ensuite que ces déplacements ne sont pas seulement cosmétiques. Sur 69 requêtes évaluées, l'ajout du graphe augmente la précision@1 de 0,5942 à 0,7536, le NDCG@5 de 0,5495 à 0,7339, le NDCG@10 de 0,5575 à 0,7392 et le recall@10 de 0,4491 à 0,6147. Le hit rate@10 reste identique à 0,9420 : cela signifie que les éléments pertinents sont souvent déjà présents dans le vivier pgvector, mais que Neo4j les ordonne mieux. C'est exactement le rôle attendu du reranking : ne pas refaire la recherche depuis zéro, mais transformer une liste plausible en liste mieux priorisée.
+
+La conclusion doit rester stricte. Le reranking hybride améliore le classement dans ce protocole, mais la pertinence utilisée est un proxy construit à partir de métadonnées normalisées et non une annotation humaine indépendante. Le résultat est donc une preuve opérationnelle de cohérence interne, pas encore une preuve définitive de satisfaction recruteur ou candidat. Pour défendre le système en production, il faudra compléter cette évaluation par des jugements humains ou des retours d'usage.
+
+\section{Orchestration LangGraph, génération contrôlée et interfaces}
