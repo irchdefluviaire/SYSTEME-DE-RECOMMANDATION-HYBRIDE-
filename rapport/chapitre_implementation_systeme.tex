@@ -12,7 +12,6 @@ La présentation suit l'ordre réel du workflow : diagnostic des données exploi
     \centering
     \caption{#3}
     \label{#1}
-    \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
     \IfFileExists{#2}{%
       \includegraphics[width=0.94\textwidth]{#2}%
     }{%
@@ -25,10 +24,11 @@ La présentation suit l'ordre réel du workflow : diagnostic des données exploi
         \end{minipage}
       }%
     }
+    \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \end{figure}
 }
 
-\section{Données exploitables et contraintes de qualité}
+\section{Données exploitables et contraintes de qualité du système}
 
 %\subsection{Briques effectivement implémentées}
 
@@ -84,7 +84,6 @@ Le corpus utilisé dans l'implémentation ne doit pas être lu comme une simple 
   \centering
   \caption{Volumes réellement exploités par les modules de recommandation}
   \label{tab:implementation_volumes_exploites}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
   \tableStyleStart
   \begin{tabularx}{0.94\textwidth}{XrX}
     \rowcolor{darkblue}
@@ -101,6 +100,7 @@ Le corpus utilisé dans l'implémentation ne doit pas être lu comme une simple 
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
 \end{table}
 
 Le premier résultat d'ingénierie est positif : les volumes sont suffisants pour construire un système hybride, car le corpus ne se limite pas aux offres. Il contient aussi des candidats, des compétences, des secteurs, des métiers, des localisations et des référentiels. En revanche, l'asymétrie entre 13\,957 offres et 41\,298 candidats impose de contrôler les effets de popularité : un secteur très représenté peut devenir dominant même lorsque la pertinence individuelle est moyenne. Cette limite justifie l'usage d'un reranking hybride plutôt qu'un classement purement vectoriel.
@@ -109,8 +109,8 @@ Le premier résultat d'ingénierie est positif : les volumes sont suffisants pou
   \centering
   \caption{Répartition des offres par source après nettoyage}
   \label{fig:implementation_sources_offres}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.86\textwidth]{figures/generated/implementation_deep_current/01_offres_par_source.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
 Les 13\,957 offres proviennent de six sources : Louma-Jobs, FNE, ACPE, Jobartis Cameroun, LinkedIn et Emploi.cm. Louma-Jobs concentre 6\,021 offres, soit 43,14\,\% du fichier. Le FNE représente 2\,494 offres, ACPE 2\,388, Jobartis Cameroun 2\,350, LinkedIn 380 et Emploi.cm 324. Cette concentration n'est pas neutre : le modèle observe davantage le vocabulaire, les formats et les secteurs présents sur Louma-Jobs que ceux des autres plateformes. Le corpus est donc robuste pour construire un prototype opérationnel, mais il ne doit pas être présenté comme une photographie exhaustive du marché camerounais de l'emploi. La bonne lecture est la suivante : les sources sont assez nombreuses pour éviter une dépendance totale à une seule plateforme, mais assez déséquilibrées pour imposer une analyse par source dans l'évaluation.
@@ -129,8 +129,8 @@ La localisation confirme que le système dispose d'un signal géographique explo
   \centering
   \caption{Compétences fréquentes et disponibilité descriptive}
   \label{fig:implementation_competences_descriptions}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/03_competences_descriptions.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
 Les signaux les plus fréquents sont Finance, Commerce, Vente, Marketing, Informatique, Distribution, Banque, Assurance, Communication, Comptabilité, Santé et Transport. Cette structure est cohérente avec un système emploi--compétences, mais elle révèle un risque méthodologique : plusieurs libellés sont des domaines d'activité plutôt que des compétences observables. Dans l'implémentation, ces variables sont donc utilisées comme signaux d'appariement et de contexte, non comme preuve définitive d'une compétence maîtrisée par un candidat.
@@ -159,7 +159,6 @@ Ce modèle est acceptable comme point de départ parce qu'il fournit déjà une 
   \centering
   \caption{Protocole de construction des paires de fine-tuning}
   \label{tab:implementation_protocole_finetuning}
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.5cm}X}
     \rowcolor{darkblue}
@@ -175,6 +174,7 @@ Ce modèle est acceptable comme point de départ parce qu'il fournit déjà une 
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
+  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
 \end{table}
 
 La structure \texttt{sentence1}/\texttt{sentence2} est volontairement asymétrique. \texttt{sentence1} représente la requête métier structurée que le système manipulera souvent en production : métadonnées, compétences et contexte de l'offre. \texttt{sentence2} représente le texte descriptif à retrouver. Ce choix entraîne le modèle à rapprocher une description naturelle d'une formulation structurée, ce qui correspond mieux au besoin du système qu'un entraînement sur deux phrases descriptives ordinaires.
@@ -188,7 +188,6 @@ Le filtrage des offres informatives est nécessaire. Entraîner le modèle sur d
   \centering
   \caption{Hyperparamètres du fine-tuning SentenceTransformer}
   \label{tab:implementation_hyperparametres_finetuning}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{0.94\textwidth}{p{5.2cm}X}
     \rowcolor{darkblue}
@@ -206,6 +205,7 @@ Le filtrage des offres informatives est nécessaire. Entraîner le modèle sur d
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
 
 Ces hyperparamètres ne sont pas des valeurs arbitraires. Ils traduisent un compromis imposé par les ressources disponibles : le fine-tuning devait rester exécutable localement, sans infrastructure GPU lourde ni entraînement long. Le modèle \texttt{all-MiniLM-L6-v2} a donc été conservé parce qu'il produit des vecteurs de 384 dimensions, moins coûteux à encoder, stocker et rechercher dans pgvector. Le batch de 32 limite la consommation mémoire tout en conservant assez d'exemples négatifs implicites pour la \textit{MultipleNegativesRankingLoss}. Le nombre de cinq époques évite un entraînement excessif sur un corpus de paires encore imparfait. Le \textit{learning rate} de $2\times10^{-5}$, avec \textit{warmup} puis décroissance, permet une adaptation progressive du modèle sans déstabiliser les représentations déjà apprises.
@@ -214,8 +214,8 @@ Ces hyperparamètres ne sont pas des valeurs arbitraires. Ils traduisent un comp
   \centering
   \caption{Diagnostic du fine-tuning : perte, généralisation, métriques de validation et calendrier du learning rate}
   \label{fig:implementation_finetuning_courbes}
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
   \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/04_finetuning_courbes.png}
+  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
 \end{figure}
 
 La figure \ref{fig:implementation_finetuning_courbes} se lit en quatre blocs. Le premier montre que la perte d'entraînement chute fortement au début, de 2,445 à 0,132 en fin d'entraînement : le modèle apprend rapidement à rapprocher les paires positives du domaine. Le deuxième bloc compare la perte finale sur un échantillon fixe de 64 paires par split : 0,171 sur train, 0,285 sur validation et 0,433 sur test. Cette hausse est normale : les jeux non vus sont plus difficiles que les exemples utilisés pendant l'apprentissage. Le troisième bloc montre que les métriques de validation progressent jusqu'aux dernières époques, avec un léger tassement final ; il n'y a donc pas de signal évident d'effondrement. Le quatrième bloc rappelle le choix de ressources : un \textit{learning rate} maximal de $2\times10^{-5}$, 100 étapes de \textit{warmup}, un batch de 32 et seulement cinq époques. Le protocole cherche donc un gain utile de classement, pas une optimisation coûteuse et difficile à reproduire.
@@ -234,8 +234,8 @@ Cette comparaison a été régénérée sur 953 paires de test après la mise à
   \centering
   \caption{Comparaison des modèles d'embeddings : qualité de classement, rappel et latence}
   \label{fig:implementation_benchmark_embeddings}
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
   \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/05_benchmark_modeles_embeddings.png}
+  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
 \end{figure}
 
 Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint un NDCG@10 de 0,6232, un MRR@10 de 0,5874 et un recall@10 de 0,7398. Le meilleur modèle généraliste dense testé, mE5-base, atteint seulement 0,3333 en NDCG@10 et 0,4355 en recall@10, avec une latence nettement plus élevée. TF-IDF reste très rapide et compétitif sur certains signaux lexicaux, mais son recall@10 reste inférieur à celui du modèle fine-tuné. L'intérêt du fine-tuning est donc empirique, pas seulement théorique. La bonne architecture n'oppose pas \og deep learning \fg{} et lexical ; elle utilise le modèle fine-tuné comme signal sémantique principal et conserve les signaux lexicaux comme complément.
@@ -246,8 +246,8 @@ Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint
   \centering
   \caption{Projection UMAP des embeddings indexés}
   \label{fig:implementation_espace_vectoriel}
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/07_espace_vectoriel_embeddings.png}
+  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
 \end{figure}
 
 La figure \ref{fig:implementation_espace_vectoriel} utilise UMAP pour projeter en deux dimensions un échantillon de 1\,810 embeddings indexés : 350 candidats, 350 offres, 350 compétences, 350 métiers, 209 groupes de base MEPC et 201 domaines détaillés NCF. UMAP est ici un outil de lecture visuelle. 
@@ -277,8 +277,8 @@ La base pgvector constitue le premier étage du retrieval de l'Agentic RAG. Son 
   \centering
   \caption{Schéma physique de la base pgvector : tables documentaires, embeddings et index de recherche}
   \label{fig:implementation_schema_pgvector}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
   \includegraphics[width=0.96\textwidth]{pgvector.png}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector}
 \end{figure}
 
 La figure \ref{fig:implementation_schema_pgvector} donne la lecture la plus simple de la brique pgvector. La table \texttt{embeddings} stocke les vecteurs des entités structurées : candidats, offres, compétences, métiers, groupes \MEPC{} et domaines \NCF{}. La table \texttt{doc\_chunks} stocke les fragments documentaires issus des référentiels. Les index spécialisés servent ensuite à interroger ces deux familles d'objets par similarité vectorielle, par recherche textuelle, par type d'entité, par modèle d'embedding ou par identifiant Neo4j.
@@ -291,7 +291,6 @@ Cette séparation évite une confusion fréquente : pgvector n'est pas seulement
   \centering
   \caption{Structure opérationnelle des tables pgvector}
   \label{tab:implementation_pgvector_tables}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.0cm}p{4.2cm}X}
     \rowcolor{darkblue}
@@ -302,6 +301,7 @@ Cette séparation évite une confusion fréquente : pgvector n'est pas seulement
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
 \end{table}
 
 Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les vecteurs ont une dimension de 384, ce qui limite le coût de stockage et de recherche tout en restant adapté au retrieval sémantique. L'instance courante contient 72\,643 embeddings d'entités structurées et 142 embeddings documentaires, soit 72\,785 vecteurs interrogeables.
@@ -310,7 +310,6 @@ Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les v
   \centering
   \caption{Distribution des embeddings par type d'entité}
   \label{tab:implementation_pgvector_distribution}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
   \tableStyleStart
   \begin{tabularx}{0.92\textwidth}{Xrrr}
     \rowcolor{darkblue}
@@ -328,6 +327,7 @@ Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les v
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
 \end{table}
 
 Cette distribution montre que pgvector couvre les deux côtés du matching. Les candidats représentent 56,85\,\% des embeddings et les offres 19,22\,\%. Les compétences et métiers forment le vocabulaire pivot qui permet de relier une similarité textuelle à une logique emploi--compétences. La couverture Neo4j de 100\,\% est le point décisif : chaque résultat vectoriel peut être replacé dans le graphe pour récupérer secteur, niveau, localisation, compétences reliées ou chemin explicatif.
@@ -342,8 +342,8 @@ La stratégie d'ingestion est structurelle par défaut. Elle détecte les titres
   \centering
   \caption{Distribution des tailles, sources et couverture du chunking documentaire}
   \label{fig:implementation_chunking_diagnostics}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
 La figure \ref{fig:implementation_chunking_diagnostics} montre que les chunks sont courts mais hétérogènes. La taille médiane de 116 tokens convient au retrieval, tandis que le coefficient de variation de 0,91 signale des écarts importants entre fragments. Cette variabilité n'est pas automatiquement un défaut : elle reflète la structure inégale des référentiels. Elle impose cependant de contrôler la qualité des passages récupérés dans les réponses RAG. La couverture documentaire et la duplication des chunks sont détaillées en annexe (tableau~\ref{tab:implementation_chunking_coverage_duplication}), ainsi que les statistiques de chunking (tableau~\ref{tab:implementation_pgvector_chunking}).
@@ -352,8 +352,8 @@ La figure \ref{fig:implementation_chunking_diagnostics} montre que les chunks so
   \centering
   \caption{Distribution de la cohérence sémantique intra-chunk par source}
   \label{fig:implementation_chunking_coherence}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.72\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
 La cohérence sémantique moyenne vaut 0,303. Ce niveau est modéré : les chunks ne sont pas incohérents, mais ils ne forment pas non plus des blocs fortement homogènes. C'est cohérent avec des référentiels administratifs qui mêlent intitulés, codes, descriptions et listes. La mesure détaillée est reportée en annexe (tableau~\ref{tab:implementation_chunking_coherence}). Pour une version de production, ce résultat justifie de tester une variante de chunking sémantique contrôlée par la cohérence intra-chunk, sans perdre la structure réglementaire.
@@ -376,8 +376,8 @@ La conclusion technique est donc circonscrite. pgvector indexe les entités util
   \centering
   \caption{Schéma logique du graphe de connaissances}
   \label{fig:implementation_schema_graphe}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/11_schema_graphe_connaissances.png}
+  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{figure}
 
 Le graphe Neo4j doit être lu comme la mémoire relationnelle du système. Il relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Son rôle n'est pas de remplacer les embeddings : pgvector retrouve d'abord des objets proches dans l'espace sémantique, tandis que Neo4j vérifie ensuite comment ces objets sont reliés. Une offre peut donc être proche du profil dans pgvector, puis être acceptée, rétrogradée ou expliquée à partir de ses compétences requises, de son secteur, de son niveau NCF ou de son rattachement métier. La section ne présente donc pas un graphe au sens général ; elle montre comment le graphe construit sert à transformer un voisinage vectoriel en chemin de décision lisible.
@@ -388,7 +388,6 @@ La lecture correcte est la suivante : le graphe transforme une proximité textue
   \centering
   \caption{Lecture conjointe des noeuds et relations Neo4j mobilisés par le matching}
   \label{fig:implementation_neo4j_noeuds_relations}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
   \begin{minipage}[t]{0.3\textwidth}
     \centering
     \includegraphics[width=\textwidth]{noeuds_neo4j.png}
@@ -399,6 +398,7 @@ La lecture correcte est la suivante : le graphe transforme une proximité textue
     \includegraphics[width=\textwidth]{relations_neo4j.png}
     \caption*{\normalsize (b) Types de relations}
   \end{minipage}
+  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{figure}
 
 La figure \ref{fig:implementation_neo4j_noeuds_relations} doit être lue en deux temps. Le panneau des noeuds indique les objets que le système manipule : \texttt{Candidat}, \texttt{OffreEmploi}, \texttt{Compétence}, \texttt{Métier}, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et fragments documentaires. Le panneau des relations indique ce que le système sait vérifier entre ces objets : un candidat \texttt{POSSEDE} des compétences, une offre \texttt{REQUIERT} des compétences, un métier \texttt{NECESSITE} des compétences de référence, une offre est rattachée à un secteur, à un niveau, à un employeur et à une localisation. L'information utile n'est donc pas le noeud isolé, mais le couple \og objet + relation \fg{}.
@@ -420,8 +420,8 @@ Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'imp
   \centering
   \caption{Tableau de bord statistique du graphe Neo4j}
   \label{fig:implementation_neo4j_dashboard}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
+  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{figure}
 
 La figure~\ref{fig:implementation_neo4j_dashboard} synthétise les volumes et la structure globale du graphe avant l’analyse détaillée. Elle sert ici de point d’entrée : le graphe doit d’abord être compris par ses ordres de grandeur, puis seulement par ses hubs, ses communautés et ses chemins de matching.
@@ -527,8 +527,8 @@ S_{\text{hybride}} =
   \centering
   \caption{Distribution comparée des scores pgvector et Neo4j utilisés dans le reranking}
   \label{fig:implementation_distribution_scores_hybrides}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
   \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/13_distribution_scores_pgvector_neo4j.png}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
 \end{figure}
 
 La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les deux scores n'ont pas le même comportement. Le score pgvector est continu et relativement concentré : sa moyenne vaut 0,5225 et sa médiane 0,5304 sur les 690 couples candidat--offre évalués. Le score Neo4j est plus discontinu : sa moyenne vaut 0,5606, sa médiane 0,8330, mais 31,30\,\% des couples ont un score nul. Cette différence est normale. pgvector renvoie presque toujours une proximité textuelle, même moyenne ; Neo4j est plus sévère, car une offre peut être textuellement proche tout en n'ayant aucune compétence requise couverte par le candidat.
@@ -537,7 +537,6 @@ La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les d
   \centering
   \caption{Résultats de calibration des poids du score hybride}
   \label{tab:implementation_moteur_hybride_score}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \normalsize
   \setlength{\tabcolsep}{3pt}
@@ -560,6 +559,7 @@ La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les d
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
 
 La calibration Optuna a été réalisée avec un \texttt{TPESampler}, 500 essais et une graine fixée à 42. Lorsque l'objectif est de maximiser le NDCG@10, le meilleur jeu retenu donne tout le poids au score Neo4j : $\alpha=0$ et $\beta=1$. Ce résultat ne signifie pas que pgvector est inutile. Il signifie que, sur le sous-ensemble déjà récupéré par pgvector, le reclassement est mieux ordonné lorsque la compatibilité graphe domine. La bonne lecture est donc séquentielle : pgvector sert à constituer le vivier de candidats plausibles ; Neo4j sert ensuite à départager ces candidats par couverture de compétences. Pour un objectif davantage centré sur le rang exact de la première bonne offre, le critère $(\text{MRR@10}+\text{Precision@10})/2$ retient au contraire un mélange, avec 0,6615 pour pgvector et 0,3385 pour Neo4j. Le choix final dépend donc du besoin applicatif : maximiser la qualité du top 10 ou privilégier la première recommandation.
@@ -571,8 +571,8 @@ L'effet du reranking se mesure à deux niveaux. Le premier niveau regarde les ra
   \centering
   \caption{Effet du reranking Neo4j sur les métriques et les déplacements de rang}
   \label{fig:implementation_effet_reranking_neo4j}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/13_effet_reranking_pgvector_neo4j.png}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
 \end{figure}
 
 La figure \ref{fig:implementation_effet_reranking_neo4j} montre un effet net du graphe sur l'ordre des résultats. Sur les 690 couples évalués, 59,86\,\% gagnent des positions après reranking, 13,77\,\% perdent des positions et 26,38\,\% restent au même rang. Le gain moyen est de 4,01 rangs, avec une médiane de 1 rang et un maximum de 28 rangs. Cette moyenne ne doit pas être interprétée comme une amélioration automatique de chaque offre : elle indique que le score Neo4j change réellement l'ordre produit par pgvector, en remontant surtout les offres dont les compétences requises sont mieux couvertes.
