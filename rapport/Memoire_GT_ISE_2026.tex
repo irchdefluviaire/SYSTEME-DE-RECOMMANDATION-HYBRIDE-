@@ -7,12 +7,7 @@
 \usepackage[T1]{fontenc}
 \usepackage[sc]{mathpazo}
 \usepackage[french]{babel}
-\usepackage[
-  inner=3.81cm,
-  outer=1.90cm,
-  top=3.81cm,
-  bottom=1.90cm
-]{geometry}
+\usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{setspace}
 
 % ======================================================
@@ -50,6 +45,9 @@
 \newcommand{\source}[1]{%
   \par\vspace{0.2\baselineskip}
   {\centering\footnotesize\itshape Source : #1\par}
+}
+\newcommand{\sourceTravaux}[2]{%
+  \source{Nos travaux, #1, à partir de #2.}
 }
 \newcommand{\filevar}[1]{\texttt{\textcolor{darkblue}{#1}}}
 \newcommand{\tabheader}[1]{\textcolor{white}{\textbf{#1}}}
@@ -120,7 +118,7 @@
   parsep=0pt
 }
 \setlist[itemize,3]{
-  label=\textcolor{kmeraiorange}{\scriptsize\ding{108}},
+  label=\textcolor{kmeraiorange}{\ding{108}},
   leftmargin=1.4em,
   itemsep=1pt,
   parsep=0pt
@@ -128,17 +126,17 @@
 
 % Couleurs des titres inspirees de l'identite visuelle KmerAI
 \titleformat{\section}
-  {\normalfont\fontsize{16}{19}\selectfont\bfseries\color{kmeraiteal}}
+  {\normalfont\Large\bfseries\color{kmeraiteal}}
   {\thesection}{0.8em}{}
 \titleformat{\subsection}
-  {\normalfont\fontsize{14}{17}\selectfont\bfseries\color{kmeraigreen}}
+  {\normalfont\large\bfseries\color{kmeraigreen}}
   {\thesubsection}{0.8em}{}
 \titleformat{\subsubsection}
-  {\normalfont\fontsize{12}{14}\selectfont\bfseries\color{kmeraired}}
+  {\normalfont\normalsize\bfseries\color{kmeraired}}
   {\thesubsubsection}{0.8em}{}
-\titlespacing*{\section}{0pt}{24pt}{12pt}
-\titlespacing*{\subsection}{0pt}{18pt}{9pt}
-\titlespacing*{\subsubsection}{0pt}{12pt}{6pt}
+\titlespacing*{\section}{0pt}{1.2ex plus .2ex}{0.8ex}
+\titlespacing*{\subsection}{0pt}{1ex plus .2ex}{0.6ex}
+\titlespacing*{\subsubsection}{0pt}{0.8ex plus .2ex}{0.5ex}
 
 % ======================================================
 % Commandes personnalisées
@@ -235,9 +233,7 @@
 % Mise en forme générale
 % ======================================================
 \frenchspacing
-\onehalfspacing
-\setlength{\parskip}{12pt plus 2pt minus 1pt}
-\setlength{\parindent}{0pt}
+\linespread{1.4}
 \raggedbottom
 \setlength{\headheight}{15pt}
 \setlength{\headsep}{0.35cm}
@@ -280,7 +276,7 @@
     \interlinepenalty\@M
     \hrule
     \vspace*{10\p@}
-    \fontsize{18}{22}\selectfont\bfseries #1\par\nobreak
+    \Huge \bfseries #1\par\nobreak
     \par
     \vspace*{10\p@}
     \hrule
@@ -296,7 +292,7 @@
     \interlinepenalty\@M
     \hrule
     \vspace*{10\p@}
-    \fontsize{18}{22}\selectfont\bfseries #1\par\nobreak
+    \Huge \bfseries #1\par\nobreak
     \par
     \vspace*{10\p@}
     \hrule
@@ -318,7 +314,7 @@
 \fancyhead[L]{\textsl{\nouppercase{\rightmark}}}
 \fancyfoot[L]{NGOULOU NGOUBILI Irch Defluviaire}
 \fancyfoot[C]{\textbf{\thepage}}
-\fancyfoot[R]{Mémoire professionnel}
+\fancyfoot[R]{Memoire Professionnel}
 \renewcommand{\headrulewidth}{1pt}
 \renewcommand{\footrulewidth}{0.5pt}
 \addtolength{\headheight}{1pt}
@@ -327,7 +323,7 @@
   \fancyhead{}
   \fancyfoot[L]{NGOULOU NGOUBILI Irch Defluviaire}
   \fancyfoot[C]{\textbf{\thepage}}
-  \fancyfoot[R]{Mémoire professionnel}
+  \fancyfoot[R]{Memoire Professionnel}
   \renewcommand{\headrulewidth}{0pt}
   \renewcommand{\footrulewidth}{0.5pt}
 }
@@ -335,6 +331,46 @@
 \newcommand{\clearemptydoublepage}{%
   \newpage{\pagestyle{plain}\cleardoublepage}
 }
+
+% ======================================================
+% Sommaire, table des matières et listes en interligne simple
+% Les listes de figures/tableaux affichent explicitement Figure x.x
+% et Tableau x.x au lieu d'un numéro isolé.
+% ======================================================
+\makeatletter
+\let\OldTableOfContents\tableofcontents
+\renewcommand{\tableofcontents}{%
+  \begingroup
+  \singlespacing
+  \setlength{\parskip}{0pt}
+  \OldTableOfContents
+  \endgroup
+}
+
+\let\OldListOfFigures\listoffigures
+\renewcommand{\listoffigures}{%
+  \begingroup
+  \singlespacing
+  \setlength{\parskip}{0pt}
+  \renewcommand*\l@figure{\@dottedtocline{1}{1.5em}{6.4em}}%
+  \let\OldNumberLine\numberline
+  \renewcommand{\numberline}[1]{\OldNumberLine{Figure~##1}}%
+  \OldListOfFigures
+  \endgroup
+}
+
+\let\OldListOfTables\listoftables
+\renewcommand{\listoftables}{%
+  \begingroup
+  \singlespacing
+  \setlength{\parskip}{0pt}
+  \renewcommand*\l@table{\@dottedtocline{1}{1.5em}{6.8em}}%
+  \let\OldNumberLine\numberline
+  \renewcommand{\numberline}[1]{\OldNumberLine{Tableau~##1}}%
+  \OldListOfTables
+  \endgroup
+}
+\makeatother
 
 % ======================================================
 % Bibliographie : citations numériques [1], [2], ...
@@ -398,25 +434,25 @@ BP : 83000 Toulon, France
  \end{minipage}
 \vspace*{0.2cm}
 \begin{center}
-	\large {\textbf{\textit{Mémoire professionnel de fin d’étude présenté en vue de l’obtention du diplôme d’Ingénieur
+	\normalsize {\textbf{\textit{Mémoire professionnel de fin d’étude présenté en vue de l’obtention du diplôme d’Ingénieur
 Statisticien Économiste(ISE)}}}\\[0.2cm] 
-	\large{\textbf{\textit{\underline{OPTION :} Data Science et Marketing}}}
+	\normalsize{\textbf{\textit{\underline{OPTION :} Data Science et Marketing}}}
 \\[0.2cm]
 %\includegraphics[scale=0.7]{sty.png}\\
     % Title
     {\color{midblue}\rule[-0.002mm]{17cm}{2.2mm}} \\[0.0001cm]\definecolor{bordeaux}{rgb}{.5,0,0}%Modélisation d'un système de recommandation hybride basé sur les Graphes de connaissances
-    \Large \textbf{\color{blue!100!black}{CONCEPTION D'UN SYSTEME DE RECOMMANDATION HYBRIDE POUR LE MATCHING EMPLOI-COMPETENCES AU CAMEROUN PAR INTEGRATION DES LLMS ET DES GRAPHES DE CONNAISSANCES}}
+    \normalsize \textbf{\color{blue!100!black}{CONCEPTION D'UN SYSTEME DE RECOMMANDATION HYBRIDE POUR LE MATCHING EMPLOI-COMPETENCES AU CAMEROUN PAR INTEGRATION DES LLMS ET DES GRAPHES DE CONNAISSANCES}}
     {\color{midblue}\rule[-0.002mm]{17cm}{2.2mm}}\definecolor{bordeaux}{rgb}{.4,0,0}
 \par\vspace{0.8mm}
-   \tcbox[colback=blue!4, colframe=midblue, boxrule=0.8pt, arc=1mm, left=2mm, right=2mm, top=0.8mm, bottom=0.8mm]{\textbf{\small Rédigé par :}}\par\vspace{0.8mm}
-    {\large\bfseries NGOULOU NGOUBILI Irch Defluviaire}\\
+   \tcbox[colback=blue!4, colframe=midblue, boxrule=0.8pt, arc=1mm, left=2mm, right=2mm, top=0.8mm, bottom=0.8mm]{\textbf{\normalsize Rédigé par :}}\par\vspace{0.8mm}
+    {\normalsize\bfseries NGOULOU NGOUBILI Irch Defluviaire}\\
     {\normalsize Élève Ingénieur Statisticien Économiste cycle long -- $5^e$ année}\\[0.12cm]
-    \tcbox[colback=blue!4, colframe=midblue, boxrule=0.8pt, arc=1mm, left=2mm, right=2mm, top=0.8mm, bottom=0.8mm]{\textbf{\small Sous l'encadrement de :}}\par\vspace{0.2cm}
-    {\large\bfseries Dr. FOUTSE Yuehgoh}\\
+    \tcbox[colback=blue!4, colframe=midblue, boxrule=0.8pt, arc=1mm, left=2mm, right=2mm, top=0.8mm, bottom=0.8mm]{\textbf{\normalsize Sous l'encadrement de :}}\par\vspace{0.2cm}
+    {\normalsize\bfseries Dr. FOUTSE Yuehgoh}\\
     {\normalsize Présidente \& Directrice exécutive adjointe, PhD Computer Science \& Data Scientist}
 \end{center}
  \begin{center}
-    \tcbox[colback=midblue, colframe=midblue, boxrule=0.8pt, arc=1mm, left=3mm, right=3mm, top=1mm, bottom=1mm]{\large\textbf{\textcolor{white}{Année académique 2025-2026}}}
+    \tcbox[colback=midblue, colframe=midblue, boxrule=0.8pt, arc=1mm, left=3mm, right=3mm, top=1mm, bottom=1mm]{\normalsize\textbf{\textcolor{white}{Année académique 2025-2026}}}
   \end{center}
 \end{titlepage}
 
@@ -450,7 +486,7 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 \addcontentsline{toc}{chapter}{Liste des sigles et abréviations}
 
 \vspace{-0.8cm}
-{\footnotesize
+{\normalsize
 \renewcommand{\arraystretch}{0.86}
 \noindent\begin{tabularx}{\textwidth}{@{}p{2.5cm}X@{}}
 ANN : & Approximate Nearest Neighbors \\
@@ -551,7 +587,7 @@ Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologiq
 \end{singlespace}
 \newpage
 \pagenumbering{arabic}
-\onehalfspacing
+\linespread{1.4}\selectfont
 
 
 
@@ -720,8 +756,8 @@ La représentation textuelle par sac-de-mots, théorisée dans les années 1950 
   \centering
   \caption{Évolution chronologique des LLMs (2013-2024)}
   \label{fig:chronologie_llm}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.75\textwidth]{figures/evolution_llms.png}
-  \source{Auteur}
 \end{figure}
 \subsubsection{Les représentations vectorielles denses Word2Vec (2013):}
 L'introduction de Word2Vec par Mikolov et al. (2013) marque une rupture majeure. A l'aide d'un réseau de neurones peu profond, le modèle apprend des plongements vectoriels (embeddings) qui capturent les régularités sémantiques entre mots, en s'appuyant sur l'hypothèse distributionnelle selon laquelle « des mots qui apparaissent dans des contextes similaires ont des sens similaires ». Pour la première fois, des opérations algébriques sur les vecteurs de mots (par exemple roi - homme + femme = reine) deviennent significatives. Word2Vec produit toutefois des représentations statiques : le mot « banque » a la même représentation, qu'il désigne une institution financière ou la rive d'un fleuve.
@@ -825,8 +861,8 @@ sont distants dans le texte.
   \centering
   \caption{Mécanisme de self-attention}
   \label{fig:self_attention}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.8\textwidth]{figures/self_attention.png}
-  \source{Auteur}
 \end{figure}
 %\begin{align}
 %  \operatorname{MultiHead}(\mat{Q},\mat{K},\mat{V})
@@ -846,8 +882,8 @@ L'enchaînement de ces éléments self-attention, normalisation, FFN, connexions
   \centering
   \caption{Architecture complète du Transformer}
   \label{fig:transformers}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.5\textwidth]{figures/trans.png}
-  \source{Auteur}
 \end{figure}
 %\subsubsection{Spécificités du décodeur : attention masquée et attention croisée}
 %Le décodeur du Transformer présente deux caractéristiques distinctives qui le différencient de l'encodeur.
@@ -1107,8 +1143,8 @@ Pour le présent projet, cette distinction est déterminante. Le modèle d'embed
   \centering
   \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
   \label{fig:rag_graphrag_agentic_rag}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
-  \source{Figure reprise du dossier du projet, inspirée de l'article Medium sur l'Agentic RAG \cite{nimeesha2024agenticrag}}
 \end{figure}
 
 La figure \ref{fig:rag_graphrag_agentic_rag} illustre la rupture entre une \RAG{} traditionnelle et une architecture agentique. Dans le flux traditionnel, la requête traverse une chaîne relativement fixe : indexation, récupération d'un document, génération, puis réponse finale. Dans le flux agentique, la requête passe par un ou plusieurs agents capables de coordonner la récupération, de solliciter plusieurs outils et d'organiser la réponse. L'image met surtout en évidence que l'Agentic RAG n'est pas seulement une meilleure recherche documentaire ; c'est une organisation dynamique de la recherche et de la génération.
@@ -1148,20 +1184,20 @@ Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le mod
 
 \subsection{Démarche d'ingénierie appliquée retenue}
 
-La présente étude adopte une démarche d'ingénierie appliquée orientée vers la conception, l'intégration et l'évaluation d'un artefact numérique d'aide à la décision. L'objet étudié n'est donc pas uniquement un modèle statistique pris isolément, mais un système complet de recommandation emploi-compétences combinant données structurées, représentations vectorielles, graphe de connaissances, règles métier et génération augmentée par récupération. Ce positionnement est cohérent avec la problématique du mémoire : améliorer l'appariement entre candidats, offres d'emploi, compétences, métiers et trajectoires de formation dans un contexte où l'information est hétérogène, incomplète et dispersée.
+La présente étude adopte une démarche d'ingénierie appliquée orientée vers la conception, l'intégration et l'évaluation d'un artefact numérique d'aide à la décision. L'objet étudié n'est donc pas uniquement un modèle statistique pris isolément, mais un système complet de recommandation emploi-compétences combinant données structurées, représentations vectorielles, graphe de connaissances, règles métier et RAG. Ce positionnement est cohérent avec la problématique du mémoire : améliorer l'appariement entre candidats, offres d'emploi, compétences, métiers et trajectoires de formation dans un contexte où l'information est hétérogène, incomplète et dispersée.
 
 La logique méthodologique retenue repose sur quatre principes. Le premier est la \textit{traçabilité} : chaque recommandation doit pouvoir être rattachée à des données observables, à un référentiel ou à une relation explicite du graphe. Le deuxième est l'\textit{hybridation} : aucune source d'information ne suffit seule à résoudre le problème. La similarité sémantique capte les proximités de langage, le graphe encode les relations métier, les règles contrôlent les contraintes de niveau et le \LLM{} sert à formuler une réponse intelligible. Le troisième principe est l'\textit{explicabilité opérationnelle} : le système ne doit pas seulement retourner une liste d'offres, mais justifier le rapprochement, signaler les compétences communes, identifier les écarts et proposer une trajectoire de montée en compétences. Le quatrième principe est le \textit{contrôle génératif} : les réponses produites par le \LLM{} doivent être contraintes par le contexte récupéré afin de réduire le risque d'hallucination, conformément à la logique du \RAG{} \cite{lewis2020rag,es2024ragas}.
 
-Sur le plan de l'orchestration, le mémoire retient explicitement \textit{LangGraph} comme cadre méthodologique de pilotage du système agentique \cite{langgraphdocs2026}. Ce choix signifie que le raisonnement applicatif n'est pas laissé à une boucle conversationnelle informelle : il est modélisé comme un graphe d'états, composé de noeuds spécialisés, de transitions contrôlées et d'un état partagé. LangGraph est donc utilisé pour organiser le routage entre les briques du système, conserver les traces des outils mobilisés, permettre une révision lorsque le contexte est insuffisant et rendre le workflow auditable.
+Sur le plan de l'orchestration, cette étude retient explicitement \textit{LangGraph} comme cadre méthodologique de pilotage du système agentique \cite{langgraphdocs2026}. Ce choix signifie que le raisonnement applicatif n'est pas laissé à une boucle conversationnelle informelle. LangGraph est donc utilisé pour organiser le routage entre les briques du système, conserver les traces des outils mobilisés, permettre une révision lorsque le contexte est insuffisant et rendre le workflow auditable.
 
-Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
+%Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
 
 \begin{figure}[p]
   \centering
-  \includegraphics[height=0.88\textheight]{figures/myWorkflow.png}
-  \caption{Architecture méthodologique du workflow agentique de recommandation emploi-compétences}
+  \caption{Architecture méthodologique du workflow agentique de recommandation}
   \label{fig:architecture_methodologique_workflow_agentique}
-  \source{Auteur}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \includegraphics[height=0.88\textheight]{figures/myWorkflow.png}
 \end{figure}
 
 La figure \ref{fig:architecture_methodologique_workflow_agentique} présente l'architecture générale retenue pour la solution. Elle doit être lue comme une carte méthodologique du système plutôt que comme un simple schéma technique. Le point d'entrée est la requête de l'utilisateur. Cette requête n'est pas transmise directement au modèle génératif ; elle est d'abord interprétée par une couche d'orchestration qui détermine le type de besoin exprimé. Cette étape est centrale, car une demande de recommandation candidat-offre, une question sur un référentiel, une interrogation relationnelle sur les compétences ou une question globale ne mobilisent pas les mêmes sources ni les mêmes traitements.
@@ -1176,6 +1212,7 @@ Enfin, la partie inférieure du schéma rappelle que le système ne s'arrête pa
   \centering
   \caption{Correspondance entre objectifs spécifiques et choix méthodologiques}
   \label{tab:objectifs_choix_methodologiques}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{4.1cm}X}
     \rowcolor{darkblue}
@@ -1190,7 +1227,6 @@ Enfin, la partie inférieure du schéma rappelle que le système ne s'arrête pa
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Auteur}
 \end{table}
 
 \subsection{Sources de données et leur rôle dans le système}
@@ -1205,6 +1241,7 @@ Les offres d'emploi apportent les informations relatives aux postes disponibles 
   \centering
   \caption{Sources de données mobilisées et utilisation méthodologique}
   \label{tab:sources_methodologie_rewrite}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.0cm}p{3.4cm}X}
     \rowcolor{darkblue}
@@ -1219,7 +1256,6 @@ Les offres d'emploi apportent les informations relatives aux postes disponibles 
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Auteur}
 \end{table}
 
 \subsection{Préparation et normalisation des données}
@@ -1353,6 +1389,7 @@ Le système est organisé autour de huit blocs fonctionnels. Le premier bloc cor
   \centering
   \caption{Organisation opérationnelle des modules implémentés}
   \label{tab:modules_implementation}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.6cm}p{4.3cm}X}
     \rowcolor{darkblue}
@@ -1370,7 +1407,6 @@ Le système est organisé autour de huit blocs fonctionnels. Le premier bloc cor
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Auteur, à partir de l'architecture du projet}
 \end{table}
 
 Cette structuration répond à une exigence de maintenabilité. Les données, les embeddings, le graphe, la génération et les interfaces ne sont pas fusionnés dans un script unique. Chaque couche peut être testée séparément, puis mobilisée par l'agent selon le besoin de l'utilisateur.
@@ -1407,6 +1443,7 @@ L'instance courante vérifiée par le diagnostic du système contient les volume
   \centering
   \caption{Entités indexées dans pgvector au moment du diagnostic}
   \label{tab:pgvector_diagnostic_chap3}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{0.82\textwidth}{p{5.0cm}rX}
     \rowcolor{darkblue}
@@ -1421,7 +1458,6 @@ L'instance courante vérifiée par le diagnostic du système contient les volume
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Diagnostic local du système}
 \end{table}
 
 \section{Implémentation du graphe de connaissances Neo4j}
@@ -1436,6 +1472,7 @@ Le diagnostic exécuté sur l'instance locale indique que Neo4j contient 43\,008
   \centering
   \caption{Principales fonctions du graphe dans le système}
   \label{tab:roles_neo4j_chap3}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{4.2cm}X}
     \rowcolor{darkblue}
@@ -1449,7 +1486,6 @@ Le diagnostic exécuté sur l'instance locale indique que Neo4j contient 43\,008
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Auteur}
 \end{table}
 
 \section{Implémentation du moteur de recommandation hybride}
@@ -1480,13 +1516,14 @@ L'orchestration agentique est implémentée dans \filevar{src/08\_agentic\_graph
   \centering
   \caption{Workflow agentique implémenté dans LangGraph}
   \label{fig:workflow_langgraph_chap3}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \resizebox{0.95\textwidth}{!}{%
   \begin{tikzpicture}[
     node distance=0.9cm and 1.8cm,
     proc/.style={rectangle, rounded corners=3pt, draw=kmeraiteal, thick, fill=kmeraiteal!8,
-      align=center, minimum width=3.2cm, minimum height=0.8cm, font=\small\bfseries},
+      align=center, minimum width=3.2cm, minimum height=0.8cm, font=\normalsize\bfseries},
     critic/.style={diamond, draw=kmeraired, thick, fill=kmeraired!8,
-      align=center, aspect=2.0, font=\small\bfseries},
+      align=center, aspect=2.0, font=\normalsize\bfseries},
     arr/.style={-{Stealth[length=2.2mm]}, thick, draw=kmeraigray}
   ]
     \node[proc] (a) {\texttt{analyse\_request}};
@@ -1502,10 +1539,9 @@ L'orchestration agentique est implémentée dans \filevar{src/08\_agentic\_graph
     \draw[arr] (e) -- (b);
     \draw[arr] (b) -- (g);
     \draw[arr] (g) -- (c);
-    \draw[arr] (c) |- node[pos=0.25, above, font=\scriptsize]{réviser} (x);
+    \draw[arr] (c) |- node[pos=0.25, above, font=\normalsize]{réviser} (x);
     \draw[arr] (x) -| (e);
   \end{tikzpicture}}
-  \source{Auteur}
 \end{figure}
 
 Le noeud \filevar{analyse\_request} identifie le type de demande. Le noeud \filevar{plan\_tools} sélectionne les outils nécessaires. Le noeud \filevar{execute\_tools} appelle ces outils et stocke les résultats. Le noeud \filevar{build\_context} normalise les sorties pour la génération. Le noeud \filevar{generate\_final\_answer} appelle le \LLM{} OpenRouter. Le critic vérifie ensuite la fidélité approximative de la réponse par rapport au contexte. En cas de décision \filevar{revise}, \filevar{expand\_context} ajoute des outils complémentaires, puis le système relance l'exécution.
@@ -1516,6 +1552,7 @@ Le routage par use-case détermine les outils mobilisés. Une question stricteme
   \centering
   \caption{Outils exposés à l'agent LangGraph}
   \label{tab:tools_agent_chap3}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{4.3cm}X}
     \rowcolor{darkblue}
@@ -1530,7 +1567,6 @@ Le routage par use-case détermine les outils mobilisés. Une question stricteme
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Auteur, à partir du registre d'outils du système}
 \end{table}
 
 \section{Implémentation du LLM final et du critic}
@@ -1553,6 +1589,7 @@ La troisième manière est l'API FastAPI implémentée dans \filevar{src/06\_api
   \centering
   \caption{Modes d'accès au système implémenté}
   \label{tab:interfaces_chap3}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.2cm}p{4.4cm}X}
     \rowcolor{darkblue}
@@ -1565,7 +1602,6 @@ La troisième manière est l'API FastAPI implémentée dans \filevar{src/06\_api
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Auteur}
 \end{table}
 
 \section{Diagnostic d'intégration}
@@ -1576,6 +1612,7 @@ Un diagnostic d'intégration a été exécuté sur l'instance locale afin de vé
   \centering
   \caption{Résultat du diagnostic local d'intégration}
   \label{tab:diagnostic_integration_chap3}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \tableStyleStart
   \begin{tabularx}{\textwidth}{p{3.4cm}X}
     \rowcolor{darkblue}
@@ -1588,7 +1625,6 @@ Un diagnostic d'intégration a été exécuté sur l'instance locale afin de vé
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Diagnostic exécuté localement}
 \end{table}
 
 Ce diagnostic ne mesure pas encore la qualité des recommandations. Il vérifie seulement que les briques nécessaires au fonctionnement du système sont disponibles et raccordées. La qualité du classement, la pertinence des réponses et la fidélité aux sources sont traitées dans le chapitre suivant.
@@ -1607,15 +1643,17 @@ La force de cette implémentation tient dans son caractère hybride et traçable
 \chapter{Évaluation de la performance du système}
 \vspace{-1.4cm}
 
-\section{Objectif et logique générale de l'évaluation}
+\section{Cadre d'évaluation et protocole expérimental}
+
+\subsection{Questions évaluées et logique de séparation}
 
 Ce chapitre évalue empiriquement le système implémenté au chapitre précédent. L'objectif n'est pas seulement de produire des scores globaux, mais de répondre à une question centrale du mémoire : l'ajout d'un graphe de connaissances Neo4j apporte-t-il une amélioration mesurable par rapport à une recherche vectorielle fondée uniquement sur pgvector ? Cette question est décisive, car le graphe ajoute une complexité technique réelle : modélisation des nœuds et relations, chargement Neo4j, requêtes Cypher, enrichissement des résultats, maintenance d'une base supplémentaire. Son intérêt doit donc être justifié par un gain observable en qualité de classement, en explicabilité ou en contrôle métier.
 
 L'évaluation a été conduite en cinq niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau vérifie fonctionnellement le graphe : recherche métier--compétences, compétence--offres, skill gap et compatibilité \NCF{}. Le quatrième niveau calibre les pondérations du score hybride avec Optuna. Le cinquième niveau évalue le contrôle de génération du workflow Agentic GraphRAG, en particulier le seuil \filevar{accept/revise} du critic.
 
-Les résultats présentés dans ce chapitre proviennent d'artefacts exécutables : le benchmark d'embeddings sauvegardé dans \filevar{outputs/evaluation/embedding\_benchmark.json}, l'ablation \filevar{src/07\_evaluation/ablation\_pgvector\_graph.py}, la calibration \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py} et la calibration contrastive du critic \filevar{src/07\_evaluation/calibrate\_critic\_threshold\_contrastive.py}. Les sorties d'ablation sont exportées dans \filevar{outputs/evaluation/pgvector\_vs\_graph}, les sorties Optuna dans \filevar{outputs/evaluation/hybrid\_weight\_optimization}, les sorties du critic dans \filevar{outputs/evaluation/critic\_contrastive\_calibration} et les figures dans \filevar{rapport/figures/generated/evaluation}. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties produites par le pipeline local.
+Les résultats présentés dans ce chapitre proviennent d'artefacts reproductibles du pipeline local. Le benchmark des embeddings est produit par le module d'évaluation SentenceTransformer, l'ablation compare directement pgvector et Neo4j sur les mêmes requêtes, la calibration des pondérations est conduite avec Optuna, et le seuil du critic est estimé par un protocole contrastif. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties calculées à partir des paires candidat--offre, des contextes récupérés et des réponses générées par le système.
 
-\section{Données et protocole expérimental}
+\subsection{Données, métriques et limites du protocole}
 
 Le système dispose de 13\,957 offres normalisées et de 41\,298 profils candidats. Le benchmark d'embeddings utilise le jeu de test issu de la construction des paires contrastives offre--profil, soit 473 requêtes de test. Chaque requête correspond à une description structurée d'offre ou de profil, et le corpus contient les textes enrichis utilisés pour l'apprentissage contrastif. Les métriques calculées sont celles de la recherche d'information : Precision@K, Recall@K, NDCG@K et MRR@K.
 
@@ -1630,15 +1668,17 @@ Cette comparaison est volontairement réalisée sans génération \LLM{}. Le mod
 
 La pertinence utilisée pour calculer les métriques d'ablation est un proxy construit à partir des métadonnées normalisées : chevauchement lexical entre le profil et l'offre, proximité sectorielle et compatibilité de niveau \NCF{}. Cette approximation est acceptable pour comparer deux variantes internes sur le même échantillon, mais elle ne remplace pas une annotation humaine. Les résultats doivent donc être interprétés comme une mesure comparative de l'effet du graphe, non comme une mesure définitive de satisfaction utilisateur.
 
-\section{Évaluation du modèle d'embeddings}
+\section{Retrieval sémantique et apport mesuré du graphe}
+
+\subsection{Performance du modèle d'embeddings fine-tuné}
 
 Le premier résultat concerne l'intérêt du fine-tuning du SentenceTransformer. Le tableau \ref{tab:eval_embeddings} présente les performances du modèle fine-tuné par rapport à plusieurs modèles généralistes ou multilingues. Le modèle spécialisé domine nettement les alternatives sur les métriques de retrieval.
 
 \begin{table}[H]
 \centering
-\small
 \caption{Benchmark des modèles d'embeddings sur 473 requêtes de test}
 \label{tab:eval_embeddings}
+\normalsize
 \begin{tabular}{lrrrr}
 \toprule
 Modèle & NDCG@10 & MRR@10 & Recall@10 & Latence ms/phrase \\
@@ -1657,22 +1697,22 @@ Le modèle fine-tuné atteint un Recall@10 de 0.8520, contre 0.3192 pour MiniLM-
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/embedding_benchmark_plot.png}
 \caption{Comparaison des modèles d'embeddings sur le jeu de test}
 \label{fig:eval_embedding_benchmark}
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/embedding_benchmark_plot.png}
 \end{figure}
 
 Ce résultat valide le choix d'un encodeur adapté au domaine. Il montre aussi pourquoi une base vectorielle généraliste ne suffit pas : le vocabulaire emploi-compétences contient des formulations longues, des intitulés hybrides, des niveaux de formation et des compétences implicites. Le fine-tuning contrastif rapproche ces formulations dans l'espace vectoriel et améliore directement le retrieval.
 
-\section{Ablation pgvector seul contre pgvector + graphe}
+\subsection{Ablation pgvector seul contre pgvector enrichi par Neo4j}
 
 Le coeur de l'évaluation concerne l'apport de Neo4j. Le script d'ablation a demandé l'évaluation de 80 candidats. Sur cet échantillon, 69 requêtes ont été évaluées avec succès et 11 ont été écartées par les contrôles d'exécution. Les résultats doivent donc être lus comme une comparaison sur les requêtes valides, non comme une mesure exhaustive de tout le corpus. L'intérêt de cette ablation est néanmoins fort : le même pool initial de 30 offres est utilisé dans les deux configurations, ce qui isole l'effet du reranking graphe.
 
 \begin{table}[H]
 \centering
-\small
 \caption{Comparaison retrieval : pgvector seul versus pgvector + graphe}
 \label{tab:eval_pgvector_graph}
+\normalsize
 \begin{tabular}{lrrrrr}
 \toprule
 Configuration & Precision@5 & Recall@10 & NDCG@10 & MRR@10 & HitRate@10 \\
@@ -1691,22 +1731,22 @@ La Precision@1 progresse également, de 0.5942 à 0.7536. Ce point est important
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/ablation_metrics_comparison.png}
 \caption{Effet de l'enrichissement graphe sur les métriques de retrieval}
 \label{fig:eval_ablation_metrics}
+\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/ablation_metrics_comparison.png}
 \end{figure}
 
 La figure \ref{fig:eval_ablation_metrics} confirme cette lecture. La configuration \textit{pgvector + graphe} domine la configuration vectorielle seule sur les métriques principales de classement. Cela ne signifie pas que pgvector devient secondaire : pgvector reste le premier étage, chargé de produire rapidement le pool candidat. Le résultat indique plutôt que, dans ce pool, le graphe apporte une information métier suffisamment discriminante pour améliorer le reranking.
 
-\section{Évaluation fonctionnelle du graphe et du GraphRAG}
+\section{Lecture fonctionnelle du graphe Neo4j et du GraphRAG}
 
-L'ablation précédente mesure l'effet du graphe sur le classement. Elle ne suffit pas à vérifier que Neo4j joue correctement son rôle fonctionnel. Une évaluation complémentaire a donc été réalisée avec le script \filevar{scripts/generate\_neo4j\_functional\_evaluation.py}. Elle teste cinq scénarios directement liés aux usages du système : recherche métier vers compétences, recherche compétence vers offres, calcul de \textit{skill gap}, compatibilité \NCF{} et comparaison RAG contre GraphRAG.
+L'ablation précédente mesure l'effet du graphe sur le classement. Elle ne suffit pas à vérifier que Neo4j joue correctement son rôle fonctionnel. Une évaluation complémentaire a donc été réalisée avec un module dédié au diagnostic fonctionnel du graphe. Elle teste cinq scénarios directement liés aux usages du système : recherche métier vers compétences, recherche compétence vers offres, calcul de \textit{skill gap}, compatibilité \NCF{} et comparaison RAG contre GraphRAG.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/generated/evaluation/functional_graph_evaluation.png}
 \caption{Évaluation fonctionnelle des requêtes Neo4j utiles au GraphRAG}
 \label{fig:eval_functional_graph}
+\includegraphics[width=0.92\textwidth]{figures/generated/evaluation/functional_graph_evaluation.png}
 \end{figure}
 
 \subsection{Recherche métier vers compétences}
@@ -1720,26 +1760,6 @@ Cette richesse est utile pour l'orientation et la montée en compétences, mais 
 Le deuxième test part d'une compétence et récupère les offres qui la requièrent. C'est le scénario inverse : \og quelles offres demandent cette compétence ? \fg{}. La compétence \og comptabilité \fg{} est reliée à 748 offres, \og réaliser des activités de service après-vente \fg{} à 662 offres et \og planifier des campagnes de marketing sur les médias sociaux \fg{} à 626 offres. Sur les 25 compétences les plus présentes dans les offres, la moyenne atteint 590,16 offres.
 
 Ce résultat prouve que Neo4j peut servir de moteur de recherche relationnelle. Il montre aussi une limite importante : certaines compétences très fréquentes sont peu discriminantes ou relèvent davantage d'un domaine large que d'une compétence opérationnelle fine. Dans un système de recommandation, ces hubs ne doivent pas être récompensés mécaniquement. Ils doivent être pondérés avec le score sémantique, le niveau \NCF{}, le secteur et les compétences plus spécifiques.
-
-\begin{table}[H]
-\centering
-\small
-\caption{Synthèse de l'évaluation fonctionnelle du graphe}
-\label{tab:eval_functional_graph_summary}
-\begin{tabularx}{\textwidth}{XrrX}
-\toprule
-Test fonctionnel & Volume ou score & Lecture & Interprétation \\
-\midrule
-Offres avec compétence \filevar{REQUIERT} & 10\,729 / 13\,957 & 76,87\,\% & Couverture suffisante pour le reranking, mais 3\,228 offres restent pénalisées par absence de compétences matérialisées. \\
-Candidats avec compétence \filevar{POSSEDE} & 38\,841 / 41\,298 & 94,05\,\% & Le signal candidat est largement disponible pour calculer le taux de match. \\
-Top métiers vers compétences & 124,4 compétences & Moyenne top 25 & Les métiers fournissent un contexte riche, utile pour l'orientation. \\
-Top compétences vers offres & 590,16 offres & Moyenne top 25 & Les compétences fréquentes facilitent la recherche, mais créent des hubs à contrôler. \\
-Skill gap échantillonné & 5,30 & Moyenne & Une offre prise au hasard reste rarement immédiatement compatible. \\
-Compatibilité \NCF{} exacte & 13,29\,\% & Même niveau & Le niveau exact est discriminant ; il ne doit pas être remplacé par le seul texte. \\
-\bottomrule
-\end{tabularx}
-\end{table}
-
 \subsection{Skill gap}
 
 Le \textit{skill gap} est calculé en comparant les compétences \filevar{REQUIERT} par l'offre et les compétences \filevar{POSSEDE} par le candidat. Sur l'échantillon fonctionnel, le déficit moyen est de 5,30 compétences et la médiane vaut 6. Ce résultat est cohérent avec l'objectif du système : il ne s'agit pas de supposer que tous les candidats sont proches de toutes les offres, mais d'identifier les couples où l'écart est acceptable et de transformer les autres cas en trajectoire de montée en compétences.
@@ -1758,32 +1778,34 @@ La comparaison RAG contre GraphRAG est matérialisée par l'ablation \filevar{pg
 
 Les résultats sont nets : le NDCG@10 passe de 0,5575 à 0,7392, le Recall@10 de 0,4491 à 0,6147, et le MRR@10 de 0,6908 à 0,8093. Le GraphRAG améliore donc l'ordre des recommandations et pas seulement leur explication. La conclusion correcte est précise : pgvector est efficace comme outil de rappel initial, tandis que Neo4j apporte un signal de décision plus discriminant lorsque les relations \filevar{POSSEDE}, \filevar{REQUIERT}, \filevar{A\_NIVEAU} et \filevar{REQUIERT\_NIVEAU} sont disponibles.
 
-\section{Analyse du reranking par le graphe}
+\section{Reranking hybride et calibration des poids}
+
+\subsection{Déplacements de rang après reranking par le graphe}
 
 Le reranking graphe déplace les offres dans le classement initial. Une offre qui était par exemple au rang 8 dans pgvector peut être remontée au rang 3 si elle présente une meilleure compatibilité \NCF{}, un meilleur alignement sectoriel ou un meilleur score de compétences. Inversement, une offre très proche sémantiquement peut être rétrogradée si le niveau requis ou les signaux métier sont moins compatibles.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/graph_rerank_rank_shift.png}
 \caption{Distribution des déplacements de rang après reranking par le graphe}
 \label{fig:eval_rank_shift}
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/graph_rerank_rank_shift.png}
 \end{figure}
 
 Cette redistribution a deux effets. Le premier est positif : le système ne se limite plus à une proximité textuelle. Il peut corriger des cas où une offre ressemble lexicalement au profil mais ne correspond pas au niveau de formation ou au secteur recherché. Le second est plus problématique : si les relations du graphe sont incomplètes, le score structurel peut pénaliser de bonnes offres ou favoriser des offres seulement parce que leurs métadonnées sont mieux renseignées. Le graphe ajoute donc de l'information, mais il ajoute aussi une source d'erreur potentielle.
 
 Ce résultat appelle une conclusion nuancée. Le graphe n'est pas une garantie automatique d'amélioration. Il améliore le système si les relations sont correctes, si les poids du score hybride sont bien calibrés et si l'objectif est de produire une liste explicable plutôt qu'un unique meilleur résultat. Dans le système actuel, l'apport est visible sur Recall@10 et NDCG@10, mais il reste insuffisamment stabilisé sur le rang 1.
 
-\section{Calibration bayésienne des pondérations du score hybride}
+\subsection{Pondérations optimales du score hybride avec Optuna}
 
-Afin de ne pas conserver des pondérations arbitraires dans le moteur hybride, un module logiciel spécifique a été ajouté : \filevar{src/07\_evaluation/optimize\_hybrid\_weights.py}. Ce module lit les sorties détaillées de l'ablation, optimise les pondérations du score hybride avec Optuna et compare trois fonctions objectif : NDCG@10, moyenne NDCG@10--Recall@10--Precision@10, et moyenne MRR@10--Precision@10. Les sorties sont sauvegardées dans \filevar{outputs/evaluation/hybrid\_weight\_optimization} et les figures correspondantes dans \filevar{rapport/figures/generated/evaluation}.
+Afin de ne pas conserver des pondérations arbitraires dans le moteur hybride, une étape d'optimisation a été intégrée au protocole d'évaluation. Elle exploite les sorties détaillées de l'ablation, optimise les pondérations du score hybride avec Optuna et compare trois fonctions objectif : NDCG@10, moyenne NDCG@10--Recall@10--Precision@10, et moyenne MRR@10--Precision@10. Les résultats retenus sont ensuite synthétisés sous forme de tableaux et de figures pour comparer les pondérations obtenues selon l'objectif optimisé.
 
 L'expérience a été conduite sur 690 couples candidat--offre correspondant à 69 candidats évalués. La pertinence graduée utilisée est \filevar{proxy\_relevance}, c'est-à-dire le proxy métier construit à partir des métadonnées normalisées. Cette décision est préférable à l'utilisation directe des verdicts du moteur, car elle limite la circularité : on ne calibre pas les poids uniquement sur une étiquette déjà produite par le score hybride. Cependant, cette pertinence reste un label faible ; elle ne remplace pas une annotation humaine.
 
 \begin{table}[H]
 \centering
-\small
 \caption{Pondérations retenues selon la fonction objectif du score hybride}
 \label{tab:eval_optimisation_poids_hybrides}
+\normalsize
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lrrrrrr}
 \toprule
@@ -1805,15 +1827,17 @@ Un point statistique doit être souligné : Precision@10 et Recall@10 restent co
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials_ndcg.png}
 \caption{Évolution de l'objectif NDCG@10 au cours des essais Optuna}
 \label{fig:eval_hybrid_weights_trials}
+\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials_ndcg.png}
 \end{figure}
 
 La figure \ref{fig:eval_hybrid_weights_trials} montre que les meilleurs essais se concentrent près de la frontière où le poids Neo4j domine. Cette concentration confirme que le problème n'est pas seulement un mauvais choix initial de pondérations : dans l'échantillon disponible, le signal graphe agrégé par \filevar{taux\_match} apporte une amélioration marginale au NDCG@10 lorsqu'il est utilisé pour reranger un pool déjà construit par pgvector.
 
 \begin{figure}[H]
 \centering
+\caption{Comparaison des pondérations retenues selon la fonction objectif}
+\label{fig:eval_hybrid_weights_best}
 \begin{minipage}[t]{0.48\textwidth}
 \centering
 \includegraphics[width=\textwidth]{figures/generated/evaluation/hybrid_weights_multi_objective_comparison.png}
@@ -1822,8 +1846,6 @@ La figure \ref{fig:eval_hybrid_weights_trials} montre que les meilleurs essais s
 \centering
 \includegraphics[width=\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison_ndcg.png}
 \end{minipage}
-\caption{Comparaison des pondérations retenues selon la fonction objectif}
-\label{fig:eval_hybrid_weights_best}
 \end{figure}
 
 %\begin{figure}[H]
@@ -1835,7 +1857,9 @@ La figure \ref{fig:eval_hybrid_weights_trials} montre que les meilleurs essais s
 
 La figure \ref{fig:eval_hybrid_weights_best} confirme que le score Neo4j seul atteint un NDCG@10 de 0.9697, contre 0.9489 pour le score sémantique seul. Le score hybride actuel atteint 0.9704, légèrement au-dessus de la calibration à deux composantes, parce qu'il mobilise aussi des signaux de niveau \NCF{} et d'alignement sectoriel. La conclusion d'ingénierie est donc précise : le système doit conserver pgvector pour le rappel initial, mais le classement final doit donner une priorité forte au score graphe lorsque les relations \filevar{POSSEDE} et \filevar{REQUIERT} sont disponibles. Si l'objectif applicatif devient la meilleure première recommandation, la pondération retenue par MRR@10--Precision@10 fournit une alternative défendable avec environ deux tiers de signal sémantique et un tiers de signal graphe. La prochaine étape méthodologique consiste à calibrer simultanément toutes les composantes métier sur un jeu annoté humainement, au lieu de se limiter au couple \filevar{score\_sem}/\filevar{taux\_match}.
 
-\section{Calibration contrastive du critic de génération}
+\section{Contrôle de génération par critic et décision accept/revise}
+
+\subsection{Calibration contrastive du seuil de fidélité}
 
 Le workflow Agentic GraphRAG ne s'arrête pas au classement des offres. Après le retrieval et l'enrichissement graphe, le \LLM{} OpenRouter formule une réponse finale, puis un critic local vérifie si cette réponse reste suffisamment appuyée par le contexte récupéré. Ce critic calcule un score de fidélité lexicale : il compare les mots significatifs de la réponse aux mots présents dans le contexte. La décision \filevar{accept/revise} dépend ensuite d'un seuil appliqué à ce score.
 
@@ -1845,39 +1869,40 @@ L'expérience utilise 51 cas de base issus des sorties fonctionnelles du graphe 
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/critic_contrastive_distributions.png}
 \caption{Distribution des scores du critic avec contexte réel et contexte mélangé}
 \label{fig:eval_critic_contrastive_distributions}
-\source{Calibration contrastive du critic, \filevar{critic\_contrastive\_cases.csv}}
+\source{Nos travaux, évaluation du critic, à partir des réponses générées et des contextes de preuve récupérés.}
+\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/critic_contrastive_distributions.png}
 \end{figure}
 
 La figure \ref{fig:eval_critic_contrastive_distributions} confirme que le critic distingue correctement les réponses appuyées par leur contexte des réponses placées face à des preuves non pertinentes. Cette séparation ne valide pas la qualité métier de chaque réponse, mais elle valide le rôle de garde-fou lexical : une réponse déconnectée de ses preuves obtient généralement un score très faible.
 
 \begin{table}[H]
 \centering
-\caption{Comparaison du seuil courant et du seuil contrastif recommandé}
+\caption{Seuil critique retenu après calibration contrastive}
 \label{tab:eval_critic_threshold_contrastive}
+\source{Nos travaux, évaluation du critic, à partir des réponses générées et des contextes de preuve récupérés.}
 \tableStyleStart
-\begin{tabularx}{0.94\textwidth}{lrrrX}
+\begin{tabularx}{0.88\textwidth}{lrrrX}
 \rowcolor{darkblue}
 \tabheader{Seuil} & \tabheader{F1} & \tabheader{Fausses accept.} & \tabheader{Fausses révisions} & \tabheader{Lecture} \\
 \midrule
-0,12 courant & 0,9444 & 6 & 0 & Seuil permissif : il conserve toutes les réponses avec contexte réel, mais accepte encore des contextes mélangés. \\
-0,46 recommandé & 0,9901 & 0 & 1 & Seuil prudent : il bloque tous les contextes mélangés, au prix d'une révision inutile. \\
+0,46 retenu & 0,9901 & 0 & 1 & Seuil prudent : il bloque les contextes mélangés dans ce test contrastif, au prix d'une révision inutile. \\
 \bottomrule
 \end{tabularx}
 \tableStyleEnd
-\source{Calibration contrastive du critic, \filevar{critic\_contrastive\_threshold\_grid.csv}}
 \end{table}
 
-Le résultat le plus important est le suivant : le seuil initial de 0,12 fonctionne comme garde-fou minimal, mais il reste trop permissif dans ce test contrastif. Il accepte 6 contextes mélangés sur 51, soit un taux de fausse acceptation de 11,76\,\%. Le seuil recommandé par le protocole contrastif est 0,46. À ce seuil, aucune réponse associée à un contexte mélangé n'est acceptée, tandis que 50 réponses sur 51 restent acceptées avec leur vrai contexte. La règle retenue est volontairement sévère : minimiser d'abord les fausses acceptations, puis maximiser le F1 des décisions \filevar{accept/revise}.
+\subsection{Lecture opérationnelle des décisions accept/revise}
+
+Le résultat le plus important est le suivant : le seuil opérationnel retenu est 0,46. À ce niveau, aucune réponse associée à un contexte mélangé n'est acceptée dans le test contrastif, tandis que 50 réponses sur 51 restent acceptées avec leur vrai contexte. La règle retenue est volontairement sévère : minimiser d'abord les fausses acceptations, puis maximiser le F1 des décisions \filevar{accept/revise}.
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/critic_contrastive_threshold_grid.png}
 \caption{Effet du seuil du critic sur les décisions accept/revise}
 \label{fig:eval_critic_threshold_grid}
-\source{Calibration contrastive du critic, \filevar{critic\_contrastive\_threshold\_grid.csv}}
+\source{Nos travaux, évaluation du critic, à partir des réponses générées et des contextes de preuve récupérés.}
+\includegraphics[width=0.86\textwidth]{figures/generated/evaluation/critic_contrastive_threshold_grid.png}
 \end{figure}
 
 Cette calibration ne transforme pas le critic en juge parfait. Elle ne dit pas qu'une réponse acceptée est correcte au sens métier ; elle dit seulement qu'elle est suffisamment ancrée lexicalement dans les preuves récupérées. La décision correcte pour l'étude est donc de présenter 0,46 comme seuil opérationnel plus prudent pour les réponses générées, tout en conservant la nécessité d'une validation humaine future pour mesurer la qualité réelle des conseils, des citations et des trajectoires de formation.
@@ -1914,6 +1939,7 @@ Cette calibration ne transforme pas le critic en juge parfait. Elle ne dit pas q
 	\centering
 	\caption{Labels de nœuds et relations structurantes du graphe}
 	\label{tab:labels_relations_graphe}
+	\source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 	\tableStyleStart
 	\begin{tabularx}{\textwidth}{p{3.6cm}p{4.2cm}X}
 		\rowcolor{darkblue}
@@ -1927,12 +1953,12 @@ Cette calibration ne transforme pas le critic en juge parfait. Elle ne dit pas q
 		\bottomrule
 	\end{tabularx}
 	\tableStyleEnd
-	\source{Auteur}
 \end{table}
 \begin{table}[H]
 	\centering
 	\caption{Volume d'entités indexées dans la base vectorielle pgvector}
 	\label{tab:volume_pgvector}
+	\source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 	\tableStyleStart
 	\begin{tabularx}{\textwidth}{p{4.8cm}rX}
 		\rowcolor{darkblue}
@@ -1949,7 +1975,6 @@ Cette calibration ne transforme pas le critic en juge parfait. Elle ne dit pas q
 		\bottomrule
 	\end{tabularx}
 	\tableStyleEnd
-	\source{Auteur}
 \end{table}
 
 
@@ -1957,6 +1982,7 @@ Cette calibration ne transforme pas le critic en juge parfait. Elle ne dit pas q
 	\centering
 	\caption{Pipeline général implémenté : étapes, entrées et sorties}
 	\label{tab:pipeline_general_implementation}
+	\source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 	\tableStyleStart
 	\begin{tabularx}{\textwidth}{p{0.8cm}p{3.0cm}p{4.3cm}X}
 		\rowcolor{darkblue}
@@ -1972,8 +1998,9 @@ Cette calibration ne transforme pas le critic en juge parfait. Elle ne dit pas q
 		\bottomrule
 	\end{tabularx}
 	\tableStyleEnd
-	\source{Auteur, à partir des scripts \texttt{src/} et \texttt{scripts/} du projet}
 \end{table}
+
+\input{annexe_chapitre3_complements.tex}
 
 \markboth{Table des matières}{Table des matières}
 \begin{singlespace}

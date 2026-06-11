@@ -97,8 +97,8 @@ Les grands modèles de langage ont transformé le traitement automatique du lang
   \centering
   \caption{Évolution simplifiée des modèles de langage et des représentations textuelles}
   \label{fig:chronologie_llm_revue}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.75\textwidth]{figures/evolution_llms.png}
-  \source{Figure du dossier du projet, synthèse pédagogique de l'évolution des modèles de langage}
 \end{figure}
 
 Deux grandes familles de modèles sont utiles pour ce mémoire. La première regroupe les modèles de représentation, comme BERT et Sentence-BERT. BERT apprend des représentations contextuelles bidirectionnelles adaptées à la compréhension du texte \cite{devlin2018bert}. Sentence-BERT adapte cette logique pour produire des embeddings de phrases comparables efficacement par similarité cosinus \cite{reimers2019sbert}. La seconde famille regroupe les modèles génératifs, comme GPT, T5 ou les modèles instruction-tuned. GPT-3 a montré qu'un modèle de grande taille pouvait effectuer des tâches variées à partir de quelques exemples dans le prompt \cite{brown2020language}. T5 a proposé une formulation unifiée des tâches NLP comme transformation texte-vers-texte \cite{raffel2020t5}. L'apprentissage par retour humain a ensuite amélioré la capacité des modèles à suivre des instructions \cite{ouyang2022training}.
@@ -133,8 +133,8 @@ Dans une \RAG{} classique, le système récupère des documents proches d'une re
   \centering
   \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
   \label{fig:rag_graphrag_agentic_rag_revue}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
-  \source{Figure du dossier du projet, inspirée des architectures Agentic RAG et des travaux sur agents outillés}
 \end{figure}
 
 La figure \ref{fig:rag_graphrag_agentic_rag_revue} illustre cette évolution. Une \RAG{} simple suit une chaîne relativement fixe : requête, récupération, génération. Une architecture GraphRAG ajoute une couche relationnelle. Une architecture agentique introduit une capacité de planification et de contrôle : le système peut choisir un outil, observer le résultat, élargir le contexte et réviser la réponse.
@@ -145,7 +145,7 @@ Les travaux ReAct montrent l'intérêt d'alterner raisonnement et action outill�
 
 Le manque de la littérature est ici opérationnel. Beaucoup de travaux décrivent des architectures générales, mais la fiabilité dépend de détails concrets : qualité des chunks, schéma du graphe, robustesse des requêtes, traçabilité des sources, gestion des cas sans résultat et critères de révision. C'est pourquoi l'architecture retenue ajoute un critic et des traces d'exécution. Le \LLM{} produit la réponse finale, mais les données récupérées et les outils appelés doivent rester observables.
 
-\section{Évaluation, acquis de la littérature et positionnement du mémoire}
+%\section{Évaluation, acquis de la littérature et positionnement du mémoire}
 
 \subsection{Évaluer la performance et la factualité}
 
@@ -199,12 +199,12 @@ Dans une architecture \RAG{}, l'évaluation ne s'arrête pas au classement des r
 
 Ces critères sont moins simples à formaliser que Precision@k ou Recall@k, car ils portent sur du langage naturel. Des approches comme G-Eval utilisent des \LLM{} comme juges pour approximer l'évaluation humaine \cite{liu2023geval}. Cette pratique doit rester prudente : un juge automatique peut aider à comparer des variantes de système, mais il ne remplace pas une validation métier. Dans ce mémoire, l'évaluation doit donc combiner des métriques de retrieval pour pgvector et Neo4j, des critères de factualité pour la réponse générée, et une interprétation professionnelle de l'utilité des recommandations.
 
-\subsection{Acquis, manques et contribution du mémoire}
+%\subsection{Acquis, manques et contribution du mémoire}
 
-La littérature fournit plusieurs acquis solides. Les modèles d'appariement du marché du travail expliquent pourquoi les frictions informationnelles justifient des dispositifs d'intermédiation. Les systèmes de recommandation montrent que l'hybridation est souvent nécessaire lorsque les données sont hétérogènes. Les Transformers et les embeddings permettent de dépasser la recherche lexicale. Les graphes de connaissances apportent une structure relationnelle utile pour expliquer les recommandations. La \RAG{} et l'Agentic RAG permettent enfin de produire des réponses en langage naturel à partir de contextes récupérés.
+%La littérature fournit plusieurs acquis solides. Les modèles d'appariement du marché du travail expliquent pourquoi les frictions informationnelles justifient des dispositifs d'intermédiation. Les systèmes de recommandation montrent que l'hybridation est souvent nécessaire lorsque les données sont hétérogènes. Les Transformers et les embeddings permettent de dépasser la recherche lexicale. Les graphes de connaissances apportent une structure relationnelle utile pour expliquer les recommandations. La \RAG{} et l'Agentic RAG permettent enfin de produire des réponses en langage naturel à partir de contextes récupérés.
 
-Mais ces acquis laissent des manques importants. Premièrement, une proximité sémantique n'est pas une preuve de compatibilité professionnelle. Deuxièmement, les modèles collaboratifs exigent des historiques d'interaction souvent absents dans les plateformes émergentes. Troisièmement, un \LLM{} peut formuler une réponse convaincante sans être fidèle aux données. Quatrièmement, les graphes RH proposés dans la littérature ne sont pas automatiquement adaptés aux nomenclatures camerounaises ni aux données locales de KmerAI.
+%Mais ces acquis laissent des manques importants. Premièrement, une proximité sémantique n'est pas une preuve de compatibilité professionnelle. Deuxièmement, les modèles collaboratifs exigent des historiques d'interaction souvent absents dans les plateformes émergentes. Troisièmement, un \LLM{} peut formuler une réponse convaincante sans être fidèle aux données. Quatrièmement, les graphes RH proposés dans la littérature ne sont pas automatiquement adaptés aux nomenclatures camerounaises ni aux données locales de KmerAI.
 
-Le domaine de recherche du mémoire se situe donc à l'intersection de la recommandation hybride, des graphes de connaissances et de la génération contrôlée. La contribution n'est pas de proposer un nouveau Transformer ou un nouvel algorithme de factorisation matricielle. Elle consiste à concevoir et évaluer une architecture intégrée pour le matching emploi-compétences, dans laquelle chaque brique remplit une fonction distincte : présélection sémantique, contrôle relationnel, calcul d'écart de compétences, génération contextualisée et vérification de la réponse.
+%Le domaine de recherche du mémoire se situe donc à l'intersection de la recommandation hybride, des graphes de connaissances et de la génération contrôlée. La contribution n'est pas de proposer un nouveau Transformer ou un nouvel algorithme de factorisation matricielle. Elle consiste à concevoir et évaluer une architecture intégrée pour le matching emploi-compétences, dans laquelle chaque brique remplit une fonction distincte : présélection sémantique, contrôle relationnel, calcul d'écart de compétences, génération contextualisée et vérification de la réponse.
 
-Cette position est volontairement prudente. Le système ne prétend pas remplacer l'expertise humaine du conseiller emploi ou du recruteur. Il vise à rendre l'information plus exploitable : quelles offres sont proches du profil, quelles compétences expliquent la recommandation, quels écarts subsistent, et quelles pistes de formation peuvent réduire ces écarts. C'est cette articulation entre performance algorithmique, explicabilité et utilité professionnelle qui guide les choix méthodologiques et l'implémentation présentés dans les chapitres suivants.
+%Cette position est volontairement prudente. Le système ne prétend pas remplacer l'expertise humaine du conseiller emploi ou du recruteur. Il vise à rendre l'information plus exploitable : quelles offres sont proches du profil, quelles compétences expliquent la recommandation, quels écarts subsistent, et quelles pistes de formation peuvent réduire ces écarts. C'est cette articulation entre performance algorithmique, explicabilité et utilité professionnelle qui guide les choix méthodologiques et l'implémentation présentés dans les chapitres suivants.

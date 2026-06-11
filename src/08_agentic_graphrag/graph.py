@@ -242,22 +242,22 @@ def build_context(state: AgentState) -> AgentState:
 # Les lambdas referencent les _render_* definis plus bas ; Python les resout
 # a l'appel, pas a la definition, donc l'ordre dans le fichier n'importe pas.
 _CONTEXT_RENDERERS: dict[str, Any] = {
-    diagnostic:              lambda r, k, st: str(r.get(status, r)),
-    referentiel:             lambda r, k, st: _render_documents(r.get(documents, [])),
-    question_globale:        lambda r, k, st: _render_global_summary(
-                                   r.get(global_summary, {}), r.get(documents, [])
+    "diagnostic":            lambda r, k, st: str(r.get("status", r)),
+    "referentiel":           lambda r, k, st: _render_documents(r.get("documents", [])),
+    "question_globale":      lambda r, k, st: _render_global_summary(
+                                   r.get("global_summary", {}), r.get("documents", [])
                                ),
-    graph_query:             lambda r, k, st: _with_neo4j_schema(
-                                   _render_graph_rows(r.get(graph, {})), True
+    "graph_query":           lambda r, k, st: _with_neo4j_schema(
+                                   _render_graph_rows(r.get("graph", {})), True
                                ),
-    orientation_metier:      lambda r, k, st: _with_neo4j_schema(
+    "orientation_metier":    lambda r, k, st: _with_neo4j_schema(
                                    _render_semantic_and_graph(r, k), False
                                ),
-    recherche_generale:      lambda r, k, st: _with_neo4j_schema(
+    "recherche_generale":    lambda r, k, st: _with_neo4j_schema(
                                    _render_semantic_and_graph(r, k), True
                                ),
-    recommendation_candidat: lambda r, k, st: _render_candidate_recommendation(st, r),
-    skill_gap_roadmap:       lambda r, k, st: _render_candidate_recommendation(st, r),
+    "recommendation_candidat": lambda r, k, st: _render_candidate_recommendation(st, r),
+    "skill_gap_roadmap":     lambda r, k, st: _render_candidate_recommendation(st, r),
 }
 
 
@@ -613,4 +613,3 @@ workflow.add_conditional_edges(
 workflow.add_edge("expand_context", "execute_tools")
 
 graph = workflow.compile()
-
