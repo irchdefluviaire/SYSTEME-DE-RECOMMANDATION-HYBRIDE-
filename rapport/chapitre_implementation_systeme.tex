@@ -74,23 +74,6 @@ La vue d'ensemble de l'implémentation doit être lue comme une chaîne d'exécu
 La figure \ref{fig:pipeline_operationnel_implementation} distingue les flux principaux. Les données nettoyées alimentent deux familles de composants : d'une part le modèle d'embeddings et la base vectorielle ; d'autre part le graphe de connaissances. Le moteur GraphRAG se situe à l'intersection de ces deux sources : il récupère des voisins sémantiques dans pgvector, exploite les relations Neo4j pour contextualiser les résultats, puis transmet un contexte contrôlé au workflow LangGraph. L'interface n'est donc pas un composant isolé ; elle est le point d'accès à une chaîne déjà construite.
 
 %Cette séparation est le point central de l'implémentation. Les données ne sont pas confondues avec le modèle ; le modèle ne remplace pas la base vectorielle ; pgvector ne remplace pas Neo4j ; le graphe ne génère pas la réponse ; LangGraph ne calcule pas seul la recommandation ; l'interface n'est qu'une couche d'accès. Le système est donc auditable par couche : on peut vérifier les fichiers produits par l'ETL, le modèle sauvegardé, les tables pgvector, les noeuds Neo4j, les outils GraphRAG, les traces LangGraph et les réponses exposées à l'utilisateur.
-
-\implementationScreenshot
-  {fig:capture_streamlit_interface}
-  {figures/captures/ch3_01_streamlit_interface.png}
-  {Interface Streamlit du système de recommandation}
-  {Capture d'écran de l'application locale}
-
-La capture de l'interface Streamlit doit être interprétée comme une preuve d'intégration applicative. Elle ne mesure pas la qualité statistique du système ; elle montre que les briques sont exposées dans une interface utilisable, avec une entrée utilisateur, des résultats retournés et, idéalement, des traces du workflow. Pour le mémoire, cette capture doit donc compléter les métriques, pas les remplacer.
-
-\implementationScreenshot
-  {fig:capture_api_health}
-  {figures/captures/ch3_02_api_health.png}
-  {Diagnostic API ou état des services}
-  {Capture d'écran de FastAPI, terminal ou navigateur local}
-
-La capture du diagnostic API est utile pour documenter la disponibilité des services : modèle d'embeddings, pgvector, Neo4j et agent. Elle permet de passer d'un discours déclaratif à une preuve d'exécution locale. Si un service apparaît en erreur sur la capture, il faut l'assumer dans l'interprétation plutôt que masquer le problème.
-
 \subsection{Diagnostic du corpus après nettoyage}
 
 Le corpus utilisé dans l'implémentation ne doit pas être lu comme une simple base descriptive. Il constitue la matière première du moteur de recommandation : chaque variable conservée doit donc apporter un signal exploitable pour rapprocher une offre, un candidat, une compétence, un métier ou un référentiel. La question d'ingénierie posée ici est directe : le système dispose-t-il d'assez d'information structurée pour recommander correctement, et quelles limites doivent être compensées par l'architecture hybride ? Le tableau suivant synthétise uniquement les volumes qui conditionnent directement la faisabilité technique du système.
@@ -238,15 +221,6 @@ Ce modèle est acceptable comme point de départ parce qu'il fournit déjà une 
 La structure \texttt{sentence1}/\texttt{sentence2} est volontairement asymétrique. \texttt{sentence1} représente la requête métier structurée que le système manipulera souvent en production : métadonnées, compétences et contexte de l'offre. \texttt{sentence2} représente le texte descriptif à retrouver. Ce choix entraîne le modèle à rapprocher une description naturelle d'une formulation structurée, ce qui correspond mieux au besoin du système qu'un entraînement sur deux phrases descriptives ordinaires.
 
 Le filtrage des offres informatives est nécessaire. Entraîner le modèle sur des paires dont la description est vide, trop courte ou sans compétences introduirait du bruit : le modèle apprendrait à rapprocher des textes pauvres au lieu de structurer le domaine. Le seuil de 120 caractères pour \texttt{sentence2} et de 40 caractères pour \texttt{sentence1} est donc un garde-fou d'apprentissage. Il réduit le volume utilisé pour le fine-tuning, mais améliore la qualité du signal.
-
-\implementationScreenshot
-  {fig:capture_finetuning_terminal}
-  {figures/captures/ch3_03_finetuning_terminal.png}
-  {Trace d'entraînement du modèle SentenceTransformer}
-  {Capture d'écran du terminal d'entraînement}
-
-La capture du terminal de fine-tuning doit montrer le chargement du modèle, le démarrage de l'entraînement, l'évolution de la loss et les paramètres utilisés. Elle joue un rôle de preuve d'exécution. L'interprétation reste toutefois statistique : une loss qui baisse ne suffit pas à valider le modèle ; il faut la compléter par des métriques de ranking et une comparaison avec des modèles de référence.
-
 \subsection{Comportement du fine-tuning et gains sur le ranking}
 
 \subsubsection{Paramétrage contraint et dynamique d'apprentissage}
@@ -494,6 +468,16 @@ La couverture documentaire est calculée en rapportant le nombre de tokens index
 
 La cohérence sémantique moyenne vaut 0,303. Ce niveau est modéré : les chunks ne sont pas incohérents, mais ils ne forment pas non plus des blocs fortement homogènes. C'est cohérent avec des référentiels administratifs qui mêlent intitulés, codes, descriptions et listes. Pour un RAG de production, cette mesure suggère deux améliorations : fusionner certains fragments trop courts et tester une variante de chunking sémantique contrôlée par la cohérence intra-chunk. L'objectif ne serait pas de maximiser artificiellement la cohérence, mais de trouver le meilleur compromis entre contexte, taille et performance de retrieval.
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.96\textwidth]{pgvector.png}
+  \caption{Schéma physique de la base pgvector : tables documentaires, embeddings et index de recherche}
+  \label{fig:implementation_schema_pgvector}
+  \source{Schéma de synthèse construit à partir du schéma PostgreSQL et des index pgvector du projet}
+\end{figure}
+
+La figure \ref{fig:implementation_schema_pgvector} montre que la mémoire vectorielle repose sur deux tables complémentaires. La table \texttt{doc\_chunks} conserve les fragments documentaires et leurs métadonnées ; la table \texttt{embeddings} stocke les représentations vectorielles des entités métier. Les index spécialisés accélèrent la recherche par type d'entité, par modèle, par identifiant Neo4j et par similarité vectorielle. Cette organisation permet au système de passer d'un fragment ou d'une entité retrouvée sémantiquement vers le graphe Neo4j correspondant, sans confondre stockage documentaire, retrieval vectoriel et raisonnement relationnel.
+
 \begin{table}[H]
   \centering
   \caption{Indicateurs techniques pgvector}
@@ -549,21 +533,11 @@ Les recherches supportées sont de trois types. La première est la recherche s�
 
 Ces requêtes montrent que pgvector est prêt pour le retrieval de l'Agentic RAG : il peut produire un top-$K$ sémantique, filtrer par nature d'entité, mobiliser un score lexical complémentaire et renvoyer des identifiants directement raccordables au graphe.
 
-\implementationScreenshot
-  {fig:capture_pgvector_database}
-  {figures/captures/ch3_04_pgvector_tables.png}
-  {Tables et index pgvector dans PostgreSQL}
-  {Capture d'écran de pgAdmin, psql ou DBeaver}
-
-La capture pgvector doit montrer les tables \texttt{embeddings} et \texttt{doc\_chunks}, ou les index associés. Son intérêt est de matérialiser la brique vectorielle : les embeddings ne sont pas seulement calculés dans un script, ils sont persistés, indexés et exploitables par le moteur de recherche.
-
 La conclusion technique est nette : pgvector remplit les conditions minimales d'une brique de retrieval. Il indexe toutes les entités utiles, conserve les liens Neo4j, dispose d'index vectoriels et lexicaux, et présente des latences compatibles avec une application interactive. Le point à surveiller pour l'évaluation n'est donc plus la disponibilité du stockage, mais la qualité du ranking produit par le retrieval et son amélioration par le graphe.
 
 \section{Neo4j, mémoire relationnelle du matching}
 
 \subsection{Du voisinage vectoriel au chemin explicable}
-
-\subsubsection{Carte des entités reliées par la recommandation}
 
 \begin{figure}[H]
   \centering
@@ -577,26 +551,34 @@ Le graphe Neo4j doit être lu comme la mémoire relationnelle du système. Il re
 
 La lecture correcte est la suivante : le graphe transforme une proximité textuelle en raisonnement contrôlable. Sans Neo4j, le système peut seulement dire qu'un profil et une offre se ressemblent dans un espace vectoriel. Avec Neo4j, il peut préciser par quelles relations cette proximité devient crédible : compétences possédées par le candidat, compétences exigées par l'offre, niveau de formation compatible ou non, secteur cohérent, et éventuel chemin vers une formation ou un métier de référence.
 
-\subsubsection{Noeuds qui portent la décision candidat--offre}
+\begin{figure}[H]
+  \centering
+  \begin{minipage}[t]{0.3\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{noeuds_neo4j.png}
+    \caption*{\small (a) Types de noeuds}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.24\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{relations_neo4j.png}
+    \caption*{\small (b) Types de relations}
+  \end{minipage}
+  \caption{Lecture conjointe des noeuds et relations Neo4j mobilisés par le matching}
+  \label{fig:implementation_neo4j_noeuds_relations}
+  \source{Schémas de synthèse construits à partir de la base Neo4j du projet}
+\end{figure}
+
+La figure \ref{fig:implementation_neo4j_noeuds_relations} doit être lue en deux temps. Le panneau des noeuds indique les objets que le système manipule : \texttt{Candidat}, \texttt{OffreEmploi}, \texttt{Compétence}, \texttt{Métier}, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et fragments documentaires. Le panneau des relations indique ce que le système sait vérifier entre ces objets : un candidat \texttt{POSSEDE} des compétences, une offre \texttt{REQUIERT} des compétences, un métier \texttt{NECESSITE} des compétences de référence, une offre est rattachée à un secteur, à un niveau, à un employeur et à une localisation. L'information utile n'est donc pas le noeud isolé, mais le couple \og objet + relation \fg{}.
+
+Cette représentation rend l'interprétation du graphe plus simple : Neo4j ne dit pas seulement qu'une offre, un candidat ou une compétence existe dans la base ; il montre comment ces éléments sont reliés. Une recommandation devient défendable lorsque le chemin est lisible : candidat $\rightarrow$ compétences possédées $\rightarrow$ compétences requises par l'offre, puis éventuellement métier, niveau NCF, secteur ou formation de référence. À l'inverse, si le chemin est absent ou porté seulement par une compétence trop générale, le graphe doit servir à rétrograder l'offre plutôt qu'à la justifier artificiellement.
 
 Les noeuds représentent les objets métier manipulés par le système. Les noeuds \texttt{Candidat} et \texttt{OffreEmploi} portent les deux pôles du matching : un profil disponible et une opportunité à classer. Les noeuds \texttt{Compétence} jouent le rôle de pivot explicatif, car ils permettent de comparer ce qu'un candidat possède avec ce qu'une offre requiert. Les noeuds \texttt{Métier}, \texttt{GroupeBaseMEPC}, \texttt{GroupeISCO}, \texttt{NiveauFormationNCF}, \texttt{DomaineDétailléNCF}, \texttt{Secteur} et \texttt{Localisation} ajoutent les dimensions de contrôle : métier de référence, famille professionnelle, niveau de qualification, domaine de formation, secteur d'activité et lieu. Les noeuds \texttt{DocChunk} et \texttt{DocumentReferentiel} relient le graphe aux sources documentaires utilisées par le GraphRAG.
 
 Cette organisation évite une erreur fréquente : interpréter une offre et un candidat comme deux textes isolés. Dans le graphe, ils deviennent deux ensembles de relations. Un candidat n'est pas seulement une phrase de profil ; il est relié à des compétences, un niveau, une filière et un secteur. Une offre n'est pas seulement un intitulé ; elle est reliée à des compétences exigées, un employeur, une localisation, un secteur et un niveau requis. C'est cette représentation relationnelle qui rend l'explication possible.
 
-\subsubsection{Relations qui prouvent, filtrent ou contextualisent le match}
-
 Les relations décrivent les contraintes et les preuves utilisées par la recommandation. \texttt{POSSEDE} relie un candidat aux compétences déclarées ou inférées à partir de son profil. \texttt{REQUIERT} relie une offre aux compétences attendues. \texttt{NECESSITE} relie un métier aux compétences de référence du référentiel. \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU} et \texttt{REQUIERT\_NIVEAU\_NCF} structurent la compatibilité de formation. \texttt{DANS\_SECTEUR}, \texttt{LOCALISEE\_A} et \texttt{PUBLIEE\_PAR} contextualisent l'offre. Enfin, les relations de référentiel, comme \texttt{PARTIE\_DE}, \texttt{CLASSIFIE\_DANS} ou \texttt{EXTRAIT\_DE}, permettent de passer d'un résultat opérationnel à une explication institutionnelle.
 
 Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'implémentation, les liens \texttt{REQUIERT} et \texttt{POSSEDE} vers les compétences ESCO sont matérialisés par correspondance lexicale et portent des métadonnées d'audit comme la méthode de rapprochement et le niveau de confiance. Leur fonction est donc opérationnelle : fournir un signal exploitable et vérifiable pour le matching. Une interprétation rigoureuse doit conserver cette limite, car une compétence mal extraite ou trop générique peut améliorer artificiellement le score d'une offre.
-
-\implementationScreenshot
-  {fig:capture_neo4j_browser}
-  {figures/captures/ch3_05_neo4j_browser.png}
-  {Visualisation du graphe dans Neo4j Browser}
-  {Capture d'écran de Neo4j Browser ou Neo4j Bloom}
-
-La capture Neo4j doit être utilisée comme preuve visuelle de la base de connaissances. Elle doit montrer des noeuds et relations réels du projet, par exemple un chemin candidat--compétence--offre ou offre--métier--référentiel. Son interprétation doit rester sobre : une capture ne prouve pas la qualité globale du graphe, mais elle illustre la manière dont les entités sont reliées.
-
 \subsection{Structure du graphe et risques de hubs}
 
 \subsubsection{Taille réelle du graphe et couverture de la projection matching}
@@ -778,23 +760,23 @@ Le test de robustesse retire successivement les 1\,\%, 5\,\% et 10\,\% de noeuds
 
 L'analyse métier confirme le rôle pivot des compétences. Une offre exige en moyenne 4,19 compétences, avec une médiane de 6. Un candidat possède en moyenne 5,36 compétences, avec une médiane de 6. Les métiers sont beaucoup plus riches : 41,48 compétences en moyenne et 37 en médiane, parce qu'ils agrègent des exigences de référentiel. Cette différence est saine : l'offre et le candidat portent un signal opérationnel court ; le métier porte un contexte plus large qui sert à l'enrichissement, à l'explication et à la montée en compétences.
 
-\begin{table}[H]
-  \centering
-  \caption{Nombre moyen de compétences par objet métier}
-  \label{tab:implementation_neo4j_competences_moyennes}
-  \tableStyleStart
-  \begin{tabularx}{0.88\textwidth}{Xrrrr}
-    \rowcolor{darkblue}
-    \tabheader{Objet} & \tabheader{Effectif} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p90} \\
-    \midrule
-    Offre & 13\,957 & 4,19 & 6 & 6 \\
-    Candidat & 41\,298 & 5,36 & 6 & 6 \\
-    Métier & 3\,039 & 41,48 & 37 & 70 \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{\texttt{17\_neo4j\_competences\_moyennes.csv}}
-\end{table}
+%\begin{table}[H]
+%  \centering
+%  \caption{Nombre moyen de compétences par objet métier}
+%  \label{tab:implementation_neo4j_competences_moyennes}
+%  \tableStyleStart
+%  \begin{tabularx}{0.88\textwidth}{Xrrrr}
+%    \rowcolor{darkblue}
+%    \tabheader{Objet} & \tabheader{Effectif} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p90} \\
+%    \midrule
+%    Offre & 13\,957 & 4,19 & 6 & 6 \\
+%    Candidat & 41\,298 & 5,36 & 6 & 6 \\
+%    Métier & 3\,039 & 41,48 & 37 & 70 \\
+%    \bottomrule
+%  \end{tabularx}
+%  \tableStyleEnd
+%  \source{\texttt{17\_neo4j\_competences\_moyennes.csv}}
+%\end{table}
 
 \begin{figure}[H]
   \centering
@@ -851,13 +833,24 @@ La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les d
   \caption{Résultats de calibration des poids du score hybride}
   \label{tab:implementation_moteur_hybride_score}
   \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.2cm}p{2.1cm}rrr}
+  \small
+  \setlength{\tabcolsep}{3pt}
+  \renewcommand{\arraystretch}{1.16}
+  \begin{tabularx}{0.98\textwidth}{>{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}p{2.55cm}
+      >{\centering\arraybackslash}p{1.75cm}
+      >{\centering\arraybackslash}p{1.65cm}
+      >{\centering\arraybackslash}p{2.05cm}}
     \rowcolor{darkblue}
-    \tabheader{Objectif optimisé} & \tabheader{Jeu retenu} & \tabheader{$\alpha$ pgvector} & \tabheader{$\beta$ Neo4j} & \tabheader{NDCG@10} \\
+    \tabheader{Objectif optimisé} &
+    \tabheader{Jeu retenu} &
+    \tabheader{$\alpha$ pgvector} &
+    \tabheader{$\beta$ Neo4j} &
+    \tabheader{NDCG@10} \\
     \midrule
     NDCG@10 & Neo4j seul & 0,0000 & 1,0000 & 0,9697 \\
-    $(\text{NDCG@10}+\text{Recall@10}+\text{Precision@10})/3$ & Neo4j seul & 0,0000 & 1,0000 & 0,9697 \\
-    $(\text{MRR@10}+\text{Precision@10})/2$ & Mixte Optuna & 0,6615 & 0,3385 & 0,9674 \\
+    \makecell[l]{$(\text{NDCG@10}+\text{Recall@10}$\\$+\text{Precision@10})/3$} & Neo4j seul & 0,0000 & 1,0000 & 0,9697 \\
+    \makecell[l]{$(\text{MRR@10}+\text{Precision@10})/2$} & Mixte Optuna & 0,6615 & 0,3385 & 0,9674 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
