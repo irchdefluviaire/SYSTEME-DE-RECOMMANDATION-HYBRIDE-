@@ -8,6 +8,7 @@ can show what was called and what evidence was retrieved.
 
 from __future__ import annotations
 
+import concurrent.futures
 import os
 import sys
 from pathlib import Path
@@ -69,12 +70,15 @@ def get_neo4j_driver():
         return _NEO4J_DRIVER
     from neo4j import GraphDatabase
 
-    _NEO4J_DRIVER = GraphDatabase.driver(
+    driver = GraphDatabase.driver(
         os.getenv("NEO4J_URI", "bolt://localhost:7687"),
         auth=(os.getenv("NEO4J_USER", "neo4j"), os.getenv("NEO4J_PASSWORD", "")),
-        connection_timeout=5,
+        connection_timeout=30,
+        connection_acquisition_timeout=30,
+        max_transaction_retry_time=35,
     )
-    _NEO4J_DRIVER.verify_connectivity()
+    driver.verify_connectivity()  # lève ServiceUnavailable si Neo4j est down
+    _NEO4J_DRIVER = driver        # stocké seulement si verify_connectivity réussit
     return _NEO4J_DRIVER
 
 
@@ -152,11 +156,18 @@ def tool_neo4j_graph_query(args: dict[str, Any]) -> dict[str, Any]:
     """Run a safe read-only text-to-Cypher graph query against Neo4j."""
 
     query = str(args.get("query", "")).strip()
-    result = run_text2cypher(
-        get_neo4j_driver(),
-        query,
-        database=os.getenv("NEO4J_DATABASE", "neo4j"),
-    )
+    timeout_s = int(os.getenv("NEO4J_QUERY_TIMEOUT_S", "60"))
+    db = os.getenv("NEO4J_DATABASE", "neo4j")
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        future = pool.submit(run_text2cypher, get_neo4j_driver(), query, database=db)
+        try:
+            result = future.result(timeout=timeout_s)
+        except concurrent.futures.TimeoutError:
+            raise RuntimeError(
+                f"neo4j_graph_query: timeout après {timeout_s}s — Neo4j trop lent ou inaccessible"
+            )
+
     return {"tool": "neo4j_graph_query", "query": query, **result}
 
 

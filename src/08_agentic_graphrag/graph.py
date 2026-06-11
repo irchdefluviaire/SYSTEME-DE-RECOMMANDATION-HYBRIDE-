@@ -82,21 +82,33 @@ def _find_candidat_id(text: str) -> str | None:
     return match.group(0) if match else None
 
 
+# ── Règles de détection de l'intention — chaque tuple (mots-clés, use_case)
+# est évalué dans l'ordre ; le premier match l'emporte.
+_USE_CASE_RULES: list[tuple[tuple[str, ...], str]] = [
+    (("status", "health", "etat", "diagnostic", "connect"),                         "diagnostic"),
+    (("global", "globale", "tendance", "tendances", "macro", "resume", "synthese"), "question_globale"),
+    (("ncf", "mepc", "diplome", "referentiel", "classification"),                   "referentiel"),
+    (("cypher", "relation", "relations", "graphe", "neo4j", "relie", "lier"),       "graph_query"),
+]
+_CANDIDATE_RULES: list[tuple[tuple[str, ...], str]] = [
+    (("competence", "competences", "skill", "gap", "manquant", "roadmap", "formation"), "skill_gap_roadmap"),
+]
+_ORIENTATION_KEYWORDS: tuple[str, ...] = (
+    "devenir", "orientation", "metier", "carriere", "competence", "competences",
+)
+
+
 def _infer_use_case(text: str, candidat_id: str | None) -> str:
     q = text.lower()
-    if any(w in q for w in ["status", "health", "etat", "diagnostic", "connect"]):
-        return "diagnostic"
-    if any(w in q for w in ["global", "globale", "vue d'ensemble", "tendance", "tendances", "macro", "resume", "rÃ©sumÃ©", "synthese", "synthÃ¨se"]):
-        return "question_globale"
-    if any(w in q for w in ["ncf", "mepc", "diplome", "referentiel", "classification"]):
-        return "referentiel"
-    if any(w in q for w in ["cypher", "relation", "relations", "graphe", "neo4j", "relie", "lier"]):
-        return "graph_query"
+    for keywords, use_case in _USE_CASE_RULES:
+        if any(w in q for w in keywords):
+            return use_case
     if candidat_id:
-        if any(w in q for w in ["competence", "competences", "skill", "gap", "manquant", "roadmap", "formation"]):
-            return "skill_gap_roadmap"
+        for keywords, use_case in _CANDIDATE_RULES:
+            if any(w in q for w in keywords):
+                return use_case
         return "recommendation_candidat"
-    if any(w in q for w in ["devenir", "orientation", "metier", "carriere", "competence", "competences"]):
+    if any(w in q for w in _ORIENTATION_KEYWORDS):
         return "orientation_metier"
     return "recherche_generale"
 
@@ -124,55 +136,50 @@ def analyse_request(state: AgentState) -> AgentState:
     }
 
 
+# ── Table de dispatch use_case → liste d'outils ─────────────────────────────
+# Chaque entrée est un callable (query, candidat_id, top_k) → list[dict].
+# Ajouter un nouveau use_case = ajouter UNE ligne ici, sans toucher plan_tools.
+_rec_plan = lambda q, cid, k: [
+    _tool_call("hybrid_candidate_recommendation", candidat_id=cid, top_k=k, backend="openrouter"),
+]
+
+_PLAN_DISPATCH: dict[str, Any] = {
+    "diagnostic":              lambda q, cid, k: [
+        _tool_call("service_status"),
+    ],
+    "question_globale":        lambda q, cid, k: [
+        _tool_call("global_graph_summary", top_k=k),
+        _tool_call("pgvector_document_search", query=q, top_k=min(k, 5)),
+    ],
+    "recommendation_candidat": _rec_plan,
+    "skill_gap_roadmap":       _rec_plan,
+    "referentiel":             lambda q, cid, k: [
+        _tool_call("pgvector_document_search", query=q, top_k=k),
+    ],
+    "graph_query":             lambda q, cid, k: [
+        _tool_call("neo4j_graph_query", query=q, top_k=k),
+    ],
+    "orientation_metier":      lambda q, cid, k: [
+        _tool_call("pgvector_semantic_search", query=q, kinds=["METIER", "COMPETENCE", "OFFRE_EMPLOI"], top_k=k),
+        _tool_call("pgvector_document_search", query=q, top_k=min(k, 5)),
+        _tool_call("neo4j_graph_query", query=q, top_k=k),
+    ],
+    "recherche_generale":      lambda q, cid, k: [
+        _tool_call("pgvector_semantic_search", query=q, kinds=["OFFRE_EMPLOI", "METIER", "COMPETENCE"], top_k=k),
+        _tool_call("neo4j_graph_query", query=q, top_k=k),
+    ],
+}
+
+
 def plan_tools(state: AgentState) -> AgentState:
-    """SÃ©lectionne les outils base de donnÃ©es nÃ©cessaires pour la requÃªte."""
-
-    query = state.get("user_query", "")
-    top_k = int(state.get("top_k", 5))
+    """Sélectionne les outils nécessaires selon le use_case détecté."""
+    query    = state.get("user_query", "")
+    top_k    = int(state.get("top_k", 5))
     use_case = state.get("use_case", "recherche_generale")
-    candidat_id = state.get("candidat_id") or DEFAULT_CANDIDAT_ID
+    cid      = state.get("candidat_id") or DEFAULT_CANDIDAT_ID
 
-    if use_case == "diagnostic":
-        tool_calls = [_tool_call("service_status")]
-    elif use_case == "question_globale":
-        tool_calls = [
-            _tool_call("global_graph_summary", top_k=top_k),
-            _tool_call("pgvector_document_search", query=query, top_k=min(top_k, 5)),
-        ]
-    elif use_case in {"recommendation_candidat", "skill_gap_roadmap"}:
-        tool_calls = [
-            _tool_call(
-                "hybrid_candidate_recommendation",
-                candidat_id=candidat_id,
-                top_k=top_k,
-                backend="openrouter",
-            )
-        ]
-    elif use_case == "referentiel":
-        tool_calls = [_tool_call("pgvector_document_search", query=query, top_k=top_k)]
-    elif use_case == "graph_query":
-        tool_calls = [_tool_call("neo4j_graph_query", query=query, top_k=top_k)]
-    elif use_case == "orientation_metier":
-        tool_calls = [
-            _tool_call(
-                "pgvector_semantic_search",
-                query=query,
-                kinds=["METIER", "COMPETENCE", "OFFRE_EMPLOI"],
-                top_k=top_k,
-            ),
-            _tool_call("pgvector_document_search", query=query, top_k=min(top_k, 5)),
-            _tool_call("neo4j_graph_query", query=query, top_k=top_k),
-        ]
-    else:
-        tool_calls = [
-            _tool_call(
-                "pgvector_semantic_search",
-                query=query,
-                kinds=["OFFRE_EMPLOI", "METIER", "COMPETENCE"],
-                top_k=top_k,
-            ),
-            _tool_call("neo4j_graph_query", query=query, top_k=top_k),
-        ]
+    build      = _PLAN_DISPATCH.get(use_case, _PLAN_DISPATCH["recherche_generale"])
+    tool_calls = build(query, cid, top_k)
 
     traces = [*state.get("traces", []), "plan_tools:" + ",".join(t["name"] for t in tool_calls)]
     return {**state, "tool_calls": tool_calls, "traces": traces}
@@ -231,20 +238,32 @@ def build_context(state: AgentState) -> AgentState:
 
 # â”€â”€ SynthÃ¨se finale avec LLM OpenRouter â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 
+# ── Table de rendu use_case → texte de contexte pour le LLM ─────────────────
+# Les lambdas referencent les _render_* definis plus bas ; Python les resout
+# a l'appel, pas a la definition, donc l'ordre dans le fichier n'importe pas.
+_CONTEXT_RENDERERS: dict[str, Any] = {
+    diagnostic:              lambda r, k, st: str(r.get(status, r)),
+    referentiel:             lambda r, k, st: _render_documents(r.get(documents, [])),
+    question_globale:        lambda r, k, st: _render_global_summary(
+                                   r.get(global_summary, {}), r.get(documents, [])
+                               ),
+    graph_query:             lambda r, k, st: _with_neo4j_schema(
+                                   _render_graph_rows(r.get(graph, {})), True
+                               ),
+    orientation_metier:      lambda r, k, st: _with_neo4j_schema(
+                                   _render_semantic_and_graph(r, k), False
+                               ),
+    recherche_generale:      lambda r, k, st: _with_neo4j_schema(
+                                   _render_semantic_and_graph(r, k), True
+                               ),
+    recommendation_candidat: lambda r, k, st: _render_candidate_recommendation(st, r),
+    skill_gap_roadmap:       lambda r, k, st: _render_candidate_recommendation(st, r),
+}
+
+
 def _build_context_text(result: dict[str, Any], use_case: str, top_k: int, state: AgentState) -> str:
-    """Construit un texte de contexte structurÃ© Ã  passer au LLM."""
-    include_schema = use_case in {"graph_query", "recherche_generale"}
-    if use_case == "referentiel":
-        return _render_documents(result.get("documents", []))
-    if use_case == "question_globale":
-        return _render_global_summary(result.get("global_summary", {}), result.get("documents", []))
-    if use_case == "graph_query":
-        return _with_neo4j_schema(_render_graph_rows(result.get("graph", {})), include_schema)
-    if use_case in {"orientation_metier", "recherche_generale"}:
-        return _with_neo4j_schema(_render_semantic_and_graph(result, top_k), include_schema)
-    if use_case in {"recommendation_candidat", "skill_gap_roadmap"}:
-        return _render_candidate_recommendation(state, result)
-    return str(result)
+    renderer = _CONTEXT_RENDERERS.get(use_case, lambda r, k, st: str(r))
+    return renderer(result, top_k, state)
 
 
 def _with_neo4j_schema(context_text: str, include_schema: bool) -> str:
