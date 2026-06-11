@@ -56,7 +56,7 @@ def _flatten_context(context: Any) -> str:
     return str(context)
 
 
-def critique_answer(answer: str, context: Any, *, min_faithfulness: float = 0.12) -> dict[str, Any]:
+def critique_answer(answer: str, context: Any, *, min_faithfulness: float = 0.46) -> dict[str, Any]:
     """Retourne une critique locale de la reponse par recouvrement lexical."""
 
     answer_tokens = _tokens(answer)
