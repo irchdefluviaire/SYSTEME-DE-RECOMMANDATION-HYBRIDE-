@@ -1,7 +1,23 @@
-% Compléments détaillés déplacés depuis le chapitre 3 pour alléger le corps du mémoire.
-\section{Compléments techniques du chapitre 3}
-
-Les éléments suivants documentent les diagnostics détaillés de l'implémentation. Ils sont conservés en annexe afin que le chapitre 3 reste centré sur les décisions d'architecture et non sur l'inventaire complet des sorties graphiques.
+\begin{table}[H]
+  \centering
+  \caption{Correspondance entre objectifs spécifiques et choix méthodologiques}
+  \label{tab:objectifs_choix_methodologiques}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{4.1cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Objectif spécifique} & \tabheader{Choix méthodologique retenu} \\
+    \midrule
+    Normaliser les offres, candidats et référentiels & Construction d'une couche de données standardisée : identifiants stables, champs nettoyés, niveaux de formation, secteurs, compétences et textes d'embedding. \\
+    Adapter la recherche sémantique au domaine emploi-compétences & Fine-tuning contrastif d'un modèle SentenceTransformer, puis indexation des embeddings dans PostgreSQL avec pgvector pour le retrieval top-$K$ \cite{reimers2019sbert,pgvector2024}. \\
+    Représenter les relations entre métiers, compétences et profils & Construction d'un graphe de connaissances Neo4j reliant candidats, offres, compétences, métiers, secteurs, localisations et référentiels \cite{hogan2021knowledge,hamilton2020graph}. \\
+    Produire une recommandation explicable & Score hybride combinant similarité vectorielle, couverture de compétences, compatibilité de niveau et alignement sectoriel, complété par une analyse de \textit{skill gap}. \\
+    Orchestrer la réponse utilisateur & Workflow LangGraph routant la requête vers les outils adaptés : pgvector, Neo4j, recherche documentaire, Text2Cypher, critic et génération finale. \\
+    Evaluer la qualité du système & Protocole séparant l'évaluation du retrieval, du graphe, du classement et de la réponse générée. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+\end{table}
 
 \begin{figure}[H]
   \centering
@@ -162,14 +178,6 @@ Les éléments suivants documentent les diagnostics détaillés de l'implémenta
   \end{tabularx}
   \tableStyleEnd
 \end{table}
-
-\begin{figure}[H]
-  \centering
-  \caption{Tableau de bord statistique du graphe Neo4j}
-  \label{fig:implementation_neo4j_dashboard}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
-\end{figure}
 
 \begin{figure}[H]
   \centering

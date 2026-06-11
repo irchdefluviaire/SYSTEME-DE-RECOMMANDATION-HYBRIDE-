@@ -1846,35 +1846,6 @@
       \verb https://langchain-ai.github.io/langgraph/
       \endverb
     \endentry
-    \entry{hamilton2020graph}{book}{}{}
-      \name{author}{1}{}{%
-        {{hash=2abce6c40b4cc1a3d89f175883b24536}{%
-           family={Hamilton},
-           familyi={H\bibinitperiod},
-           given={William\bibnamedelima L.},
-           giveni={W\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
-      }
-      \list{publisher}{1}{%
-        {Morgan \& Claypool Publishers}%
-      }
-      \strng{namehash}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{fullhash}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{fullhashraw}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{bibnamehash}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{authorbibnamehash}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{authornamehash}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{authorfullhash}{2abce6c40b4cc1a3d89f175883b24536}
-      \strng{authorfullhashraw}{2abce6c40b4cc1a3d89f175883b24536}
-      \field{sortinit}{4}
-      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{title}{Graph Representation Learning}
-      \field{year}{2020}
-      \verb{doi}
-      \verb 10.2200/S01045ED1V01Y202009AIM046
-      \endverb
-    \endentry
     \entry{akiba2019optuna}{inproceedings}{}{}
       \name{author}{5}{}{%
         {{hash=2939d0d5b491018f7cc7812609071a79}{%
@@ -1911,8 +1882,8 @@
       \strng{authornamehash}{0da4c5b8107cb83a6bd4ba0c9b294621}
       \strng{authorfullhash}{6a8f61fd5680dbd348b2b27b4a54d0d8}
       \strng{authorfullhashraw}{6a8f61fd5680dbd348b2b27b4a54d0d8}
-      \field{sortinit}{5}
-      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{sortinit}{4}
+      \field{sortinithash}{9381316451d1b9788675a07e972a12a7}
       \field{labelnamesource}{author}
       \field{labeltitlesource}{title}
       \field{booktitle}{Proceedings of the 25th ACM SIGKDD International Conference on Knowledge Discovery and Data Mining}
@@ -1922,6 +1893,35 @@
       \range{pages}{9}
       \verb{doi}
       \verb 10.1145/3292500.3330701
+      \endverb
+    \endentry
+    \entry{hamilton2020graph}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=2abce6c40b4cc1a3d89f175883b24536}{%
+           family={Hamilton},
+           familyi={H\bibinitperiod},
+           given={William\bibnamedelima L.},
+           giveni={W\bibinitperiod\bibinitdelim L\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Morgan \& Claypool Publishers}%
+      }
+      \strng{namehash}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{fullhash}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{fullhashraw}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{bibnamehash}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{authorbibnamehash}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{authornamehash}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{authorfullhash}{2abce6c40b4cc1a3d89f175883b24536}
+      \strng{authorfullhashraw}{2abce6c40b4cc1a3d89f175883b24536}
+      \field{sortinit}{5}
+      \field{sortinithash}{20e9b4b0b173788c5dace24730f47d8c}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Graph Representation Learning}
+      \field{year}{2020}
+      \verb{doi}
+      \verb 10.2200/S01045ED1V01Y202009AIM046
       \endverb
     \endentry
   \enddatalist

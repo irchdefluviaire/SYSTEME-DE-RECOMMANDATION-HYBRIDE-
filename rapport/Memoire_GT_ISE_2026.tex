@@ -1208,26 +1208,7 @@ L'intérêt méthodologique de cette architecture est donc l'hybridation contrô
 
 Enfin, la partie inférieure du schéma rappelle que le système ne s'arrête pas à la production d'une réponse. Un module de critique évalue si la réponse est suffisamment pertinente, factuelle, complète et traçable. Si le contexte est insuffisant, la boucle peut relancer une recherche élargie avant de produire une réponse révisée. Ce choix méthodologique est important pour le mémoire : l'architecture ne cherche pas seulement à générer un texte convaincant, mais à produire une recommandation fondée sur des sources identifiables, des relations vérifiables et des critères métier explicites. Les sections suivantes détaillent chacune de ces briques : préparation des données, construction des embeddings, stockage vectoriel, graphe de connaissances, moteur hybride, orchestration agentique et protocole d'évaluation.
 
-\begin{table}[H]
-  \centering
-  \caption{Correspondance entre objectifs spécifiques et choix méthodologiques}
-  \label{tab:objectifs_choix_methodologiques}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{4.1cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Objectif spécifique} & \tabheader{Choix méthodologique retenu} \\
-    \midrule
-    Normaliser les offres, candidats et référentiels & Construction d'une couche de données standardisée : identifiants stables, champs nettoyés, niveaux de formation, secteurs, compétences et textes d'embedding. \\
-    Adapter la recherche sémantique au domaine emploi-compétences & Fine-tuning contrastif d'un modèle SentenceTransformer, puis indexation des embeddings dans PostgreSQL avec pgvector pour le retrieval top-$K$ \cite{reimers2019sbert,pgvector2024}. \\
-    Représenter les relations entre métiers, compétences et profils & Construction d'un graphe de connaissances Neo4j reliant candidats, offres, compétences, métiers, secteurs, localisations et référentiels \cite{hogan2021knowledge,hamilton2020graph}. \\
-    Produire une recommandation explicable & Score hybride combinant similarité vectorielle, couverture de compétences, compatibilité de niveau et alignement sectoriel, complété par une analyse de \textit{skill gap}. \\
-    Orchestrer la réponse utilisateur & Workflow LangGraph routant la requête vers les outils adaptés : pgvector, Neo4j, recherche documentaire, Text2Cypher, critic et génération finale. \\
-    Evaluer la qualité du système & Protocole séparant l'évaluation du retrieval, du graphe, du classement et de la réponse générée. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-\end{table}
+Le tableau~\ref{tab:objectifs_choix_methodologiques}, placé en annexe, synthétise la correspondance entre les objectifs spécifiques du mémoire et les choix méthodologiques retenus.
 
 \subsection{Sources de données et leur rôle dans le système}
 
@@ -1337,7 +1318,7 @@ Ce choix s'inscrit dans la logique de l'Agentic RAG : le système n'est pas un s
 
 \subsection{Text2Cypher et rôle du LLM}
 
-Deux usages du \LLM{} sont distingués. Le premier concerne l'interrogation du graphe en langage naturel. Pour les questions de type \filevar{graph\_query} ou les recherches générales nécessitant un raisonnement relationnel, la question peut être transformée en requête Cypher par un module Text2Cypher. Le modèle retenu pour cette tâche est \filevar{neo4j/text2cypher-gemma-2-9b-it-finetuned-2024v1}. La génération de Cypher est encadrée par le schéma Neo4j : types de noeuds, propriétés et relations autorisées. Cette contrainte est indispensable, car un modèle génératif qui ne connaît pas le schéma réel peut produire des requêtes syntaxiquement plausibles mais inexécutables ou non pertinentes.
+Deux usages du \LLM{} sont distingués. Le premier concerne l'interrogation du graphe en langage naturel. Pour les questions de type \filevar{graph\_query} ou les recherches générales nécessitant un raisonnement relationnel, la question peut être transformée en requête Cypher par un module Text2Cypher. Le modèle retenu pour cette tâche est \filevar{gemma-2-9b-finetuned-2024v1}. La génération de Cypher est encadrée par le schéma Neo4j : types de noeuds, propriétés et relations autorisées. Cette contrainte est indispensable, car un modèle génératif qui ne connaît pas le schéma réel peut produire des requêtes syntaxiquement plausibles mais inexécutables ou non pertinentes.
 
 Le second usage du \LLM{} concerne la génération de la réponse finale. Le système utilise l'API OpenRouter avec le modèle \filevar{openai/gpt-oss-20b:free}. Ce modèle ne doit pas inventer la réponse à partir de ses connaissances générales. Il reçoit un contexte construit par le workflow : résultats pgvector, lignes Neo4j, fragments documentaires et métadonnées de source. Le prompt lui demande de répondre en français, de structurer la réponse et de citer les informations utilisées.
 
@@ -1348,10 +1329,7 @@ Cette séparation des rôles est méthodologiquement importante. Text2Cypher ser
 Le système prévoit trois modes d'accès : une interface Streamlit pour l'usage conversationnel, une API FastAPI pour l'intégration applicative et une CLI pour les tests de développement. Ces interfaces ne changent pas la logique de recommandation ; elles exposent le même moteur sous des formes différentes. La CLI facilite la vérification rapide des use-cases, Streamlit permet une démonstration interactive et FastAPI prépare l'intégration dans un environnement applicatif comme  la plateforme Kmer-AI, les agences de recrutement (FNE et l'ACPE).
 
 La traçabilité est intégrée à plusieurs niveaux. Les traces du workflow indiquent les noeuds traversés et les outils appelés. Les résultats conservent les identifiants des entités, les sources documentaires, les scores et les chemins du graphe. La réponse finale doit citer les éléments utilisés. Cette exigence est décisive dans un système d'aide à l'orientation ou au recrutement : une recommandation sans preuve peut être séduisante, mais elle n'est pas défendable.
-
-\section{Évaluation prévue, limites et synthèse méthodologique}
-
-\subsection{Protocole d'évaluation prévu}
+\subsection{Protocole d'évaluation prévu du système}
 
 L'évaluation est conçue comme une évaluation en plusieurs étages. Le premier étage porte sur le retrieval vectoriel : le système retrouve-t-il les offres, compétences, métiers ou documents attendus dans les premiers résultats ? Les métriques retenues sont notamment Precision@K, Recall@K, MRR@K, MAP@K et NDCG@K, couramment utilisées pour les tâches de recherche d'information \cite{thakur2021beir,muennighoff2022mteb}.
 
@@ -1359,17 +1337,17 @@ Le deuxième étage porte sur le graphe : les relations retournées sont-elles c
 
 La méthode distingue donc clairement performance de récupération et qualité de génération. Une réponse bien rédigée ne prouve pas que le système a retrouvé les bonnes informations. Inversement, un bon retrieval ne garantit pas une bonne synthèse. Cette séparation protège l'analyse contre une erreur fréquente dans les systèmes \RAG{} : juger le système uniquement à l'apparence de la réponse finale.
 
-\subsection{Limites méthodologiques et précautions d'interprétation}
+%\subsection{Limites méthodologiques et précautions d'interprétation}
 
-Plusieurs limites doivent être prises en compte dès la conception. Premièrement, les données d'offres et de candidats peuvent contenir des omissions, des doublons et des formulations ambiguës. Deuxièmement, l'alignement entre référentiels reste partiel : il améliore la structuration, mais ne garantit pas une équivalence parfaite entre catégories. Troisièmement, le graphe dépend de la qualité des relations extraites ou importées. Une relation manquante peut conduire à sous-estimer une compatibilité réelle. Quatrièmement, les \LLM{} peuvent produire des formulations plausibles mais non soutenues par les données ; c'est pourquoi le contexte, les citations et le critic sont nécessaires.
+%Plusieurs limites doivent être prises en compte dès la conception. Premièrement, les données d'offres et de candidats peuvent contenir des omissions, des doublons et des formulations ambiguës. Deuxièmement, l'alignement entre référentiels reste partiel : il améliore la structuration, mais ne garantit pas une équivalence parfaite entre catégories. Troisièmement, le graphe dépend de la qualité des relations extraites ou importées. Une relation manquante peut conduire à sous-estimer une compatibilité réelle. Quatrièmement, les \LLM{} peuvent produire des formulations plausibles mais non soutenues par les données ; c'est pourquoi le contexte, les citations et le critic sont nécessaires.
 
-Une autre limite est matérielle. L'utilisation locale ou semi-locale de modèles spécialisés, notamment pour Text2Cypher, peut être contrainte par la mémoire disponible. Cette contrainte influence les choix techniques : recours à une API pour la génération finale, chargement contrôlé du modèle Text2Cypher et possibilité de fallback vers des templates Cypher sécurisés. Ces choix ne sont pas des faiblesses méthodologiques en soi ; ils traduisent l'adaptation du système aux ressources disponibles.
+%Une autre limite est matérielle. L'utilisation locale ou semi-locale de modèles spécialisés, notamment pour Text2Cypher, peut être contrainte par la mémoire disponible. Cette contrainte influence les choix techniques : recours à une API pour la génération finale, chargement contrôlé du modèle Text2Cypher et possibilité de fallback vers des templates Cypher sécurisés. Ces choix ne sont pas des faiblesses méthodologiques en soi ; ils traduisent l'adaptation du système aux ressources disponibles.
 
-\subsection{Ce que l'architecture garantit et ses exigences}
+%\subsection{Ce que l'architecture garantit et ses exigences}
 
-La méthodologie proposée construit un système hybride plutôt qu'un modèle isolé. Elle part de données locales hétérogènes, les normalise, les rattache à des référentiels, les encode dans un espace vectoriel, les structure dans un graphe de connaissances, puis orchestre leur interrogation par un workflow agentique. Le rôle du \LLM{} est strictement encadré : transformer certaines questions en requêtes graphe, puis formuler une réponse fondée sur les preuves récupérées.
+%La méthodologie proposée construit un système hybride plutôt qu'un modèle isolé. Elle part de données locales hétérogènes, les normalise, les rattache à des référentiels, les encode dans un espace vectoriel, les structure dans un graphe de connaissances, puis orchestre leur interrogation par un workflow agentique. Le rôle du \LLM{} est strictement encadré : transformer certaines questions en requêtes graphe, puis formuler une réponse fondée sur les preuves récupérées.
 
-Cette approche répond aux objectifs du mémoire. Elle permet de dépasser la recherche par mots-clés, d'exploiter les référentiels institutionnels, de produire des recommandations explicables et de relier chaque verdict à des compétences, des niveaux de formation et des sources identifiables. Les chapitres suivants présentent la réalisation opérationnelle de cette méthodologie, puis l'évaluation de ses performances.
+%Cette approche répond aux objectifs du mémoire. Elle permet de dépasser la recherche par mots-clés, d'exploiter les référentiels institutionnels, de produire des recommandations explicables et de relier chaque verdict à des compétences, des niveaux de formation et des sources identifiables. Les chapitres suivants présentent la réalisation opérationnelle de cette méthodologie, puis l'évaluation de ses performances.
 
 \part{Présentation des résultats}
 
@@ -1514,34 +1492,10 @@ L'orchestration agentique est implémentée dans \filevar{src/08\_agentic\_graph
 
 \begin{figure}[H]
   \centering
-  \caption{Workflow agentique implémenté dans LangGraph}
+  \caption{Visualisation du workflow agentique dans LangGraph Studio}
   \label{fig:workflow_langgraph_chap3}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-  \resizebox{0.95\textwidth}{!}{%
-  \begin{tikzpicture}[
-    node distance=0.9cm and 1.8cm,
-    proc/.style={rectangle, rounded corners=3pt, draw=kmeraiteal, thick, fill=kmeraiteal!8,
-      align=center, minimum width=3.2cm, minimum height=0.8cm, font=\normalsize\bfseries},
-    critic/.style={diamond, draw=kmeraired, thick, fill=kmeraired!8,
-      align=center, aspect=2.0, font=\normalsize\bfseries},
-    arr/.style={-{Stealth[length=2.2mm]}, thick, draw=kmeraigray}
-  ]
-    \node[proc] (a) {\texttt{analyse\_request}};
-    \node[proc, right=of a] (p) {\texttt{plan\_tools}};
-    \node[proc, right=of p] (e) {\texttt{execute\_tools}};
-    \node[proc, below=of e] (b) {\texttt{build\_context}};
-    \node[proc, left=of b] (g) {\texttt{generate\_final\_answer}};
-    \node[critic, left=of g] (c) {critic};
-    \node[proc, below=of b] (x) {\texttt{expand\_context}};
-
-    \draw[arr] (a) -- (p);
-    \draw[arr] (p) -- (e);
-    \draw[arr] (e) -- (b);
-    \draw[arr] (b) -- (g);
-    \draw[arr] (g) -- (c);
-    \draw[arr] (c) |- node[pos=0.25, above, font=\normalsize]{réviser} (x);
-    \draw[arr] (x) -| (e);
-  \end{tikzpicture}}
+  \source{Nos travaux, visualisation LangGraph Studio du workflow implémenté dans \filevar{src/08\_agentic\_graphrag/graph.py}.}
+  \includegraphics[width=0.95\textwidth]{langchaindev.png}
 \end{figure}
 
 Le noeud \filevar{analyse\_request} identifie le type de demande. Le noeud \filevar{plan\_tools} sélectionne les outils nécessaires. Le noeud \filevar{execute\_tools} appelle ces outils et stocke les résultats. Le noeud \filevar{build\_context} normalise les sorties pour la génération. Le noeud \filevar{generate\_final\_answer} appelle le \LLM{} OpenRouter. Le critic vérifie ensuite la fidélité approximative de la réponse par rapport au contexte. En cas de décision \filevar{revise}, \filevar{expand\_context} ajoute des outils complémentaires, puis le système relance l'exécution.
@@ -1643,30 +1597,30 @@ La force de cette implémentation tient dans son caractère hybride et traçable
 \chapter{Évaluation de la performance du système}
 \vspace{-1.4cm}
 
-\section{Cadre d'évaluation et protocole expérimental}
+%\section{Cadre d'évaluation et protocole expérimental}
 
-\subsection{Questions évaluées et logique de séparation}
+%\subsection{Questions évaluées et logique de séparation}
 
-Ce chapitre évalue empiriquement le système implémenté au chapitre précédent. L'objectif n'est pas seulement de produire des scores globaux, mais de répondre à une question centrale du mémoire : l'ajout d'un graphe de connaissances Neo4j apporte-t-il une amélioration mesurable par rapport à une recherche vectorielle fondée uniquement sur pgvector ? Cette question est décisive, car le graphe ajoute une complexité technique réelle : modélisation des nœuds et relations, chargement Neo4j, requêtes Cypher, enrichissement des résultats, maintenance d'une base supplémentaire. Son intérêt doit donc être justifié par un gain observable en qualité de classement, en explicabilité ou en contrôle métier.
+%Ce chapitre évalue empiriquement le système implémenté au chapitre précédent. L'objectif n'est pas seulement de produire des scores globaux, mais de répondre à une question centrale du mémoire : l'ajout d'un graphe de connaissances Neo4j apporte-t-il une amélioration mesurable par rapport à une recherche vectorielle fondée uniquement sur pgvector ? Cette question est décisive, car le graphe ajoute une complexité technique réelle : modélisation des nœuds et relations, chargement Neo4j, requêtes Cypher, enrichissement des résultats, maintenance d'une base supplémentaire. Son intérêt doit donc être justifié par un gain observable en qualité de classement, en explicabilité ou en contrôle métier.
 
-L'évaluation a été conduite en cinq niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau vérifie fonctionnellement le graphe : recherche métier--compétences, compétence--offres, skill gap et compatibilité \NCF{}. Le quatrième niveau calibre les pondérations du score hybride avec Optuna. Le cinquième niveau évalue le contrôle de génération du workflow Agentic GraphRAG, en particulier le seuil \filevar{accept/revise} du critic.
+%L'évaluation a été conduite en cinq niveaux. Le premier niveau porte sur le modèle d'embeddings, c'est-à-dire la capacité du SentenceTransformer fine-tuné à retrouver les paires offre--profil pertinentes dans un corpus de test. Le deuxième niveau porte sur l'ablation du moteur de recommandation : une configuration \textit{pgvector seul} est comparée à une configuration \textit{pgvector + graphe}. Le troisième niveau vérifie fonctionnellement le graphe : recherche métier--compétences, compétence--offres, skill gap et compatibilité \NCF{}. Le quatrième niveau calibre les pondérations du score hybride avec Optuna. Le cinquième niveau évalue le contrôle de génération du workflow Agentic GraphRAG, en particulier le seuil \filevar{accept/revise} du critic.
 
-Les résultats présentés dans ce chapitre proviennent d'artefacts reproductibles du pipeline local. Le benchmark des embeddings est produit par le module d'évaluation SentenceTransformer, l'ablation compare directement pgvector et Neo4j sur les mêmes requêtes, la calibration des pondérations est conduite avec Optuna, et le seuil du critic est estimé par un protocole contrastif. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties calculées à partir des paires candidat--offre, des contextes récupérés et des réponses générées par le système.
+%Les résultats présentés dans ce chapitre proviennent d'artefacts reproductibles du pipeline local. Le benchmark des embeddings est produit par le module d'évaluation SentenceTransformer, l'ablation compare directement pgvector et Neo4j sur les mêmes requêtes, la calibration des pondérations est conduite avec Optuna, et le seuil du critic est estimé par un protocole contrastif. Cette traçabilité est importante : les nombres présentés ici ne sont pas des valeurs théoriques, mais des sorties calculées à partir des paires candidat--offre, des contextes récupérés et des réponses générées par le système.
 
-\subsection{Données, métriques et limites du protocole}
+%\subsection{Données, métriques et limites du protocole}
 
-Le système dispose de 13\,957 offres normalisées et de 41\,298 profils candidats. Le benchmark d'embeddings utilise le jeu de test issu de la construction des paires contrastives offre--profil, soit 473 requêtes de test. Chaque requête correspond à une description structurée d'offre ou de profil, et le corpus contient les textes enrichis utilisés pour l'apprentissage contrastif. Les métriques calculées sont celles de la recherche d'information : Precision@K, Recall@K, NDCG@K et MRR@K.
+%Le système dispose de 13\,957 offres normalisées et de 41\,298 profils candidats. Le benchmark d'embeddings utilise le jeu de test issu de la construction des paires contrastives offre--profil, soit 473 requêtes de test. Chaque requête correspond à une description structurée d'offre ou de profil, et le corpus contient les textes enrichis utilisés pour l'apprentissage contrastif. Les métriques calculées sont celles de la recherche d'information : Precision@K, Recall@K, NDCG@K et MRR@K.
 
-Pour l'ablation \textit{pgvector} contre \textit{pgvector + graphe}, le protocole est différent. Un échantillon de 80 candidats est tiré aléatoirement avec la graine 42 ; 69 candidats ont été effectivement évalués après contrôle d'exécution. Pour chaque candidat, pgvector retourne un pool initial de 30 offres candidates. Deux classements sont alors comparés :
+%Pour l'ablation \textit{pgvector} contre \textit{pgvector + graphe}, le protocole est différent. Un échantillon de 80 candidats est tiré aléatoirement avec la graine 42 ; 69 candidats ont été effectivement évalués après contrôle d'exécution. Pour chaque candidat, pgvector retourne un pool initial de 30 offres candidates. Deux classements sont alors comparés :
 
-\begin{itemize}
-    \item \textbf{pgvector seul} : l'ordre des offres est conservé tel qu'il est retourné par la recherche sémantique et lexicale dans PostgreSQL/pgvector ;
-    \item \textbf{pgvector + graphe} : le même pool initial est enrichi par Neo4j, puis rerangé par le score hybride combinant similarité sémantique, compatibilité de compétences, compatibilité de niveau \NCF{} et alignement sectoriel.
-\end{itemize}
+%\begin{itemize}
+%    \item \textbf{pgvector seul} : l'ordre des offres est conservé tel qu'il est retourné par la recherche sémantique et lexicale dans PostgreSQL/pgvector ;
+%    \item \textbf{pgvector + graphe} : le même pool initial est enrichi par Neo4j, puis rerangé par le score hybride combinant similarité sémantique, compatibilité de compétences, compatibilité de niveau \NCF{} et alignement sectoriel.
+%\end{itemize}
 
-Cette comparaison est volontairement réalisée sans génération \LLM{}. Le modèle génératif OpenRouter intervient dans le chatbot pour formuler la réponse finale, mais il n'est pas mobilisé dans l'ablation. Cette séparation évite de confondre deux phénomènes : la qualité du classement des offres et la qualité rédactionnelle de la réponse.
+%Cette comparaison est volontairement réalisée sans génération \LLM{}. Le modèle génératif OpenRouter intervient dans le chatbot pour formuler la réponse finale, mais il n'est pas mobilisé dans l'ablation. Cette séparation évite de confondre deux phénomènes : la qualité du classement des offres et la qualité rédactionnelle de la réponse.
 
-La pertinence utilisée pour calculer les métriques d'ablation est un proxy construit à partir des métadonnées normalisées : chevauchement lexical entre le profil et l'offre, proximité sectorielle et compatibilité de niveau \NCF{}. Cette approximation est acceptable pour comparer deux variantes internes sur le même échantillon, mais elle ne remplace pas une annotation humaine. Les résultats doivent donc être interprétés comme une mesure comparative de l'effet du graphe, non comme une mesure définitive de satisfaction utilisateur.
+%La pertinence utilisée pour calculer les métriques d'ablation est un proxy construit à partir des métadonnées normalisées : chevauchement lexical entre le profil et l'offre, proximité sectorielle et compatibilité de niveau \NCF{}. Cette approximation est acceptable pour comparer deux variantes internes sur le même échantillon, mais elle ne remplace pas une annotation humaine. Les résultats doivent donc être interprétés comme une mesure comparative de l'effet du graphe, non comme une mesure définitive de satisfaction utilisateur.
 
 \section{Retrieval sémantique et apport mesuré du graphe}
 

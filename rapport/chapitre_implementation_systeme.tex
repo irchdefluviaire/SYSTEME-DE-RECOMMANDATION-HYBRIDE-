@@ -269,7 +269,42 @@ La visualisation doit enfin être lue avec discipline. UMAP ne prouve pas que le
 
 \section{Mémoire vectorielle pgvector pour le retrieval}
 
-La base pgvector n'est pas utilisée comme un simple entrepôt de vecteurs. Elle constitue le premier étage du retrieval de l'Agentic RAG : transformer une requête en vecteur, récupérer un top-$K$ d'entités proches, puis transmettre ces résultats au moteur hybride et au graphe Neo4j. La preuve attendue est donc statistique et opérationnelle : volume indexé, couverture des entités, dimension des vecteurs, index effectivement présents et latence de recherche.
+La base pgvector constitue le premier étage du retrieval de l'Agentic RAG. Son rôle est précis : transformer une requête, un profil ou un fragment documentaire en vecteur, récupérer rapidement un top-$K$ d'objets proches, puis transmettre ces résultats au moteur hybride et au graphe Neo4j. Elle ne décide donc pas seule de la recommandation finale ; elle construit le vivier initial sur lequel le graphe pourra ensuite vérifier les relations métier.
+
+\subsection{Architecture physique de la mémoire vectorielle}
+
+\begin{figure}[H]
+  \centering
+  \caption{Schéma physique de la base pgvector : tables documentaires, embeddings et index de recherche}
+  \label{fig:implementation_schema_pgvector}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \includegraphics[width=0.96\textwidth]{pgvector.png}
+\end{figure}
+
+La figure \ref{fig:implementation_schema_pgvector} donne la lecture la plus simple de la brique pgvector. La table \texttt{embeddings} stocke les vecteurs des entités structurées : candidats, offres, compétences, métiers, groupes \MEPC{} et domaines \NCF{}. La table \texttt{doc\_chunks} stocke les fragments documentaires issus des référentiels. Les index spécialisés servent ensuite à interroger ces deux familles d'objets par similarité vectorielle, par recherche textuelle, par type d'entité, par modèle d'embedding ou par identifiant Neo4j.
+
+Cette séparation évite une confusion fréquente : pgvector n'est pas seulement une colonne \texttt{vector}. C'est une couche de retrieval qui associe trois informations dans la même base : le vecteur, les métadonnées métier et le lien vers Neo4j. Le système peut donc partir d'un voisin sémantique retrouvé dans PostgreSQL, puis retrouver le noeud du graphe correspondant pour obtenir les compétences, niveaux, secteurs ou chemins explicatifs.
+
+\subsection{Tables et volumes effectivement indexés}
+
+\begin{table}[H]
+  \centering
+  \caption{Structure opérationnelle des tables pgvector}
+  \label{tab:implementation_pgvector_tables}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \tableStyleStart
+  \begin{tabularx}{\textwidth}{p{3.0cm}p{4.2cm}X}
+    \rowcolor{darkblue}
+    \tabheader{Table} & \tabheader{Rôle} & \tabheader{Champs et usages clés} \\
+    \midrule
+    \texttt{embeddings} & Recherche sémantique sur les entités structurées. & \texttt{entity\_kind}, \texttt{entity\_id}, \texttt{model\_id}, \texttt{embedding}, \texttt{label\_fr}, \texttt{text\_to\_embed}, \texttt{neo4j\_node\_id}. \\
+    \texttt{doc\_chunks} & Recherche documentaire sur les référentiels. & \texttt{chunk\_id}, \texttt{source}, \texttt{section\_title}, \texttt{subsection\_title}, \texttt{chunk\_text}, \texttt{chunk\_strategy}, \texttt{ncf\_code}, \texttt{mepc\_code}, \texttt{embedding}, \texttt{neo4j\_node\_id}. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+\end{table}
+
+Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les vecteurs ont une dimension de 384, ce qui limite le coût de stockage et de recherche tout en restant adapté au retrieval sémantique. L'instance courante contient 72\,643 embeddings d'entités structurées et 142 embeddings documentaires, soit 72\,785 vecteurs interrogeables.
 
 \begin{table}[H]
   \centering
@@ -295,36 +330,13 @@ La base pgvector n'est pas utilisée comme un simple entrepôt de vecteurs. Elle
   \tableStyleEnd
 \end{table}
 
-Cette distribution montre que pgvector couvre les deux côtés du matching. Les candidats représentent 56,85\,\% des embeddings et les offres 19,22\,\%. Les compétences et métiers forment le vocabulaire pivot qui permet de passer d'une similarité textuelle à une logique emploi--compétences. La couverture Neo4j de 100\,\% est déterminante : chaque résultat vectoriel peut être replacé dans le graphe pour récupérer secteur, niveau, localisation, compétences reliées ou chemin explicatif.
+Cette distribution montre que pgvector couvre les deux côtés du matching. Les candidats représentent 56,85\,\% des embeddings et les offres 19,22\,\%. Les compétences et métiers forment le vocabulaire pivot qui permet de relier une similarité textuelle à une logique emploi--compétences. La couverture Neo4j de 100\,\% est le point décisif : chaque résultat vectoriel peut être replacé dans le graphe pour récupérer secteur, niveau, localisation, compétences reliées ou chemin explicatif.
 
-\begin{table}[H]
-  \centering
-  \caption{Structure opérationnelle des tables pgvector}
-  \label{tab:implementation_pgvector_tables}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.0cm}p{4.2cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Table} & \tabheader{Rôle} & \tabheader{Champs et usages clés} \\
-    \midrule
-    \texttt{embeddings} & Recherche sémantique sur les entités structurées. & \texttt{entity\_kind}, \texttt{entity\_id}, \texttt{model\_id}, \texttt{embedding}, \texttt{label\_fr}, \texttt{text\_to\_embed}, \texttt{neo4j\_node\_id}. \\
-    \texttt{doc\_chunks} & Recherche documentaire sur les référentiels. & \texttt{chunk\_id}, \texttt{source}, \texttt{section\_title}, \texttt{subsection\_title}, \texttt{chunk\_text}, \texttt{chunk\_strategy}, \texttt{ncf\_code}, \texttt{mepc\_code}, \texttt{embedding}, \texttt{neo4j\_node\_id}. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-\end{table}
+\subsection{Référentiels découpés en chunks interrogeables}
 
-Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les vecteurs ont une dimension de 384, ce qui garde un compromis raisonnable entre précision de retrieval et coût d'indexation. Au total, la brique vectorielle contient 72\,643 embeddings d'entités structurées et 142 embeddings documentaires, soit 72\,785 vecteurs exploitables par le retrieval.
+Les référentiels ne sont pas indexés comme de simples PDF. Ils sont d'abord découpés en fragments documentaires, puis chaque fragment reçoit un embedding et un identifiant Neo4j. Les documents référentiels ajoutent 142 chunks : 43 pour les diplômes, 61 pour le MEPC 2013 et 38 pour la NCF 2017. Cette double indexation est nécessaire au GraphRAG : pgvector retrouve le passage pertinent, puis Neo4j le rattache à une formation, un métier, un niveau ou un domaine.
 
-\subsection{Stratégie de chunking des référentiels}
-
-Les chunks documentaires ne sont pas produits par un découpage arbitraire du texte. La stratégie d'ingestion est structurelle par défaut : elle détecte les titres de section à partir de la mise en forme et des motifs numérotés, puis chaque titre ouvre un chunk dont le contenu s'étend jusqu'au titre suivant. Les fragments trop courts, inférieurs à 80 caractères, sont fusionnés avec le fragment précédent afin d'éviter d'indexer des passages sans contexte. Une limite supérieure de 3\,000 caractères contrôle la taille maximale du passage envoyé à l'encodeur. Cette stratégie est cohérente avec les documents exploités, car la NCF, le MEPC et le référentiel des diplômes sont des documents hiérarchisés : niveaux, domaines, groupes, sous-groupes, métiers et descripteurs.
-
-Le pipeline prévoit aussi une stratégie sémantique de secours : si la structure n'est pas détectée, le texte est découpé en fenêtres glissantes de 800 caractères avec un recouvrement de 120 caractères. Cette option n'a pas été nécessaire dans l'index courant : les 142 chunks effectivement présents dans \texttt{doc\_chunks} ont tous été générés par la stratégie structurelle. Le taux de recouvrement observé est donc nul dans la base actuelle. C'est une information importante pour l'évaluation, car le retrieval documentaire ne récupère pas seulement des morceaux de taille fixe ; il récupère des unités qui correspondent autant que possible à des sections réglementaires interprétables.
-
-Les statistiques détaillées du chunking documentaire sont placées en annexe (tableau~\ref{tab:implementation_pgvector_chunking}). Le chapitre conserve la logique : découper les référentiels selon leur structure afin d'éviter des fragments sans contexte.
-
-Ce diagnostic est plus nuancé qu'une simple description de paramètres. La taille médiane de 116 tokens produit des unités courtes, adaptées au retrieval, mais le coefficient de variation de 0,91 indique une hétérogénéité importante. Certains chunks sont très courts, ce qui peut créer des passages peu informatifs ; d'autres approchent 500 tokens, ce qui peut diluer le signal dans l'embedding. Cette variabilité n'est pas automatiquement mauvaise : elle reflète la structure inégale des référentiels. Elle impose cependant de contrôler la qualité des chunks récupérés dans les réponses RAG.
+La stratégie d'ingestion est structurelle par défaut. Elle détecte les titres de section à partir de la mise en forme et des motifs numérotés, puis chaque titre ouvre un chunk dont le contenu s'étend jusqu'au titre suivant. Les fragments de moins de 80 caractères sont fusionnés avec le fragment précédent, afin d'éviter des passages sans contexte. Une limite supérieure de 3\,000 caractères contrôle la taille maximale envoyée à l'encodeur. Le pipeline prévoit une stratégie sémantique de secours par fenêtres glissantes de 800 caractères avec 120 caractères de recouvrement, mais elle n'a pas été nécessaire dans l'index courant : les 142 chunks ont été produits par la stratégie structurelle.
 
 \begin{figure}[H]
   \centering
@@ -334,11 +346,7 @@ Ce diagnostic est plus nuancé qu'une simple description de paramètres. La tail
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
 \end{figure}
 
-La couverture documentaire et la duplication des chunks sont détaillées en annexe (tableau~\ref{tab:implementation_chunking_coverage_duplication}).
-
-La couverture documentaire est calculée en rapportant le nombre de tokens indexés dans les chunks au nombre de tokens extraits des PDF. Elle doit être interprétée avec prudence, car les PDF contiennent aussi des pages de garde, tables, sommaires et contenus peu utiles au retrieval. Malgré cette limite, le résultat est un signal de vigilance : l'index actuel couvre 25,9\,\% de la NCF et 23,6\,\% du MEPC, contre 79,3\,\% pour le référentiel des diplômes. Le chunking structurel a donc privilégié les sections détectées comme exploitables, mais il ne doit pas être présenté comme une ingestion exhaustive des PDF réglementaires. A l'inverse, le taux de duplication quasi exacte est nul ; la base ne gaspille donc pas le stockage sur des chunks presque identiques.
-
-La mesure de cohérence intra-chunk est reportée en annexe (tableau~\ref{tab:implementation_chunking_coherence}).
+La figure \ref{fig:implementation_chunking_diagnostics} montre que les chunks sont courts mais hétérogènes. La taille médiane de 116 tokens convient au retrieval, tandis que le coefficient de variation de 0,91 signale des écarts importants entre fragments. Cette variabilité n'est pas automatiquement un défaut : elle reflète la structure inégale des référentiels. Elle impose cependant de contrôler la qualité des passages récupérés dans les réponses RAG. La couverture documentaire et la duplication des chunks sont détaillées en annexe (tableau~\ref{tab:implementation_chunking_coverage_duplication}), ainsi que les statistiques de chunking (tableau~\ref{tab:implementation_pgvector_chunking}).
 
 \begin{figure}[H]
   \centering
@@ -348,31 +356,17 @@ La mesure de cohérence intra-chunk est reportée en annexe (tableau~\ref{tab:im
   \includegraphics[width=0.72\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
 \end{figure}
 
-La cohérence sémantique moyenne vaut 0,303. Ce niveau est modéré : les chunks ne sont pas incohérents, mais ils ne forment pas non plus des blocs fortement homogènes. C'est cohérent avec des référentiels administratifs qui mêlent intitulés, codes, descriptions et listes. Pour un RAG de production, cette mesure suggère deux améliorations : fusionner certains fragments trop courts et tester une variante de chunking sémantique contrôlée par la cohérence intra-chunk. L'objectif ne serait pas de maximiser artificiellement la cohérence, mais de trouver le meilleur compromis entre contexte, taille et performance de retrieval.
+La cohérence sémantique moyenne vaut 0,303. Ce niveau est modéré : les chunks ne sont pas incohérents, mais ils ne forment pas non plus des blocs fortement homogènes. C'est cohérent avec des référentiels administratifs qui mêlent intitulés, codes, descriptions et listes. La mesure détaillée est reportée en annexe (tableau~\ref{tab:implementation_chunking_coherence}). Pour une version de production, ce résultat justifie de tester une variante de chunking sémantique contrôlée par la cohérence intra-chunk, sans perdre la structure réglementaire.
 
-\begin{figure}[H]
-  \centering
-  \caption{Schéma physique de la base pgvector : tables documentaires, embeddings et index de recherche}
-  \label{fig:implementation_schema_pgvector}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
-  \includegraphics[width=0.96\textwidth]{pgvector.png}
-\end{figure}
+\subsection{Index, latence et types de recherche}
 
-La figure \ref{fig:implementation_schema_pgvector} montre que la mémoire vectorielle repose sur deux tables complémentaires. La table \texttt{doc\_chunks} conserve les fragments documentaires et leurs métadonnées ; la table \texttt{embeddings} stocke les représentations vectorielles des entités métier. Les index spécialisés accélèrent la recherche par type d'entité, par modèle, par identifiant Neo4j et par similarité vectorielle. Cette organisation permet au système de passer d'un fragment ou d'une entité retrouvée sémantiquement vers le graphe Neo4j correspondant, sans confondre stockage documentaire, retrieval vectoriel et raisonnement relationnel.
+Les indicateurs techniques pgvector sont reportés en annexe (tableau~\ref{tab:implementation_pgvector_indicateurs}) et le détail des index pgvector et textuels dans le tableau~\ref{tab:implementation_pgvector_index}. Dans le corps du chapitre, le point important est leur rôle : les index HNSW accélèrent la similarité vectorielle, les index par type d'entité évitent de mélanger candidats, offres, métiers et compétences, les index textuels complètent la recherche dense par des correspondances lexicales, et les identifiants Neo4j assurent la continuité avec le graphe.
 
-Les indicateurs techniques pgvector sont reportés en annexe (tableau~\ref{tab:implementation_pgvector_indicateurs}).
+La latence observée est compatible avec un retrieval interactif : la médiane vaut 30,89 ms pour un top-10 HNSW. Cette valeur laisse de la marge pour les étapes suivantes, notamment le reranking graphe et la construction du contexte. Le maximum observé, 160,40 ms, rappelle toutefois qu'il faut raisonner en distribution et non seulement en moyenne. Pour un Agentic RAG, la stabilité des temps élevés est plus importante que le meilleur cas.
 
-La mesure de latence est suffisamment basse pour servir un retrieval interactif : une médiane de 30,89 ms pour un top-10 HNSW laisse de la marge pour les étapes suivantes, notamment le reranking graphe et la construction du contexte. Le maximum observé, 160,40 ms, rappelle toutefois qu'il faut raisonner en distribution et non seulement en moyenne. Pour un Agentic RAG, la stabilité du p90 est plus importante que le meilleur cas.
+La brique supporte trois types de recherche. La première est la recherche sémantique top-$K$, fondée sur la proximité cosinus entre embeddings. La deuxième est la recherche lexicale française, via les index GIN et \texttt{to\_tsvector}. La troisième est la recherche hybride : présélection vectorielle, filtre par nature d'entité, puis enrichissement par Neo4j. Cette organisation confirme que pgvector est prêt pour le retrieval de l'Agentic RAG : il produit le vivier initial, filtre les objets utiles et renvoie des identifiants directement raccordables au graphe.
 
-Le détail des index pgvector et textuels est placé en annexe (tableau~\ref{tab:implementation_pgvector_index}).
-
-Les documents référentiels ajoutent 142 chunks indexés : 43 pour les diplômes, 61 pour le MEPC 2013 et 38 pour la NCF 2017. Tous les chunks disposent d'un embedding et d'un identifiant Neo4j. Cette double indexation est importante pour le GraphRAG : pgvector retrouve le passage documentaire pertinent, puis Neo4j permet de le relier à une formation, un métier, un niveau ou un domaine.
-
-Les recherches supportées sont de trois types. La première est la recherche sémantique top-$K$, fondée sur l'opérateur cosinus de pgvector. La deuxième est la recherche lexicale française, via les index GIN et \texttt{to\_tsvector}. La troisième est la recherche hybride : présélection vectorielle, filtre métier par type d'entité, puis enrichissement par Neo4j.
-
-Ces requêtes montrent que pgvector est prêt pour le retrieval de l'Agentic RAG : il peut produire un top-$K$ sémantique, filtrer par nature d'entité, mobiliser un score lexical complémentaire et renvoyer des identifiants directement raccordables au graphe.
-
-La conclusion technique est nette : pgvector remplit les conditions minimales d'une brique de retrieval. Il indexe toutes les entités utiles, conserve les liens Neo4j, dispose d'index vectoriels et lexicaux, et présente des latences compatibles avec une application interactive. Le point à surveiller pour l'évaluation n'est donc plus la disponibilité du stockage, mais la qualité du ranking produit par le retrieval et son amélioration par le graphe.
+La conclusion technique est donc circonscrite. pgvector indexe les entités utiles, conserve les liens Neo4j, dispose d'index vectoriels et lexicaux, et présente des latences compatibles avec une application interactive. Le point à évaluer ensuite n'est plus la disponibilité du stockage, mais la qualité du ranking produit par ce premier étage et son amélioration par le graphe.
 
 \section{Neo4j : mémoire relationnelle du matching}
 
@@ -422,7 +416,15 @@ Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'imp
 
 \subsubsection{Taille réelle du graphe et couverture de la projection matching}
 
-Le tableau de bord statistique complet du graphe est renvoyé en annexe (figure~\ref{fig:implementation_neo4j_dashboard}).
+\begin{figure}[H]
+  \centering
+  \caption{Tableau de bord statistique du graphe Neo4j}
+  \label{fig:implementation_neo4j_dashboard}
+  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
+\end{figure}
+
+La figure~\ref{fig:implementation_neo4j_dashboard} synthétise les volumes et la structure globale du graphe avant l’analyse détaillée. Elle sert ici de point d’entrée : le graphe doit d’abord être compris par ses ordres de grandeur, puis seulement par ses hubs, ses communautés et ses chemins de matching.
 
 Le graphe complet contient 90\,230 noeuds et 550\,542 relations, répartis en 18 labels et 18 types de relations. Sa densité dirigée globale est très faible, environ $6{,}76 \times 10^{-5}$, ce qui est normal pour un graphe hétérogène de connaissances : toutes les entités n'ont pas vocation à être reliées entre elles. Cette faible densité ne signifie donc pas que le graphe est pauvre ; elle signifie qu'il encode des relations spécialisées plutôt qu'un réseau où tout serait connecté à tout.
 
@@ -547,8 +549,8 @@ La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les d
       >{\centering\arraybackslash}p{2.05cm}}
     \rowcolor{darkblue}
     \tabheader{Objectif optimisé} &
-    \tabheader{Jeu retenu} &
-    \tabheader{$\alpha$ pgvector} &
+    \tabheader{Outil} &
+    \tabheader{$\alpha$ Sem} &
     \tabheader{$\beta$ Neo4j} &
     \tabheader{NDCG@10} \\
     \midrule
@@ -581,4 +583,3 @@ L'ablation confirme ensuite que ces déplacements ne sont pas seulement cosméti
 
 La conclusion doit rester stricte. Le reranking hybride améliore le classement dans ce protocole, mais la pertinence utilisée est un proxy construit à partir de métadonnées normalisées et non une annotation humaine indépendante. Le résultat est donc une preuve opérationnelle de cohérence interne, pas encore une preuve définitive de satisfaction recruteur ou candidat. Pour défendre le système en production, il faudra compléter cette évaluation par des jugements humains ou des retours d'usage.
 
-\section{Orchestration agentique, critic et exposition du système}
