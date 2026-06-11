@@ -711,7 +711,7 @@ Une telle standardisation produit trois gains analytiques. Premièrement, elle a
 Cependant, une nomenclature tabulaire reste insuffisante si elle ne représente que des listes. Le marché de l'emploi est relationnel par nature : un métier exige des compétences, une compétence appartient à une famille, une formation développe certaines compétences, une compétence peut être proche ou complémentaire d'une autre, et un candidat peut viser plusieurs trajectoires professionnelles. La modélisation en graphe devient alors pertinente, car elle permet de représenter explicitement ces relations. Dans un graphe de connaissances, les entités \textit{Candidat}, \textit{Offre}, \textit{Métier}, \textit{Compétence}, \textit{Formation}, \textit{Secteur} et \textit{Niveau} sont reliées par des arcs sémantiques tels que \og possède \fg{}, \og exige \fg{}, \og développe \fg{}, \og est proche de \fg{} ou \og appartient à \fg{}.
 
 Ce passage de la nomenclature vers le graphe est essentiel pour le présent mémoire. La nomenclature apporte le vocabulaire contrôlé ; le graphe apporte la structure relationnelle ; les embeddings et les LLMs apportent la capacité à traiter les formulations non structurées. L'enjeu méthodologique consiste donc à articuler ces trois niveaux : normaliser les métiers et compétences, représenter leurs relations dans Neo4j, puis exploiter ces relations pour calculer un \emph{skill gap} et recommander des formations adaptées. Sans cette couche de standardisation, le système risque de produire des correspondances superficielles ; sans la couche graphe, il risque de perdre l'information relationnelle nécessaire à une recommandation explicable.
-\section{Les fondements des LLMs}
+\section{LLMs : architecture, représentations et raisonnement}
 L'avènement des LLMs a profondément redéfini le champ de l'IA appliquée au langage. \textbf{Alammar et Grootendorst} (2024) qualifient l'année 2023 d'« année de l'IA générative », soulignant qu'en l'espace de quelques mois, ces modèles ont transformé en profondeur des tâches aussi variées que la traduction automatique, la génération de texte, la synthèse documentaire et la recommandation. Pour comprendre cette rupture technologique, il est nécessaire d'en restituer les fondements théoriques. Cette section retrace d'abord l'évolution historique du NLP jusqu'aux LLMs, présente ensuite l'architecture Transformer et le mécanisme d'attention qui en constitue le cœur, explicite la notion d'embedding et de représentation vectorielle, avant de comparer les principales variantes architecturales des LLMs.
 \subsection{Définition et évolution historique des LLMs en NLP}
 Le NLP, désigne le sous-domaine de l'IA dédié au développement de technologies capables de comprendre, traiter et générer le langage humain (Alammar \& Grootendorst, 2024, chap. 1). Les deux termes sont aujourd'hui employés de manière largement interchangeable, en raison du succès continu des méthodes d'apprentissage automatique dans le traitement des problèmes linguistiques.
@@ -907,7 +907,7 @@ L'enchaînement de ces éléments self-attention, normalisation, FFN, connexions
 %  \tableStyleEnd
 %  \source{Auteur}
 %\end{table}
-\section{Généralité sur le fine-tuning des modèles de \LLM{}s}
+\section{Fine-tuning : adapter les représentations au domaine emploi-compétences}
 Le \emph{fine-tuning}, ou ajustement fin, désigne l'adaptation d'un modèle pré-entraîné à une tâche, un domaine ou un style de réponse spécifique. Dans le cas des \LLM{}s, le modèle dispose déjà de connaissances linguistiques et statistiques acquises lors d'un pré-entraînement massif sur de grands corpus. Le fine-tuning ne repart donc pas de zéro : il modifie une partie ou la totalité des paramètres du modèle afin d'améliorer ses performances sur un corpus plus spécialisé \cite{devlin2018bert,raffel2020t5}. Cette logique est particulièrement pertinente lorsque le domaine cible possède un vocabulaire, des relations sémantiques ou des critères de décision qui diffèrent des usages généraux du langage.
 
 Dans le cadre du matching emploi-compétences, l'intérêt du fine-tuning est direct. Les textes manipulés ne sont pas de simples phrases ordinaires ; ce sont des CV, des offres d'emploi, des intitulés de métiers, des descriptions de tâches, des compétences techniques, des certifications et des parcours de formation. Un modèle généraliste peut comprendre une partie de ces informations, mais il peut confondre des compétences proches, ignorer des synonymes professionnels locaux ou mal hiérarchiser l'importance d'une compétence dans une offre. L'ajustement sur des données du domaine permet de spécialiser les représentations du modèle afin qu'il rapproche mieux les profils et les postes réellement compatibles.
@@ -946,7 +946,7 @@ Ces limites justifient le recours à un système hybride. Le \LLM{} apporte la c
 
 
 % ============================================================
-\section{Généralité sur des BD vectorielles et orientées graphes}
+\section{Bases vectorielles et graphes de connaissances : complémentarité fonctionnelle}
 % ============================================================
 Les bases de données vectorielles et les bases orientées graphes répondent à deux besoins complémentaires dans les systèmes modernes d'intelligence artificielle. Les premières sont conçues pour indexer et interroger des représentations numériques continues, généralement produites par des modèles d'embeddings. Les secondes sont conçues pour représenter explicitement des entités et les relations qui les relient. Dans le cadre du matching emploi-compétences, cette complémentarité est stratégique : la base vectorielle permet de retrouver des profils et offres proches sur le plan sémantique, tandis que le graphe permet d'expliquer pourquoi ces éléments sont liés à travers des métiers, compétences, secteurs, formations et niveaux d'exigence.
 
@@ -1016,7 +1016,7 @@ Enfin, cette combinaison améliore l'explicabilité. Un \LLM{} peut générer un
 
 
 % ============================================================
-\section{Généralité sur les systèmes de recommandation}
+\section{Systèmes de recommandation : filtrage, hybridation et modèles neuronaux}
 % ============================================================
 Les systèmes de recommandation (\textsc{sr}) sont des outils algorithmiques conçus pour prédire
 et suggérer des éléments pertinents à un utilisateur, en se basant sur des informations le
@@ -1116,7 +1116,7 @@ Pour le présent projet, cette distinction est déterminante. Le modèle d'embed
 
 La figure \ref{fig:rag_graphrag_agentic_rag} illustre la rupture entre une \RAG{} traditionnelle et une architecture agentique. Dans le flux traditionnel, la requête traverse une chaîne relativement fixe : indexation, récupération d'un document, génération, puis réponse finale. Dans le flux agentique, la requête passe par un ou plusieurs agents capables de coordonner la récupération, de solliciter plusieurs outils et d'organiser la réponse. L'image met surtout en évidence que l'Agentic RAG n'est pas seulement une meilleure recherche documentaire ; c'est une organisation dynamique de la recherche et de la génération.
 
-\section{Agentic RAG}
+\section{Orchestration agentique : planification, outils et critique}
 
 L'Agentic RAG désigne une extension de la \RAG{} dans laquelle la récupération n'est plus une étape fixe et unique, mais une séquence pilotée par un agent. L'idée, mise en avant dans les travaux récents sur les agents outillés et illustrée dans des synthèses techniques comme l'article Medium consulté \cite{nimeesha2024agenticrag}, est de remplacer une chaîne linéaire \og requête--recherche--génération \fg{} par une boucle plus adaptative : planifier, appeler un outil, observer le résultat, décider si l'information est suffisante, puis continuer ou produire la réponse. Cette logique rejoint les modèles de raisonnement-action tels que ReAct, où un modèle alterne raisonnement et usage d'outils externes \cite{yao2023react}.
 
@@ -1149,7 +1149,7 @@ Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le mod
 
 \section{Cadre méthodologique et sources de données}
 
-\subsection{Positionnement méthodologique}
+\subsection{Démarche d'ingénierie appliquée retenue}
 
 La présente étude adopte une démarche d'ingénierie appliquée orientée vers la conception, l'intégration et l'évaluation d'un artefact numérique d'aide à la décision. L'objet étudié n'est donc pas uniquement un modèle statistique pris isolément, mais un système complet de recommandation emploi-compétences combinant données structurées, représentations vectorielles, graphe de connaissances, règles métier et génération augmentée par récupération. Ce positionnement est cohérent avec la problématique du mémoire : améliorer l'appariement entre candidats, offres d'emploi, compétences, métiers et trajectoires de formation dans un contexte où l'information est hétérogène, incomplète et dispersée.
 
@@ -1310,7 +1310,7 @@ Le second usage du \LLM{} concerne la génération de la réponse finale. Le sys
 
 Cette séparation des rôles est méthodologiquement importante. Text2Cypher sert à produire une requête structurée vers le graphe. Le \LLM{} final sert à formuler une synthèse lisible. Dans les deux cas, le modèle est subordonné aux données disponibles et non l'inverse.
 
-\subsection{Interfaces et traçabilité}
+\subsection{Modes d'accès et traçabilité des décisions}
 
 Le système prévoit trois modes d'accès : une interface Streamlit pour l'usage conversationnel, une API FastAPI pour l'intégration applicative et une CLI pour les tests de développement. Ces interfaces ne changent pas la logique de recommandation ; elles exposent le même moteur sous des formes différentes. La CLI facilite la vérification rapide des use-cases, Streamlit permet une démonstration interactive et FastAPI prépare l'intégration dans un environnement applicatif comme  la plateforme Kmer-AI, les agences de recrutement (FNE et l'ACPE).
 
@@ -1332,7 +1332,7 @@ Plusieurs limites doivent être prises en compte dès la conception. Premièreme
 
 Une autre limite est matérielle. L'utilisation locale ou semi-locale de modèles spécialisés, notamment pour Text2Cypher, peut être contrainte par la mémoire disponible. Cette contrainte influence les choix techniques : recours à une API pour la génération finale, chargement contrôlé du modèle Text2Cypher et possibilité de fallback vers des templates Cypher sécurisés. Ces choix ne sont pas des faiblesses méthodologiques en soi ; ils traduisent l'adaptation du système aux ressources disponibles.
 
-\subsection{Synthèse de l'approche méthodologique}
+\subsection{Ce que l'architecture garantit et ses exigences}
 
 La méthodologie proposée construit un système hybride plutôt qu'un modèle isolé. Elle part de données locales hétérogènes, les normalise, les rattache à des référentiels, les encode dans un espace vectoriel, les structure dans un graphe de connaissances, puis orchestre leur interrogation par un workflow agentique. Le rôle du \LLM{} est strictement encadré : transformer certaines questions en requêtes graphe, puis formuler une réponse fondée sur les preuves récupérées.
 
