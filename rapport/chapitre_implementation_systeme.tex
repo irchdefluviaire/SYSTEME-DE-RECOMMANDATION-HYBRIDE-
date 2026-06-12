@@ -1,6 +1,4 @@
 \chapter{Construction opérationnelle du système hybride emploi--compétences}
-\vspace{-1.2cm}
-
 Ce chapitre présente la matérialisation opérationnelle de l'architecture méthodologique décrite précédemment. Son objectif est de montrer ce qui a été effectivement construit, alimenté, indexé, relié et rendu exploitable dans le système de recommandation emploi-compétences.
 
 La présentation suit l'ordre réel du workflow : diagnostic des données exploitables, adaptation du modèle d'embeddings, matérialisation de la mémoire vectorielle, construction du graphe Neo4j, calibration du score hybride, puis orchestration agentique et exposition du système. Les résultats sont donc introduits au moment où ils justifient une décision d'implémentation, et non comme une simple succession de graphiques.
@@ -340,8 +338,8 @@ Dans le workflow, Neo4j intervient après le rappel pgvector. pgvector propose d
   \centering
   \caption{Schéma logique du graphe de connaissances}
   \label{fig:implementation_schema_graphe}
-  \includegraphics[width=0.5\textwidth]{figures/generated/implementation_deep_current/11_schema_graphe_connaissances.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.3\textwidth]{figures/generated/implementation_deep_current/11_schema_graphe_connaissances.png}
+  \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
 
 La figure~\ref{fig:implementation_schema_graphe} donne la structure logique du graphe : les candidats et les offres sont reliés aux compétences, métiers, secteurs, localisations, niveaux \NCF{}, référentiels \MEPC{} et chunks documentaires. L'idée centrale est simple : pgvector mesure une proximité textuelle, tandis que Neo4j vérifie si cette proximité repose sur des relations métier lisibles.

@@ -266,21 +266,21 @@
 }
 
 \def\@makechapterhead#1{%
-  \vspace*{15\p@}
+  \vspace*{6\p@}
   {\parindent \z@ \centering \reset@font
     \thickhrulefill\quad
     \scshape\@chapapp{} \thechapterwords
     \quad \thickhrulefill
     \par\nobreak
-    \vspace*{10\p@}
+    \vspace*{6\p@}
     \interlinepenalty\@M
     \hrule
-    \vspace*{10\p@}
+    \vspace*{6\p@}
     \Huge \bfseries #1\par\nobreak
     \par
-    \vspace*{10\p@}
+    \vspace*{6\p@}
     \hrule
-    \vskip 60\p@
+    \vskip 12\p@
   }
 }
 
@@ -288,15 +288,15 @@
   {\parindent \z@ \centering \reset@font
     \thickhrulefill
     \par\nobreak
-    \vspace*{10\p@}
+    \vspace*{6\p@}
     \interlinepenalty\@M
     \hrule
-    \vspace*{10\p@}
+    \vspace*{6\p@}
     \Huge \bfseries #1\par\nobreak
     \par
-    \vspace*{10\p@}
+    \vspace*{6\p@}
     \hrule
-    \vskip 60\p@
+    \vskip 12\p@
   }
 }
 
@@ -341,7 +341,7 @@
 \let\OldTableOfContents\tableofcontents
 \renewcommand{\tableofcontents}{%
   \begingroup
-  \singlespacing
+  \onehalfspacing
   \setlength{\parskip}{0pt}
   \OldTableOfContents
   \endgroup
@@ -473,7 +473,9 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 
 
 \markboth{Sommaire}{Sommaire}
+\begin{spacing}{1.5}
 \shorttableofcontents{Sommaire}{1} % Pour le sommaire
+\end{spacing}
 
 %\chapter*{Sommaire} % Sommaire court (Guide 2.5)
 %\begin{spacing}{1}
@@ -485,7 +487,7 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 \markboth{Liste des sigles et abréviations}{Liste des sigles et abréviations}
 \addcontentsline{toc}{chapter}{Liste des sigles et abréviations}
 
-\vspace{-0.8cm}
+%\vspace{-0.8cm}
 {\normalsize
 \renewcommand{\arraystretch}{0.86}
 \noindent\begin{tabularx}{\textwidth}{@{}p{2.5cm}X@{}}
@@ -550,7 +552,7 @@ SR : & Système de Recommandation \\
 \markboth{Avant-propos}{Avant-propos}
 \addcontentsline{toc}{chapter}{Avant-propos}
 % Présenter l'ISSEA et ses missions ici.
-\vspace{-1.4cm}
+%\vspace{-1.4cm}
 L’Institut Sous-régional de Statistique et d’Économie Appliquée (ISSEA), institution spécialisée de la CEMAC créée en 1984, a pour mission principale la formation de cadres supérieurs en statistique, économie et data science, capables de répondre aux enjeux contemporains de décision fondée sur les données. Dans ce cadre, l’ISSEA propose plusieurs filières de formation, parmi lesquelles figure celle des Ingénieurs Statisticiens Économistes (ISE), alliant rigueur mathématique, modélisation économétrique et outils modernes d’analyse de données (Data Science).
 
 Arrivés à un niveau avancé de leur formation, les élèves Ingénieurs Statisticiens Économistes sont tenus d’effectuer un stage professionnel d’une durée minimale de trois (03) mois. Ce stage constitue une phase essentielle du cursus, permettant de confronter les connaissances théoriques acquises à des problématiques réelles, tout en favorisant l’acquisition de compétences opérationnelles en environnement professionnel. Il est sanctionné par la rédaction d’un mémoire professionnel, soutenu devant un jury.
@@ -599,7 +601,7 @@ Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologiq
 \markboth{Introduction générale}{Introduction générale}
 \addcontentsline{toc}{chapter}{Introduction générale}
 % Contexte, Problématique, Objectifs, Hypothèses, Méthodologie, Plan.
-\vspace{-1.4cm}
+%\vspace{-1.4cm}
 \section*{Contexte et justification}
 \markright{Contexte et justification}
 Le fonctionnement du marché de l'emploi constitue un déterminant central de la performance économique et sociale d’un pays. Au Cameroun, ce marché reste marqué par des déséquilibres structurels persistants, notamment l’inadéquation entre les compétences disponibles et les besoins des entreprises, la forte informalité et les difficultés d’insertion professionnelle des jeunes. Les données disponibles montrent que le chômage des jeunes demeure une réalité importante, avec un taux estimé à 6,6\% en 2024 et 6,5\% en 2025 selon les estimations modélisées de l’OIT relayées par la Banque Mondiale et la base FRED.Par ailleurs, plusieurs travaux sur le Cameroun soulignent que le problème ne tient pas uniquement au manque d’emplois, mais aussi à un mismatch entre formation, compétences et exigences du marché.
@@ -1178,8 +1180,7 @@ Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le mod
 \fi
 
 \chapter{Source de données et Approche méthodologique}
-\vspace{-1.4cm}
-
+%\vspace{-1.4cm}
 \section{Cadre méthodologique et sources de données}
 
 \subsection{Démarche d'ingénierie appliquée retenue}
@@ -1596,8 +1597,6 @@ La force de cette implémentation tient dans son caractère hybride et traçable
 
 
 \chapter{Évaluation de la performance du système}
-\vspace{-1.4cm}
-
 Ce chapitre évalue le système implémenté au chapitre précédent. Il ne répète pas la description technique des briques ; il vérifie ce que ces briques apportent effectivement au fonctionnement du système. L'évaluation suit donc une logique en cinq niveaux : qualité du retrieval sémantique, effet du graphe sur le classement, validité fonctionnelle des requêtes GraphRAG, calibration du score hybride et contrôle de la génération finale par le critic.
 
 Deux précautions guident l'interprétation. Premièrement, l'évaluation du classement est conduite sans génération \LLM{} : elle mesure la qualité du retrieval et du reranking, non la qualité rédactionnelle de la réponse. Deuxièmement, la pertinence utilisée dans l'ablation est un proxy construit à partir des métadonnées normalisées ; elle permet de comparer deux variantes du même système, mais ne remplace pas une annotation humaine par des recruteurs ou des conseillers métier.
@@ -1754,7 +1753,7 @@ Le résultat est clair mais doit être bien défendu. Lorsque l'objectif privil�
 \centering
 \caption{Évolution de l'objectif NDCG@10 au cours des essais Optuna}
 \label{fig:eval_hybrid_weights_trials}
-\includegraphics[width=0.82\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials_ndcg.png}
+\includegraphics[width=0.55\textwidth]{figures/generated/evaluation/hybrid_weights_optimization_trials_ndcg.png}
 \source{Nos travaux, optimisation Optuna des poids du score hybride.}
 \end{figure}
 
@@ -1806,20 +1805,45 @@ La valeur 0,46 est retenue parce qu'elle maximise le compromis F1 dans ce test t
 
 Cette calibration ne transforme pas le critic en juge parfait. Une réponse acceptée n'est pas automatiquement correcte au sens métier ; elle est seulement suffisamment ancrée lexicalement dans les preuves récupérées. Pour défendre le système devant un jury, la formulation correcte est donc : le seuil 0,46 est un seuil opérationnel calibré empiriquement par contraste, en attendant une validation humaine de la qualité réelle des recommandations générées.
 
+\section{Orchestration agentique avec LangGraph}
+
+Les résultats précédents évaluent séparément le retrieval, le reranking par Neo4j et le critic. Dans l'application, ces briques ne fonctionnent pourtant pas isolément : elles sont coordonnées par un workflow agentique construit avec LangGraph, dans l'écosystème LangChain. Cette orchestration se situe à la fin du workflow global : elle reçoit la question utilisateur, choisit les outils à activer, organise les résultats récupérés, déclenche la génération finale, puis décide si la réponse doit être acceptée ou révisée.
+
+\begin{figure}[H]
+\centering
+\caption{Workflow agentique orchestré dans LangGraph Studio}
+\label{fig:eval_langgraph_orchestration}
+\includegraphics[width=0.94\textwidth]{langchaindev.png}
+\source{Nos travaux, visualisation LangGraph Studio du workflow implémenté dans \filevar{src/08\_agentic\_graphrag/graph.py}.}
+\end{figure}
+
+La figure~\ref{fig:eval_langgraph_orchestration} montre que le système commence par le noeud \filevar{analyse\_request}. Ce noeud identifie l'intention de la requête : diagnostic, recommandation, recherche documentaire, question relationnelle Neo4j ou demande générale. Le noeud \filevar{plan\_tools} choisit ensuite les outils adaptés. Cette étape évite d'appeler toutes les bases inutilement : une question sur un métier peut mobiliser Neo4j, une question documentaire peut mobiliser pgvector sur les chunks, et une recommandation candidat--offre mobilise le moteur hybride.
+
+Le noeud \filevar{execute\_tools} exécute les outils retenus : recherche sémantique pgvector, requête Neo4j, score hybride, recherche documentaire ou diagnostic de service. Les sorties ne sont pas envoyées directement au \LLM{}. Elles passent d'abord par \filevar{build\_context}, qui transforme les résultats hétérogènes en contexte lisible : offres candidates, compétences communes, compétences manquantes, relations du graphe, fragments documentaires et métadonnées. Le noeud \filevar{generate\_final\_answer} produit ensuite la réponse finale à partir de ce contexte.
+
+La boucle \filevar{generate\_final\_answer} $\rightarrow$ \filevar{expand\_context} est le point de contrôle principal. Si le critic estime que la réponse est insuffisamment ancrée dans les preuves, le workflow ne se contente pas d'afficher une réponse fragile : il élargit le contexte, relance les outils nécessaires, reconstruit le contexte et régénère la réponse. La décision \filevar{accept} signifie donc que le score de fidélité dépasse le seuil opérationnel calibré ; la décision \filevar{revise} signifie que le système doit chercher davantage de preuves avant de répondre.
+
+Cette orchestration donne une cohérence applicative aux métriques du chapitre. Le Recall@10 et le NDCG@10 évaluent la qualité des résultats récupérés avant génération ; le reranking Neo4j évalue la capacité à réordonner le vivier ; le critic contrôle l'ancrage de la réponse finale ; LangGraph relie ces étapes dans une chaîne exécutable et traçable. La performance du système ne dépend donc pas seulement d'un modèle ou d'une base, mais de la coordination contrôlée entre pgvector, Neo4j, le score hybride, le \LLM{} et le critic.
+
 \section*{Conclusion}
 
 L'évaluation montre trois résultats principaux. Premièrement, le fine-tuning du modèle d'embeddings améliore fortement le retrieval sémantique, avec un Recall@10 de 0.8520 et un NDCG@10 de 0.6336. Deuxièmement, l'ajout de Neo4j améliore le classement des offres dans le pool pgvector : le NDCG@10 passe de 0.5575 à 0.7392 et le MRR@10 de 0.6908 à 0.8093. Troisièmement, le critic distingue correctement les réponses ancrées dans leur contexte des réponses confrontées à un contexte mélangé, ce qui justifie le seuil opérationnel de 0,46.
 
 La limite principale reste l'absence d'annotation humaine indépendante. Les résultats démontrent la cohérence interne du système et l'intérêt mesurable du graphe dans le protocole actuel. Ils ne prouvent pas encore la satisfaction d'un recruteur, d'un candidat ou d'un conseiller d'orientation. Cette limite doit être assumée : le système est techniquement validé sur ses sorties internes, mais son évaluation métier finale devra passer par un jeu annoté et des tests utilisateurs.
 
-\chapter{Discussion et recommandations}
-\vspace{-1.4cm}
-
-
 \chapter*{Conclusion générale}
 \markboth{Conclusion générale}{Conclusion générale}
 \addcontentsline{toc}{chapter}{Conclusion générale}
-% Rappel objectif, résultats, limites et perspectives (Max 1 page).
+\vspace*{-1cm}
+Ce mémoire avait pour objectif de concevoir et d'évaluer un système de recommandation hybride pour le rapprochement entre offres d'emploi, profils candidats, compétences et référentiels métier. Le choix retenu n'a pas été de confier toute la décision à un modèle génératif, mais de construire une chaîne contrôlée : nettoyage des données, adaptation des embeddings au domaine emploi--compétences, indexation vectorielle avec pgvector, structuration relationnelle dans Neo4j, reranking hybride, puis génération augmentée par un workflow agentique.
+
+Les résultats obtenus montrent que chaque brique joue un rôle distinct. Le modèle d'embeddings améliore la récupération des éléments proches dans l'espace sémantique. pgvector fournit une mémoire rapide pour retrouver les offres, compétences et fragments documentaires pertinents. Neo4j apporte une lecture relationnelle du matching : il permet d'exploiter les liens entre métiers, compétences, formations et référentiels, puis d'améliorer le classement initial par un score de graphe. Enfin, l'orchestration LangGraph organise ces traitements dans un workflow exploitable par l'application, depuis l'analyse de la requête jusqu'à la génération de la réponse finale.
+
+L'évaluation confirme l'intérêt de cette architecture hybride. Le fine-tuning du modèle d'embeddings améliore le retrieval, l'ajout du graphe renforce le classement des offres et le critic permet de filtrer les réponses insuffisamment ancrées dans les preuves récupérées. Le seuil opérationnel de 0,46 n'est donc pas présenté comme une vérité théorique : il correspond à une calibration empirique issue des sorties contrastives du système. Cette précision est importante, car elle évite de surinterpréter le critic comme un juge métier autonome.
+
+La principale limite du travail reste l'absence d'une validation humaine indépendante à grande échelle. Les métriques internes démontrent la cohérence technique du pipeline, mais elles ne remplacent pas l'appréciation d'un recruteur, d'un conseiller d'orientation ou d'un candidat. Les perspectives prioritaires consistent donc à constituer un jeu annoté par des experts, tester le système auprès d'utilisateurs réels, suivre les erreurs de recommandation par famille de métiers et enrichir progressivement le graphe avec des données institutionnelles mieux normalisées.
+
+Au total, le système proposé constitue une base opérationnelle de recommandation explicable. Sa force ne réside pas seulement dans l'utilisation d'un \LLM{}, mais dans l'articulation entre mémoire vectorielle, mémoire relationnelle, règles de ranking et contrôle de la génération. C'est cette combinaison qui rend le dispositif plus défendable qu'une approche purement textuelle ou purement générative.
 
 
 % ======================================================
@@ -1830,10 +1854,9 @@ La limite principale reste l'absence d'annotation humaine indépendante. Les ré
 \pagenumbering{Roman}
 
 %\chapter{Bibliographie}
-\addcontentsline{toc}{chapter}{Bibliographie}
 % Utiliser le style Harvard (Auteur-Date) préconisé par l'ISSEA.
 \vspace{-1.4cm}
-\cleardoublepage
+\clearpage
 \addcontentsline{toc}{chapter}{Bibliographie}
 \markboth{Bibliographie}{Bibliographie}
 \printbibliography
@@ -1908,8 +1931,8 @@ La limite principale reste l'absence d'annotation humaine indépendante. Les ré
 \input{annexe_chapitre3_complements.tex}
 
 \markboth{Table des matières}{Table des matières}
-\begin{singlespace}
+\begin{spacing}{1.5}
 \tableofcontents % Table des matières détaillée à la fin (Optionnel si sommaire au début)
-\end{singlespace}
+\end{spacing}
 \end{document}
 
