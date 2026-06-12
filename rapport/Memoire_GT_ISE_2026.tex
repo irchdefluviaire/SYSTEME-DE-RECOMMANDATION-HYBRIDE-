@@ -1790,26 +1790,11 @@ Aucun jeu d'annotations humaines n'étant disponible, le seuil est calibré par 
 \includegraphics[width=0.86\textwidth]{figures/generated/evaluation/critic_contrastive_distributions.png}
 \source{Nos travaux, évaluation du critic à partir des réponses générées et des contextes récupérés.}
 \end{figure}
-
-\begin{table}[H]
-\centering
-\caption{Seuil critique retenu après calibration contrastive}
-\label{tab:eval_critic_threshold_contrastive}
-\tableStyleStart
-\begin{tabularx}{0.88\textwidth}{lrrrX}
-\rowcolor{darkblue}
-\tabheader{Seuil} & \tabheader{F1} & \tabheader{Fausses accept.} & \tabheader{Fausses révisions} & \tabheader{Lecture} \\
-\midrule
-0,46 retenu & 0,9901 & 0 & 1 & Seuil prudent : il bloque les contextes mélangés dans ce test contrastif, au prix d'une révision inutile. \\
-\bottomrule
-\end{tabularx}
-\tableStyleEnd
-\source{Nos travaux, évaluation du critic à partir des réponses générées et des contextes récupérés.}
-\end{table}
-
 \subsection{Interprétation des décisions accept/revise}
 
-Le seuil opérationnel retenu est 0,46. À ce niveau, aucune réponse associée à un contexte mélangé n'est acceptée dans le test contrastif, tandis que 50 réponses sur 51 restent acceptées avec leur vrai contexte. La règle choisie est donc prudente : elle préfère déclencher une révision inutile plutôt que laisser passer une réponse déconnectée de ses preuves.
+Le seuil opérationnel retenu est 0,46. Il a été obtenu par une calibration empirique sur une grille de seuils appliquée aux 102 évaluations contrastives : 51 réponses comparées à leur vrai contexte et les mêmes 51 réponses comparées à un contexte mélangé. Pour chaque seuil candidat, le critic transforme le score continu en décision binaire : \filevar{accept} si le score est supérieur ou égal au seuil, \filevar{revise} sinon. La grille permet ensuite de compter deux erreurs : les fausses acceptations, c'est-à-dire les contextes mélangés acceptés à tort, et les fausses révisions, c'est-à-dire les vrais contextes renvoyés inutilement en révision.
+
+La valeur 0,46 est retenue parce qu'elle maximise le compromis F1 dans ce test tout en respectant une contrainte de prudence : ne laisser passer aucun contexte mélangé. À ce niveau, aucune réponse associée à un contexte mélangé n'est acceptée, tandis que 50 réponses sur 51 restent acceptées avec leur vrai contexte. Le choix n'est donc pas théorique ; il vient du point de la grille où le système bloque les réponses les moins ancrées sans devenir excessivement sévère sur les réponses correctement contextualisées.
 
 \begin{figure}[H]
 \centering
@@ -1821,7 +1806,7 @@ Le seuil opérationnel retenu est 0,46. À ce niveau, aucune réponse associée 
 
 Cette calibration ne transforme pas le critic en juge parfait. Une réponse acceptée n'est pas automatiquement correcte au sens métier ; elle est seulement suffisamment ancrée lexicalement dans les preuves récupérées. Pour défendre le système devant un jury, la formulation correcte est donc : le seuil 0,46 est un seuil opérationnel calibré empiriquement par contraste, en attendant une validation humaine de la qualité réelle des recommandations générées.
 
-\section{Synthèse de l'évaluation}
+\section*{Conclusion}
 
 L'évaluation montre trois résultats principaux. Premièrement, le fine-tuning du modèle d'embeddings améliore fortement le retrieval sémantique, avec un Recall@10 de 0.8520 et un NDCG@10 de 0.6336. Deuxièmement, l'ajout de Neo4j améliore le classement des offres dans le pool pgvector : le NDCG@10 passe de 0.5575 à 0.7392 et le MRR@10 de 0.6908 à 0.8093. Troisièmement, le critic distingue correctement les réponses ancrées dans leur contexte des réponses confrontées à un contexte mélangé, ce qui justifie le seuil opérationnel de 0,46.
 

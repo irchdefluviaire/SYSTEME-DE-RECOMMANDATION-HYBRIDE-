@@ -78,32 +78,9 @@ La présentation suit l'ordre réel du workflow : diagnostic des données exploi
 %Cette séparation est le point central de l'implémentation. Les données ne sont pas confondues avec le modèle ; le modèle ne remplace pas la base vectorielle ; pgvector ne remplace pas Neo4j ; le graphe ne génère pas la réponse ; LangGraph ne calcule pas seul la recommandation ; l'interface n'est qu'une couche d'accès. Le système est donc auditable par couche : on peut vérifier les fichiers produits par l'ETL, le modèle sauvegardé, les tables pgvector, les noeuds Neo4j, les outils GraphRAG, les traces LangGraph et les réponses exposées à l'utilisateur.
 \subsection{Volumes disponibles après nettoyage}
 
-Le corpus utilisé dans l'implémentation ne doit pas être lu comme une simple base descriptive. Il constitue la matière première du moteur de recommandation : chaque variable conservée doit donc apporter un signal exploitable pour rapprocher une offre, un candidat, une compétence, un métier ou un référentiel. La question d'ingénierie posée ici est directe : le système dispose-t-il d'assez d'information structurée pour recommander correctement, et quelles limites doivent être compensées par l'architecture hybride ? Le tableau suivant synthétise uniquement les volumes qui conditionnent directement la faisabilité technique du système.
+Dans le workflow, cette étape correspond à l'entrée ETL : elle vérifie que les données nettoyées peuvent alimenter l'encodeur, pgvector et Neo4j. Les volumes détaillés sont reportés en annexe au tableau~\ref{tab:implementation_volumes_exploites}. Le point utile ici est simple : le corpus contient assez d'offres, de candidats, de compétences, de métiers, de secteurs, de localisations et de référentiels pour construire un moteur hybride, mais ces objets ne sont pas équilibrés.
 
-\begin{table}[H]
-  \centering
-  \caption{Volumes réellement exploités par les modules de recommandation}
-  \label{tab:implementation_volumes_exploites}
-  \tableStyleStart
-  \begin{tabularx}{0.94\textwidth}{XrX}
-    \rowcolor{darkblue}
-    \tabheader{Objet exploité} & \tabheader{Volume} & \tabheader{Utilité pour le système} \\
-    \midrule
-    Offres normalisées & 13\,957 & Base principale à recommander, indexée dans pgvector et reliée au graphe. \\
-    Candidats normalisés & 41\,298 & Vivier à partir duquel sont calculés les rapprochements offre--profil. \\
-    Compétences indexées & 13\,939 & Signal de matching, de filtrage et de justification du \textit{skill gap}. \\
-    Secteurs nettoyés & 1\,039 & Signal de contexte pour limiter les rapprochements absurdes entre domaines trop éloignés. \\
-    Métiers indexés & 3\,039 & Niveau d'agrégation utile pour stabiliser les recommandations au-delà des intitulés d'offres. \\
-    Groupes métiers MEPC & 209 & Référentiel externe pour structurer les proximités métier. \\
-    Domaines détaillés NCF & 201 & Référentiel de formation utilisé pour contextualiser les niveaux et domaines. \\
-    Localisations représentées dans Neo4j & 312 & Signal géographique pour filtrage souple et explication des résultats. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
-\end{table}
-
-Le premier résultat d'ingénierie est positif : les volumes sont suffisants pour construire un système hybride, car le corpus ne se limite pas aux offres. Il contient aussi des candidats, des compétences, des secteurs, des métiers, des localisations et des référentiels. En revanche, l'asymétrie entre 13\,957 offres et 41\,298 candidats impose de contrôler les effets de popularité : un secteur très représenté peut devenir dominant même lorsque la pertinence individuelle est moyenne. Cette limite justifie l'usage d'un reranking hybride plutôt qu'un classement purement vectoriel.
+L'asymétrie entre 13\,957 offres et 41\,298 candidats impose donc de contrôler les effets de popularité. Un secteur ou une compétence très représenté peut dominer la similarité sans être le meilleur signal métier. Cette limite justifie le workflow retenu : nettoyer les données, encoder les textes, rappeler un vivier par pgvector, puis laisser Neo4j contrôler les relations utiles au matching.
 
 \begin{figure}[H]
   \centering
@@ -113,15 +90,15 @@ Le premier résultat d'ingénierie est positif : les volumes sont suffisants pou
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
-Les 13\,957 offres proviennent de six sources : Louma-Jobs, FNE, ACPE, Jobartis Cameroun, LinkedIn et Emploi.cm. Louma-Jobs concentre 6\,021 offres, soit 43,14\,\% du fichier. Le FNE représente 2\,494 offres, ACPE 2\,388, Jobartis Cameroun 2\,350, LinkedIn 380 et Emploi.cm 324. Cette concentration n'est pas neutre : le modèle observe davantage le vocabulaire, les formats et les secteurs présents sur Louma-Jobs que ceux des autres plateformes. Le corpus est donc robuste pour construire un prototype opérationnel, mais il ne doit pas être présenté comme une photographie exhaustive du marché camerounais de l'emploi. La bonne lecture est la suivante : les sources sont assez nombreuses pour éviter une dépendance totale à une seule plateforme, mais assez déséquilibrées pour imposer une analyse par source dans l'évaluation.
+Les 13\,957 offres proviennent de sources hétérogènes, dont plusieurs ont été scrapées : Emploi.cm, Jobartis Cameroun, LinkedIn, Louma-Jobs, ainsi que les sources institutionnelles FNE et ACPE. Louma-Jobs domine le corpus avec 6\,021 offres, soit 43,14\,\%. Le corpus est donc exploitable pour un prototype opérationnel, mais il ne doit pas être présenté comme une photographie exhaustive du marché camerounais de l'emploi.
 
 \subsection{Qualité des variables utiles au matching emploi-compétences}
-La qualité d'un système de recommandation dépend moins du nombre brut de lignes que de la disponibilité des variables qui portent la décision : description textuelle, compétences, localisation, secteur, niveau et source. Le diagnostic est donc séparé en deux lectures complémentaires. La première vérifie si la localisation peut réellement servir au filtrage et à l'explication. La seconde examine les compétences et les descriptions, c'est-à-dire les deux signaux qui alimentent directement les embeddings et le graphe.
+La qualité utile au matching dépend surtout de six variables : description, compétences, localisation, secteur, niveau et source. Elles alimentent directement le champ \filevar{text\_to\_embed}, les filtres pgvector et les relations Neo4j. Le diagnostic reste donc ciblé : que peut-on utiliser sans inventer d'information ?
 
 \subsubsection{Localisation exploitable pour filtrer sans exclure}
 Le diagnostic détaillé de localisation est renvoyé en annexe (figure~\ref{fig:implementation_localisation}). Dans le corps du chapitre, on retient seulement que la localisation est suffisamment renseignée pour filtrer et expliquer les recommandations, mais pas assez homogène pour être utilisée comme contrainte dure.
 
-La localisation confirme que le système dispose d'un signal géographique exploitable : 79,88\,\% des offres sont rattachées au Cameroun et 20,12\,\% à l'international. Les localités dominantes sont notamment Yaoundé, Douala, Bafoussam, Kribi, Maroua, Garoua, Bamenda et Buéa, avec aussi des localités plus fines comme Ngousso ou Yaoundé-Ekoumdoum. Lorsque la ville n'est pas indiquée mais que le pays est renseigné, l'offre n'est plus classée comme localisation globalement inconnue : elle conserve une étiquette du type \og Cameroun (ville non précisée) \fg{} ou \og États-Unis (ville non précisée) \fg{}. Le nettoyage a donc privilégié une stratégie hiérarchique : exploiter d'abord la ville, sinon le pays, et ne pas inventer une ville absente du fichier brut.
+La localisation est exploitable, mais seulement comme filtre souple : 79,88\,\% des offres sont rattachées au Cameroun et 20,12\,\% à l'international. Lorsque la ville manque mais que le pays existe, le nettoyage conserve le pays sans inventer une ville. Le système peut donc expliquer une recommandation par zone géographique, mais il ne doit pas exclure brutalement une offre parce que la ville est absente.
 
 \subsubsection{Compétences et descriptions : signal utile mais hétérogène}
 
@@ -139,15 +116,15 @@ La disponibilité descriptive est le principal point faible du corpus. Les sourc
 
 \subsection{Nettoyage réalisé et limites conservées}
 
-Le nettoyage appliqué au corpus répond à un principe conservateur : corriger les incohérences techniques sans créer une information qui n'existe pas. Les libellés ont été harmonisés pour limiter les effets de casse et de formats d'écriture. Pour la localisation, la règle retenue est hiérarchique : si la ville est disponible, elle est utilisée ; si la ville est absente mais que le pays est connu, le pays est conservé ; si aucune information géographique exploitable n'existe, l'observation reste non localisable. Cette règle évite de supprimer silencieusement les offres concernées, tout en signalant au moteur que le filtrage par ville doit être moins contraignant que le filtrage par pays.
-
-La déduplication des offres suit également une règle stricte : une offre n'est considérée comme doublon que lorsque toute la ligne normalisée est identique sur l'ensemble des variables. Ce choix est rigoureux pour un corpus multi-sources, car deux offres peuvent partager un intitulé ou un employeur tout en différant par la ville, la source, la date, le niveau, le secteur ou la description. Une déduplication floue aurait risqué de supprimer des opportunités réellement distinctes.
+Le nettoyage suit une règle conservatrice : corriger les formats sans fabriquer une information absente. Les libellés sont harmonisés, les localisations sont normalisées par priorité ville puis pays, et les doublons ne sont supprimés que lorsque la ligne normalisée est strictement identique. Ce choix protège le corpus multi-sources : deux offres peuvent avoir le même intitulé tout en différant par la ville, la source, le secteur, le niveau ou la description.
 
 Le tableau détaillé des règles de nettoyage est placé en annexe (tableau~\ref{tab:implementation_nettoyage_donnees}). Le chapitre conserve uniquement le principe d'ingénierie : corriger les formats sans inventer une information absente des données brutes.
 
 Les graphiques secondaires détaillant la structure sectorielle, les villes détaillées, les niveaux NCF, l'expérience, la structure des candidats, les longueurs de textes et les référentiels MEPC--NCF sont renvoyés en annexes. Dans ce chapitre, seuls les résultats qui changent une décision d'architecture sont conservés : enrichir les embeddings, utiliser pgvector pour le rappel rapide, exploiter Neo4j pour les contraintes métier, et garder un critic pour contrôler les réponses générées.
 
 \section{Adaptation du modèle d'embeddings au domaine emploi--compétences}
+
+Dans le workflow méthodologique, cette section correspond à l'étape située après l'ETL et avant l'indexation pgvector. Les données nettoyées sont transformées en paires d'apprentissage, puis l'encodeur SentenceTransformer est adapté au vocabulaire emploi--compétences. Le résultat attendu n'est pas une réponse générée, mais un encodeur capable de produire des vecteurs plus utiles pour le retrieval.
 
 \subsection{Encodeur retenu et paires contrastives}
 
@@ -269,9 +246,9 @@ La visualisation doit enfin être lue avec discipline. UMAP ne prouve pas que le
 
 \section{Mémoire vectorielle pgvector pour le retrieval}
 
-La base pgvector constitue le premier étage du retrieval de l'Agentic RAG. Son rôle est précis : transformer une requête, un profil ou un fragment documentaire en vecteur, récupérer rapidement un top-$K$ d'objets proches, puis transmettre ces résultats au moteur hybride et au graphe Neo4j. Elle ne décide donc pas seule de la recommandation finale ; elle construit le vivier initial sur lequel le graphe pourra ensuite vérifier les relations métier.
+Dans le workflow, pgvector intervient juste après l'encodage des entités par le modèle fine-tuné. Il constitue le premier étage du retrieval de l'Agentic RAG : transformer une requête, un profil ou un fragment documentaire en vecteur, récupérer rapidement un top-$K$ d'objets proches, puis transmettre ce vivier au moteur hybride et au graphe Neo4j. pgvector ne décide donc pas seul de la recommandation finale ; il fournit la liste de départ que le graphe va contrôler.
 
-\subsection{Architecture physique de la mémoire vectorielle}
+\subsection{Schéma physique, tables et volumes indexés}
 
 \begin{figure}[H]
   \centering
@@ -283,26 +260,7 @@ La base pgvector constitue le premier étage du retrieval de l'Agentic RAG. Son 
 
 La figure \ref{fig:implementation_schema_pgvector} donne la lecture la plus simple de la brique pgvector. La table \texttt{embeddings} stocke les vecteurs des entités structurées : candidats, offres, compétences, métiers, groupes \MEPC{} et domaines \NCF{}. La table \texttt{doc\_chunks} stocke les fragments documentaires issus des référentiels. Les index spécialisés servent ensuite à interroger ces deux familles d'objets par similarité vectorielle, par recherche textuelle, par type d'entité, par modèle d'embedding ou par identifiant Neo4j.
 
-Cette séparation évite une confusion fréquente : pgvector n'est pas seulement une colonne \texttt{vector}. C'est une couche de retrieval qui associe trois informations dans la même base : le vecteur, les métadonnées métier et le lien vers Neo4j. Le système peut donc partir d'un voisin sémantique retrouvé dans PostgreSQL, puis retrouver le noeud du graphe correspondant pour obtenir les compétences, niveaux, secteurs ou chemins explicatifs.
-
-\subsection{Tables et volumes effectivement indexés}
-
-\begin{table}[H]
-  \centering
-  \caption{Structure opérationnelle des tables pgvector}
-  \label{tab:implementation_pgvector_tables}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.0cm}p{4.2cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Table} & \tabheader{Rôle} & \tabheader{Champs et usages clés} \\
-    \midrule
-    \texttt{embeddings} & Recherche sémantique sur les entités structurées. & \texttt{entity\_kind}, \texttt{entity\_id}, \texttt{model\_id}, \texttt{embedding}, \texttt{label\_fr}, \texttt{text\_to\_embed}, \texttt{neo4j\_node\_id}. \\
-    \texttt{doc\_chunks} & Recherche documentaire sur les référentiels. & \texttt{chunk\_id}, \texttt{source}, \texttt{section\_title}, \texttt{subsection\_title}, \texttt{chunk\_text}, \texttt{chunk\_strategy}, \texttt{ncf\_code}, \texttt{mepc\_code}, \texttt{embedding}, \texttt{neo4j\_node\_id}. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
-\end{table}
+Cette séparation évite une confusion fréquente : pgvector n'est pas seulement une colonne \texttt{vector}. C'est une couche de retrieval qui associe trois informations dans la même base : le vecteur, les métadonnées métier et le lien vers Neo4j. Le schéma suffit donc à comprendre les deux tables utiles : \texttt{embeddings} pour les entités structurées et \texttt{doc\_chunks} pour les fragments documentaires. Le détail technique des champs n'est pas répété ici, car l'image présente déjà la structure physique de la base.
 
 Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les vecteurs ont une dimension de 384, ce qui limite le coût de stockage et de recherche tout en restant adapté au retrieval sémantique. L'instance courante contient 72\,643 embeddings d'entités structurées et 142 embeddings documentaires, soit 72\,785 vecteurs interrogeables.
 
@@ -336,53 +294,57 @@ Cette distribution montre que pgvector couvre les deux côtés du matching. Les 
 
 Les référentiels ne sont pas indexés comme de simples PDF. Ils sont d'abord découpés en fragments documentaires, puis chaque fragment reçoit un embedding et un identifiant Neo4j. Les documents référentiels ajoutent 142 chunks : 43 pour les diplômes, 61 pour le MEPC 2013 et 38 pour la NCF 2017. Cette double indexation est nécessaire au GraphRAG : pgvector retrouve le passage pertinent, puis Neo4j le rattache à une formation, un métier, un niveau ou un domaine.
 
-La stratégie d'ingestion est structurelle par défaut. Elle détecte les titres de section à partir de la mise en forme et des motifs numérotés, puis chaque titre ouvre un chunk dont le contenu s'étend jusqu'au titre suivant. Les fragments de moins de 80 caractères sont fusionnés avec le fragment précédent, afin d'éviter des passages sans contexte. Une limite supérieure de 3\,000 caractères contrôle la taille maximale envoyée à l'encodeur. Le pipeline prévoit une stratégie sémantique de secours par fenêtres glissantes de 800 caractères avec 120 caractères de recouvrement, mais elle n'a pas été nécessaire dans l'index courant : les 142 chunks ont été produits par la stratégie structurelle.
+La figure~\ref{fig:implementation_chunking_pipeline} situe précisément cette étape dans le workflow : documents sources, détection des titres, découpage structurel, validation des tailles, puis indexation dans \texttt{doc\_chunks}. La stratégie d'ingestion est structurelle par défaut. Elle détecte les titres de section à partir de la mise en forme et des motifs numérotés, puis chaque titre ouvre un chunk dont le contenu s'étend jusqu'au titre suivant. Les fragments de moins de 80 caractères sont fusionnés avec le fragment précédent et une limite supérieure de 3\,000 caractères contrôle la taille maximale. La stratégie sémantique de secours par fenêtres glissantes existe dans le pipeline, mais elle n'a pas été utilisée dans l'index courant : les 142 chunks proviennent tous du découpage structurel.
+
+\begin{figure}[H]
+  \centering
+  \caption{Pipeline de chunking structurel des référentiels documentaires}
+  \label{fig:implementation_chunking_pipeline}
+  \includegraphics[width=0.96\textwidth]{chunking.png}
+  \source{Nos travaux, schématisation du pipeline de chunking documentaire et d'indexation pgvector.}
+\end{figure}
 
 \begin{figure}[H]
   \centering
   \caption{Distribution des tailles, sources et couverture du chunking documentaire}
   \label{fig:implementation_chunking_diagnostics}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
+  \includegraphics[width=0.5\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
-La figure \ref{fig:implementation_chunking_diagnostics} montre que les chunks sont courts mais hétérogènes. La taille médiane de 116 tokens convient au retrieval, tandis que le coefficient de variation de 0,91 signale des écarts importants entre fragments. Cette variabilité n'est pas automatiquement un défaut : elle reflète la structure inégale des référentiels. Elle impose cependant de contrôler la qualité des passages récupérés dans les réponses RAG. La couverture documentaire et la duplication des chunks sont détaillées en annexe (tableau~\ref{tab:implementation_chunking_coverage_duplication}), ainsi que les statistiques de chunking (tableau~\ref{tab:implementation_pgvector_chunking}).
+La figure~\ref{fig:implementation_chunking_diagnostics} vérifie que le pipeline produit des unités interrogeables. La médiane de 116 tokens est adaptée au retrieval : les passages sont assez courts pour être précis, mais assez longs pour conserver un contexte de section. La forte variabilité, avec un coefficient de variation de 0,91, vient de la structure des référentiels : certaines sections sont de simples intitulés, d'autres contiennent des listes ou descriptions plus longues. Ce n'est pas une erreur de traitement ; c'est un signal de surveillance. Les très petits chunks risquent d'être peu informatifs, tandis que les plus longs peuvent mélanger plusieurs idées.
 
 \begin{figure}[H]
   \centering
   \caption{Distribution de la cohérence sémantique intra-chunk par source}
   \label{fig:implementation_chunking_coherence}
-  \includegraphics[width=0.72\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
+  \includegraphics[width=0.4\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
-La cohérence sémantique moyenne vaut 0,303. Ce niveau est modéré : les chunks ne sont pas incohérents, mais ils ne forment pas non plus des blocs fortement homogènes. C'est cohérent avec des référentiels administratifs qui mêlent intitulés, codes, descriptions et listes. La mesure détaillée est reportée en annexe (tableau~\ref{tab:implementation_chunking_coherence}). Pour une version de production, ce résultat justifie de tester une variante de chunking sémantique contrôlée par la cohérence intra-chunk, sans perdre la structure réglementaire.
+La figure~\ref{fig:implementation_chunking_coherence} complète cette lecture par source. La cohérence sémantique moyenne vaut 0,303 : les chunks restent exploitables, mais ils ne sont pas toujours très homogènes. Cette valeur est cohérente avec des référentiels administratifs qui combinent codes, titres, listes et descriptions courtes. L'interprétation pratique est claire : le chunking structurel respecte bien la logique réglementaire, mais les réponses RAG doivent citer les passages récupérés et éviter de surinterpréter un chunk très court ou trop composite. Les mesures détaillées sont reportées en annexe aux tableaux~\ref{tab:implementation_chunking_coverage_duplication}, \ref{tab:implementation_pgvector_chunking} et \ref{tab:implementation_chunking_coherence}.
 
-\subsection{Index, latence et types de recherche}
+\subsection{Index et modes de recherche mobilisés}
 
-Les indicateurs techniques pgvector sont reportés en annexe (tableau~\ref{tab:implementation_pgvector_indicateurs}) et le détail des index pgvector et textuels dans le tableau~\ref{tab:implementation_pgvector_index}. Dans le corps du chapitre, le point important est leur rôle : les index HNSW accélèrent la similarité vectorielle, les index par type d'entité évitent de mélanger candidats, offres, métiers et compétences, les index textuels complètent la recherche dense par des correspondances lexicales, et les identifiants Neo4j assurent la continuité avec le graphe.
+Les index pgvector ne sont pas seulement un détail de base de données ; ils déterminent la manière dont le workflow récupère les preuves. Trois usages sont distingués. Le premier est le rappel sémantique top-$K$ par HNSW, utilisé pour obtenir rapidement les offres, candidats, métiers ou compétences proches d'une requête. Le deuxième est le filtrage par type d'entité, indispensable pour éviter de comparer une offre avec un chunk documentaire lorsque l'outil attend une offre. Le troisième est la recherche textuelle française, utile lorsque la requête contient un terme exact que l'embedding peut diluer.
 
-La latence observée est compatible avec un retrieval interactif : la médiane vaut 30,89 ms pour un top-10 HNSW. Cette valeur laisse de la marge pour les étapes suivantes, notamment le reranking graphe et la construction du contexte. Le maximum observé, 160,40 ms, rappelle toutefois qu'il faut raisonner en distribution et non seulement en moyenne. Pour un Agentic RAG, la stabilité des temps élevés est plus importante que le meilleur cas.
-
-La brique supporte trois types de recherche. La première est la recherche sémantique top-$K$, fondée sur la proximité cosinus entre embeddings. La deuxième est la recherche lexicale française, via les index GIN et \texttt{to\_tsvector}. La troisième est la recherche hybride : présélection vectorielle, filtre par nature d'entité, puis enrichissement par Neo4j. Cette organisation confirme que pgvector est prêt pour le retrieval de l'Agentic RAG : il produit le vivier initial, filtre les objets utiles et renvoie des identifiants directement raccordables au graphe.
-
-La conclusion technique est donc circonscrite. pgvector indexe les entités utiles, conserve les liens Neo4j, dispose d'index vectoriels et lexicaux, et présente des latences compatibles avec une application interactive. Le point à évaluer ensuite n'est plus la disponibilité du stockage, mais la qualité du ranking produit par ce premier étage et son amélioration par le graphe.
+La latence observée reste compatible avec un usage interactif : la médiane vaut 30,89 ms pour un top-10 HNSW. Le maximum de 160,40 ms rappelle cependant que l'Agentic RAG doit raisonner en chaîne complète : retrieval, enrichissement Neo4j, construction du contexte et génération. Les indicateurs techniques détaillés sont donc placés en annexe aux tableaux~\ref{tab:implementation_pgvector_indicateurs} et \ref{tab:implementation_pgvector_index}. Dans le corps du chapitre, la conclusion est limitée mais suffisante : pgvector produit un vivier rapide, typé et raccordable à Neo4j.
 
 \section{Neo4j : mémoire relationnelle du matching}
 
-\subsection{Du voisinage vectoriel au chemin explicable}
+Dans le workflow, Neo4j intervient après le rappel pgvector. pgvector propose des voisins sémantiques ; Neo4j vérifie ensuite si ces voisins sont reliés par des chemins métier défendables : compétences possédées, compétences requises, métier de référence, niveau \NCF{}, secteur et localisation. Cette section montre donc comment le graphe transforme une proximité textuelle en explication contrôlable.
+
+\subsection{Schéma, noeuds et relations mobilisés par le matching}
 
 \begin{figure}[H]
   \centering
   \caption{Schéma logique du graphe de connaissances}
   \label{fig:implementation_schema_graphe}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/11_schema_graphe_connaissances.png}
+  \includegraphics[width=0.5\textwidth]{figures/generated/implementation_deep_current/11_schema_graphe_connaissances.png}
   \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{figure}
 
-Le graphe Neo4j doit être lu comme la mémoire relationnelle du système. Il relie les candidats, offres, compétences, métiers, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et chunks documentaires. Son rôle n'est pas de remplacer les embeddings : pgvector retrouve d'abord des objets proches dans l'espace sémantique, tandis que Neo4j vérifie ensuite comment ces objets sont reliés. Une offre peut donc être proche du profil dans pgvector, puis être acceptée, rétrogradée ou expliquée à partir de ses compétences requises, de son secteur, de son niveau NCF ou de son rattachement métier. La section ne présente donc pas un graphe au sens général ; elle montre comment le graphe construit sert à transformer un voisinage vectoriel en chemin de décision lisible.
-
-La lecture correcte est la suivante : le graphe transforme une proximité textuelle en raisonnement contrôlable. Sans Neo4j, le système peut seulement dire qu'un profil et une offre se ressemblent dans un espace vectoriel. Avec Neo4j, il peut préciser par quelles relations cette proximité devient crédible : compétences possédées par le candidat, compétences exigées par l'offre, niveau de formation compatible ou non, secteur cohérent, et éventuel chemin vers une formation ou un métier de référence.
+La figure~\ref{fig:implementation_schema_graphe} donne la structure logique du graphe : les candidats et les offres sont reliés aux compétences, métiers, secteurs, localisations, niveaux \NCF{}, référentiels \MEPC{} et chunks documentaires. L'idée centrale est simple : pgvector mesure une proximité textuelle, tandis que Neo4j vérifie si cette proximité repose sur des relations métier lisibles.
 
 \begin{figure}[H]
   \centering
@@ -403,15 +365,9 @@ La lecture correcte est la suivante : le graphe transforme une proximité textue
 
 La figure \ref{fig:implementation_neo4j_noeuds_relations} doit être lue en deux temps. Le panneau des noeuds indique les objets que le système manipule : \texttt{Candidat}, \texttt{OffreEmploi}, \texttt{Compétence}, \texttt{Métier}, référentiels MEPC, niveaux et domaines NCF, secteurs, employeurs, localisations et fragments documentaires. Le panneau des relations indique ce que le système sait vérifier entre ces objets : un candidat \texttt{POSSEDE} des compétences, une offre \texttt{REQUIERT} des compétences, un métier \texttt{NECESSITE} des compétences de référence, une offre est rattachée à un secteur, à un niveau, à un employeur et à une localisation. L'information utile n'est donc pas le noeud isolé, mais le couple \og objet + relation \fg{}.
 
-Cette représentation rend l'interprétation du graphe plus simple : Neo4j ne dit pas seulement qu'une offre, un candidat ou une compétence existe dans la base ; il montre comment ces éléments sont reliés. Une recommandation devient défendable lorsque le chemin est lisible : candidat $\rightarrow$ compétences possédées $\rightarrow$ compétences requises par l'offre, puis éventuellement métier, niveau NCF, secteur ou formation de référence. À l'inverse, si le chemin est absent ou porté seulement par une compétence trop générale, le graphe doit servir à rétrograder l'offre plutôt qu'à la justifier artificiellement.
+La figure~\ref{fig:implementation_neo4j_noeuds_relations} précise les objets manipulés et les relations effectivement mobilisées. Une recommandation devient défendable lorsque le chemin est explicite : candidat $\rightarrow$ compétences possédées $\rightarrow$ compétences requises par l'offre, puis éventuellement métier, niveau \NCF{}, secteur ou formation de référence. Si ce chemin est absent ou porté seulement par une compétence trop générale, le graphe doit rétrograder l'offre plutôt que la justifier artificiellement.
 
-Les noeuds représentent les objets métier manipulés par le système. Les noeuds \texttt{Candidat} et \texttt{OffreEmploi} portent les deux pôles du matching : un profil disponible et une opportunité à classer. Les noeuds \texttt{Compétence} jouent le rôle de pivot explicatif, car ils permettent de comparer ce qu'un candidat possède avec ce qu'une offre requiert. Les noeuds \texttt{Métier}, \texttt{GroupeBaseMEPC}, \texttt{GroupeISCO}, \texttt{NiveauFormationNCF}, \texttt{DomaineDétailléNCF}, \texttt{Secteur} et \texttt{Localisation} ajoutent les dimensions de contrôle : métier de référence, famille professionnelle, niveau de qualification, domaine de formation, secteur d'activité et lieu. Les noeuds \texttt{DocChunk} et \texttt{DocumentReferentiel} relient le graphe aux sources documentaires utilisées par le GraphRAG.
-
-Cette organisation évite une erreur fréquente : interpréter une offre et un candidat comme deux textes isolés. Dans le graphe, ils deviennent deux ensembles de relations. Un candidat n'est pas seulement une phrase de profil ; il est relié à des compétences, un niveau, une filière et un secteur. Une offre n'est pas seulement un intitulé ; elle est reliée à des compétences exigées, un employeur, une localisation, un secteur et un niveau requis. C'est cette représentation relationnelle qui rend l'explication possible.
-
-Les relations décrivent les contraintes et les preuves utilisées par la recommandation. \texttt{POSSEDE} relie un candidat aux compétences déclarées ou inférées à partir de son profil. \texttt{REQUIERT} relie une offre aux compétences attendues. \texttt{NECESSITE} relie un métier aux compétences de référence du référentiel. \texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU} et \texttt{REQUIERT\_NIVEAU\_NCF} structurent la compatibilité de formation. \texttt{DANS\_SECTEUR}, \texttt{LOCALISEE\_A} et \texttt{PUBLIEE\_PAR} contextualisent l'offre. Enfin, les relations de référentiel, comme \texttt{PARTIE\_DE}, \texttt{CLASSIFIE\_DANS} ou \texttt{EXTRAIT\_DE}, permettent de passer d'un résultat opérationnel à une explication institutionnelle.
-
-Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'implémentation, les liens \texttt{REQUIERT} et \texttt{POSSEDE} vers les compétences ESCO sont matérialisés par correspondance lexicale et portent des métadonnées d'audit comme la méthode de rapprochement et le niveau de confiance. Leur fonction est donc opérationnelle : fournir un signal exploitable et vérifiable pour le matching. Une interprétation rigoureuse doit conserver cette limite, car une compétence mal extraite ou trop générique peut améliorer artificiellement le score d'une offre.
+Ces relations restent des signaux opérationnels, pas des vérités absolues. Les liens \texttt{REQUIERT} et \texttt{POSSEDE} dépendent de l'extraction et du rattachement lexical des compétences. Une compétence mal extraite ou trop générique peut donc améliorer artificiellement le score. C'est pourquoi les indicateurs de structure, de hubs et de centralité sont nécessaires avant d'utiliser Neo4j comme brique de reranking.
 \subsection{Structure du graphe et risques de hubs}
 
 \subsubsection{Taille réelle du graphe et couverture de la projection matching}
@@ -420,8 +376,8 @@ Ces relations ne doivent pas être lues comme des vérités absolues. Dans l'imp
   \centering
   \caption{Tableau de bord statistique du graphe Neo4j}
   \label{fig:implementation_neo4j_dashboard}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.5\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
+  \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
 
 La figure~\ref{fig:implementation_neo4j_dashboard} synthétise les volumes et la structure globale du graphe avant l’analyse détaillée. Elle sert ici de point d’entrée : le graphe doit d’abord être compris par ses ordres de grandeur, puis seulement par ses hubs, ses communautés et ses chemins de matching.
@@ -437,23 +393,25 @@ Cette structure impose toutefois une lecture prudente. Comme les relations de co
 
 \subsubsection{Noeuds très connectés : signal utile ou bruit de popularité}
 
-La distribution complète des degrés est placée en annexe (figure~\ref{fig:implementation_neo4j_distribution_degres}).
+La distribution complète des degrés est placée en annexe (figure~\ref{fig:implementation_neo4j_distribution_degres}). La distribution des degrés est fortement asymétrique. L'estimation exploratoire d'une loi de puissance sur la queue de distribution donne un exposant compris entre 1,40 et 2,51 selon le seuil $x_{\min}$ retenu. Ce n'est pas une preuve formelle de loi de puissance, mais un diagnostic utile : le graphe comporte bien des hubs. Dans un système de recommandation, ces hubs doivent être traités avec prudence. Une compétence très connectée n'est pas automatiquement discriminante ; elle peut simplement être générique, très fréquente ou issue d'un référentiel large.
 
-La distribution des degrés est fortement asymétrique. L'estimation exploratoire d'une loi de puissance sur la queue de distribution donne un exposant compris entre 1,40 et 2,51 selon le seuil $x_{\min}$ retenu. Ce n'est pas une preuve formelle de loi de puissance, mais un diagnostic utile : le graphe comporte bien des hubs. Dans un système de recommandation, ces hubs doivent être traités avec prudence. Une compétence très connectée n'est pas automatiquement discriminante ; elle peut simplement être générique, très fréquente ou issue d'un référentiel large.
-
-Le tableau d'hétérogénéité des degrés par famille de noeuds est reporté en annexe (tableau~\ref{tab:implementation_neo4j_degres}).
-
-Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
+Le tableau d'hétérogénéité des degrés par famille de noeuds est reporté en annexe (tableau~\ref{tab:implementation_neo4j_degres}). Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
 
 \subsubsection{Compétences pivots selon degré, PageRank et intermédiarité}
 
-Le graphique des centralités de compétences est renvoyé en annexe (figure~\ref{fig:implementation_neo4j_centralites_competences}).
+\begin{figure}[H]
+  \centering
+  \caption{Centralités des compétences : degré, PageRank et intermédiarité approximée}
+  \label{fig:implementation_neo4j_centralites_competences}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/15_neo4j_centralites_competences.png}
+  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+\end{figure}
 
 Les centralités donnent trois lectures complémentaires. La centralité de degré et le PageRank identifient surtout les compétences les plus connectées, par exemple \og coordonner le transport \fg{}, \og respecter le planning de travail dans les transports \fg{}, \og gérer le transport de fonds \fg{} et \og comptabilité \fg{}. L'intermédiarité approximée, calculée sur le sous-graphe des noeuds de plus fort degré, fait ressortir d'autres compétences : \og utiliser différents moyens de communication \fg{}, \og gérer les budgets \fg{}, \og former le personnel \fg{}, \og normes de qualité \fg{} et \og assurer la gestion de projets \fg{}. Ces dernières sont plus intéressantes pour la recommandation, car elles jouent un rôle de passerelle entre plusieurs familles de métiers.
 
 Les exemples de compétences centrales selon les métriques de graphe sont placés en annexe (tableau~\ref{tab:implementation_neo4j_centralites}).
 
-La distinction entre degré, PageRank et intermédiarité est importante. Un noeud peut être très populaire sans être une bonne passerelle de recommandation. Pour le \textit{skill gap}, les compétences d'intermédiarité sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
+La distinction entre degré, PageRank et intermédiarité est importante. Un noeud à fort degré est fréquent ; il peut donc être utile, mais peu discriminant. Un noeud avec PageRank élevé structure le réseau parce qu'il est relié à des noeuds eux-mêmes importants. Un noeud avec intermédiarité élevée sert de passerelle entre plusieurs zones du graphe. Pour le \textit{skill gap}, ces compétences passerelles sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
 
 \subsubsection{Communautés Louvain et robustesse aux hubs}
 
@@ -527,8 +485,8 @@ S_{\text{hybride}} =
   \centering
   \caption{Distribution comparée des scores pgvector et Neo4j utilisés dans le reranking}
   \label{fig:implementation_distribution_scores_hybrides}
-  \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/13_distribution_scores_pgvector_neo4j.png}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/13_distribution_scores_pgvector_neo4j.png}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings}
 \end{figure}
 
 La figure \ref{fig:implementation_distribution_scores_hybrides} montre que les deux scores n'ont pas le même comportement. Le score pgvector est continu et relativement concentré : sa moyenne vaut 0,5225 et sa médiane 0,5304 sur les 690 couples candidat--offre évalués. Le score Neo4j est plus discontinu : sa moyenne vaut 0,5606, sa médiane 0,8330, mais 31,30\,\% des couples ont un score nul. Cette différence est normale. pgvector renvoie presque toujours une proximité textuelle, même moyenne ; Neo4j est plus sévère, car une offre peut être textuellement proche tout en n'ayant aucune compétence requise couverte par le candidat.
@@ -567,19 +525,21 @@ La calibration Optuna a été réalisée avec un \texttt{TPESampler}, 500 essais
 
 L'effet du reranking se mesure à deux niveaux. Le premier niveau regarde les rangs des couples candidat--offre déjà présents dans le vivier récupéré par pgvector. Le second niveau regarde les métriques de ranking lorsque l'on compare le système \texttt{pgvector\_only} au système \texttt{pgvector\_plus\_graph}. Cette distinction est importante : Neo4j ne remplace pas le retrieval vectoriel, il intervient après lui pour réordonner les offres candidates.
 
+La figure \ref{fig:implementation_effet_reranking_neo4j} montre un effet net du graphe sur l'ordre des résultats. Sur les 690 couples évalués, 59,86\,\% gagnent des positions après reranking, 13,77\,\% perdent des positions et 26,38\,\% restent au même rang. Le gain moyen est de 4,01 rangs, avec une médiane de 1 rang et un maximum de 28 rangs. Cette moyenne ne doit pas être interprétée comme une amélioration automatique de chaque offre : elle indique que le score Neo4j change réellement l'ordre produit par pgvector, en remontant surtout les offres dont les compétences requises sont mieux couvertes.
+
 \begin{figure}[H]
   \centering
   \caption{Effet du reranking Neo4j sur les métriques et les déplacements de rang}
   \label{fig:implementation_effet_reranking_neo4j}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/13_effet_reranking_pgvector_neo4j.png}
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings}
 \end{figure}
-
-La figure \ref{fig:implementation_effet_reranking_neo4j} montre un effet net du graphe sur l'ordre des résultats. Sur les 690 couples évalués, 59,86\,\% gagnent des positions après reranking, 13,77\,\% perdent des positions et 26,38\,\% restent au même rang. Le gain moyen est de 4,01 rangs, avec une médiane de 1 rang et un maximum de 28 rangs. Cette moyenne ne doit pas être interprétée comme une amélioration automatique de chaque offre : elle indique que le score Neo4j change réellement l'ordre produit par pgvector, en remontant surtout les offres dont les compétences requises sont mieux couvertes.
-
 Le résumé détaillé des déplacements de rang après reranking est placé en annexe (tableau~\ref{tab:implementation_moteur_hybride_scores}).
 
 L'ablation confirme ensuite que ces déplacements ne sont pas seulement cosmétiques. Sur 69 requêtes évaluées, l'ajout du graphe augmente la précision@1 de 0,5942 à 0,7536, le NDCG@5 de 0,5495 à 0,7339, le NDCG@10 de 0,5575 à 0,7392 et le recall@10 de 0,4491 à 0,6147. Le hit rate@10 reste identique à 0,9420 : cela signifie que les éléments pertinents sont souvent déjà présents dans le vivier pgvector, mais que Neo4j les ordonne mieux. C'est exactement le rôle attendu du reranking : ne pas refaire la recherche depuis zéro, mais transformer une liste plausible en liste mieux priorisée.
 
 La conclusion doit rester stricte. Le reranking hybride améliore le classement dans ce protocole, mais la pertinence utilisée est un proxy construit à partir de métadonnées normalisées et non une annotation humaine indépendante. Le résultat est donc une preuve opérationnelle de cohérence interne, pas encore une preuve définitive de satisfaction recruteur ou candidat. Pour défendre le système en production, il faudra compléter cette évaluation par des jugements humains ou des retours d'usage.
 
+\section*{Conclusion}
+
+Le chapitre a suivi le workflow réel du système. Les données nettoyées alimentent d'abord l'encodeur ; l'encodeur produit les vecteurs ; pgvector construit le vivier de retrieval ; Neo4j vérifie les relations métier ; le score hybride rerange les offres candidates. Cette chaîne évite de confier toute la décision au \LLM{} : la génération intervient après la récupération, l'enrichissement relationnel et le scoring.La conclusion d'implémentation est donc précise. Le système est opérationnel parce que ses briques sont raccordées : données normalisées, modèle d'embeddings spécialisé, mémoire vectorielle, graphe de connaissances et reranking hybride. Il reste cependant dépendant de la qualité des données scrapées, de la complétude des compétences et de la validité des relations Neo4j. Le chapitre suivant évalue justement ce que ces choix apportent au retrieval, au classement et à la génération de la recommandation.

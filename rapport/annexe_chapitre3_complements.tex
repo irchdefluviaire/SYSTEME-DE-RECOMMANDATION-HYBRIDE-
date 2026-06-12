@@ -19,6 +19,29 @@
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
 
+\begin{table}[H]
+  \centering
+  \caption{Volumes réellement exploités par les modules de recommandation}
+  \label{tab:implementation_volumes_exploites}
+  \tableStyleStart
+  \begin{tabularx}{0.94\textwidth}{XrX}
+    \rowcolor{darkblue}
+    \tabheader{Objet exploité} & \tabheader{Volume} & \tabheader{Utilité pour le système} \\
+    \midrule
+    Offres normalisées & 13\,957 & Base principale à recommander, indexée dans pgvector et reliée au graphe. \\
+    Candidats normalisés & 41\,298 & Vivier à partir duquel sont calculés les rapprochements offre--profil. \\
+    Compétences indexées & 13\,939 & Signal de matching, de filtrage et de justification du \textit{skill gap}. \\
+    Secteurs nettoyés & 1\,039 & Signal de contexte pour limiter les rapprochements absurdes entre domaines trop éloignés. \\
+    Métiers indexés & 3\,039 & Niveau d'agrégation utile pour stabiliser les recommandations au-delà des intitulés d'offres. \\
+    Groupes métiers MEPC & 209 & Référentiel externe pour structurer les proximités métier. \\
+    Domaines détaillés NCF & 201 & Référentiel de formation utilisé pour contextualiser les niveaux et domaines. \\
+    Localisations représentées dans Neo4j & 312 & Signal géographique pour filtrage souple et explication des résultats. \\
+    \bottomrule
+  \end{tabularx}
+  \tableStyleEnd
+  \source{Nos travaux, diagnostics PostgreSQL}
+\end{table}
+
 \begin{figure}[H]
   \centering
   \caption{Localisation nettoyée des offres}
@@ -65,7 +88,7 @@
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
+  \source{Nos travaux, traitements Python et SentenceTransformer}
 \end{table}
 
 \begin{table}[H]
@@ -155,7 +178,7 @@
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \source{Nos travaux, diagnostics PostgreSQL}
 \end{table}
 
 \begin{table}[H]
@@ -176,22 +199,22 @@
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \source{Nos travaux, diagnostics PostgreSQL}
 \end{table}
 
 \begin{figure}[H]
   \centering
   \caption{Composition du graphe par types de noeuds et relations}
   \label{fig:implementation_neo4j_composition}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
+  \source{Nos travaux, diagnostics Neo4j.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \caption{Distribution des degrés dans la projection matching}
   \label{fig:implementation_neo4j_distribution_degres}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/14_neo4j_distribution_degres.png}
+  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/14_neo4j_distribution_degres.png}
   \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{figure}
 
@@ -217,15 +240,13 @@
   \tableStyleEnd
   \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{table}
-
 \begin{figure}[H]
-  \centering
-  \caption{Centralités des compétences : degré, PageRank et intermédiarité approximée}
-  \label{fig:implementation_neo4j_centralites_competences}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/15_neo4j_centralites_competences.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+	\centering
+	\caption{Communautés Louvain, distances et composantes connexes}
+	\label{fig:implementation_neo4j_communautes}
+	\includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/16_neo4j_communautes_connectivite.png}
+	\source{Nos travaux, diagnostics Neo4j}
 \end{figure}
-
 \begin{table}[H]
   \centering
   \caption{Exemples de compétences centrales selon trois métriques}
@@ -244,37 +265,28 @@
   \tableStyleEnd
   \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{table}
-
-\begin{figure}[H]
-  \centering
-  \caption{Communautés Louvain, distances et composantes connexes}
-  \label{fig:implementation_neo4j_communautes}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/16_neo4j_communautes_connectivite.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
-\end{figure}
-
 \begin{figure}[H]
   \centering
   \caption{Robustesse de la projection matching après retrait des hubs}
   \label{fig:implementation_neo4j_robustesse}
-  \includegraphics[width=0.78\textwidth]{figures/generated/implementation_deep_current/18_neo4j_robustesse.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/18_neo4j_robustesse.png}
+  \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \caption{Compétences par offre, candidat et métier dans Neo4j}
   \label{fig:implementation_neo4j_competences_entites}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/17_neo4j_competences_metier_offre_candidat.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/17_neo4j_competences_metier_offre_candidat.png}
+  \source{Nos travaux, diagnostics Neo4j.}
 \end{figure}
 
 \begin{figure}[H]
   \centering
   \caption{Distribution échantillonnée du skill gap candidat--offre}
   \label{fig:implementation_neo4j_skill_gap}
-  \includegraphics[width=0.86\textwidth]{figures/generated/implementation_deep_current/17_neo4j_skill_gap_distribution.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/17_neo4j_skill_gap_distribution.png}
+  \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
 
 \begin{table}[H]
@@ -298,5 +310,5 @@
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic}
 \end{table}
