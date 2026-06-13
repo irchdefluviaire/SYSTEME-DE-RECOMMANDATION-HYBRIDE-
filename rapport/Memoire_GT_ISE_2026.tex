@@ -1294,6 +1294,38 @@ S_{hyb}(c,o)=\alpha S_{sem}(c,o)+\beta S_{graph}(c,o)+\gamma C_{ncf}(c,o)+\delta
 \]
 où $c$ désigne un candidat, $o$ une offre, $S_{sem}$ la similarité sémantique, $S_{graph}$ la couverture de compétences issue du graphe, $C_{ncf}$ la compatibilité de niveau de formation et $A_{sect}$ l'alignement sectoriel. Cette formulation traduit un choix méthodologique important : le système ne délègue pas toute la décision au \LLM{}. Le \LLM{} intervient pour synthétiser et expliquer, mais le classement repose sur des signaux calculables et auditables.
 
+\subsection{Construction du proxy de pertinence pour l'évaluation}
+
+L'évaluation du classement nécessite de savoir quelles offres doivent être considérées comme pertinentes pour chaque candidat. En l'absence d'annotations indépendantes produites par des recruteurs, cette étude utilise un label faible nommé \filevar{proxy\_relevance}. Ce proxy ne fait pas partie du score hybride appliqué par le moteur de recommandation : il sert uniquement de référence expérimentale pour comparer l'ordre produit par pgvector, Neo4j et leurs différentes pondérations. Cette séparation évite d'évaluer le classement avec le même score que celui utilisé pour le construire.
+
+Pour un candidat $c$ et une offre $o$, le proxy combine trois informations issues des métadonnées normalisées :
+
+\[
+R_{\mathrm{proxy}}(c,o)
+=0{,}45L(c,o)+0{,}30S(c,o)+0{,}25N(c,o),
+\]
+
+\noindent où $L(c,o)$ mesure le recouvrement lexical, $S(c,o)$ l'alignement sectoriel et $N(c,o)$ la compatibilité de niveau \NCF{}. Le recouvrement lexical compare les mots du métier visé, du secteur, de la filière, du secteur demandé et de l'objectif professionnel avec ceux du titre, du secteur, des compétences et de la description de l'offre :
+
+\[
+L(c,o)=
+\frac{\left|T_c\cap T_o\right|}
+{\max\!\left(\min\!\left(|T_c|,|T_o|\right),1\right)}.
+\]
+
+L'alignement sectoriel correspond à la part des termes du secteur du candidat également présents dans le secteur de l'offre. La compatibilité \NCF{} vaut $1$ lorsque le niveau du candidat est supérieur ou égal au niveau demandé, $0{,}70$ lorsque l'écart est d'un niveau, $0{,}40$ lorsqu'il est de deux niveaux et $0{,}10$ au-delà. Lorsque l'un des niveaux est absent, une valeur neutre de $0{,}45$ est retenue afin de ne pas assimiler une donnée manquante à une incompatibilité certaine.
+
+Le score continu $R_{\mathrm{proxy}}$ est utilisé comme gain gradué dans le calcul du NDCG. Pour Precision@10, Recall@10 et MRR@10, il est transformé en label binaire séparément pour chaque candidat. Une offre est déclarée pertinente lorsque :
+
+\[
+R_{\mathrm{proxy}}(c,o)\geq
+\max\!\left(0{,}35,\;Q_{0{,}70,c}\right),
+\]
+
+\noindent où $Q_{0{,}70,c}$ est le 70\ieme{} percentile des scores obtenus par les offres du vivier du candidat $c$. Le seuil de $0{,}35$ impose une pertinence minimale, tandis que le percentile retient les offres relativement meilleures pour ce candidat. Si aucune offre ne franchit le seuil, l'offre possédant le proxy le plus élevé est conservée comme pertinente afin que les métriques de ranking restent calculables.
+
+Ce protocole fournit une référence reproductible, mais il ne constitue pas une vérité métier. Les coefficients $0{,}45$, $0{,}30$ et $0{,}25$, ainsi que le seuil de binarisation, sont des choix méthodologiques destinés à l'ablation interne. Les résultats doivent donc être interprétés comme une mesure de cohérence du système par rapport aux métadonnées disponibles, en attendant une validation sur des jugements humains.
+
 Les pondérations ne doivent pas être fixées uniquement par intuition. La méthodologie retient donc une calibration statistique par optimisation bayésienne avec Optuna, en utilisant le \textit{Tree-structured Parzen Estimator} comme stratégie de recherche \cite{akiba2019optuna}. Dans l'expérience logicielle retenue, le score calibré est volontairement ramené à deux signaux observables dans les sorties d'évaluation : le score sémantique issu de pgvector et le score Neo4j issu de l'enrichissement graphe. Le problème optimisé est donc :
 
 \[
@@ -1599,7 +1631,7 @@ La force de cette implémentation tient dans son caractère hybride et traçable
 \chapter{Évaluation de la performance du système}
 Ce chapitre évalue le système implémenté au chapitre précédent. Il ne répète pas la description technique des briques ; il vérifie ce que ces briques apportent effectivement au fonctionnement du système. L'évaluation suit donc une logique en cinq niveaux : qualité du retrieval sémantique, effet du graphe sur le classement, validité fonctionnelle des requêtes GraphRAG, calibration du score hybride et contrôle de la génération finale par le critic.
 
-Deux précautions guident l'interprétation. Premièrement, l'évaluation du classement est conduite sans génération \LLM{} : elle mesure la qualité du retrieval et du reranking, non la qualité rédactionnelle de la réponse. Deuxièmement, la pertinence utilisée dans l'ablation est un proxy construit à partir des métadonnées normalisées ; elle permet de comparer deux variantes du même système, mais ne remplace pas une annotation humaine par des recruteurs ou des conseillers métier.
+Deux précautions guident l'interprétation. Premièrement, l'évaluation du classement est conduite sans génération \LLM{} : elle mesure la qualité du retrieval et du reranking, non la qualité rédactionnelle de la réponse. Deuxièmement, la pertinence utilisée dans l'ablation est le proxy défini dans la méthodologie à partir du recouvrement lexical, de l'alignement sectoriel et de la compatibilité \NCF{}. Sa valeur continue sert de gain pour le NDCG ; sa version binarisée par le seuil $\max(0{,}35,Q_{0{,}70})$ sert à Precision, Recall et MRR. Ce label faible permet de comparer les variantes du système, mais ne remplace pas une annotation humaine par des recruteurs ou des conseillers métier.
 
 \section{Protocole expérimental et métriques retenues}
 
