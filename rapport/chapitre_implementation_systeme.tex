@@ -395,32 +395,6 @@ La distribution complète des degrés est placée en annexe (figure~\ref{fig:imp
 
 Le tableau d'hétérogénéité des degrés par famille de noeuds est reporté en annexe (tableau~\ref{tab:implementation_neo4j_degres}). Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
 
-\subsubsection{Compétences pivots selon degré, PageRank et intermédiarité}
-
-\begin{figure}[H]
-  \centering
-  \caption{Centralités des compétences : degré, PageRank et intermédiarité approximée}
-  \label{fig:implementation_neo4j_centralites_competences}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/15_neo4j_centralites_competences.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
-\end{figure}
-
-Les centralités donnent trois lectures complémentaires. La centralité de degré et le PageRank identifient surtout les compétences les plus connectées, par exemple \og coordonner le transport \fg{}, \og respecter le planning de travail dans les transports \fg{}, \og gérer le transport de fonds \fg{} et \og comptabilité \fg{}. L'intermédiarité approximée, calculée sur le sous-graphe des noeuds de plus fort degré, fait ressortir d'autres compétences : \og utiliser différents moyens de communication \fg{}, \og gérer les budgets \fg{}, \og former le personnel \fg{}, \og normes de qualité \fg{} et \og assurer la gestion de projets \fg{}. Ces dernières sont plus intéressantes pour la recommandation, car elles jouent un rôle de passerelle entre plusieurs familles de métiers.
-
-Les exemples de compétences centrales selon les métriques de graphe sont placés en annexe (tableau~\ref{tab:implementation_neo4j_centralites}).
-
-La distinction entre degré, PageRank et intermédiarité est importante. Un noeud à fort degré est fréquent ; il peut donc être utile, mais peu discriminant. Un noeud avec PageRank élevé structure le réseau parce qu'il est relié à des noeuds eux-mêmes importants. Un noeud avec intermédiarité élevée sert de passerelle entre plusieurs zones du graphe. Pour le \textit{skill gap}, ces compétences passerelles sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
-
-\subsubsection{Communautés Louvain et robustesse aux hubs}
-
-Les communautés Louvain et distances sont détaillées en annexe (figure~\ref{fig:implementation_neo4j_communautes}).
-
-La détection de communautés a été réalisée avec Louvain sur un échantillon pondéré de la composante géante, enrichi par les noeuds de plus fort degré afin de conserver l'ossature du réseau. Elle identifie 100 communautés dans la projection analysée. Ce résultat ne doit pas être vendu comme une typologie définitive des métiers ; il sert à vérifier que le graphe contient des regroupements relationnels exploitables. La distance moyenne échantillonnée dans la composante géante vaut 4,10 sauts, avec une médiane de 4. En pratique, cela signifie qu'un candidat, une offre, une compétence ou un métier peut être relié au reste du réseau par quelques relations seulement, ce qui rend le GraphRAG opérationnel pour produire des chemins explicatifs courts.
-
-Le test de robustesse après retrait des hubs est reporté en annexe (figure~\ref{fig:implementation_neo4j_robustesse}).
-
-Le test de robustesse retire successivement les 1\,\%, 5\,\% et 10\,\% de noeuds les plus centraux selon le degré, puis mesure la taille de la composante géante restante. Ce test est sévère, car il cible les hubs au lieu de supprimer des noeuds au hasard. Son intérêt est de mesurer la dépendance du graphe à quelques entités très connectées. Si la composante géante s'effondre fortement après retrait des hubs, cela signifie que le système dépend excessivement de compétences ou niveaux génériques. Dans ce cas, le reranking doit pénaliser les hubs trop peu discriminants et valoriser les compétences spécifiques.
-
 \subsubsection{Skill gap observé entre profils et offres}
 
 Les compétences moyennes par objet métier sont visualisées en annexe (figure~\ref{fig:implementation_neo4j_competences_entites}).
