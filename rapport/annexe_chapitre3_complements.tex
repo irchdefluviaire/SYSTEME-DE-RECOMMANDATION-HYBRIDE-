@@ -137,6 +137,14 @@
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
 
+\begin{figure}[H]
+  \centering
+  \caption{Distribution de la cohérence sémantique intra-chunk par source}
+  \label{fig:implementation_chunking_coherence}
+  \includegraphics[width=0.72\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
+  \source{Nos travaux, mesure Python de la similarité cosinus moyenne entre les phrases de chaque chunk.}
+\end{figure}
+
 \begin{table}[H]
   \centering
   \caption{Cohérence sémantique intra-chunk}
@@ -155,67 +163,12 @@
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
 
-\begin{table}[H]
-  \centering
-  \caption{Indicateurs techniques pgvector}
-  \label{tab:implementation_pgvector_indicateurs}
-  \tableStyleStart
-  \begin{tabularx}{0.92\textwidth}{Xr}
-    \rowcolor{darkblue}
-    \tabheader{Indicateur} & \tabheader{Valeur observée} \\
-    \midrule
-    Embeddings d'entités structurées & 72\,643 \\
-    Chunks documentaires indexés & 142 \\
-    Dimension des vecteurs & 384 \\
-    Modèle d'encodage & \texttt{all-MiniLM-L6-v2-ft-offres-cm} \\
-    Index PostgreSQL sur \texttt{embeddings} et \texttt{doc\_chunks} & 19 \\
-    Taille totale de la table \texttt{embeddings} & 259,05 Mo \\
-    Taille de l'index \texttt{emb\_hnsw} & 81,30 Mo \\
-    Taille totale de \texttt{doc\_chunks} & 1,51 Mo \\
-    Latence moyenne top-10 HNSW sur 25 requêtes & 34,31 ms \\
-    Latence médiane top-10 HNSW sur 25 requêtes & 30,89 ms \\
-    Latence p90 top-10 HNSW sur 25 requêtes & 64,41 ms \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL}
-\end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Index pgvector et index complémentaires}
-  \label{tab:implementation_pgvector_index}
-  \tableStyleStart
-  \begin{tabularx}{\textwidth}{p{3.4cm}p{4.6cm}X}
-    \rowcolor{darkblue}
-    \tabheader{Famille d'index} & \tabheader{Index observés} & \tabheader{Usage dans le retrieval} \\
-    \midrule
-    Vectoriel HNSW & \texttt{emb\_hnsw}, \texttt{doc\_chunks\_hnsw} avec \texttt{vector\_cosine\_ops}. & Recherche approximative des plus proches voisins en similarité cosinus. \\
-    B-tree métier & \texttt{emb\_offre\_idx}, \texttt{emb\_candidat\_idx}, \texttt{emb\_competence\_idx}, \texttt{emb\_metier\_idx}. & Filtrage par type d'entité et accès rapide aux objets métiers. \\
-    Synchronisation graphe & \texttt{emb\_neo4j\_idx}. & Passage d'un résultat vectoriel vers le noeud Neo4j correspondant. \\
-    Modèle et unicité & \texttt{emb\_model\_idx}, contrainte unique \texttt{entity\_kind, entity\_id, model\_id}. & Éviter les doublons d'embeddings et gérer les futures versions de modèles. \\
-    Recherche lexicale & \texttt{emb\_fulltext\_fr\_idx}, \texttt{doc\_chunks\_fulltext\_fr\_idx}. & Complément lexical français pour requêtes par mots exacts, acronymes ou intitulés rares. \\
-    Référentiels & \texttt{doc\_chunks\_ncf\_idx}, \texttt{doc\_chunks\_mepc\_idx}, \texttt{doc\_chunks\_source\_idx}. & Recherche ciblée dans NCF, MEPC et référentiel des diplômes. \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL}
-\end{table}
-
 \begin{figure}[H]
   \centering
   \caption{Composition du graphe par types de noeuds et relations}
   \label{fig:implementation_neo4j_composition}
   \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
   \source{Nos travaux, diagnostics Neo4j.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \caption{Distribution des degrés dans la projection matching}
-  \label{fig:implementation_neo4j_distribution_degres}
-  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/14_neo4j_distribution_degres.png}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{figure}
 
 \begin{table}[H]
@@ -227,35 +180,19 @@
     \rowcolor{darkblue}
     \tabheader{Label} & \tabheader{Moyenne} & \tabheader{Médiane} & \tabheader{p90} & \tabheader{Max} \\
     \midrule
-    \texttt{NiveauFormationNCF} & 5\,812,56 & 7\,073 & 10\,672,4 & 11\,050 \\
-    \texttt{GroupeBaseMEPC} & 90,22 & 73 & 201 & 276 \\
+    \texttt{NiveauFormationNCF} & 5\,847,88 & 5\,924,5 & 10\,056,6 & 10\,261 \\
+    \texttt{GroupeBaseMEPC} & 95,11 & 74 & 200 & 275 \\
     \texttt{Secteur} & 72,69 & 5,5 & 151,6 & 1\,548 \\
-    \texttt{Métier} & 48,61 & 44 & 77 & 186 \\
+    \texttt{Métier} & 47,61 & 43 & 76 & 185 \\
     \texttt{Localisation} & 43,96 & 1 & 8 & 4\,467 \\
-    \texttt{Compétence} & 30,57 & 5 & 28 & 6\,789 \\
-    \texttt{OffreEmploi} & 7,97 & 9 & 11 & 11 \\
-    \texttt{Candidat} & 6,56 & 7 & 8 & 8 \\
+    \texttt{Compétence} & 30,04 & 4 & 27 & 6\,787 \\
+    \texttt{OffreEmploi} & 6,57 & 8 & 9 & 9 \\
+    \texttt{Candidat} & 6,36 & 7 & 7 & 7 \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
   \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
 \end{table}
-\begin{figure}[H]
-  \centering
-  \caption{Compétences par offre, candidat et métier dans Neo4j}
-  \label{fig:implementation_neo4j_competences_entites}
-  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/17_neo4j_competences_metier_offre_candidat.png}
-  \source{Nos travaux, diagnostics Neo4j.}
-\end{figure}
-
-\begin{figure}[H]
-  \centering
-  \caption{Distribution échantillonnée du skill gap candidat--offre}
-  \label{fig:implementation_neo4j_skill_gap}
-  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/17_neo4j_skill_gap_distribution.png}
-  \source{Nos travaux, diagnostics Neo4j}
-\end{figure}
-
 \begin{table}[H]
   \centering
   \caption{Résumé du déplacement de rang après reranking Neo4j}

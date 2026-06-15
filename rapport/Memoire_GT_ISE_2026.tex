@@ -1193,11 +1193,11 @@ Sur le plan de l'orchestration, cette étude retient explicitement \textit{LangG
 
 %Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
 
-\begin{figure}[p]
+\begin{figure}
   \centering
   \caption{Architecture méthodologique du workflow agentique de recommandation}
   \label{fig:architecture_methodologique_workflow_agentique}
-  \includegraphics[height=0.88\textheight]{figures/myWorkflow.png}
+  \includegraphics[height=0.55\textheight]{figures/myWorkflow.png}
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{figure}
 
@@ -1745,7 +1745,11 @@ Enfin, la dernière partie de la figure~\ref{fig:eval_functional_graph} met en r
 
 \subsection{Déplacements de rang après reranking par le graphe}
 
-Le reranking graphe modifie l'ordre initial produit par pgvector. Une offre peut remonter si elle présente une meilleure couverture de compétences, un meilleur alignement sectoriel ou une meilleure compatibilité de niveau. Inversement, une offre textuellement proche peut être rétrogradée si ses relations métier sont faibles ou mal renseignées.
+Le déplacement de rang est calculé par la différence
+\[
+\Delta r = r_{\text{pgvector}}-r_{\text{hybride}}.
+\]
+Une valeur positive indique qu'une offre remonte après l'ajout du score Neo4j ; une valeur négative indique une rétrogradation ; une valeur nulle signifie que son rang ne change pas. Dans cette expérience, le score Neo4j correspond au taux de couverture des compétences requises par l'offre. Le graphique ne mesure donc pas directement l'effet du secteur ou du niveau \NCF{}.
 
 \begin{figure}[H]
 \centering
@@ -1755,7 +1759,9 @@ Le reranking graphe modifie l'ordre initial produit par pgvector. Une offre peut
 \source{Nos travaux, ablation du moteur hybride et analyse des déplacements de rang.}
 \end{figure}
 
-Cette redistribution confirme que Neo4j agit réellement sur le classement. Le graphe ajoute de l'information, mais il ajoute aussi une dépendance à la qualité des relations. Si les compétences sont mal extraites ou si une offre est peu renseignée, le score graphe peut pénaliser ou favoriser des résultats pour de mauvaises raisons. Le résultat doit donc être lu comme une preuve de cohérence interne du système, pas comme une validation métier définitive.
+Sur les 690 couples candidat--offre associés aux 69 candidats évalués, 59,86\,\% des offres remontent, 13,77\,\% reculent et 26,38\,\% conservent leur position. Le rang moyen passe de 9,51 avec pgvector seul à 5,50 après reranking, soit un gain moyen de 4,01 positions. Le déplacement médian n'est toutefois que de $+1$ : l'amélioration moyenne est donc influencée par un nombre plus limité de remontées importantes et ne signifie pas que chaque offre gagne quatre places.
+
+La figure montre ainsi que Neo4j modifie réellement l'ordre du vivier initial, principalement en favorisant les offres dont les compétences requises sont mieux couvertes. Une rétrogradation n'est pas nécessairement une erreur : elle peut signaler qu'une proximité textuelle élevée n'est pas confirmée par les relations de compétences. Inversement, le résultat dépend de la qualité des liens \filevar{POSSEDE} et \filevar{REQUIERT}. Cette analyse démontre un effet mesurable du graphe sur le classement, mais pas encore une pertinence métier définitive sans annotation humaine.
 
 \subsection{Pondérations optimales avec Optuna}
 
@@ -1837,26 +1843,6 @@ La valeur 0,46 est retenue parce qu'elle maximise le compromis F1 dans ce test t
 
 Cette calibration ne transforme pas le critic en juge parfait. Une réponse acceptée n'est pas automatiquement correcte au sens métier ; elle est seulement suffisamment ancrée lexicalement dans les preuves récupérées. Pour défendre le système devant un jury, la formulation correcte est donc : le seuil 0,46 est un seuil opérationnel calibré empiriquement par contraste, en attendant une validation humaine de la qualité réelle des recommandations générées.
 
-\section{Orchestration agentique avec LangGraph}
-
-Les résultats précédents évaluent séparément le retrieval, le reranking par Neo4j et le critic. Dans l'application, ces briques ne fonctionnent pourtant pas isolément : elles sont coordonnées par un workflow agentique construit avec LangGraph, dans l'écosystème LangChain. Cette orchestration se situe à la fin du workflow global : elle reçoit la question utilisateur, choisit les outils à activer, organise les résultats récupérés, déclenche la génération finale, puis décide si la réponse doit être acceptée ou révisée.
-
-\begin{figure}[H]
-\centering
-\caption{Workflow agentique orchestré dans LangGraph Studio}
-\label{fig:eval_langgraph_orchestration}
-\includegraphics[width=0.94\textwidth]{langchaindev.png}
-\source{Nos travaux, visualisation LangGraph Studio du workflow implémenté dans \filevar{src/08\_agentic\_graphrag/graph.py}.}
-\end{figure}
-
-La figure~\ref{fig:eval_langgraph_orchestration} montre que le système commence par le noeud \filevar{analyse\_request}. Ce noeud identifie l'intention de la requête : diagnostic, recommandation, recherche documentaire, question relationnelle Neo4j ou demande générale. Le noeud \filevar{plan\_tools} choisit ensuite les outils adaptés. Cette étape évite d'appeler toutes les bases inutilement : une question sur un métier peut mobiliser Neo4j, une question documentaire peut mobiliser pgvector sur les chunks, et une recommandation candidat--offre mobilise le moteur hybride.
-
-Le noeud \filevar{execute\_tools} exécute les outils retenus : recherche sémantique pgvector, requête Neo4j, score hybride, recherche documentaire ou diagnostic de service. Les sorties ne sont pas envoyées directement au \LLM{}. Elles passent d'abord par \filevar{build\_context}, qui transforme les résultats hétérogènes en contexte lisible : offres candidates, compétences communes, compétences manquantes, relations du graphe, fragments documentaires et métadonnées. Le noeud \filevar{generate\_final\_answer} produit ensuite la réponse finale à partir de ce contexte.
-
-La boucle \filevar{generate\_final\_answer} $\rightarrow$ \filevar{expand\_context} est le point de contrôle principal. Si le critic estime que la réponse est insuffisamment ancrée dans les preuves, le workflow ne se contente pas d'afficher une réponse fragile : il élargit le contexte, relance les outils nécessaires, reconstruit le contexte et régénère la réponse. La décision \filevar{accept} signifie donc que le score de fidélité dépasse le seuil opérationnel calibré ; la décision \filevar{revise} signifie que le système doit chercher davantage de preuves avant de répondre.
-
-Cette orchestration donne une cohérence applicative aux métriques du chapitre. Le Recall@10 et le NDCG@10 évaluent la qualité des résultats récupérés avant génération ; le reranking Neo4j évalue la capacité à réordonner le vivier ; le critic contrôle l'ancrage de la réponse finale ; LangGraph relie ces étapes dans une chaîne exécutable et traçable. La performance du système ne dépend donc pas seulement d'un modèle ou d'une base, mais de la coordination contrôlée entre pgvector, Neo4j, le score hybride, le \LLM{} et le critic.
-
 \section*{Conclusion}
 
 L'évaluation montre trois résultats principaux. Premièrement, le fine-tuning du modèle d'embeddings améliore fortement le retrieval sémantique, avec un Recall@10 de 0.8520 et un NDCG@10 de 0.6336. Deuxièmement, l'ajout de Neo4j améliore le classement des offres dans le pool pgvector : le NDCG@10 passe de 0.5575 à 0.7392 et le MRR@10 de 0.6908 à 0.8093. Troisièmement, le critic distingue correctement les réponses ancrées dans leur contexte des réponses confrontées à un contexte mélangé, ce qui justifie le seuil opérationnel de 0,46.
@@ -1866,7 +1852,6 @@ La limite principale reste l'absence d'annotation humaine indépendante. Les ré
 \chapter*{Conclusion générale}
 \markboth{Conclusion générale}{Conclusion générale}
 \addcontentsline{toc}{chapter}{Conclusion générale}
-\vspace*{-1cm}
 Ce mémoire avait pour objectif de concevoir et d'évaluer un système de recommandation hybride pour le rapprochement entre offres d'emploi, profils candidats, compétences et référentiels métier. Le choix retenu n'a pas été de confier toute la décision à un modèle génératif, mais de construire une chaîne contrôlée : nettoyage des données, adaptation des embeddings au domaine emploi--compétences, indexation vectorielle avec pgvector, structuration relationnelle dans Neo4j, reranking hybride, puis génération augmentée par un workflow agentique.
 
 Les résultats obtenus montrent que chaque brique joue un rôle distinct. Le modèle d'embeddings améliore la récupération des éléments proches dans l'espace sémantique. pgvector fournit une mémoire rapide pour retrouver les offres, compétences et fragments documentaires pertinents. Neo4j apporte une lecture relationnelle du matching : il permet d'exploiter les liens entre métiers, compétences, formations et référentiels, puis d'améliorer le classement initial par un score de graphe. Enfin, l'orchestration LangGraph organise ces traitements dans un workflow exploitable par l'application, depuis l'analyse de la requête jusqu'à la génération de la réponse finale.
