@@ -222,7 +222,7 @@ Le benchmark multi-modèles confirme le résultat. Le modèle fine-tuné atteint
   \caption{Projection UMAP des embeddings indexés}
   \label{fig:implementation_espace_vectoriel}
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/07_espace_vectoriel_embeddings.png}
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
+  \source{Nos travaux, traitements Python et SentenceTransformer}
 \end{figure}
 
 La figure \ref{fig:implementation_espace_vectoriel} utilise UMAP pour projeter en deux dimensions un échantillon de 1\,810 embeddings indexés : 350 candidats, 350 offres, 350 compétences, 350 métiers, 209 groupes de base MEPC et 201 domaines détaillés NCF. UMAP est ici un outil de lecture visuelle. 
@@ -245,23 +245,20 @@ La visualisation doit enfin être lue avec discipline. UMAP ne prouve pas que le
 \section{Mémoire vectorielle pgvector pour le retrieval}
 
 Dans le workflow, pgvector intervient juste après l'encodage des entités par le modèle fine-tuné. Il constitue le premier étage du retrieval de l'Agentic RAG : transformer une requête, un profil ou un fragment documentaire en vecteur, récupérer rapidement un top-$K$ d'objets proches, puis transmettre ce vivier au moteur hybride et au graphe Neo4j. pgvector ne décide donc pas seul de la recommandation finale ; il fournit la liste de départ que le graphe va contrôler.
-
 \subsection{Schéma physique, tables et volumes indexés}
-
+La figure \ref{fig:implementation_schema_pgvector} donne la lecture la plus simple de la brique pgvector. La table \texttt{embeddings} stocke les vecteurs des entités structurées : candidats, offres, compétences, métiers, groupes \MEPC{} et domaines \NCF{}. La table \texttt{doc\_chunks} stocke les fragments documentaires issus des référentiels. Les index spécialisés servent ensuite à interroger ces deux familles d'objets par similarité vectorielle, par recherche textuelle, par type d'entité, par modèle d'embedding ou par identifiant Neo4j.
 \begin{figure}[H]
   \centering
-  \caption{Schéma physique de la base pgvector : tables documentaires, embeddings et index de recherche}
+  \caption{Schéma physique de la base pgvector}
   \label{fig:implementation_schema_pgvector}
   \includegraphics[width=0.96\textwidth]{pgvector.png}
   \source{Nos travaux, diagnostics PostgreSQL--pgvector}
 \end{figure}
-
-La figure \ref{fig:implementation_schema_pgvector} donne la lecture la plus simple de la brique pgvector. La table \texttt{embeddings} stocke les vecteurs des entités structurées : candidats, offres, compétences, métiers, groupes \MEPC{} et domaines \NCF{}. La table \texttt{doc\_chunks} stocke les fragments documentaires issus des référentiels. Les index spécialisés servent ensuite à interroger ces deux familles d'objets par similarité vectorielle, par recherche textuelle, par type d'entité, par modèle d'embedding ou par identifiant Neo4j.
-
 Cette séparation évite une confusion fréquente : pgvector n'est pas seulement une colonne \texttt{vector}. C'est une couche de retrieval qui associe trois informations dans la même base : le vecteur, les métadonnées métier et le lien vers Neo4j. Le schéma suffit donc à comprendre les deux tables utiles : \texttt{embeddings} pour les entités structurées et \texttt{doc\_chunks} pour les fragments documentaires. Le détail technique des champs n'est pas répété ici, car l'image présente déjà la structure physique de la base.
 
 Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les vecteurs ont une dimension de 384, ce qui limite le coût de stockage et de recherche tout en restant adapté au retrieval sémantique. L'instance courante contient 72\,643 embeddings d'entités structurées et 142 embeddings documentaires, soit 72\,785 vecteurs interrogeables.
 
+Cette distribution montre que pgvector couvre les deux côtés du matching. Les candidats représentent 56,85\,\% des embeddings et les offres 19,22\,\%. Les compétences et métiers forment le vocabulaire pivot qui permet de relier une similarité textuelle à une logique emploi--compétences. La couverture Neo4j de 100\,\% est le point décisif : chaque résultat vectoriel peut être replacé dans le graphe pour récupérer secteur, niveau, localisation, compétences reliées ou chemin explicatif.
 \begin{table}[H]
   \centering
   \caption{Distribution des embeddings par type d'entité}
@@ -283,11 +280,8 @@ Le modèle d'encodage utilisé est \texttt{all-MiniLM-L6-v2-ft-offres-cm}. Les v
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
-  \source{Nos travaux, diagnostics PostgreSQL--pgvector, à partir des embeddings, des métadonnées et des fragments documentaires indexés.}
+  \source{Nos travaux, diagnostics PostgreSQL-pgvector.}
 \end{table}
-
-Cette distribution montre que pgvector couvre les deux côtés du matching. Les candidats représentent 56,85\,\% des embeddings et les offres 19,22\,\%. Les compétences et métiers forment le vocabulaire pivot qui permet de relier une similarité textuelle à une logique emploi--compétences. La couverture Neo4j de 100\,\% est le point décisif : chaque résultat vectoriel peut être replacé dans le graphe pour récupérer secteur, niveau, localisation, compétences reliées ou chemin explicatif.
-
 \subsection{Référentiels découpés en chunks interrogeables}
 
 Les référentiels ne sont pas indexés comme de simples PDF. Ils sont d'abord découpés en fragments documentaires, puis chaque fragment reçoit un embedding et un identifiant Neo4j. Les documents référentiels ajoutent 142 chunks : 43 pour les diplômes, 61 pour le MEPC 2013 et 38 pour la NCF 2017. Cette double indexation est nécessaire au GraphRAG : pgvector retrouve le passage pertinent, puis Neo4j le rattache à une formation, un métier, un niveau ou un domaine.
@@ -304,23 +298,27 @@ La figure~\ref{fig:implementation_chunking_pipeline} situe précisément cette �
 
 \begin{figure}[H]
   \centering
-  \caption{Distribution des tailles, sources et couverture du chunking documentaire}
-  \label{fig:implementation_chunking_diagnostics}
-  \includegraphics[width=0.5\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \begin{minipage}[t]{0.54\textwidth}
+    \centering
+    \caption{Distribution des tailles, sources et couverture du chunking documentaire}
+    \label{fig:implementation_chunking_diagnostics}
+    \includegraphics[width=\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
+    \source{Nos travaux, diagnostics Python du chunking documentaire.}
+  \end{minipage}\hfill
+  \begin{minipage}[t]{0.43\textwidth}
+    \centering
+    \caption{Distribution de la cohérence sémantique intra-chunk par source}
+    \label{fig:implementation_chunking_coherence}
+    \includegraphics[width=\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
+    \source{Nos travaux, mesure Python de la similarité cosinus moyenne entre les phrases de chaque chunk.}
+  \end{minipage}
 \end{figure}
 
-La figure~\ref{fig:implementation_chunking_diagnostics} vérifie que le pipeline produit des unités interrogeables. La médiane de 116 tokens est adaptée au retrieval : les passages sont assez courts pour être précis, mais assez longs pour conserver un contexte de section. La forte variabilité, avec un coefficient de variation de 0,91, vient de la structure des référentiels : certaines sections sont de simples intitulés, d'autres contiennent des listes ou descriptions plus longues. Ce n'est pas une erreur de traitement ; c'est un signal de surveillance. Les très petits chunks risquent d'être peu informatifs, tandis que les plus longs peuvent mélanger plusieurs idées.
+Les figures~\ref{fig:implementation_chunking_diagnostics} et~\ref{fig:implementation_chunking_coherence} évaluent deux propriétés complémentaires. La première décrit la forme des unités indexées. Les 142 chunks se répartissent entre le MEPC 2013 (61), les diplômes (43) et la NCF 2017 (38). Leur taille médiane est de 116 tokens, mais la distribution est hétérogène : de nombreux fragments contiennent moins de 100 tokens, tandis qu'un second groupe dépasse 400 tokens. Cette dispersion traduit la structure des documents sources, composés à la fois d'intitulés courts et de sections descriptives plus développées. Elle impose toutefois de surveiller les extrêmes : un fragment très court fournit peu de contexte, alors qu'un fragment très long peut contenir plusieurs informations distinctes.
 
-\begin{figure}[H]
-  \centering
-  \caption{Distribution de la cohérence sémantique intra-chunk par source}
-  \label{fig:implementation_chunking_coherence}
-  \includegraphics[width=0.4\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-\end{figure}
+La couverture documentaire affichée dans la figure~\ref{fig:implementation_chunking_diagnostics} est un indicateur approximatif, calculé comme le rapport entre le nombre de tokens conservés dans les chunks et le nombre de tokens extraits des PDF. Sa moyenne de 42,9\,\% ne signifie donc pas que 57,1\,\% des connaissances utiles ont nécessairement été perdues : le texte écarté peut inclure des en-têtes, sommaires, répétitions ou éléments sans valeur pour le retrieval. En revanche, les faibles ratios du MEPC 2013 et de la NCF 2017 signalent qu'un contrôle manuel par échantillonnage reste nécessaire pour vérifier que les sections métier importantes ont bien été conservées.
 
-La figure~\ref{fig:implementation_chunking_coherence} complète cette lecture par source. La cohérence sémantique moyenne vaut 0,303 : les chunks restent exploitables, mais ils ne sont pas toujours très homogènes. Cette valeur est cohérente avec des référentiels administratifs qui combinent codes, titres, listes et descriptions courtes. L'interprétation pratique est claire : le chunking structurel respecte bien la logique réglementaire, mais les réponses RAG doivent citer les passages récupérés et éviter de surinterpréter un chunk très court ou trop composite. Les mesures détaillées sont reportées en annexe aux tableaux~\ref{tab:implementation_chunking_coverage_duplication}, \ref{tab:implementation_pgvector_chunking} et \ref{tab:implementation_chunking_coherence}.
+La figure~\ref{fig:implementation_chunking_coherence} examine ensuite le contenu interne des fragments. La cohérence correspond à la similarité cosinus moyenne entre les phrases d'un même chunk : plus elle est élevée, plus les phrases traitent d'un sujet commun. La NCF 2017 présente la cohérence moyenne la plus forte (0,336), devant le MEPC 2013 (0,307) et les diplômes (0,268). Les chunks issus des diplômes sont donc les plus variables et comportent notamment une valeur très faible proche de 0,07, signe d'un fragment susceptible de réunir des phrases peu liées. La moyenne globale de 0,303 ne démontre pas, à elle seule, une bonne qualité absolue ; elle montre surtout que le découpage structurel préserve mieux l'unité thématique de la NCF que celle des documents de diplômes. Pour le GraphRAG, ces résultats justifient le maintien des métadonnées de source, la citation du passage récupéré et une vigilance particulière sur les chunks très courts, très longs ou faiblement cohérents. Les mesures détaillées sont reportées en annexe aux tableaux~\ref{tab:implementation_chunking_coverage_duplication}, \ref{tab:implementation_pgvector_chunking} et \ref{tab:implementation_chunking_coherence}.
 
 \subsection{Index et modes de recherche mobilisés}
 
@@ -338,7 +336,7 @@ Dans le workflow, Neo4j intervient après le rappel pgvector. pgvector propose d
   \centering
   \caption{Schéma logique du graphe de connaissances}
   \label{fig:implementation_schema_graphe}
-  \includegraphics[width=0.3\textwidth]{figures/generated/implementation_deep_current/11_schema_graphe_connaissances.png}
+  \includegraphics[width=0.5\textwidth]{schema.png}
   \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
 
@@ -394,6 +392,32 @@ Cette structure impose toutefois une lecture prudente. Comme les relations de co
 La distribution complète des degrés est placée en annexe (figure~\ref{fig:implementation_neo4j_distribution_degres}). La distribution des degrés est fortement asymétrique. L'estimation exploratoire d'une loi de puissance sur la queue de distribution donne un exposant compris entre 1,40 et 2,51 selon le seuil $x_{\min}$ retenu. Ce n'est pas une preuve formelle de loi de puissance, mais un diagnostic utile : le graphe comporte bien des hubs. Dans un système de recommandation, ces hubs doivent être traités avec prudence. Une compétence très connectée n'est pas automatiquement discriminante ; elle peut simplement être générique, très fréquente ou issue d'un référentiel large.
 
 Le tableau d'hétérogénéité des degrés par famille de noeuds est reporté en annexe (tableau~\ref{tab:implementation_neo4j_degres}). Les degrés moyens montrent une forte hétérogénéité. Les noeuds \texttt{NiveauFormationNCF} ont un degré moyen de 5\,812,56, parce que neuf niveaux seulement absorbent une grande partie des relations candidat--niveau et offre--niveau. Les \texttt{GroupeBaseMEPC}, les \texttt{Secteur}, les \texttt{Métier}, les \texttt{Localisation} et les \texttt{Compétence} jouent aussi un rôle de concentration. Cette hétérogénéité est une force pour l'explication, mais une faiblesse pour le scoring si elle n'est pas normalisée : le graphe peut favoriser des noeuds populaires au lieu de noeuds réellement informatifs.
+
+\subsubsection{Compétences pivots selon degré, PageRank et intermédiarité}
+
+\begin{figure}[H]
+  \centering
+  \caption{Centralités des compétences : degré, PageRank et intermédiarité approximée}
+  \label{fig:implementation_neo4j_centralites_competences}
+  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/15_neo4j_centralites_competences.png}
+  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+\end{figure}
+
+Les centralités donnent trois lectures complémentaires. La centralité de degré et le PageRank identifient surtout les compétences les plus connectées, par exemple \og coordonner le transport \fg{}, \og respecter le planning de travail dans les transports \fg{}, \og gérer le transport de fonds \fg{} et \og comptabilité \fg{}. L'intermédiarité approximée, calculée sur le sous-graphe des noeuds de plus fort degré, fait ressortir d'autres compétences : \og utiliser différents moyens de communication \fg{}, \og gérer les budgets \fg{}, \og former le personnel \fg{}, \og normes de qualité \fg{} et \og assurer la gestion de projets \fg{}. Ces dernières sont plus intéressantes pour la recommandation, car elles jouent un rôle de passerelle entre plusieurs familles de métiers.
+
+Les exemples de compétences centrales selon les métriques de graphe sont placés en annexe (tableau~\ref{tab:implementation_neo4j_centralites}).
+
+La distinction entre degré, PageRank et intermédiarité est importante. Un noeud à fort degré est fréquent ; il peut donc être utile, mais peu discriminant. Un noeud avec PageRank élevé structure le réseau parce qu'il est relié à des noeuds eux-mêmes importants. Un noeud avec intermédiarité élevée sert de passerelle entre plusieurs zones du graphe. Pour le \textit{skill gap}, ces compétences passerelles sont particulièrement utiles : elles indiquent des compétences transversales qui peuvent rapprocher plusieurs trajectoires professionnelles. Dans le moteur hybride, cela justifie de ne pas traiter toutes les compétences manquantes de la même manière.
+
+\subsubsection{Communautés Louvain et robustesse aux hubs}
+
+Les communautés Louvain et distances sont détaillées en annexe (figure~\ref{fig:implementation_neo4j_communautes}).
+
+La détection de communautés a été réalisée avec Louvain sur un échantillon pondéré de la composante géante, enrichi par les noeuds de plus fort degré afin de conserver l'ossature du réseau. Elle identifie 100 communautés dans la projection analysée. Ce résultat ne doit pas être vendu comme une typologie définitive des métiers ; il sert à vérifier que le graphe contient des regroupements relationnels exploitables. La distance moyenne échantillonnée dans la composante géante vaut 4,10 sauts, avec une médiane de 4. En pratique, cela signifie qu'un candidat, une offre, une compétence ou un métier peut être relié au reste du réseau par quelques relations seulement, ce qui rend le GraphRAG opérationnel pour produire des chemins explicatifs courts.
+
+Le test de robustesse après retrait des hubs est reporté en annexe (figure~\ref{fig:implementation_neo4j_robustesse}).
+
+Le test de robustesse retire successivement les 1\,\%, 5\,\% et 10\,\% de noeuds les plus centraux selon le degré, puis mesure la taille de la composante géante restante. Ce test est sévère, car il cible les hubs au lieu de supprimer des noeuds au hasard. Son intérêt est de mesurer la dépendance du graphe à quelques entités très connectées. Si la composante géante s'effondre fortement après retrait des hubs, cela signifie que le système dépend excessivement de compétences ou niveaux génériques. Dans ce cas, le reranking doit pénaliser les hubs trop peu discriminants et valoriser les compétences spécifiques.
 
 \subsubsection{Skill gap observé entre profils et offres}
 
