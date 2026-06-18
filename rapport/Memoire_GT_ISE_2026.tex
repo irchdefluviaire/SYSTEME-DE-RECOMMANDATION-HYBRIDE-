@@ -6,7 +6,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[sc]{mathpazo}
-\usepackage[french]{babel}
+\usepackage[french,shorthands=off]{babel}
 \usepackage[left=2cm,right=2cm,top=2cm,bottom=2cm]{geometry}
 \usepackage{setspace}
 
@@ -276,7 +276,7 @@
     \interlinepenalty\@M
     \hrule
     \vspace*{6\p@}
-    \Huge \bfseries #1\par\nobreak
+    \Huge \bfseries \MakeUppercase{#1}\par\nobreak
     \par
     \vspace*{6\p@}
     \hrule
@@ -292,7 +292,7 @@
     \interlinepenalty\@M
     \hrule
     \vspace*{6\p@}
-    \Huge \bfseries #1\par\nobreak
+    \Huge \bfseries \MakeUppercase{#1}\par\nobreak
     \par
     \vspace*{6\p@}
     \hrule
@@ -459,7 +459,7 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 \pagenumbering{roman}
 \begin{singlespace}
 
-\chapter*{Dédicace}
+\chapter*{DÉDICACE}
 \markboth{Dédicace}{Dédicace}
 \addcontentsline{toc}{chapter}{Dédicace}
 \begin{flushright}
@@ -467,7 +467,7 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 \end{flushright}
 
 
-\chapter*{Remerciements}
+\chapter*{REMERCIEMENTS}
 \markboth{Remerciements}{Remerciements}
 \addcontentsline{toc}{chapter}{Remerciements}
 
@@ -483,7 +483,7 @@ Statisticien Économiste(ISE)}}}\\[0.2cm]
 %\end{spacing}
 
 
-\chapter*{Liste des sigles et abréviations}
+\chapter*{LISTE DES SIGLES ET ABRÉVIATIONS}
 \markboth{Liste des sigles et abréviations}{Liste des sigles et abréviations}
 \addcontentsline{toc}{chapter}{Liste des sigles et abréviations}
 
@@ -548,7 +548,7 @@ SR : & Système de Recommandation \\
 \addcontentsline{toc}{chapter}{Liste des figures}
 
 
-\chapter*{Avant-propos}
+\chapter*{AVANT-PROPOS}
 \markboth{Avant-propos}{Avant-propos}
 \addcontentsline{toc}{chapter}{Avant-propos}
 % Présenter l'ISSEA et ses missions ici.
@@ -564,7 +564,7 @@ LLMs et des graphes de connaissances ». Il vise principalement à concevoir une
 
 Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologique, il cherche à montrer comment les modèles de représentation sémantique, les bases vectorielles et les graphes de connaissances peuvent être combinés pour traiter un problème réel d’appariement sur le marché du travail. Sur le plan opérationnel, il propose une démarche reproductible susceptible d’aider KmerAI à développer des outils de recommandation, d’orientation et de montée en compétences adaptés aux besoins des candidats, des recruteurs et des acteurs de la formation.
 
-\chapter*{Résumé}
+\chapter*{RÉSUMÉ}
 \markboth{Résumé}{Résumé}
 \addcontentsline{toc}{chapter}{Résumé}
 % Contexte, problématique, méthode, résultats clés (Max 250 mots).
@@ -575,7 +575,7 @@ Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologiq
 \textbf{Mots-clés :} Économétrie, Statistique, Développement...
 
 
-\chapter*{Abstract}
+\chapter*{ABSTRACT}
 \markboth{Abstract}{Abstract}
 \addcontentsline{toc}{chapter}{Abstract}
 % Version anglaise du résumé.
@@ -674,7 +674,7 @@ Afin de répondre à la problématique, cette étude repose sur les hypothèses 
 \end{itemize}
 \vspace{-0.5cm}
 \section*{Méthodologie de l'étude}
-\markright{{Méthodologie de l'étude}
+\markright{Méthodologie de l'étude}
 La démarche adoptée s’inscrit dans un cadre d’ingénierie des données combinant structuration des connaissances et modélisation hybride. Elle repose sur la collecte et la normalisation des données issues d’offres d’emploi sur les différentes sites web et de profils, alignées sur la NCM 2013 afin d’assurer la cohérence sémantique. Un graphe de connaissances est ensuite construit sous Neo4j en intégrant les référentiels ESCO et NCM, à partir d’un processus d’extraction automatique de triplets à partir des données textuelles. Parallèlement, les descriptions sont vectorisées et indexées dans un espace sémantique permettant la mesure de similarité. Le moteur de recommandation combine ces différentes sources d’information à travers un score hybride articulant similarité vectorielle et signal relationnel issu du graphe. Le système permet ainsi d’identifier les écarts de compétences entre profils et offres, et de générer des recommandations sous forme de trajectoires d’apprentissage. L’évaluation repose sur des métriques standard telles que la précision@K, le rappel et le NDCG, ainsi que sur l’analyse de la cohérence des recommandations générées.
 \section*{Outils techniques mobilisés pour l'étude}
 La réalisation du système mobilise Python pour l’ETL, l’analyse et l’entraînement ; SentenceTransformers et PyTorch pour les embeddings ; PostgreSQL avec pgvector pour la mémoire vectorielle ; Neo4j pour la mémoire relationnelle ; LangGraph/LangChain pour l’orchestration agentique ; Optuna pour la calibration du score hybride ; FastAPI et Streamlit pour l’exposition applicative. Les traitements ont été exécutés sur un ordinateur local de type AMD64 disposant de 8 processeurs logiques et d’environ 15,25 Go de mémoire vive. PyTorch y est disponible en mode CPU, sans GPU CUDA détecté. Cette contrainte matérielle justifie les choix d’implémentation retenus : modèle d’embeddings léger, vecteurs de dimension 384, lots d’entraînement contrôlés et recours à une API externe pour la génération finale.
@@ -1162,7 +1162,7 @@ Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le mod
 
 \fi
 
-\chapter{SOURCES DE DONNEES ET APPROCHE METHODOLOGIQUE}
+\chapter{SOURCES DE DONNÉES ET APPROCHE MÉTHODOLOGIQUE}
 Ce chapitre précise les données mobilisées et la logique de construction du système. Il ne présente pas encore les résultats : il explique comment les sources sont préparées, comment elles sont représentées, puis comment elles sont interrogées par un workflow hybride.
 
 \section{Cadre méthodologique et sources de données}
@@ -1523,6 +1523,8 @@ La capture de cette interface est reportée en annexe à la figure~\ref{fig:inte
 
 La troisième manière est l'API FastAPI implémentée dans \filevar{src/06\_api}. Elle expose des routes pour la recommandation, le skill gap, l'encodage, le chat et la santé du système. Au démarrage, l'API initialise le modèle SentenceTransformer, la connexion Neo4j, la connexion pgvector et le moteur de recommandation. L'API prévoit également un mode dégradé lorsque certains services ne sont pas disponibles, ce qui rend le système plus robuste pendant les tests.
 
+La documentation interactive de cette API est reportée en annexe à la figure~\ref{fig:api_fastapi_endpoints}. Elle montre que l'exposition applicative suit le même workflow que le système interne. Les routes \filevar{/recommend/} et \filevar{/recommend/candidat/\{candidat\_id\}} appellent le moteur de recommandation pour combiner la récupération vectorielle et le score issu du graphe. La route \filevar{/skill-gap/} sert à comparer les compétences d'un candidat avec celles attendues par une offre. La route \filevar{/embed/} vérifie l'encodage des textes en vecteurs de dimension 384. Enfin, les routes \filevar{/offre/} et \filevar{/offre/\{offre\_id\}} donnent accès aux informations d'offres nécessaires à l'interprétation des résultats.
+
 \begin{table}[H]
   \centering
   \caption{Modes d'accès au système implémenté}
@@ -1579,7 +1581,7 @@ La force de cette implémentation tient dans son caractère hybride et traçable
 \fi
 
 
-\chapter{Évaluation de la performance du système}
+\chapter{ÉVALUATION DE LA PERFORMANCE DU SYSTÈME}
 Ce chapitre évalue le système implémenté au chapitre précédent. Il ne répète pas la description technique des briques ; il vérifie ce que ces briques apportent effectivement au fonctionnement du système. L'évaluation suit donc une logique en cinq niveaux : qualité du retrieval sémantique, effet du graphe sur le classement, validité fonctionnelle des requêtes GraphRAG, calibration du score hybride et contrôle de la génération finale par le critic.
 
 Deux précautions guident l'interprétation. Premièrement, l'évaluation du classement est conduite sans génération \LLM{} : elle mesure la qualité du retrieval et du reranking, non la qualité rédactionnelle de la réponse. Deuxièmement, la pertinence utilisée dans l'ablation est le proxy défini dans la méthodologie à partir du recouvrement lexical, de l'alignement sectoriel et de la compatibilité \NCF{}. Sa valeur continue sert de gain pour le NDCG ; sa version binarisée par le seuil $\max(0{,}35,Q_{0{,}70})$ sert à Precision, Recall et MRR. Ce label faible permet de comparer les variantes du système, mais ne remplace pas une annotation humaine par des recruteurs ou des conseillers métier.
@@ -1812,7 +1814,7 @@ L'évaluation montre trois résultats principaux. Premièrement, le fine-tuning 
 
 La limite principale reste l'absence d'annotation humaine indépendante. Les résultats démontrent la cohérence interne du système et l'intérêt mesurable du graphe dans le protocole actuel. Ils ne prouvent pas encore la satisfaction d'un recruteur, d'un candidat ou d'un conseiller d'orientation. Cette limite doit être assumée : le système est techniquement validé sur ses sorties internes, mais son évaluation métier finale devra passer par un jeu annoté et des tests utilisateurs.
 
-\chapter*{Conclusion générale}
+\chapter*{CONCLUSION GÉNÉRALE}
 \markboth{Conclusion générale}{Conclusion générale}
 \addcontentsline{toc}{chapter}{Conclusion générale}
 Ce mémoire avait pour objectif de concevoir et d'évaluer un système de recommandation hybride pour le rapprochement entre offres d'emploi, profils candidats, compétences et référentiels métier. Le choix retenu n'a pas été de confier toute la décision à un modèle génératif, mais de construire une chaîne contrôlée : nettoyage des données, adaptation des embeddings au domaine emploi--compétences, indexation vectorielle avec pgvector, structuration relationnelle dans Neo4j, reranking hybride, puis génération augmentée par un workflow agentique.
@@ -1841,7 +1843,7 @@ Au total, le système proposé constitue une base opérationnelle de recommandat
 \markboth{Bibliographie}{Bibliographie}
 \printbibliography
 
-\chapter{Annexes}
+\chapter{ANNEXES}
 % Questionnaires, codes, tableaux volumineux.
 \begin{figure}[H]
   \centering
@@ -1857,6 +1859,14 @@ Au total, le système proposé constitue une base opérationnelle de recommandat
   \label{fig:interface_streamlit_chatbot}
   \includegraphics[width=0.92\textwidth]{chatbot.png}
   \source{Nos travaux, capture locale de l'interface \filevar{chatbot\_app.py}.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \caption{Documentation interactive des endpoints FastAPI}
+  \label{fig:api_fastapi_endpoints}
+  \includegraphics[width=0.86\textwidth]{api1.png}
+  \source{Nos travaux, capture locale de la documentation FastAPI générée à partir de \filevar{src/06\_api/main.py}.}
 \end{figure}
 
 \begin{table}[H]
