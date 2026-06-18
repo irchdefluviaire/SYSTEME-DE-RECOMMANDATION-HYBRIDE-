@@ -622,15 +622,10 @@ de montée en compétences.
 
 Par ailleurs, si des référentiels structurants existent notamment la Nomenclature Camerounaise des Métiers (NCM 2013), le référentiel européen \ESCO{} et la Nomenclature Camerounaise des Formations (\NCF{}), leur intégration opérationnelle dans les plateformes et outils d'appariement reste encore limitée. Ils sont peu exploités pour aligner les intitulés locaux de métiers sur des standards internationaux, harmoniser les compétences attendues, qualifier les niveaux et domaines de formation, et rendre les correspondances profil--offre plus transparentes et comparables. Il en résulte un décalage entre la richesse potentielle de ces référentiels et leur usage effectif dans les systèmes d'information dédiés à l'emploi et à l'orientation.
 
-Dans ce contexte, la question centrale n'est plus seulement d'apparier un profil à une offre, 
-mais de concevoir un système capable (i) d'exploiter conjointement les référentiels \NCM{}, \ESCO{} et \NCF{} 
-pour structurer les métiers, les compétences et les formations, (ii) de mesurer finement le \emph{skill gap} entre 
-un candidat et un poste cible, et (iii) de proposer un parcours de montée en compétences 
-compatible avec le niveau, le domaine de formation et les trajectoires de qualification du candidat. La question principale de recherche peut ainsi être formulée comme suit :
+Dans ce contexte, la question centrale n'est plus seulement d'apparier un profil à une offre, mais celle de savoir :
 \begin{quote}
-\textit{\textbf{Comment concevoir un système de recommandation hybride, fondé sur les LLMs, 
-les graphes de connaissances, les embeddings vectoriels
-et le filtrage collaboratif, capable de mesurer le \emph{skill gap} entre un profil 
+\textit{\textbf{Comment concevoir un système de recommandation hybride, fondé sur les LLMs et 
+les graphes de connaissances, capable de mesurer le \emph{skill gap} entre un profil 
 et une offre d'emploi, puis de recommander un parcours de montée en compétences cohérent avec la nomenclature des formations, le niveau du candidat et le métier visé pour les membres de la communauté KmerAi ?}}
 \end{quote}
 
@@ -654,33 +649,21 @@ Cette question générale se décline en plusieurs questions de recherche sous-j
 \end{itemize}
 
 \vspace{-0.5cm}
-\section*{Objectifs de l'étude}
+\section*{Objectifs visés dans l'étude}
 \markright{Objectifs de l'étude}
-
-\textbf{Objectif général.} L'objectif général de cette étude est de concevoir et d'évaluer un système de recommandation hybride emploi--compétences pour appuyer la décision de recrutement et la montée en compétence. Le système rapproche les profils candidats et les offres d'emploi en combinant recherche sémantique, référentiels métiers et formations, graphe de connaissances et analyse explicable du \emph{skill gap}. Il vise ainsi à identifier les offres accessibles, les écarts de compétences, les profils à conserver en vivier et les compétences à développer.
-
-\textbf{Objectifs spécifiques.} Plus spécifiquement, il s'agit de :
-
+L'objectif général de cette étude est de \textbf{concevoir et d'évaluer un système de recommandation hybride emploi-compétences} pour appuyer la décision de recrutement et la montée en compétence. Plus spécifiquement, il s'agit de :
 \begin{itemize}
     \item normaliser les offres et profils, puis les aligner avec les référentiels \ESCO{}, \MEPC{} et \NCF{} pour obtenir des variables de matching fiables;
-    \item adapter un modèle \textit{SentenceTransformer} au domaine emploi--compétences et stocker ses embeddings dans \texttt{pgvector};
-    \item construire un graphe Neo4j des relations candidats--offres--compétences et définir un score hybride de recommandation;
-    \item orchestrer le pipeline avec \textit{LangGraph}, produire des verdicts interprétables et évaluer le retrieval par Recall@K, NDCG@K, MRR@K et MAP@K.
+    \item adapter un modèle de type \textit{encodeur} au domaine emploi-compétences et stocker ses embeddings;
+    \item construire un graphe Neo4j des relations candidats-offres-compétences et définir un score hybride de recommandation;
+    \item orchestrer et évaluer la pipeline de production des verdicts du système.
 \end{itemize}
-
-
-
-
-
-
-
-
-\vspace{-0.5cm}
+%\vspace{-0.5cm}
 \section*{Intérêt de l'étude }
 \markright{Intérêt de l'étude}
 L’intérêt d’une telle approche est renforcé par les limites des méthodes classiques de recrutement, souvent fondées sur des critères statiques ou sur des mots-clés, qui ne captent pas toujours la richesse des parcours et des compétences. En combinant différentes logiques de recommandation, un système hybride peut mieux prendre en compte les dimensions explicites et implicites des profils candidats, tout en améliorant la qualité des correspondances proposées. Cela rejoint la mission de KmerAI, qui vise à favoriser l’appropriation locale de l’IA pour résoudre des problèmes concrets du développement camerounais.
 \vspace{-0.5cm}
-\section*{Hypothèses de recherche}
+\section*{Hypothèses de l'étude}
 \markright{Hypothèses de recherche}
 Afin de répondre à la problématique, cette étude repose sur les hypothèses suivantes. 
 \begin{itemize}
@@ -690,19 +673,16 @@ Afin de répondre à la problématique, cette étude repose sur les hypothèses 
     \item \textbf{H4 :} La combinaison d'un RAG vectoriel, d'un GraphRAG et d'un score de recommandation hybride améliore la pertinence et l'explicabilité des recommandations de \emph{skill gap} et de parcours de montée en compétences, notamment lorsque ces parcours sont contraints par la nomenclature des formations.
 \end{itemize}
 \vspace{-0.5cm}
-\section*{Méthodologie de recherche}
-\markright{Méthodologie de recherche}
+\section*{Méthodologie de l'étude}
+\markright{{Méthodologie de l'étude}
 La démarche adoptée s’inscrit dans un cadre d’ingénierie des données combinant structuration des connaissances et modélisation hybride. Elle repose sur la collecte et la normalisation des données issues d’offres d’emploi sur les différentes sites web et de profils, alignées sur la NCM 2013 afin d’assurer la cohérence sémantique. Un graphe de connaissances est ensuite construit sous Neo4j en intégrant les référentiels ESCO et NCM, à partir d’un processus d’extraction automatique de triplets à partir des données textuelles. Parallèlement, les descriptions sont vectorisées et indexées dans un espace sémantique permettant la mesure de similarité. Le moteur de recommandation combine ces différentes sources d’information à travers un score hybride articulant similarité vectorielle et signal relationnel issu du graphe. Le système permet ainsi d’identifier les écarts de compétences entre profils et offres, et de générer des recommandations sous forme de trajectoires d’apprentissage. L’évaluation repose sur des métriques standard telles que la précision@K, le rappel et le NDCG, ainsi que sur l’analyse de la cohérence des recommandations générées.
-
+\section*{Outils techniques mobilisés pour l'étude}
 La réalisation du système mobilise Python pour l’ETL, l’analyse et l’entraînement ; SentenceTransformers et PyTorch pour les embeddings ; PostgreSQL avec pgvector pour la mémoire vectorielle ; Neo4j pour la mémoire relationnelle ; LangGraph/LangChain pour l’orchestration agentique ; Optuna pour la calibration du score hybride ; FastAPI et Streamlit pour l’exposition applicative. Les traitements ont été exécutés sur un ordinateur local de type AMD64 disposant de 8 processeurs logiques et d’environ 15,25 Go de mémoire vive. PyTorch y est disponible en mode CPU, sans GPU CUDA détecté. Cette contrainte matérielle justifie les choix d’implémentation retenus : modèle d’embeddings léger, vecteurs de dimension 384, lots d’entraînement contrôlés et recours à une API externe pour la génération finale.
 \vspace{-0.5cm}
 \section*{Plan du travail}
 \markright{Plan du travail}
 Le mémoire est structuré en trois parties. La première présente le cadre théorique relatif aux systèmes de recommandation, aux modèles de langage et aux graphes de connaissances. La deuxième détaille l’approche méthodologique, incluant la modélisation du graphe et la conception du système hybride. La troisième analyse les résultats obtenus et discute les performances du modèle ainsi que ses implications dans le contexte du marché du travail camerounais.
-
 \part{Cadre théorique et conceptuel}
-
-
 
 \input{chapitre_fondements_litterature.tex}
 \iffalse
@@ -1182,7 +1162,7 @@ Appliquée au projet, la logique Agentic RAG peut être résumée ainsi : le mod
 
 \fi
 
-\chapter{Sources de données et approche méthodologique}
+\chapter{SOURCES DE DONNEES ET APPROCHE METHODOLOGIQUE}
 Ce chapitre précise les données mobilisées et la logique de construction du système. Il ne présente pas encore les résultats : il explique comment les sources sont préparées, comment elles sont représentées, puis comment elles sont interrogées par un workflow hybride.
 
 \section{Cadre méthodologique et sources de données}
