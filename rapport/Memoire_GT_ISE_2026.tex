@@ -656,15 +656,16 @@ Cette question générale se décline en plusieurs questions de recherche sous-j
 \vspace{-0.5cm}
 \section*{Objectifs de l'étude}
 \markright{Objectifs de l'étude}
-L'objectif général de cette étude est de concevoir et d'évaluer un système de recommandation hybride emploi-compétences capable d'aider à la décision dans le recrutement et la montée en compétence. Le système vise à rapprocher les profils de candidats et les offres d'emploi en combinant la recherche sémantique, les référentiels métiers et formations, le graphe de connaissances et une logique explicable de \emph{skill gap}. Il ne s'agit donc pas seulement de retrouver les offres textuellement proches d'un profil, mais de produire un verdict opérationnel : identifier les offres immédiatement accessibles, distinguer celles qui nécessitent une montée en compétence, signaler les profils à conserver en vivier et expliciter les compétences à développer.
 
-Plus spécifiquement, il sera question de :
+\textbf{Objectif général.} L'objectif général de cette étude est de concevoir et d'évaluer un système de recommandation hybride emploi--compétences pour appuyer la décision de recrutement et la montée en compétence. Le système rapproche les profils candidats et les offres d'emploi en combinant recherche sémantique, référentiels métiers et formations, graphe de connaissances et analyse explicable du \emph{skill gap}. Il vise ainsi à identifier les offres accessibles, les écarts de compétences, les profils à conserver en vivier et les compétences à développer.
+
+\textbf{Objectifs spécifiques.} Plus spécifiquement, il s'agit de :
 
 \begin{itemize}
-    \item normaliser et aligner les offres d'emploi et profils candidats avec les référentiels \ESCO{}, \MEPC{} et \NCF{} afin de produire des variables structurées intitulé de poste, compétences, niveau \NCF{}, secteur, localisation exploitables par le système de matching;
-    \item adapter par \emph{fine-tuning} contrastif un modèle \textit{SentenceTransformer} au domaine emploi-compétences à partir de paires offre--profil, puis indexer les représentations produites dans une base vectorielle \texttt{pgvector} pour le retrieval sémantique;
-    \item construire un graphe de connaissances sous Neo4j modélisant les relations entre candidats, offres, compétences, métiers, secteurs et niveaux \NCF{}, et concevoir un score hybride combinant similarité sémantique, couverture de compétences, compatibilité \NCF{} et alignement sectoriel;
-    \item orchestrer, via un workflow \textit{LangGraph} multi-étapes, l'ensemble du pipeline de recommandation retrieval sémantique, enrichissement graphe, analyse de \emph{skill gap}, scoring hybride, critique et replanification afin de produire des verdicts interprétables (profil prêt, montée en compétence, vivier, hors cible) accompagnés d'une trajectoire de formation, et d'évaluer la qualité du retrieval par les métriques Recall@K, NDCG@K, MRR@K et MAP@K.
+    \item normaliser les offres et profils, puis les aligner avec les référentiels \ESCO{}, \MEPC{} et \NCF{} pour obtenir des variables de matching fiables;
+    \item adapter un modèle \textit{SentenceTransformer} au domaine emploi--compétences et stocker ses embeddings dans \texttt{pgvector};
+    \item construire un graphe Neo4j des relations candidats--offres--compétences et définir un score hybride de recommandation;
+    \item orchestrer le pipeline avec \textit{LangGraph}, produire des verdicts interprétables et évaluer le retrieval par Recall@K, NDCG@K, MRR@K et MAP@K.
 \end{itemize}
 
 
@@ -691,7 +692,9 @@ Afin de répondre à la problématique, cette étude repose sur les hypothèses 
 \vspace{-0.5cm}
 \section*{Méthodologie de recherche}
 \markright{Méthodologie de recherche}
-La démarche adoptée s’inscrit dans un cadre d’ingénierie des données combinant structuration des connaissances et modélisation hybride. Elle repose sur la collecte et la normalisation des données issues d’offres d’emploi sur les différentes sites web et de profils, alignées sur la NCM 2013 afin d’assurer la cohérence sémantique. Un graphe de connaissances est ensuite construit sous Neo4j en intégrant les référentiels ESCO et NCM, à partir d’un processus d’extraction automatique de triplets à partir des données textuelles. Parallèlement, les descriptions sont vectorisées et indexées dans un espace sémantique permettant la mesure de similarité. Le moteur de recommandation combine ces différentes sources d’information à travers un score hybride intégrant similarité structurelle, similarité sémantique et signal collaboratif. Le système permet ainsi d’identifier les écarts de compétences entre profils et offres, et de générer des recommandations sous forme de trajectoires d’apprentissage. L’évaluation repose sur des métriques standard telles que la précision@K, le rappel et le NDCG, ainsi que sur l’analyse de la cohérence des recommandations générées.
+La démarche adoptée s’inscrit dans un cadre d’ingénierie des données combinant structuration des connaissances et modélisation hybride. Elle repose sur la collecte et la normalisation des données issues d’offres d’emploi sur les différentes sites web et de profils, alignées sur la NCM 2013 afin d’assurer la cohérence sémantique. Un graphe de connaissances est ensuite construit sous Neo4j en intégrant les référentiels ESCO et NCM, à partir d’un processus d’extraction automatique de triplets à partir des données textuelles. Parallèlement, les descriptions sont vectorisées et indexées dans un espace sémantique permettant la mesure de similarité. Le moteur de recommandation combine ces différentes sources d’information à travers un score hybride articulant similarité vectorielle et signal relationnel issu du graphe. Le système permet ainsi d’identifier les écarts de compétences entre profils et offres, et de générer des recommandations sous forme de trajectoires d’apprentissage. L’évaluation repose sur des métriques standard telles que la précision@K, le rappel et le NDCG, ainsi que sur l’analyse de la cohérence des recommandations générées.
+
+La réalisation du système mobilise Python pour l’ETL, l’analyse et l’entraînement ; SentenceTransformers et PyTorch pour les embeddings ; PostgreSQL avec pgvector pour la mémoire vectorielle ; Neo4j pour la mémoire relationnelle ; LangGraph/LangChain pour l’orchestration agentique ; Optuna pour la calibration du score hybride ; FastAPI et Streamlit pour l’exposition applicative. Les traitements ont été exécutés sur un ordinateur local de type AMD64 disposant de 8 processeurs logiques et d’environ 15,25 Go de mémoire vive. PyTorch y est disponible en mode CPU, sans GPU CUDA détecté. Cette contrainte matérielle justifie les choix d’implémentation retenus : modèle d’embeddings léger, vecteurs de dimension 384, lots d’entraînement contrôlés et recours à une API externe pour la génération finale.
 \vspace{-0.5cm}
 \section*{Plan du travail}
 \markright{Plan du travail}
@@ -1195,17 +1198,7 @@ LangGraph est retenu comme cadre d'orchestration du workflow agentique \cite{lan
 
 %Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
 
-\begin{figure}
-  \centering
-  \caption{Architecture méthodologique du workflow agentique de recommandation}
-  \label{fig:architecture_methodologique_workflow_agentique}
-  \includegraphics[height=0.55\textheight]{figures/myWorkflow.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-\end{figure}
-
-La figure \ref{fig:architecture_methodologique_workflow_agentique} résume le workflow. La requête utilisateur est d'abord interprétée, puis orientée vers les sources utiles : pgvector pour la proximité sémantique, Neo4j pour les relations métier, les chunks documentaires pour les référentiels et le \LLM{} pour la formulation finale. La génération intervient donc après récupération et structuration du contexte.
-
-Le module de critique ferme la boucle. Si la réponse est insuffisamment appuyée par les preuves récupérées, le contexte peut être élargi avant une nouvelle génération. Le tableau~\ref{tab:objectifs_choix_methodologiques}, placé en annexe, résume la correspondance entre objectifs spécifiques et choix méthodologiques.
+Le workflow complet est reporté en annexe à la figure~\ref{fig:architecture_methodologique_workflow_agentique}. Il suit une logique simple : la requête est analysée, pgvector retrouve les éléments proches, Neo4j vérifie les relations métier--compétence--formation, puis le \LLM{} formule une réponse contrôlée par le critic. Le tableau~\ref{tab:objectifs_choix_methodologiques}, également placé en annexe, résume la correspondance entre objectifs spécifiques et choix méthodologiques.
 
 \subsection{Sources de données et leur rôle dans le système}
 
@@ -1546,6 +1539,8 @@ Le système peut être utilisé de trois manières. La première est la CLI de t
 
 La deuxième manière est l'interface Streamlit \filevar{chatbot\_app.py}. Elle fournit une interface conversationnelle permettant de saisir une question, d'indiquer éventuellement un identifiant candidat, de choisir le nombre de résultats et d'afficher les traces du workflow. Cette interface est adaptée à la démonstration, car elle rend visibles les noeuds et outils effectivement mobilisés par l'agent.
 
+La capture de cette interface est reportée en annexe à la figure~\ref{fig:interface_streamlit_chatbot}. Elle montre l'accès opérationnel au système : l'utilisateur ne manipule pas directement pgvector, Neo4j ou les scripts Python ; il interagit avec une interface qui orchestre ces briques en arrière-plan.
+
 La troisième manière est l'API FastAPI implémentée dans \filevar{src/06\_api}. Elle expose des routes pour la recommandation, le skill gap, l'encodage, le chat et la santé du système. Au démarrage, l'API initialise le modèle SentenceTransformer, la connexion Neo4j, la connexion pgvector et le moteur de recommandation. L'API prévoit également un mode dégradé lorsque certains services ne sont pas disponibles, ce qui rend le système plus robuste pendant les tests.
 
 \begin{table}[H]
@@ -1868,6 +1863,22 @@ Au total, le système proposé constitue une base opérationnelle de recommandat
 
 \chapter{Annexes}
 % Questionnaires, codes, tableaux volumineux.
+\begin{figure}[H]
+  \centering
+  \caption{Architecture méthodologique du workflow agentique de recommandation}
+  \label{fig:architecture_methodologique_workflow_agentique}
+  \includegraphics[height=0.55\textheight]{figures/myWorkflow.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \caption{Interface Streamlit du chatbot Agentic GraphRAG}
+  \label{fig:interface_streamlit_chatbot}
+  \includegraphics[width=0.92\textwidth]{chatbot.png}
+  \source{Nos travaux, capture locale de l'interface \filevar{chatbot\_app.py}.}
+\end{figure}
+
 \begin{table}[H]
 	\centering
 	\caption{Labels de nœuds et relations structurantes du graphe}

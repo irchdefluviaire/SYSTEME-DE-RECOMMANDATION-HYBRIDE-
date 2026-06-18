@@ -134,10 +134,10 @@ Dans une \RAG{} classique, le système récupère des documents proches d'une re
   \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
   \label{fig:rag_graphrag_agentic_rag_revue}
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-  \includegraphics[width=0.55\textwidth]{figures/AgenticRAG.png}
+  \includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
 \end{figure}
 
-La figure \ref{fig:rag_graphrag_agentic_rag_revue} illustre cette évolution. Une \RAG{} simple suit une chaîne relativement fixe : requête, récupération, génération. Une architecture GraphRAG ajoute une couche relationnelle. Une architecture agentique introduit une capacité de planification et de contrôle : le système peut choisir un outil, observer le résultat, élargir le contexte et réviser la réponse.
+La figure \ref{fig:rag_graphrag_agentic_rag_revue} distingue trois niveaux fonctionnels. La \RAG{} récupère surtout des documents proches d'une requête et les transmet au \LLM{} ; elle reste donc efficace pour une recherche documentaire, mais son raisonnement dépend du contexte retrouvé. Le GraphRAG ajoute une représentation relationnelle : les entités et leurs liens permettent de naviguer entre compétences, métiers, offres, niveaux et formations. L'Agentic RAG va plus loin : il ne se limite pas à récupérer une information, il planifie les étapes, choisit les outils, observe les résultats, ajuste le contexte et produit une réponse. Cette distinction justifie le choix du mémoire : combiner retrieval vectoriel, graphe Neo4j et orchestration LangGraph pour traiter des requêtes emploi-compétences plus complexes qu'une simple recherche de documents.
 
 \subsection{Agentic RAG, critic et traçabilité}
 
@@ -198,6 +198,16 @@ Cette métrique est particulièrement adaptée lorsque tous les résultats perti
 Dans une architecture \RAG{}, l'évaluation ne s'arrête pas au classement des résultats. Elle doit aussi mesurer la qualité de la réponse générée à partir du contexte récupéré. RAGAS distingue notamment la fidélité au contexte, la pertinence de la réponse, la qualité de la récupération et l'usage des sources \cite{es2024ragas}. La \textbf{fidélité} vérifie si les affirmations de la réponse sont supportées par les éléments récupérés. La \textbf{pertinence de réponse} vérifie si la réponse traite effectivement la question posée. La \textbf{couverture des sources} vérifie si le contexte contient suffisamment d'informations pour répondre. Enfin, la \textbf{traçabilité} vérifie si les preuves ou citations sont identifiables.
 
 Ces critères sont moins simples à formaliser que Precision@k ou Recall@k, car ils portent sur du langage naturel. Des approches comme G-Eval utilisent des \LLM{} comme juges pour approximer l'évaluation humaine \cite{liu2023geval}. Cette pratique doit rester prudente : un juge automatique peut aider à comparer des variantes de système, mais il ne remplace pas une validation métier. Dans ce mémoire, l'évaluation doit donc combiner des métriques de retrieval pour pgvector et Neo4j, des critères de factualité pour la réponse générée, et une interprétation professionnelle de l'utilité des recommandations.
+
+\section{Positionnement de l'étude}
+
+Les travaux présentés dans cette revue montrent que le matching emploi-compétences ne peut pas être traité comme une simple recherche de mots-clés. Il exige à la fois une représentation sémantique des textes, une structuration des relations métier-compétence-formation et un mécanisme de génération capable d'expliquer les résultats sans s'éloigner des données disponibles.
+
+Cette étude se positionne à l'intersection de trois familles d'approches. La première est la recherche sémantique par embeddings, utilisée pour retrouver rapidement les offres, compétences ou documents proches d'une requête. La deuxième est le graphe de connaissances, mobilisé pour représenter les relations entre candidats, offres, compétences, métiers, secteurs et niveaux de formation. La troisième est l'orchestration agentique, qui organise le retrieval, l'enrichissement par le graphe, la génération et le contrôle de la réponse.
+
+La contribution du mémoire n'est donc pas de proposer un nouveau modèle de langage ou un nouvel algorithme de recommandation générique. Elle consiste à concevoir et évaluer une architecture hybride adaptée au contexte emploi-compétences : pgvector sert à la présélection sémantique, Neo4j apporte le signal relationnel et LangGraph orchestre les étapes de décision. Ce positionnement répond à une limite de la littérature : les approches générales de RAG ou de recommandation expliquent rarement comment articuler, dans un même système opérationnel, données locales, référentiels métiers, graphe, scoring hybride et contrôle de la génération.
+
+Le système proposé reste un outil d'aide à la décision. Il ne remplace ni le recruteur, ni le conseiller emploi. Son rôle est de rendre les correspondances plus lisibles : quelles offres sont proches du profil, quelles compétences expliquent le rapprochement, quels écarts subsistent et quelles pistes de montée en compétence peuvent être envisagées.
 
 %\subsection{Acquis, manques et contribution du mémoire}
 
