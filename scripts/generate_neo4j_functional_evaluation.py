@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import sys
+import textwrap
 from pathlib import Path
 from typing import Any
 
@@ -79,7 +80,66 @@ def run_query(session, cypher: str, **params: Any) -> pd.DataFrame:
     return pd.DataFrame([dict(r) for r in session.run(cypher, **params)])
 
 
+def plot_functional_dashboard(
+    metier_comp: pd.DataFrame,
+    comp_offres: pd.DataFrame,
+    skill_gap: pd.DataFrame,
+    ncf_pairs: pd.DataFrame,
+) -> None:
+    plt, fmt_int = setup_plot()
+    fig, axes = plt.subplots(2, 2, figsize=(15.5, 9.5))
+
+    plot = metier_comp.head(6).sort_values("n_competences")
+    labels = [textwrap.fill(str(value).split("/")[0], 32) for value in plot["metier"]]
+    bars = axes[0, 0].barh(labels, plot["n_competences"], color=COLORS["purple"])
+    axes[0, 0].bar_label(bars, padding=3, fontsize=8)
+    axes[0, 0].set_title("Métiers les plus reliés aux compétences")
+    axes[0, 0].set_xlabel("Nombre de relations NECESSITE")
+    axes[0, 0].tick_params(axis="y", labelsize=8)
+
+    plot = comp_offres.head(6).sort_values("n_offres")
+    labels = [textwrap.fill(str(value), 32) for value in plot["competence"]]
+    bars = axes[0, 1].barh(labels, plot["n_offres"], color=COLORS["green"])
+    axes[0, 1].bar_label(bars, padding=3, fontsize=8, fmt=lambda x: f"{int(x):,}".replace(",", " "))
+    axes[0, 1].xaxis.set_major_formatter(fmt_int)
+    axes[0, 1].set_title("Compétences les plus reliées aux offres")
+    axes[0, 1].set_xlabel("Nombre de relations REQUIERT")
+    axes[0, 1].tick_params(axis="y", labelsize=8)
+
+    bins = range(0, int(skill_gap["skill_gap"].max()) + 2)
+    axes[1, 0].hist(skill_gap["skill_gap"], bins=bins, color=COLORS["red"], alpha=0.86)
+    mean_gap = float(skill_gap["skill_gap"].mean())
+    axes[1, 0].axvline(mean_gap, color="#7A1F1F", linestyle="--", linewidth=1.5, label=f"Moyenne : {mean_gap:.2f}")
+    axes[1, 0].set_title("Compétences manquantes par couple candidat--offre")
+    axes[1, 0].set_xlabel("Nombre de compétences manquantes")
+    axes[1, 0].set_ylabel("Nombre de couples")
+    axes[1, 0].legend()
+
+    labels = ["Niveau différent", "Même niveau"]
+    rates = [
+        float((ncf_pairs["meme_niveau"] == 0).mean()) * 100,
+        float((ncf_pairs["meme_niveau"] == 1).mean()) * 100,
+    ]
+    bars = axes[1, 1].bar(labels, rates, color=[COLORS["orange"], COLORS["blue"]], width=0.58)
+    axes[1, 1].bar_label(bars, labels=[f"{value:.1f} %" for value in rates], padding=3)
+    axes[1, 1].set_ylim(0, 100)
+    axes[1, 1].set_title("Compatibilité exacte du niveau NCF")
+    axes[1, 1].set_ylabel("Part des couples évalués (%)")
+
+    save_fig(fig, "functional_graph_evaluation")
+    plt.close(fig)
+
+
 def main() -> None:
+    if "--from-saved" in sys.argv:
+        plot_functional_dashboard(
+            pd.read_csv(OUT / "19_eval_graph_metier_competences.csv"),
+            pd.read_csv(OUT / "19_eval_graph_competence_offres.csv"),
+            pd.read_csv(OUT / "19_eval_graph_skill_gap_sample.csv"),
+            pd.read_csv(OUT / "19_eval_graph_ncf_pairs_sample.csv"),
+        )
+        return
+
     plt, fmt_int = setup_plot()
     sys.path.insert(0, str(ROOT / "src" / "03_knowledge_graph"))
     from neo4j import GraphDatabase
@@ -201,30 +261,7 @@ def main() -> None:
     save_table(sg_summary, "19_eval_graph_skill_gap_summary")
     save_table(ncf_summary, "19_eval_graph_ncf_summary")
 
-    fig, axes = plt.subplots(2, 2, figsize=(13.8, 9.2))
-    plot = metier_comp.head(12).sort_values("n_competences")
-    axes[0, 0].barh(plot["metier"].astype(str).str.slice(0, 34), plot["n_competences"], color=COLORS["purple"])
-    axes[0, 0].set_title("Recherche métier vers compétences")
-    axes[0, 0].set_xlabel("Compétences NECESSITE")
-
-    plot = comp_offres.head(12).sort_values("n_offres")
-    axes[0, 1].barh(plot["competence"].astype(str).str.slice(0, 34), plot["n_offres"], color=COLORS["green"])
-    axes[0, 1].xaxis.set_major_formatter(fmt_int)
-    axes[0, 1].set_title("Recherche compétence vers offres")
-    axes[0, 1].set_xlabel("Offres REQUIERT")
-
-    axes[1, 0].hist(skill_gap["skill_gap"], bins=range(0, int(skill_gap["skill_gap"].max()) + 2), color=COLORS["red"], alpha=0.86)
-    axes[1, 0].set_title("Skill gap échantillonné")
-    axes[1, 0].set_xlabel("Compétences manquantes")
-
-    ncf_counts = ncf_pairs["meme_niveau"].map({0: "Niveau différent", 1: "Même niveau"}).value_counts()
-    axes[1, 1].bar(ncf_counts.index, ncf_counts.values, color=[COLORS["orange"], COLORS["blue"]])
-    axes[1, 1].yaxis.set_major_formatter(fmt_int)
-    axes[1, 1].set_title("Compatibilité NCF exacte")
-    axes[1, 1].set_ylabel("Couples échantillonnés")
-
-    save_fig(fig, "functional_graph_evaluation")
-    plt.close(fig)
+    plot_functional_dashboard(metier_comp, comp_offres, skill_gap, ncf_pairs)
 
     summary = {
         "metier_competences_top_mean": float(metier_comp["n_competences"].mean()) if len(metier_comp) else None,

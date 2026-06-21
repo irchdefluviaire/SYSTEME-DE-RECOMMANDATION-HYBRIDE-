@@ -211,7 +211,7 @@ def relevant_set_for_pool(
 
 
 def _plot_metric_comparison(metrics_df: pd.DataFrame) -> None:
-    selected = ["precision@5", "recall@10", "ndcg@10", "mrr@10", "hit_rate@10"]
+    selected = ["precision@10", "recall@10", "ndcg@10", "mrr@10", "hit_rate@10"]
     plot_df = metrics_df.set_index("system")[selected].T
     ax = plot_df.plot(kind="bar", figsize=(9.5, 5), color=["#2f6fdd", "#f29700"])
     ax.set_ylim(0, 1.0)

@@ -582,7 +582,7 @@ Arrivés à un niveau avancé de leur formation, les élèves Ingénieurs Statis
 C’est dans ce cadre que nous avons effectué un stage du 9 mars 2026 au 30 juin 2026 au sein de KmerAI, où nous avons été intégrés à la Direction du Développement et de la Recherche. Cette immersion nous a permis de travailler sur une problématique appliquée située au croisement de l’analyse de données, de l’intelligence artificielle générative, du traitement automatique du langage naturel et de l’aide à la décision : l’amélioration du matching entre offres d’emploi, profils de candidats et compétences recherchées sur le marché camerounais.
 
 Le présent mémoire s’inscrit dans cette dynamique et porte sur le thème : « Conception d’un système de recommandation hybride pour le matching emploi-compétences au Cameroun par intégration des
-LLMs et des graphes de connaissances ». Il vise principalement à concevoir une architecture capable de structurer les données d’offres et de profils, d’exploiter les référentiels métiers et formations, puis de produire des recommandations plus explicables que les approches fondées uniquement sur des mots-clés. Plus spécifiquement, il s’agit de normaliser les données disponibles, d’aligner les métiers et compétences avec les référentiels \ESCO{}, \MEPC{} et \NCF{}, d’adapter un modèle d’embeddings au domaine emploi-compétences, de construire un graphe de connaissances sous Neo4j et de poser les bases d’un moteur de recommandation hybride intégrant similarité sémantique, relations de graphe et analyse du \emph{skill gap}.
+LLMs et des graphes de connaissances ». Il vise principalement à concevoir une architecture capable de structurer les données d’offres et de profils, d’exploiter les référentiels métiers et formations, puis de produire des recommandations plus explicables que les approches fondées uniquement sur des mots-clés. Plus spécifiquement, il s’agit de normaliser les données disponibles, d’aligner les métiers et compétences avec les référentiels \ESCO{}, \MEPC{} et \NCF{}, d’adapter un modèle d’embeddings au domaine emploi-compétences, de construire un graphe de connaissances sous Neo4j et de poser les bases d’un moteur de recommandation hybride intégrant similarité sémantique, relations de graphe et analyse du \emph{skill gap}\footnote{Le \emph{skill gap}, ou écart de compétences, désigne la différence entre les compétences déjà détenues par un candidat et celles requises par une offre ou un métier cible.}.
 
 Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologique, il cherche à montrer comment les modèles de représentation sémantique, les bases vectorielles et les graphes de connaissances peuvent être combinés pour traiter un problème réel d’appariement sur le marché du travail. Sur le plan opérationnel, il propose une démarche reproductible susceptible d’aider KmerAI à développer des outils de recommandation, d’orientation et de montée en compétences adaptés aux besoins des candidats, des recruteurs et des acteurs de la formation.
 \end{spacing}
@@ -668,15 +668,10 @@ et une offre d'emploi, puis de recommander un parcours de montée en compétence
 \end{tcolorbox}
 \end{center}
 
-Cette question générale se décline en plusieurs questions de recherche sous-jacentes :
+Cette question générale se décline en deux questions de recherche :
 \begin{itemize}
-    \item \textbf{Q1}~: Comment identifier et formaliser, dans le contexte camerounais, 
-    les compétences, métiers, formations et relations pertinentes pour un matching emploi compétences 
-    fiable et opérationnel à partir des référentiels \NCM{}, \ESCO{} et \NCF{} ?
-
-    \item \textbf{Q2}~: Dans quelle mesure l'intégration d'un graphe de connaissances 
-    améliore-t-elle la qualité et la précision du matching par rapport aux approches 
-    purement vectorielles ?
+    \item \textbf{Q1}~: Comment organiser les offres, les profils, les métiers, les compétences et les formations afin de mieux rapprocher les candidats des emplois disponibles ?
+    \item \textbf{Q2}~: L'ajout des liens entre candidats, compétences et offres améliore-t-il la qualité des recommandations par rapport à une recherche fondée uniquement sur les textes ?
     %\item \textbf{Q3}~: Comment le \emph{fine-tuning} et l'utilisation de LLMs 
     %peuvent-ils améliorer l'extraction et l'enrichissement des informations de compétences 
     %à partir de textes non structurés (offres d'emploi, CV, profils en ligne) ?
@@ -704,12 +699,11 @@ L’intérêt d’une telle approche est renforcé par les limites des méthodes
 \vspace{-0.5cm}
 \section*{Hypothèses de l'étude}
 \markright{Hypothèses de recherche}
-Afin de répondre à la problématique, cette étude repose sur les hypothèses suivantes. 
+Afin de répondre à la problématique, cette étude repose sur trois hypothèses. 
 \begin{itemize}
-    \item \textbf{H1 :} L’intégration conjointe de la \NCM{}, d’\ESCO{} et de la \NCF{} dans un référentiel unifié métiers--compétences--formations améliore la structuration et les performances d’appariement profil--offre, par rapport à une approche sans ces référentiels;
-    \item \textbf{H2 :} La modélisation du marché de l’emploi sous forme de graphe de connaissances (Neo4j), incluant explicitement les niveaux et domaines de formation de la \NCF{}, améliore la qualité du matching par rapport à une approche purement vectorielle;
-    \item \textbf{H3 :} Le \emph{fine-tuning} d'un modèle de représentation sémantique sur le domaine emploi-compétences améliore la qualité des embeddings et la similarité sémantique entre profils et offres, par rapport au même modèle non adapté;
-    \item \textbf{H4 :} La combinaison d'un RAG agentic et d'un score de recommandation hybride améliore la pertinence et l'explicabilité des recommandations de \emph{skill gap} et de parcours de montée en compétences.
+    \item \textbf{H1 :} La mise en ordre des données à l'aide des référentiels métiers et formations, associée à un modèle adapté au vocabulaire de l'emploi, améliore le rapprochement entre profils et offres.
+    \item \textbf{H2 :} La prise en compte des liens entre candidats, compétences, métiers et offres améliore le classement obtenu par la recherche sur les textes seule.
+    \item \textbf{H3 :} La combinaison de la recherche, du graphe et du contrôle de la réponse produit des recommandations plus pertinentes, plus compréhensibles et capables de signaler les compétences manquantes.
 \end{itemize}
 \vspace{-0.5cm}
 \section*{Méthodologie de l'étude}
@@ -738,7 +732,7 @@ La théorie moderne de la recherche d'emploi considère le marché du travail co
 Cette approche est particulièrement pertinente pour le contexte du présent mémoire. Un système de recommandation emploi-compétences cherche précisément à réduire ces frictions : il améliore la visibilité des offres, structure les profils, compare les compétences détenues et requises, puis propose des correspondances classées. Autrement dit, il agit comme une technologie d'intermédiation. Sa valeur ne réside donc pas seulement dans sa performance algorithmique, mais dans sa capacité à améliorer l'efficacité du mécanisme d'appariement sur le marché de l'emploi.
 
 \subsection{Asymétrie d'information et signalement des compétences}
-Le marché de l'emploi est aussi marqué par une forte asymétrie d'information. Les candidats connaissent mieux que les recruteurs certaines dimensions de leurs compétences, de leur motivation et de leur capacité d'apprentissage. Inversement, les entreprises connaissent mieux que les candidats la réalité des tâches, les conditions de travail et les compétences effectivement valorisées dans le poste. Akerlof a montré que l'asymétrie d'information peut conduire à une sélection adverse, c'est-à-dire à une dégradation de la qualité moyenne des échanges lorsque les acteurs ne peuvent pas distinguer correctement les bons et les mauvais profils \cite{akerlof1970lemons}. Sur le marché du travail, ce problème se traduit par une difficulté à identifier les candidats réellement compétents lorsque les informations disponibles sont incomplètes, non standardisées ou difficilement comparables.
+Le marché de l'emploi est aussi marqué par une forte asymétrie d'information. Les candidats connaissent mieux que les recruteurs certaines dimensions de leurs compétences, de leur motivation et de leur capacité d'apprentissage. Inversement, les entreprises connaissent mieux que les candidats la réalité des tâches, les conditions de travail et les compétences effectivement valorisées dans le poste. George A. Akerlof a montré que l'asymétrie d'information peut conduire à une sélection adverse, c'est-à-dire à une dégradation de la qualité moyenne des échanges lorsque les acteurs ne peuvent pas distinguer correctement les bons et les mauvais profils \cite{akerlof1970lemons}. Sur le marché du travail, ce problème se traduit par une difficulté à identifier les candidats réellement compétents lorsque les informations disponibles sont incomplètes, non standardisées ou difficilement comparables.
 
 Dans cette perspective, les diplômes, certifications, expériences professionnelles et portefeuilles de projets jouent un rôle de signal. La théorie du signalement de Spence explique que certains attributs observables permettent aux candidats de transmettre une information crédible sur leur productivité potentielle \cite{spence1973job}. Toutefois, dans les métiers numériques et dans les environnements où les compétences évoluent rapidement, les signaux traditionnels deviennent incomplets. Un intitulé de diplôme ne suffit pas toujours à inférer la maîtrise effective de Python, de l'analyse de données, de la gestion de bases relationnelles ou de la conception d'API. Le recours à des référentiels de compétences comme la \NCM{} et \ESCO{}, combinés à des représentations sémantiques, permet alors de transformer des signaux dispersés en informations structurées et comparables.
 
@@ -1209,11 +1203,21 @@ Cette première section fixe le cadre de travail. Le système est conçu comme u
 
 \subsection{Démarche d'ingénierie appliquée retenue}
 
-La démarche retenue est une démarche d'ingénierie appliquée. Elle vise à construire un système de recommandation emploi--compétences combinant données structurées, embeddings, graphe de connaissances, règles métier et \RAG{}. Ce choix répond directement au problème étudié : les offres, profils, compétences et référentiels sont hétérogènes et rarement comparables tels quels.
+Le travail suit une chaîne simple. Les offres, les profils et les référentiels sont d'abord collectés et nettoyés. Les informations comparables, comme les métiers, les compétences, les niveaux de formation et les localisations, sont ensuite harmonisées. Le système recherche alors les offres proches d'un candidat, vérifie les compétences communes et manquantes, classe les résultats, puis produit une explication.
 
-Quatre principes guident la méthode. La traçabilité impose de rattacher chaque recommandation à des données ou relations observables. L'hybridation combine pgvector, Neo4j et règles métier au lieu de dépendre d'une seule source. L'explicabilité oblige le système à signaler les compétences communes et manquantes. Le contrôle génératif limite le rôle du \LLM{} à une réponse fondée sur le contexte récupéré, conformément à la logique du \RAG{} \cite{lewis2020rag,es2024ragas}.
+\IfFileExists{simplifie.png}{%
+\begin{figure}[H]
+  \centering
+  \caption{Vue simplifiée du workflow de recommandation emploi--compétences}
+  \label{fig:workflow_methodologique_simplifie}
+  \includegraphics[height=0.4\textheight,keepaspectratio]{vrai.png}
+  \source{Nos travaux, synthèse du workflow méthodologique.}
+\end{figure}
+}{}
 
-LangGraph est retenu comme cadre d'orchestration du workflow agentique \cite{langgraphdocs2026}. Son rôle méthodologique est de router les requêtes, conserver les traces des outils appelés et permettre une révision lorsque le contexte récupéré est insuffisant.
+Cette organisation répond à quatre besoins. Premièrement, chaque recommandation doit pouvoir être reliée aux données utilisées. Deuxièmement, le classement ne doit pas dépendre d'un seul indice. Troisièmement, le système doit signaler les compétences déjà acquises et celles qui manquent. Enfin, la réponse rédigée doit rester fidèle aux informations retrouvées \cite{lewis2020rag,es2024ragas}.
+
+LangGraph coordonne ces étapes et conserve la trace des outils appelés \cite{langgraphdocs2026}. Si les informations récupérées sont insuffisantes, le système peut effectuer une recherche complémentaire avant de répondre.
 
 %Ce chapitre précise donc les choix de conception du système. Les résultats d'exécution, les performances mesurées et les exemples de réponses sont volontairement réservés aux chapitres suivants. La méthodologie décrit ici comment les données sont préparées, comment les représentations sont construites, comment les bases pgvector et Neo4j sont articulées, comment le workflow agentique est organisé et comment l'évaluation est conçue.
 
@@ -1634,7 +1638,7 @@ Ce chapitre évalue le système implémenté au chapitre précédent. Il ne rép
 
 L'évaluation mobilise trois familles d'artefacts. Le benchmark du modèle d'embeddings utilise le jeu de test issu des paires contrastives offre--profil, soit 473 requêtes. L'ablation pgvector contre pgvector enrichi par Neo4j utilise un tirage de 80 candidats avec graine fixée à 42 ; 69 candidats sont effectivement évalués après contrôles d'exécution. Enfin, la calibration du critic utilise un jeu contrastif de 102 évaluations construit à partir de 51 cas réels et de leurs contextes mélangés.
 
-Les métriques de retrieval retenues sont classiques en recherche d'information : Recall@K, Precision@K, NDCG@K, MRR@K et HitRate@K. Le Recall@K mesure si les éléments pertinents sont récupérés dans les premiers résultats. Le NDCG@K évalue aussi leur ordre. Le MRR@K met l'accent sur le rang de la première bonne recommandation. Ces métriques sont complémentaires : un système peut retrouver une bonne offre dans le top 10 tout en la plaçant trop bas pour être utile à l'utilisateur.
+Les métriques de retrieval sont calculées sur les premières offres du classement. La notation \og @10 \fg{} signifie que l'évaluation porte sur les dix offres considérées comme les plus compatibles avec chaque candidat. Precision@10 mesure la part de bonnes offres dans cette liste de dix ; Recall@10 mesure la part des offres pertinentes du vivier effectivement retrouvées ; NDCG@10 vérifie si les meilleures offres sont placées en tête ; MRR@10 dépend du rang de la première bonne offre ; HitRate@10 indique seulement si le top 10 en contient au moins une. Ces métriques sont moyennées sur les candidats évalués et varient entre 0 et 1 : plus elles sont proches de 1, meilleur est le classement.
 
 Pour l'ablation, les deux configurations reçoivent le même pool initial de 30 offres produit par pgvector. La configuration \filevar{pgvector seul} conserve l'ordre vectoriel. La configuration \filevar{pgvector + graphe} enrichit ce même pool avec Neo4j, puis le rerange à partir des relations candidat--offre--compétence. Cette construction isole l'effet du graphe : la différence observée ne vient pas d'un corpus différent, mais de l'information relationnelle ajoutée au classement.
 
@@ -1664,7 +1668,7 @@ CamemBERT sentence & 0.0904 & 0.0771 & 0.1332 & 144.15 \\
 \source{Nos travaux, évaluation SentenceTransformer sur le jeu de test offre--profil.}
 \end{table}
 
-Le modèle fine-tuné atteint un Recall@10 de 0.8520, contre 0.3192 pour MiniLM-L6 généraliste. L'écart est important : le modèle spécialisé retrouve beaucoup plus souvent l'élément attendu dans les dix premiers résultats. Le NDCG@10 passe de 0.1980 à 0.6336, ce qui montre aussi un meilleur ordre des résultats pertinents. La latence moyenne reste contenue à 32.77 ms par phrase, ce qui reste compatible avec une recherche interactive locale.
+Le modèle fine-tuné atteint un Recall@10 de 0,8520, contre 0,3192 pour MiniLM-L6 généraliste. Cela signifie que, sur l'ensemble des requêtes de test, environ 85,2\,\% des éléments attendus sont retrouvés dans les dix premiers résultats. Le NDCG@10 passe de 0,1980 à 0,6336 : l'ordre obtenu représente 63,4\,\% de la qualité du classement idéal sur ce test. Cette mesure porte sur la position des résultats, pas sur une probabilité de recrutement. La latence moyenne reste contenue à 32,77 ms par phrase, ce qui reste compatible avec une recherche interactive locale.
 
 \begin{figure}[H]
 \centering
@@ -1685,23 +1689,23 @@ Le deuxième test mesure l'apport du graphe. Le même pool initial de 30 offres 
 \centering
 \caption{Comparaison retrieval : pgvector seul versus pgvector + graphe}
 \label{tab:eval_pgvector_graph}
-\normalsize
+\small
 \begin{tabular}{lrrrrr}
 \toprule
-Configuration & Precision@5 & Recall@10 & NDCG@10 & MRR@10 & HitRate@10 \\
+Configuration & Precision@10 & Recall@10 & NDCG@10 & MRR@10 & HitRate@10 \\
 \midrule
-pgvector seul & 0.4957 & 0.4491 & 0.5575 & 0.6908 & 0.9420 \\
-pgvector + graphe & 0.6870 & 0.6147 & 0.7392 & 0.8093 & 0.9420 \\
+pgvector seul & 0.4623 & 0.4491 & 0.5575 & 0.6908 & 0.9420 \\
+pgvector + graphe & 0.6087 & 0.6147 & 0.7392 & 0.8093 & 0.9420 \\
 \midrule
-Différence & +0.1913 & +0.1656 & +0.1817 & +0.1185 & 0.0000 \\
+Différence & +0.1464 & +0.1656 & +0.1817 & +0.1185 & 0.0000 \\
 \bottomrule
 \end{tabular}
 \source{Nos travaux, ablation du moteur de recommandation sur 69 candidats évalués.}
 \end{table}
 
-L'ajout de Neo4j améliore Precision@5, Recall@10, NDCG@10 et MRR@10. Le Recall@10 passe de 0.4491 à 0.6147, soit un gain de 0.1656. Le NDCG@10 passe de 0.5575 à 0.7392, ce qui montre que le graphe ne se contente pas de retrouver plus d'offres jugées pertinentes : il les place aussi dans un meilleur ordre. Le HitRate@10 reste stable à 0.9420 ; le pool vectoriel contient donc souvent au moins une bonne offre, mais Neo4j améliore son rang.
+L'ajout de Neo4j améliore toutes les mesures du top 10 sauf le HitRate, qui reste stable. Une Precision@10 de 0,6087 signifie qu'en moyenne environ 6 des 10 offres affichées après reranking sont jugées pertinentes par le proxy, contre environ 4,6 avec pgvector seul. Le Recall@10 de 0,6147 signifie que le top 10 récupère près de 61,5\,\% des offres pertinentes présentes dans le vivier évalué. Le NDCG@10 de 0,7392 indique que l'ordre obtenu atteint 73,9\,\% de la qualité du classement idéal défini par ce proxy. Enfin, un MRR@10 de 0,8093 montre que la première offre pertinente apparaît généralement très près du début de la liste. Ces valeurs décrivent une cohérence interne avec le proxy de pertinence ; elles ne signifient pas que 73,9\,\% des recommandations seraient validées par des recruteurs.
 
-La lecture correcte est séquentielle. pgvector reste le premier étage : il constitue rapidement un vivier d'offres plausibles. Neo4j intervient ensuite pour départager ce vivier à partir des relations \filevar{POSSEDE}, \filevar{REQUIERT}, \filevar{A\_NIVEAU} et \filevar{REQUIERT\_NIVEAU}. L'amélioration mesurée vient donc du reranking relationnel, pas d'un remplacement de la recherche vectorielle.La figure met en évidence trois effets. Precision@5 augmente, ce qui signifie que le haut de liste devient plus utile. Recall@10 augmente, donc davantage d'offres pertinentes sont récupérées dans les dix premières positions. NDCG@10 et MRR@10 progressent aussi, ce qui montre que les bonnes offres ne sont pas seulement présentes : elles sont mieux ordonnées.
+La lecture correcte est séquentielle. pgvector constitue d'abord un vivier de 30 offres plausibles. Neo4j départage ensuite ces offres à partir des relations \filevar{POSSEDE}, \filevar{REQUIERT}, \filevar{A\_NIVEAU} et \filevar{REQUIERT\_NIVEAU}. L'amélioration mesurée vient donc du nouvel ordre appliqué au même vivier, et non d'un changement des offres disponibles.
 \begin{figure}[H]
 \centering
 \caption{Effet de l'enrichissement graphe sur les métriques de retrieval}
@@ -1715,12 +1719,12 @@ L'ablation précédente mesure l'effet du graphe sur le classement, mais elle ne
 
 Le rôle de cette figure n'est pas seulement illustratif. Elle sert de tableau de bord fonctionnel : chaque barre correspond à une capacité attendue du système. Si une barre est faible, le problème ne vient pas nécessairement du \LLM{} ; il peut venir d'une relation manquante, d'un référentiel incomplet ou d'un chemin Neo4j trop pauvre. La lecture des sous-sections suivantes reprend donc les mêmes familles de tests que la figure afin de relier les résultats chiffrés au fonctionnement concret du GraphRAG.
 
-La figure doit être lue comme un contrôle de couverture fonctionnelle. Les deux premiers blocs vérifient la navigation relationnelle métier--compétence--offre ; les blocs centraux contrôlent le \textit{skill gap} et le niveau \NCF{} ; le dernier bloc compare le classement obtenu avec et sans graphe. Elle confirme donc que Neo4j sert à la fois à récupérer des relations, à expliquer les écarts et à améliorer le reranking.
+La figure doit être lue comme quatre diagnostics distincts, et non comme un score global. En haut, elle vérifie que le graphe permet de passer d'un métier à ses compétences et d'une compétence aux offres associées. En bas à gauche, elle montre la distribution des compétences manquantes par couple candidat--offre. En bas à droite, elle mesure la part des couples dont les niveaux \NCF{} correspondent exactement. Elle contrôle donc le fonctionnement des chemins Neo4j ; elle ne prouve pas à elle seule la pertinence finale des recommandations.
 \begin{figure}[H]
 \centering
-\caption{Évaluation fonctionnelle des requêtes Neo4j utiles au GraphRAG}
+\caption{Diagnostics fonctionnels des chemins Neo4j mobilisés par le GraphRAG}
 \label{fig:eval_functional_graph}
-\includegraphics[width=0.52\textwidth]{figures/generated/evaluation/functional_graph_evaluation.png}
+\includegraphics[width=0.96\textwidth]{figures/generated/evaluation/functional_graph_evaluation.png}
 \source{Nos travaux, diagnostics Neo4j et GraphRAG sur les scénarios fonctionnels du système.}
 \end{figure}
 \subsection{Requêtes relationnelles métier, compétence et offre}
@@ -1778,7 +1782,7 @@ MRR@10 + Precision@10 & 0.6615 & 0.3385 & 0.9674 & 0.5000 & 1.0000 & 0.8183 \\
 \source{Nos travaux, optimisation Optuna des poids du score hybride sur les sorties d'ablation.}
 \end{table}
 
-Le résultat est clair mais doit être bien défendu. Lorsque l'objectif privilégie l'ordre global du top 10, Optuna retient un score Neo4j pur : $w_{sem}=0$ et $w_{Neo4j}=1$. Cela ne signifie pas que pgvector est inutile ; cela signifie qu'une fois le pool construit par pgvector, le meilleur signal de reclassement dans ce protocole est la couverture relationnelle calculée dans Neo4j. Lorsque l'objectif privilégie davantage la première bonne recommandation, le compromis devient hybride avec $w_{sem}=0{,}6615$ et $w_{Neo4j}=0{,}3385$.
+Le résultat est clair mais doit être bien défendu. Un NDCG@10 de 0,9697 signifie que, selon le proxy utilisé pour cette calibration, l'ordre du top 10 atteint 96,97\,\% de l'ordre idéal. Ce n'est ni une précision de 96,97\,\%, ni un taux de recrutement réussi. Lorsque l'objectif privilégie l'ordre global du top 10, Optuna retient un score Neo4j pur : $w_{sem}=0$ et $w_{Neo4j}=1$. Cela ne signifie pas que pgvector est inutile ; cela signifie qu'une fois le pool construit par pgvector, le meilleur signal de reclassement dans ce protocole est la couverture relationnelle calculée dans Neo4j. Lorsque l'objectif privilégie davantage la première bonne recommandation, le compromis devient hybride avec $w_{sem}=0{,}6615$ et $w_{Neo4j}=0{,}3385$.
 
 \begin{figure}[H]
 \centering
@@ -1884,17 +1888,16 @@ Le tableau ci-dessous résume la lecture des hypothèses au regard des résultat
 \rowcolor{darkblue}
 \tabheader{Hyp.} & \tabheader{Idée testée} & \tabheader{Statut} & \tabheader{Justification synthétique} \\
 \midrule
-H1 & Unification des référentiels métiers--compétences--formations & Soutenue partiellement & Les référentiels structurent les variables utiles au matching et au \textit{skill gap}. L'effet propre de chaque référentiel n'a toutefois pas été isolé par ablation séparée. \\
-H2 & Apport du graphe Neo4j face au vectoriel seul & Soutenue & L'ablation montre une hausse du NDCG@10 de 0.5575 à 0.7392 et du MRR@10 de 0.6908 à 0.8093 après reranking relationnel. \\
-H3 & Apport du fine-tuning des embeddings & Soutenue & Le modèle adapté obtient de meilleurs scores de ranking que le modèle de départ et devient l'encodeur principal du retrieval pgvector. \\
-H4 & Agentic RAG et score hybride pour explicabilité et \textit{skill gap} & Soutenue avec prudence & Le workflow LangGraph orchestre les outils et produit des réponses traçables. La qualité métier finale doit encore être validée par des experts humains. \\
+H1 & Données structurées et modèle adapté au vocabulaire de l'emploi & Soutenue partiellement & Le modèle adapté améliore nettement le classement sémantique et les référentiels harmonisent les métiers, compétences et niveaux. L'effet propre de chaque référentiel n'a toutefois pas été isolé. \\
+H2 & Apport des relations entre candidats, compétences et offres & Soutenue & À dix résultats, le NDCG passe de 0,5575 à 0,7392 et le MRR de 0,6908 à 0,8093 après l'ajout du graphe. \\
+H3 & Pertinence et compréhension de la recommandation complète & Soutenue avec prudence & Le workflow combine recherche, relations et contrôle de la réponse, puis indique les compétences couvertes et manquantes. Une validation par des experts métier reste nécessaire. \\
 \bottomrule
 \end{tabularx}
 \tableStyleEnd
 \source{Nos travaux, synthèse des résultats des chapitres 3 et 4.}
 \end{table}
 
-La lecture globale est donc favorable au système hybride, mais elle ne doit pas être surinterprétée. Les hypothèses H2 et H3 sont les plus solidement appuyées, car elles reposent sur des comparaisons quantitatives directes. Les hypothèses H1 et H4 sont également cohérentes avec les résultats, mais elles dépendent davantage de la qualité des référentiels, du graphe construit et de futures validations utilisateur.
+La lecture globale est favorable au système hybride, sans permettre une conclusion définitive sur son usage en recrutement. H2 est la mieux étayée, car elle repose sur une comparaison directe entre deux classements appliqués au même vivier d'offres. H1 combine un gain quantitatif du modèle adapté et un apport structurel des référentiels, dont l'effet séparé reste à mesurer. H3 est cohérente avec les contrôles réalisés, mais dépend encore d'une validation par des utilisateurs et des experts métier.
 
 \section{Portée, limites et conditions d'usage}
 

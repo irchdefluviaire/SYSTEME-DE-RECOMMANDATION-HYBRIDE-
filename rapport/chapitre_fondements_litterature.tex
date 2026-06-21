@@ -4,7 +4,9 @@
 Ce chapitre situe le mémoire dans la littérature sur l'appariement emploi-compétences, les systèmes de recommandation, l'intelligence artificielle générative, les graphes de connaissances et la génération augmentée par récupération. Il ne vise pas à reprendre l'ensemble des raisonnements des ouvrages ou articles consultés. Il sélectionne les résultats qui éclairent directement le thème du stage : concevoir un système capable de recommander des offres, d'identifier des écarts de compétences et de produire des explications fondées sur des données structurées et non structurées.
 %La revue est guidée par une hypothèse centrale : le matching emploi-compétences n'est pas un simple problème de similarité textuelle. Il combine des frictions du marché du travail, une forte variabilité du vocabulaire, des contraintes de qualification, des relations métier-compétence-formation et un besoin d'explicabilité. Cette nature composite explique pourquoi la littérature pertinente relève à la fois de l'économie du travail, de la recommandation hybride, de la recherche sémantique, des graphes de connaissances et de la génération contrôlée.
 
-\section{Vocabulaire opérationnel : du matching à l'Agentic RAG}
+\section{Repères conceptuels de l'étude}
+
+\subsection{Vocabulaire opérationnel : du matching à l'Agentic RAG}
 
 Avant d'entrer dans la revue de littérature, il est nécessaire de stabiliser les concepts utilisés dans la suite du mémoire. Cette clarification évite une confusion fréquente : employer indifféremment IA générative, \LLM{}, RAG, GraphRAG, moteur de recommandation et chatbot. Dans ce travail, ces termes désignent des fonctions complémentaires, mais non interchangeables.
 
@@ -28,9 +30,9 @@ Le \emph{skill gap}, ou écart de compétences, correspond à la différence ent
 Un embedding est une représentation vectorielle d'un texte, d'un profil, d'une offre ou d'une compétence. La recherche sémantique utilise cette représentation pour retrouver des objets proches en sens, même lorsque les formulations diffèrent. Elle répond à un problème récurrent des données d'emploi : des expressions comme \og data analyst \fg{}, \og analyste de données \fg{} et \og reporting statistique \fg{} peuvent désigner des zones de compétences voisines.
 
 \medskip
-\noindent\textbf{Base vectorielle pgvector.}
+\noindent\textbf{Base de données vectorielle.}
 
-pgvector désigne l'extension PostgreSQL utilisée pour stocker et rechercher des embeddings \cite{pgvector2024}. Dans ce mémoire, elle sert de couche de recherche rapide pour retrouver les offres, métiers, compétences ou documents proches d'une requête. Son rôle est de présélectionner des candidats à la recommandation. Elle ne suffit cependant pas à décider seule, car un bon score vectoriel ne garantit pas que le niveau \NCF{}, l'expérience ou les compétences obligatoires soient compatibles.
+Une base de données vectorielle stocke des représentations numériques d'objets et permet de retrouver rapidement ceux dont les vecteurs sont les plus proches d'une requête. Elle sert donc à rechercher des textes similaires par leur sens, et non seulement par des mots identiques. Dans ce mémoire, cette fonction est mise en œuvre avec PostgreSQL et son extension pgvector \cite{pgvector2024}. Elle présélectionne les offres, métiers, compétences ou documents proches, sans décider seule de leur compatibilité professionnelle.
 
 \medskip
 \noindent\textbf{Graphe de connaissances Neo4j.}
@@ -58,7 +60,7 @@ Le critic est un mécanisme de contrôle qui examine si la réponse générée s
 
 Le problème traité dans ce mémoire relève d'abord de l'économie du travail. Les modèles de recherche et d'appariement montrent que le chômage peut coexister avec des postes vacants lorsque la rencontre entre travailleurs et entreprises est coûteuse, lente ou imparfaitement informée \cite{mortensen1994job,pissarides2000equilibrium}. Cette lecture est importante : un système de recommandation emploi-compétences n'est pas seulement un outil informatique ; c'est un dispositif d'intermédiation qui cherche à réduire les coûts de recherche et à améliorer la qualité des mises en relation.
 
-La littérature sur l'asymétrie d'information renforce ce diagnostic. Akerlof montre que l'incertitude sur la qualité peut dégrader les échanges lorsque les acteurs ne disposent pas de signaux fiables \cite{akerlof1970lemons}. Sur le marché de l'emploi, cette asymétrie apparaît des deux côtés : le recruteur ne voit pas toujours les compétences réelles du candidat, et le candidat ne connaît pas toujours les exigences effectives du poste. La théorie du signalement de Spence explique alors le rôle des diplômes, certifications et expériences comme signaux observables \cite{spence1973job}. Mais ces signaux restent incomplets lorsque les métiers évoluent rapidement, notamment dans les domaines numériques où les compétences techniques sont souvent décrites par des formulations instables.
+La littérature sur l'asymétrie d'information renforce ce diagnostic. George A. Akerlof montre que l'incertitude sur la qualité peut dégrader les échanges lorsque les acteurs ne disposent pas de signaux fiables \cite{akerlof1970lemons}. Sur le marché de l'emploi, cette asymétrie apparaît des deux côtés : le recruteur ne voit pas toujours les compétences réelles du candidat, et le candidat ne connaît pas toujours les exigences effectives du poste. La théorie du signalement de Spence explique alors le rôle des diplômes, certifications et expériences comme signaux observables \cite{spence1973job}. Mais ces signaux restent incomplets lorsque les métiers évoluent rapidement, notamment dans les domaines numériques où les compétences techniques sont souvent décrites par des formulations instables.
 
 \subsection{Capital humain, tâches et inadéquation des compétences}
 
@@ -72,17 +74,37 @@ L'apport de cette littérature est de montrer que l'inadéquation emploi-compét
 
 Les systèmes de recommandation cherchent à classer des items selon leur pertinence probable pour un utilisateur. La littérature distingue classiquement les approches fondées sur le contenu, le filtrage collaboratif et les approches hybrides \cite{adomavicius2005toward,ricci2011recommender}. Dans le contexte de ce mémoire, l'utilisateur peut être un candidat, un conseiller emploi ou une plateforme ; les items peuvent être des offres, compétences, métiers ou formations.
 
-Les approches fondées sur le contenu utilisent les caractéristiques explicites des items et des profils. Elles sont adaptées au matching emploi-compétences parce que les offres et les candidats possèdent des descriptions textuelles, des secteurs, des niveaux et des compétences. Pazzani et Billsus montrent que ces systèmes exploitent les attributs des contenus pour produire des recommandations personnalisées \cite{pazzani2007content}. Leur avantage est l'interprétabilité ; leur limite est la dépendance au vocabulaire observé.
+Le tableau~\ref{tab:comparaison_approches_recommandation} compare ces familles dans le contexte de l'emploi \cite{pazzani2007content,koren2009matrix,he2017ncf,burke2002hybrid}.
 
-Le filtrage collaboratif exploite les interactions passées entre utilisateurs et items. Les approches de factorisation matricielle ont fortement structuré ce domaine en apprenant des facteurs latents à partir des matrices d'interactions \cite{koren2009matrix}. Les modèles neuronaux ont ensuite généralisé cette logique, par exemple avec le Neural Collaborative Filtering \cite{he2017ncf}. Ces méthodes sont puissantes lorsque l'on dispose d'un historique dense : clics, candidatures, recrutements, évaluations ou parcours de formation. Dans le cas étudié ici, cette hypothèse est fragile, car les données d'interaction restent limitées et de nombreux profils se trouvent en situation de démarrage à froid.
-
-Les approches hybrides combinent plusieurs sources de signal pour compenser les limites propres à chaque famille. Burke montre que l'hybridation peut améliorer la robustesse en associant contenu, collaboration, connaissances et règles métier \cite{burke2002hybrid}. Cette conclusion prépare directement le choix d'un système hybride : les signaux textuels, relationnels et métier doivent être séparés puis combinés, car chacun ne capture qu'une partie de la compatibilité.
+\begin{table}[H]
+\centering
+\caption{Comparaison des principales approches de recommandation}
+\label{tab:comparaison_approches_recommandation}
+\tableStyleStart
+\begin{tabularx}{\textwidth}{p{2.4cm}p{3.1cm}X X X}
+\rowcolor{darkblue}
+\tabheader{Approche} & \tabheader{Principe} & \tabheader{Avantages} & \tabheader{Inconvénients} & \tabheader{Limites dans cette étude} \\
+\midrule
+Par contenu & Compare les caractéristiques des profils et des offres. & Fonctionne sans historique de clics et permet d'expliquer les ressemblances. & Dépend de la qualité des descriptions et peut rester trop proche du profil initial. & Les formulations varient entre sources et certaines descriptions sont incomplètes. \\
+Collaborative & Utilise les comportements passés d'utilisateurs semblables. & Peut découvrir des préférences qui ne sont pas écrites dans les profils. & Exige beaucoup d'interactions et gère mal les nouveaux utilisateurs ou les nouvelles offres. & Les historiques de clics, candidatures et recrutements sont insuffisants. \\
+Hybride & Combine plusieurs signaux : textes, relations et règles métier. & Compense les faiblesses d'une source et améliore l'explication. & Demande de calibrer les signaux et rend le système plus complexe. & Sa qualité dépend encore de la fiabilité des données et des relations du graphe. \\
+\bottomrule
+\end{tabularx}
+\tableStyleEnd
+\source{Nos travaux, synthèse de Pazzani et Billsus (2007), Koren et al. (2009), He et al. (2017) et Burke (2002).}
+\end{table}
 
 \subsection{Spécificité du person-job fit}
 
 La recommandation d'emploi se distingue de la recommandation de films ou de produits. Une offre n'est pas seulement un item susceptible de plaire ; elle impose des contraintes de qualification, d'expérience, de localisation, de disponibilité et de compétences. La littérature récente sur le \emph{person-job fit} insiste sur cette double sélection : le candidat doit être intéressé par l'offre, mais l'employeur doit aussi pouvoir considérer le profil comme compatible \cite{yang2022twoway}. La recommandation devient donc un problème bilatéral.
 
-Cette spécificité change l'interprétation des scores. Dans le commerce électronique, une recommandation peut viser la probabilité de clic ou d'achat. Dans l'emploi, une recommandation doit distinguer au moins trois situations : le candidat est immédiatement compatible ; le candidat est proche mais nécessite une montée en compétences ; le candidat est trop éloigné du poste cible. La notion de \emph{skill gap} devient alors centrale.
+Cette spécificité change l'interprétation des scores. Dans le commerce électronique, une recommandation peut viser la probabilité de clic ou d'achat. Dans l'emploi, elle doit distinguer trois situations :
+\begin{itemize}
+    \item le candidat est immédiatement compatible avec le poste ;
+    \item le candidat est proche du profil attendu, mais doit encore acquérir certaines compétences ;
+    \item le candidat est trop éloigné du poste cible pour une recommandation immédiate.
+\end{itemize}
+La notion de \emph{skill gap} devient alors centrale.
 
 Les travaux récents mobilisant les graphes et les \LLM{} dans les ressources humaines vont dans ce sens. HRGraph propose par exemple d'exploiter des graphes de connaissances enrichis par \LLM{} pour la recommandation d'emploi \cite{wasi2024hrgraph}. D'autres travaux s'intéressent à la prédiction des compétences et à la construction de graphes de talents pour les ressources humaines \cite{yang2025talentgraph}. Ces contributions confirment l'intérêt des graphes pour représenter les relations entre compétences, métiers et profils, mais elles ne résolvent pas automatiquement la question de l'ancrage local : nomenclatures camerounaises, données réelles de plateforme, contraintes de formation et explication opérationnelle.
 
@@ -153,7 +175,7 @@ La \textbf{Precision@k} mesure la proportion de résultats pertinents parmi les 
 Precision@k(q)=\frac{|R_k(q)\cap Rel(q)|}{k}.
 \end{equation}
 
-Cette métrique répond à la question suivante : parmi les premières recommandations affichées, combien sont réellement utiles ? Dans un système emploi-compétences, une Precision@5 élevée signifie que les cinq premières offres proposées contiennent peu de résultats non pertinents. Sa limite est qu'elle ne mesure pas si le système a retrouvé tous les bons résultats disponibles.
+Cette métrique répond à la question suivante : parmi les premières recommandations affichées, combien sont réellement utiles ? Dans ce mémoire, Precision@10 porte sur les dix offres placées en tête pour chaque candidat. Sa limite est qu'elle ne mesure pas si le système a retrouvé tous les bons résultats disponibles.
 
 Le \textbf{Recall@k} mesure au contraire la proportion des éléments pertinents retrouvés dans les $k$ premiers résultats :
 

@@ -6,6 +6,15 @@ Ce chapitre suit le workflow réellement implémenté : préparation des donnée
 
 L'ETL produit les offres, profils et référentiels normalisés qui alimentent l'encodeur, pgvector et Neo4j. Le corpus compte 13\,957 offres pour 41\,298 candidats. Ce rapport déséquilibré augmente le risque de recommander selon la fréquence des secteurs ou des compétences ; il justifie l'ajout d'un contrôle relationnel après le rappel sémantique. Les volumes complets figurent au tableau~\ref{tab:implementation_volumes_exploites} en annexe.
 
+Les principales opérations appliquées sont :
+\begin{itemize}
+  \item harmonisation de la casse, des espaces, des accents et des formats de texte ;
+  \item suppression prudente des doublons strictement identiques ;
+  \item normalisation des localisations, secteurs, niveaux et types de contrat ;
+  \item conservation explicite des valeurs manquantes, sans inventer d'information ;
+  \item composition d'un texte exploitable à partir du titre, des compétences et des métadonnées disponibles lorsque la description est insuffisante.
+\end{itemize}
+
 \begin{figure}[H]
   \centering
   \caption{Répartition des offres par source après nettoyage}
@@ -79,26 +88,24 @@ Le modèle \texttt{all-MiniLM-L6-v2} a été retenu pour ses vecteurs de 384 dim
   \caption{Hyperparamètres du fine-tuning SentenceTransformer}
   \label{tab:implementation_hyperparametres_finetuning}
   \tableStyleStart
-  \begin{tabularx}{0.94\textwidth}{p{5.2cm}X}
+  \begin{tabularx}{\textwidth}{p{3.5cm}p{2.4cm}X}
     \rowcolor{darkblue}
-    \tabheader{Hyperparamètre} & \tabheader{Valeur} \\
+    \tabheader{Hyperparamètre} & \tabheader{Valeur} & \tabheader{Justification} \\
     \midrule
-    Nombre d'époques & 5 \\
-    Batch size & 32 \\
-    Négatifs implicites par exemple & 31 \\
-    Learning rate maximal & $2\times10^{-5}$ \\
-    Scheduler & Cosine avec warmup \\
-    Warmup & 100 étapes configurées, limitées par les étapes disponibles de l'époque \\
-    Perte & \textit{MultipleNegativesRankingLoss} avec similarité cosinus \\
-    Temps d'entraînement observé & 15\,160 s \\
-    Checkpoint retenu & Meilleur checkpoint sur validation autour de l'époque 4 \\
+    Nombre maximal d'époques & 5 & Plafond court retenu sous contrainte CPU pour observer la stabilisation sans prolonger inutilement l'entraînement. Le meilleur checkpoint apparaît autour de l'époque~4 ; la cinquième époque confirme le léger recul. \\
+    Taille de lot & 32 & Compromis entre mémoire disponible, temps de calcul et diversité des exemples comparés dans chaque lot. \\
+    Négatifs implicites & 31 par exemple & Avec un lot de 32 paires, les 31 autres descriptions servent de contre-exemples sans créer un fichier supplémentaire de négatifs. \\
+    Taux d'apprentissage maximal & $2\times10^{-5}$ & Valeur prudente pour adapter le modèle préentraîné sans modifier brutalement ses représentations initiales. \\
+    Calendrier du taux & Cosinus avec warmup & Augmentation progressive au démarrage, puis diminution contrôlée afin de stabiliser la fin de l'entraînement. \\
+    Warmup & 100 étapes au maximum & Limite les mises à jour instables au début ; le nombre effectif reste borné par les étapes disponibles. \\
+    Fonction de perte & \makecell[l]{\textit{MultipleNegatives}\\\textit{RankingLoss}} & Adaptée au retrieval : elle rapproche chaque paire correcte et éloigne les autres éléments du lot selon la similarité cosinus. \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
 
-Ces choix répondent aux ressources disponibles. Les vecteurs de 384 dimensions réduisent le stockage et le coût de recherche ; le batch de 32 limite la mémoire tout en fournissant 31 négatifs implicites par exemple ; cinq époques contiennent le temps d'entraînement. Le \textit{learning rate} de $2\times10^{-5}$ évite une modification trop brutale des représentations initiales.
+Ces choix répondent aux ressources disponibles. L'entraînement a duré 15\,160 secondes sur CPU. Cinq époques ne signifient pas que la cinquième est la meilleure : elles constituent une borne d'observation, tandis que le checkpoint retenu est celui qui obtient la meilleure validation autour de l'époque~4.
 
 La perte d'entraînement diminue de 2,445 à 0,132, tandis que la perte de test reste plus élevée (0,433) que celle d'entraînement (0,171). Cet écart signale une généralisation moins bonne sur les paires non vues, sans divergence du modèle. Le panneau des métriques montre un NDCG@10 maximal à l'époque~4, puis un léger recul ; le panneau du learning rate confirme une montée puis une décroissance contrôlée du pas d'apprentissage. Prolonger l'entraînement n'était donc pas justifié.
 \begin{figure}[H]
@@ -109,7 +116,7 @@ La perte d'entraînement diminue de 2,445 à 0,132, tandis que la perte de test 
   \source{Nos travaux, traitements Python et SentenceTransformer.}
 \end{figure}
 \subsubsection{Preuve de gain sur le ranking sémantique}
-Sur 953 paires de test, le fine-tuning multiplie le NDCG@10 par 3,7 et le MRR@10 par 4,2 par rapport au modèle de départ. Le détail figure au tableau~\ref{tab:implementation_baseline_vs_finetuned} en annexe ; l'évaluation complète est présentée au chapitre~4.
+Sur 953 paires de test, le fine-tuning multiplie le NDCG@10 par 3,7 et le MRR@10 par 4,2 par rapport au modèle de départ. La notation @10 signifie que le calcul examine les dix premiers résultats retournés pour chaque requête. Le NDCG vérifie leur ordre, tandis que le MRR dépend de la position du premier résultat pertinent. Le détail figure au tableau~\ref{tab:implementation_baseline_vs_finetuned} en annexe ; l'évaluation complète est présentée au chapitre~4.
 
 \begin{figure}[H]
   \centering
@@ -183,7 +190,15 @@ L'instance contient 72\,643 embeddings d'entités et 142 embeddings documentaire
 \end{table}
 \subsection{Référentiels découpés en chunks interrogeables}
 
-Les référentiels produisent 142 chunks : 43 pour les diplômes, 61 pour le MEPC 2013 et 38 pour la NCF 2017. La figure du pipeline montre cinq étapes : identification des documents, détection des titres, découpage structurel, validation des tailles et stockage dans pgvector. Les fragments de moins de 80 caractères sont fusionnés et la taille maximale est fixée à 3\,000 caractères. La stratégie de secours par fenêtres glissantes n'a pas été utilisée dans l'index courant.
+Les référentiels produisent 142 chunks : 43 pour les diplômes, 61 pour le MEPC 2013 et 38 pour la NCF 2017. Le traitement suit cinq étapes :
+\begin{itemize}
+  \item identifier le document source et son référentiel ;
+  \item détecter les titres et la hiérarchie des sections ;
+  \item créer un chunk par unité documentaire cohérente ;
+  \item vérifier la taille, puis fusionner les fragments de moins de 80 caractères et limiter les chunks à 3\,000 caractères ;
+  \item stocker le texte et ses métadonnées dans pgvector pour la recherche.
+\end{itemize}
+La stratégie de secours par fenêtres glissantes n'a pas été utilisée dans l'index courant.
 
 \begin{figure}[H]
   \centering
@@ -231,19 +246,19 @@ La figure~\ref{fig:implementation_schema_graphe} montre deux fonctions du graphe
 	
 	\begin{minipage}{0.32\textwidth}
 		\centering
-		\includegraphics[width=0.5\linewidth]{noeuds_neo4j.png}
+		\includegraphics[width=0.94\linewidth,height=0.18\textheight,keepaspectratio]{noeuds_neo4j.png}
 		\caption*{(a) Types de noeuds}
 	\end{minipage}
 	\hfill
 	\begin{minipage}{0.32\textwidth}
 		\centering
-		\includegraphics[width=0.99\linewidth]{sys.png}
+		\includegraphics[width=0.98\linewidth,height=0.18\textheight,keepaspectratio]{sys.png}
 		\caption*{(b) Répartition globale}
 	\end{minipage}
 	\hfill
 	\begin{minipage}{0.32\textwidth}
 		\centering
-		\includegraphics[width=0.5\linewidth]{relations_neo4j.png}
+		\includegraphics[width=0.94\linewidth,height=0.18\textheight,keepaspectratio]{relations_neo4j.png}
 		\caption*{(c) Types de relations}
 	\end{minipage}
 	

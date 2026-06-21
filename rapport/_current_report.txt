@@ -77,47 +77,47 @@ I   CADRE THÉORIQUE ET EXPÉRIMENTAL                                           
 
 1 FONDEMENTS THÉORIQUES ET REVUE DE LA LITTÉRATURE SUR L’IA GÉNÉ-
     RATIVE ET LES SYSTÈMES DE RECOMMANDATION                                                            6
-    1.1   Vocabulaire opérationnel : du matching à l’Agentic RAG . . . . . . . . . . . . . .            6
+    1.1   Repères conceptuels de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . .      6
     1.2   Fondements économiques et problématique d’appariement . . . . . . . . . . . .                 8
     1.3   Systèmes de recommandation et person-job ﬁt . . . . . . . . . . . . . . . . . . . .           9
     1.4   LLMs, embeddings et graphes de connaissances . . . . . . . . . . . . . . . . . . .           11
     1.5   RAG, GraphRAG et orchestration agentique . . . . . . . . . . . . . . . . . . . . .           13
-    1.6   Positionnement de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    16
+    1.6   Positionnement de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    17
 
-2 SOURCES DE DONNÉES ET APPROCHE MÉTHODOLOGIQUE                                                        18
-    2.1   Cadre méthodologique et sources de données . . . . . . . . . . . . . . . . . . . .           18
-    2.2   Représentation sémantique et graphe de connaissances . . . . . . . . . . . . . . .           20
+2 SOURCES DE DONNÉES ET APPROCHE MÉTHODOLOGIQUE                                                        19
+    2.1   Cadre méthodologique et sources de données . . . . . . . . . . . . . . . . . . . .           19
+    2.2   Représentation sémantique et graphe de connaissances . . . . . . . . . . . . . . .           23
 
 
 NGOULOU NGOUBILI Irch Deﬂuviaire                   iii                        Memoire Professionnel
 SOMMAIRE
 
-     2.3   Orchestration agentique et génération contrôlée . . . . . . . . . . . . . . . . . . .        23
+     2.3   Orchestration agentique et génération contrôlée . . . . . . . . . . . . . . . . . . .        25
 
 
 
-II    PRÉSENTATION DES RÉSULTATS ET DISCUSSION                                                          25
+II    PRÉSENTATION DES RÉSULTATS ET DISCUSSION                                                          27
 
-3 CONSTRUCTION DU SYSTÈME HYBRIDE EMPLOI–COMPÉTENCES                                                    26
-     3.1   Données exploitables et contraintes de qualité du système . . . . . . . . . . . . .          26
-     3.2   Adaptation du modèle d’embeddings au domaine emploi–compétences . . . . .                    28
-     3.3   Mémoire vectorielle pgvector pour le retrieval . . . . . . . . . . . . . . . . . . . .       31
-     3.4   Neo4j : mémoire relationnelle du matching . . . . . . . . . . . . . . . . . . . . . .        34
-     3.5   Score hybride et reranking des recommandations . . . . . . . . . . . . . . . . . .           38
-     3.6   Orchestration agentique du système par LangGraph . . . . . . . . . . . . . . . .             39
+3 CONSTRUCTION DU SYSTÈME HYBRIDE EMPLOI–COMPÉTENCES                                                    28
+     3.1   Données exploitables et contraintes de qualité du système . . . . . . . . . . . . .          28
+     3.2   Adaptation du modèle d’embeddings au domaine emploi–compétences . . . . .                    31
+     3.3   Mémoire vectorielle pgvector pour le retrieval . . . . . . . . . . . . . . . . . . . .       34
+     3.4   Neo4j : mémoire relationnelle du matching . . . . . . . . . . . . . . . . . . . . . .        37
+     3.5   Score hybride et reranking des recommandations . . . . . . . . . . . . . . . . . .           41
+     3.6   Orchestration agentique du système par LangGraph . . . . . . . . . . . . . . . .             42
 
-4 ÉVALUATION DE LA PERFORMANCE INTERNE DU SYSTÈME                                                       43
-     4.1   Protocole expérimental et métriques retenues . . . . . . . . . . . . . . . . . . . . .       43
-     4.2   Retrieval sémantique et apport mesuré du graphe . . . . . . . . . . . . . . . . . .          43
-     4.3   Validation fonctionnelle du GraphRAG . . . . . . . . . . . . . . . . . . . . . . . .         46
-     4.4   Reranking hybride et calibration du score . . . . . . . . . . . . . . . . . . . . . . .      48
-     4.5   Contrôle de génération par critic . . . . . . . . . . . . . . . . . . . . . . . . . . . .    51
+4 ÉVALUATION DE LA PERFORMANCE INTERNE DU SYSTÈME                                                       46
+     4.1   Protocole expérimental et métriques retenues . . . . . . . . . . . . . . . . . . . . .       46
+     4.2   Retrieval sémantique et apport mesuré du graphe . . . . . . . . . . . . . . . . . .          47
+     4.3   Validation fonctionnelle du GraphRAG . . . . . . . . . . . . . . . . . . . . . . . .         49
+     4.4   Reranking hybride et calibration du score . . . . . . . . . . . . . . . . . . . . . . .      52
+     4.5   Contrôle de génération par critic . . . . . . . . . . . . . . . . . . . . . . . . . . . .    55
 
-5 SYNTHÈSE ET DISCUSSION DES RÉSULTATS                                                                  55
-     5.1   Résultats majeurs de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   55
-     5.2   Confrontation avec la littérature . . . . . . . . . . . . . . . . . . . . . . . . . . . .    56
-     5.3   Discussion des hypothèses de recherche . . . . . . . . . . . . . . . . . . . . . . . .       56
-     5.4   Portée, limites et conditions d’usage . . . . . . . . . . . . . . . . . . . . . . . . . .    57
+5 SYNTHÈSE ET DISCUSSION DES RÉSULTATS                                                                  59
+     5.1   Résultats majeurs de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   59
+     5.2   Confrontation avec la littérature . . . . . . . . . . . . . . . . . . . . . . . . . . . .    60
+     5.3   Discussion des hypothèses de recherche . . . . . . . . . . . . . . . . . . . . . . . .       60
+     5.4   Portée, limites et conditions d’usage . . . . . . . . . . . . . . . . . . . . . . . . . .    61
 
 Conclusion générale et perspectives                                                                      I
 
@@ -186,18 +186,20 @@ SR :              Système de Recommandation
 
 NGOULOU NGOUBILI Irch Deﬂuviaire                vi                   Memoire Professionnel
                    LISTE DES TABLEAUX
-  Tableau 2.1    Sources de données mobilisées et utilisation méthodologique . . . . .             19
+  Tableau 1.1    Comparaison des principales approches de recommandation . . . . .                 10
 
-  Tableau 3.1    Protocole de construction des paires de ﬁne-tuning . . . . . . . . . . .          28
-  Tableau 3.2    Hyperparamètres du ﬁne-tuning SentenceTransformer . . . . . . . . .               29
-  Tableau 3.3    Distribution des embeddings par type d’entité . . . . . . . . . . . . . .         32
-  Tableau 3.4    Résultats de calibration des poids du score hybride . . . . . . . . . . .         39
+  Tableau 2.1    Sources de données mobilisées et utilisation méthodologique . . . . .             22
 
-  Tableau 4.1    Benchmark des modèles d’embeddings sur 473 requêtes de test . . . .               44
-  Tableau 4.2    Comparaison retrieval : pgvector seul versus pgvector + graphe . . . .            45
-  Tableau 4.3    Pondérations retenues selon la fonction objectif du score hybride . . .           50
+  Tableau 3.1    Protocole de construction des paires de ﬁne-tuning . . . . . . . . . . .          31
+  Tableau 3.2    Hyperparamètres du ﬁne-tuning SentenceTransformer . . . . . . . . .               32
+  Tableau 3.3    Distribution des embeddings par type d’entité . . . . . . . . . . . . . .         35
+  Tableau 3.4    Résultats de calibration des poids du score hybride . . . . . . . . . . .         42
 
-  Tableau 5.1    Lecture des hypothèses de recherche au regard des résultats . . . . . .           57
+  Tableau 4.1    Benchmark des modèles d’embeddings sur 473 requêtes de test . . . .               47
+  Tableau 4.2    Comparaison retrieval : pgvector seul versus pgvector + graphe . . . .            48
+  Tableau 4.3    Pondérations retenues selon la fonction objectif du score hybride . . .           54
+
+  Tableau 5.1    Lecture des hypothèses de recherche au regard des résultats . . . . . .           61
 
   Tableau A.1    Labels de nuds et relations structurantes du graphe . . . . . . . . . . . VIII
   Tableau A.2    Volume d’entités indexées dans la base vectorielle pgvector . . . . . . IX
@@ -222,32 +224,34 @@ NGOULOU NGOUBILI Irch Deﬂuviaire               vii                          Me
                 textuelles . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   11
   Figure 1.2    Différence fonctionnelle entre rag, GraphRAG et Agentic RAG . . . .                  14
 
-  Figure 3.1    Répartition des offres par source après nettoyage . . . . . . . . . . . . . 26
-  Figure 3.2    Compétences fréquentes et disponibilité descriptive . . . . . . . . . . . 27
-  Figure 3.3    perte, généralisation, métriques de validation et calendrier du learning
-                rate . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
-  Figure 3.4    Comparaison des modèles d’embeddings : qualité de classement, rap-
-                pel et latence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 30
-  Figure 3.5    Projection UMAP des embeddings indexés . . . . . . . . . . . . . . . . . 31
-  Figure 3.6    Schéma physique de la base pgvector . . . . . . . . . . . . . . . . . . . . 32
-  Figure 3.7    Pipeline de chunking structurel des référentiels documentaires . . . . . 33
-  Figure 3.8    Distribution des tailles, sources et couverture du chunking documentaire 34
-  Figure 3.9    Schéma logique du graphe de connaissances . . . . . . . . . . . . . . . 35
-  Figure 3.10   Lecture conjointe des noeuds et relations Neo4j mobilisés par le matching 35
-  Figure 3.11   Tableau de bord statistique du graphe Neo4j . . . . . . . . . . . . . . . . 36
-  Figure 3.12   Distribution des degrés dans la projection matching . . . . . . . . . . . 37
-  Figure 3.13   Distribution comparée des scores pgvector et Neo4j utilisés dans le
-                reranking . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 38
-  Figure 3.14   Workﬂow agentique orchestré dans LangGraph Studio . . . . . . . . . 40
+  Figure 2.1    Vue simpliﬁée du workﬂow de recommandation emploi–compétences                        20
 
-  Figure 4.1    Comparaison des modèles d’embeddings sur le jeu de test . . . . . . .                44
-  Figure 4.2    Effet de l’enrichissement graphe sur les métriques de retrieval . . . . .            46
-  Figure 4.3    Évaluation fonctionnelle des requêtes Neo4j utiles au GraphRAG . . .                 47
-  Figure 4.4    Distribution des déplacements de rang après reranking par le graphe .                49
-  Figure 4.5    Évolution de l’objectif NDCG@10 au cours des essais Optuna . . . . . .               50
-  Figure 4.6    Comparaison des pondérations retenues selon la fonction objectif . . .               51
-  Figure 4.7    Distribution des scores du critic avec contexte réel et contexte mélangé             52
-  Figure 4.8    Effet du seuil du critic sur les décisions accept/revise . . . . . . . . . .         53
+  Figure 3.1    Répartition des offres par source après nettoyage . . . . . . . . . . . . . 29
+  Figure 3.2    Compétences fréquentes et disponibilité descriptive . . . . . . . . . . . 30
+  Figure 3.3    perte, généralisation, métriques de validation et calendrier du learning
+                rate . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+  Figure 3.4    Comparaison des modèles d’embeddings : qualité de classement, rap-
+                pel et latence . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
+  Figure 3.5    Projection UMAP des embeddings indexés . . . . . . . . . . . . . . . . . 34
+  Figure 3.6    Schéma physique de la base pgvector . . . . . . . . . . . . . . . . . . . . 35
+  Figure 3.7    Pipeline de chunking structurel des référentiels documentaires . . . . . 36
+  Figure 3.8    Distribution des tailles, sources et couverture du chunking documentaire 37
+  Figure 3.9    Schéma logique du graphe de connaissances . . . . . . . . . . . . . . . 38
+  Figure 3.10   Lecture conjointe des noeuds et relations Neo4j mobilisés par le matching 38
+  Figure 3.11   Tableau de bord statistique du graphe Neo4j . . . . . . . . . . . . . . . . 39
+  Figure 3.12   Distribution des degrés dans la projection matching . . . . . . . . . . . 40
+  Figure 3.13   Distribution comparée des scores pgvector et Neo4j utilisés dans le
+                reranking . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 41
+  Figure 3.14   Workﬂow agentique orchestré dans LangGraph Studio . . . . . . . . . 43
+
+  Figure 4.1    Comparaison des modèles d’embeddings sur le jeu de test . . . . . . . 48
+  Figure 4.2    Effet de l’enrichissement graphe sur les métriques de retrieval . . . . . 49
+  Figure 4.3    Diagnostics fonctionnels des chemins Neo4j mobilisés par le GraphRAG 50
+  Figure 4.4    Distribution des déplacements de rang après reranking par le graphe . 53
+  Figure 4.5    Évolution de l’objectif NDCG@10 au cours des essais Optuna . . . . . . 54
+  Figure 4.6    Comparaison des pondérations retenues selon la fonction objectif . . . 55
+  Figure 4.7    Distribution des scores du critic avec contexte réel et contexte mélangé 56
+  Figure 4.8    Effet du seuil du critic sur les décisions accept/revise . . . . . . . . . . 57
 
   Figure A.1    Architecture méthodologique du workﬂow agentique de recomman-
                 dation . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . VI
@@ -290,11 +294,13 @@ proches fondées uniquement sur des mots-clés. Plus spéciﬁquement, il sagit 
 données disponibles, daligner les métiers et compétences avec les référentiels esco, mepc et
 ncf, dadapter un modèle dembeddings au domaine emploi-compétences, de construire un
 graphe de connaissances sous Neo4j et de poser les bases dun moteur de recommandation
-hybride intégrant similarité sémantique, relations de graphe et analyse du skill gap.
+
+
 
 NGOULOU NGOUBILI Irch Deﬂuviaire                ix                       Memoire Professionnel
 Avant-propos
 
+hybride intégrant similarité sémantique, relations de graphe et analyse du skill gap 1 .
    Ce travail répond à un double enjeu. Sur le plan scientiﬁque et méthodologique, il cherche
 à montrer comment les modèles de représentation sémantique, les bases vectorielles et les
 graphes de connaissances peuvent être combinés pour traiter un problème réel dappariement
@@ -306,7 +312,11 @@ formation.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire             x                        Memoire Professionnel
+   1. Le skill gap, ou écart de compétences, désigne la différence entre les compétences déjà détenues par un
+candidat et celles requises par une offre ou un métier cible.
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                     x                            Memoire Professionnel
                                       RÉSUMÉ
    Ce mémoire s’inscrit dans le contexte du rapprochement entre offres d’emploi, proﬁls can-
 didats et compétences sur le marché camerounais pour la plateforme KmerAI. La probléma-
@@ -423,32 +433,29 @@ mais celle de savoir :
                          visé pour les membres de la communauté KmerAI ?
 
 
-   Cette question générale se décline en plusieurs questions de recherche sous-jacentes :
+   Cette question générale se décline en deux questions de recherche :
 
-ä Q1 : Comment identiﬁer et formaliser, dans le contexte camerounais, les compétences,
-    métiers, formations et relations pertinentes pour un matching emploi compétences ﬁable
-    et opérationnel à partir des référentiels ncm, esco et ncf ?
-ä Q2 : Dans quelle mesure l’intégration d’un graphe de connaissances améliore-t-elle la
-    qualité et la précision du matching par rapport aux approches purement vectorielles ?
-
-
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                2                         Memoire Professionnel
-Objectifs de l’étude
+ä Q1 : Comment organiser les offres, les proﬁls, les métiers, les compétences et les forma-
+    tions aﬁn de mieux rapprocher les candidats des emplois disponibles ?
+ä Q2 : L’ajout des liens entre candidats, compétences et offres améliore-t-il la qualité des
+    recommandations par rapport à une recherche fondée uniquement sur les textes ?
 
 Objectifs visés dans l’étude
    L’objectif général de cette étude est de concevoir et d’évaluer un système de recomman-
 dation hybride emploi-compétences pour appuyer la décision de recrutement et la montée
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                2                         Memoire Professionnel
+Intérêt de l’étude
+
 en compétence. Plus spéciﬁquement, il s’agit de :
 
-ä normaliser les offres et proﬁls, puis les aligner avec les référentiels esco, mepc et ncf pour
+ ä normaliser les offres et proﬁls, puis les aligner avec les référentiels esco, mepc et ncf pour
     obtenir des variables de matching ﬁables ;
-ä adapter un modèle de type encodeur au domaine emploi-compétences et stocker ses em-
+ ä adapter un modèle de type encodeur au domaine emploi-compétences et stocker ses em-
     beddings ;
-ä construire un graphe Neo4j des relations candidats-offres-compétences et déﬁnir un score
+ ä construire un graphe Neo4j des relations candidats-offres-compétences et déﬁnir un score
     hybride de recommandation ;
-ä orchestrer et évaluer la pipeline de production des verdicts du système.
+ ä orchestrer et évaluer la pipeline de production des verdicts du système.
 
 
 Intérêt de l’étude
@@ -460,32 +467,26 @@ et implicites des proﬁls candidats, tout en améliorant la qualité des corres
 sées. Cela rejoint la mission de KmerAI, qui vise à favoriser lappropriation locale de lIA pour
 résoudre des problèmes concrets du développement camerounais.
 Hypothèses de l’étude
-   Aﬁn de répondre à la problématique, cette étude repose sur les hypothèses suivantes.
+   Aﬁn de répondre à la problématique, cette étude repose sur trois hypothèses.
 
-ä H1 : Lintégration conjointe de la ncm, desco et de la ncf dans un référentiel uniﬁé
-    métiers–compétences–formations améliore la structuration et les performances dapparie-
-    ment proﬁl–offre, par rapport à une approche sans ces référentiels ;
-ä H2 : La modélisation du marché de lemploi sous forme de graphe de connaissances
-    (Neo4j), incluant explicitement les niveaux et domaines de formation de la ncf, améliore
-    la qualité du matching par rapport à une approche purement vectorielle ;
-ä H3 : Le ﬁne-tuning d’un modèle de représentation sémantique sur le domaine emploi-
-    compétences améliore la qualité des embeddings et la similarité sémantique entre proﬁls
-    et offres, par rapport au même modèle non adapté ;
-
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                 3                      Memoire Professionnel
-Méthodologie de l’étude
-
-ä H4 : La combinaison d’un RAG agentic et d’un score de recommandation hybride améliore
-    la pertinence et l’explicabilité des recommandations de skill gap et de parcours de montée
-    en compétences.
+ ä H1 : La mise en ordre des données à l’aide des référentiels métiers et formations, associée
+    à un modèle adapté au vocabulaire de l’emploi, améliore le rapprochement entre proﬁls
+    et offres.
+ ä H2 : La prise en compte des liens entre candidats, compétences, métiers et offres améliore
+    le classement obtenu par la recherche sur les textes seule.
+ ä H3 : La combinaison de la recherche, du graphe et du contrôle de la réponse produit
+    des recommandations plus pertinentes, plus compréhensibles et capables de signaler les
+    compétences manquantes.
 
 Méthodologie de l’étude
    La démarche adoptée sinscrit dans un cadre dingénierie des données combinant structura-
 tion des connaissances et modélisation hybride. Elle repose sur la collecte et la normalisation
 des données issues doffres demploi sur les différentes sites web et de proﬁls, alignées sur la
 NCM 2013 aﬁn dassurer la cohérence sémantique. Un graphe de connaissances est ensuite
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                 3                       Memoire Professionnel
+Plan du travail
+
 construit sous Neo4j en intégrant les référentiels ESCO et NCM, à partir dun processus dex-
 traction automatique de triplets à partir des données textuelles. Parallèlement, les descriptions
 sont vectorisées et indexées dans un espace sémantique permettant la mesure de similarité.
@@ -514,6 +515,7 @@ du modèle ainsi que ses implications dans le contexte du marché du travail cam
 
 
 
+
 NGOULOU NGOUBILI Irch Deﬂuviaire               4                         Memoire Professionnel
                         Première partie
 
@@ -538,7 +540,8 @@ d’identiﬁer des écarts de compétences et de produire des explications fond
 nées structurées et non structurées.
 
 
-1.1 Vocabulaire opérationnel : du matching à l’Agentic RAG
+1.1 Repères conceptuels de l’étude
+1.1.1 Vocabulaire opérationnel : du matching à l’Agentic RAG
    Avant d’entrer dans la revue de littérature, il est nécessaire de stabiliser les concepts utilisés
 dans la suite du mémoire. Cette clariﬁcation évite une confusion fréquente : employer indiffé-
 remment IA générative, llm, RAG, GraphRAG, moteur de recommandation et chatbot. Dans
@@ -552,12 +555,13 @@ comme un problème de représentation des connaissances.
 
 Système de recommandation.
    Un système de recommandation est un dispositif algorithmique qui classe des éléments
-selon leur pertinence probable pour un utilisateur ou un cas d’usage [33]. Dans ce mémoire,
-les éléments recommandés peuvent être des offres d’emploi, des compétences, des métiers ou
+
 
 NGOULOU NGOUBILI Irch Deﬂuviaire                 6                         Memoire Professionnel
-Vocabulaire opérationnel : du matching à l’Agentic RAG
+Repères conceptuels de l’étude
 
+selon leur pertinence probable pour un utilisateur ou un cas d’usage [33]. Dans ce mémoire,
+les éléments recommandés peuvent être des offres d’emploi, des compétences, des métiers ou
 des pistes de formation. La pertinence ne renvoie donc pas seulement à une préférence ; elle
 renvoie aussi à une compatibilité professionnelle explicable.
 
@@ -574,13 +578,13 @@ objets proches en sens, même lorsque les formulations diffèrent. Elle répond 
 récurrent des données d’emploi : des expressions comme « data analyst », « analyste de don-
 nées » et « reporting statistique » peuvent désigner des zones de compétences voisines.
 
-Base vectorielle pgvector.
-   pgvector désigne l’extension PostgreSQL utilisée pour stocker et rechercher des embed-
-dings [29]. Dans ce mémoire, elle sert de couche de recherche rapide pour retrouver les offres,
-métiers, compétences ou documents proches d’une requête. Son rôle est de présélectionner
-des candidats à la recommandation. Elle ne sufﬁt cependant pas à décider seule, car un bon
-score vectoriel ne garantit pas que le niveau ncf, l’expérience ou les compétences obligatoires
-soient compatibles.
+Base de données vectorielle.
+   Une base de données vectorielle stocke des représentations numériques d’objets et permet
+de retrouver rapidement ceux dont les vecteurs sont les plus proches d’une requête. Elle sert
+donc à rechercher des textes similaires par leur sens, et non seulement par des mots identiques.
+Dans ce mémoire, cette fonction est mise en uvre avec PostgreSQL et son extension pgvector
+[29]. Elle présélectionne les offres, métiers, compétences ou documents proches, sans décider
+seule de leur compatibilité professionnelle.
 
 Graphe de connaissances Neo4j.
    Un graphe de connaissances représente des entités et leurs relations : candidat, offre, com-
@@ -593,13 +597,13 @@ quels chemins relient un métier à une formation ?
 IA générative, LLM et prompting.
    L’intelligence artiﬁcielle générative désigne les modèles capables de produire du contenu,
 notamment du texte. Un llm est un grand modèle de langage entraîné sur de grands corpus
-textuels et capable de générer, reformuler ou synthétiser des réponses. Dans ce mémoire, le
-llm n’est pas le moteur de vérité du système. Il intervient comme générateur contrôlé : il reçoit
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                7                        Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire               7                         Memoire Professionnel
 Fondements économiques et problématique d’appariement
 
+textuels et capable de générer, reformuler ou synthétiser des réponses. Dans ce mémoire, le
+llm n’est pas le moteur de vérité du système. Il intervient comme générateur contrôlé : il reçoit
 un contexte construit à partir de pgvector, Neo4j et des documents, puis rédige une réponse en
 français. Le prompting désigne l’ensemble des consignes données au modèle pour encadrer
 son comportement, limiter les inventions et structurer la réponse.
@@ -630,20 +634,20 @@ cants lorsque la rencontre entre travailleurs et entreprises est coûteuse, lent
 ment informée [25, 30]. Cette lecture est importante : un système de recommandation emploi-
 compétences n’est pas seulement un outil informatique ; c’est un dispositif d’intermédiation
 qui cherche à réduire les coûts de recherche et à améliorer la qualité des mises en relation.
-   La littérature sur l’asymétrie d’information renforce ce diagnostic. Akerlof montre que
-l’incertitude sur la qualité peut dégrader les échanges lorsque les acteurs ne disposent pas de
-signaux ﬁables [2]. Sur le marché de l’emploi, cette asymétrie apparaît des deux côtés : le re-
-cruteur ne voit pas toujours les compétences réelles du candidat, et le candidat ne connaît pas
-toujours les exigences effectives du poste. La théorie du signalement de Spence explique alors
+   La littérature sur l’asymétrie d’information renforce ce diagnostic. George A. Akerlof montre
+que l’incertitude sur la qualité peut dégrader les échanges lorsque les acteurs ne disposent pas
+de signaux ﬁables [2]. Sur le marché de l’emploi, cette asymétrie apparaît des deux côtés : le
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire               8                        Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire               8                         Memoire Professionnel
 Systèmes de recommandation et person-job ﬁt
 
-le rôle des diplômes, certiﬁcations et expériences comme signaux observables [34]. Mais ces
-signaux restent incomplets lorsque les métiers évoluent rapidement, notamment dans les do-
-maines numériques où les compétences techniques sont souvent décrites par des formulations
-instables.
+recruteur ne voit pas toujours les compétences réelles du candidat, et le candidat ne connaît
+pas toujours les exigences effectives du poste. La théorie du signalement de Spence explique
+alors le rôle des diplômes, certiﬁcations et expériences comme signaux observables [34]. Mais
+ces signaux restent incomplets lorsque les métiers évoluent rapidement, notamment dans les
+domaines numériques où les compétences techniques sont souvent décrites par des formula-
+tions instables.
 
 1.2.2 Capital humain, tâches et inadéquation des compétences
    La théorie du capital humain rappelle que la formation et l’expérience sont des investisse-
@@ -668,30 +672,34 @@ bable pour un utilisateur. La littérature distingue classiquement les approches
 contenu, le ﬁltrage collaboratif et les approches hybrides [1, 33]. Dans le contexte de ce mé-
 moire, l’utilisateur peut être un candidat, un conseiller emploi ou une plateforme ; les items
 peuvent être des offres, compétences, métiers ou formations.
-   Les approches fondées sur le contenu utilisent les caractéristiques explicites des items et
-des proﬁls. Elles sont adaptées au matching emploi-compétences parce que les offres et les
-candidats possèdent des descriptions textuelles, des secteurs, des niveaux et des compétences.
-Pazzani et Billsus montrent que ces systèmes exploitent les attributs des contenus pour pro-
-duire des recommandations personnalisées [28]. Leur avantage est l’interprétabilité ; leur limite
-est la dépendance au vocabulaire observé.
+   Le tableau 1.1 compare ces familles dans le contexte de l’emploi [28, 19, 14, 9].
+
+
 
 
 NGOULOU NGOUBILI Irch Deﬂuviaire               9                         Memoire Professionnel
 Systèmes de recommandation et person-job ﬁt
+                 Table 1.1 – Comparaison des principales approches de recommandation
+Approche           Principe                Avantages                  Inconvénients              Limites dans cette
+                                                                                                 étude
 
-   Le ﬁltrage collaboratif exploite les interactions passées entre utilisateurs et items. Les ap-
-proches de factorisation matricielle ont fortement structuré ce domaine en apprenant des fac-
-teurs latents à partir des matrices d’interactions [19]. Les modèles neuronaux ont ensuite gé-
-néralisé cette logique, par exemple avec le Neural Collaborative Filtering [14]. Ces méthodes
-sont puissantes lorsque l’on dispose d’un historique dense : clics, candidatures, recrutements,
-évaluations ou parcours de formation. Dans le cas étudié ici, cette hypothèse est fragile, car
-les données d’interaction restent limitées et de nombreux proﬁls se trouvent en situation de
-démarrage à froid.
-   Les approches hybrides combinent plusieurs sources de signal pour compenser les limites
-propres à chaque famille. Burke montre que l’hybridation peut améliorer la robustesse en
-associant contenu, collaboration, connaissances et règles métier [9]. Cette conclusion prépare
-directement le choix d’un système hybride : les signaux textuels, relationnels et métier doivent
-être séparés puis combinés, car chacun ne capture qu’une partie de la compatibilité.
+Par contenu        Compare           les Fonctionne sans his- Dépend de la qua- Les                        formulations
+                   caractéristiques        torique de clics et lité des descriptions varient entre sources
+                   des proﬁls et des permet d’expliquer et peut rester trop et certaines descrip-
+                   offres.                 les ressemblances.         proche du proﬁl ini- tions           sont   incom-
+                                                                      tial.                      plètes.
+Collaborative      Utilise les com- Peut découvrir des Exige                       beaucoup Les historiques de
+                   portements       pas- préférences qui ne d’interactions                   et clics,     candidatures
+                   sés d’utilisateurs sont pas écrites dans gère mal les nou- et recrutements sont
+                   semblables.             les proﬁls.                veaux utilisateurs ou insufﬁsants.
+                                                                      les nouvelles offres.
+Hybride            Combine          plu- Compense les fai- Demande de calibrer Sa qualité dépend
+                   sieurs signaux : blesses d’une source les signaux et rend encore de la ﬁabilité
+                   textes, relations et et améliore l’explica- le système plus com- des données et des
+                   règles métier.          tion.                      plexe.                     relations du graphe.
+    Source : Nos travaux, synthèse de Pazzani et Billsus (2007), Koren et al. (2009), He et al. (2017) et Burke (2002).
+
+
 
 1.3.2 Spéciﬁcité du person-job ﬁt
    La recommandation d’emploi se distingue de la recommandation de ﬁlms ou de produits.
@@ -701,10 +709,19 @@ récente sur le person-job ﬁt insiste sur cette double sélection : le candida
 par l’offre, mais l’employeur doit aussi pouvoir considérer le proﬁl comme compatible [40]. La
 recommandation devient donc un problème bilatéral.
    Cette spéciﬁcité change l’interprétation des scores. Dans le commerce électronique, une
-recommandation peut viser la probabilité de clic ou d’achat. Dans l’emploi, une recomman-
-dation doit distinguer au moins trois situations : le candidat est immédiatement compatible ;
-le candidat est proche mais nécessite une montée en compétences ; le candidat est trop éloigné
-du poste cible. La notion de skill gap devient alors centrale.
+recommandation peut viser la probabilité de clic ou d’achat. Dans l’emploi, elle doit distinguer
+trois situations :
+
+ä le candidat est immédiatement compatible avec le poste ;
+ä le candidat est proche du proﬁl attendu, mais doit encore acquérir certaines compétences ;
+ä le candidat est trop éloigné du poste cible pour une recommandation immédiate.
+
+La notion de skill gap devient alors centrale.
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                            10                               Memoire Professionnel
+LLMs, embeddings et graphes de connaissances
+
    Les travaux récents mobilisant les graphes et les llm dans les ressources humaines vont
 dans ce sens. HRGraph propose par exemple d’exploiter des graphes de connaissances enrichis
 par llm pour la recommandation d’emploi [38]. D’autres travaux s’intéressent à la prédiction
@@ -714,8 +731,6 @@ compétences, métiers et proﬁls, mais elles ne résolvent pas automatiquement
 l’ancrage local : nomenclatures camerounaises, données réelles de plateforme, contraintes de
 formation et explication opérationnelle.
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                10                       Memoire Professionnel
-LLMs, embeddings et graphes de connaissances
 
 1.4 LLMs, embeddings et graphes de connaissances
 1.4.1 Grands modèles de langage et génération contrôlée
@@ -737,6 +752,9 @@ Source : Nos travaux, schématisation conceptuelle à partir de Mikolov et al. (
                                    (2017), Devlin et al. (2018) et Brown et al. (2020).
 
 
+NGOULOU NGOUBILI Irch Deﬂuviaire                            11                              Memoire Professionnel
+LLMs, embeddings et graphes de connaissances
+
    Deux grandes familles de modèles sont utiles pour ce mémoire. La première regroupe
 les modèles de représentation, comme BERT et Sentence-BERT. BERT apprend des représenta-
 tions contextuelles bidirectionnelles adaptées à la compréhension du texte [10]. Sentence-BERT
@@ -744,11 +762,6 @@ adapte cette logique pour produire des embeddings de phrases comparables efﬁca
 similarité cosinus [32]. La seconde famille regroupe les modèles génératifs, comme GPT, T5
 ou les modèles instruction-tuned. GPT-3 a montré qu’un modèle de grande taille pouvait ef-
 fectuer des tâches variées à partir de quelques exemples dans le prompt [8]. T5 a proposé une
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                            11                              Memoire Professionnel
-LLMs, embeddings et graphes de connaissances
-
 formulation uniﬁée des tâches NLP comme transformation texte-vers-texte [31]. L’apprentis-
 sage par retour humain a ensuite amélioré la capacité des modèles à suivre des instructions
 [27].
@@ -776,6 +789,11 @@ cherche vectorielle à grande échelle [17]. Dans ce mémoire, l’utilisation d
 pgvector répond à une logique pragmatique : conserver les embeddings dans une base rela-
 tionnelle exploitable, interrogeable et intégrable au reste du pipeline [29].
 
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire               12                         Memoire Professionnel
+RAG, GraphRAG et orchestration agentique
+
 1.4.3 Graphes de connaissances et recommandation relationnelle
    Hogan et al. montrent que les graphes de connaissances servent à structurer des informa-
 tions hétérogènes, à rendre explicites des relations sémantiques et à soutenir des tâches de
@@ -783,11 +801,6 @@ recherche ou de raisonnement [16]. Dans le domaine emploi-compétences, cette re
 tion complète la recherche vectorielle : elle rend visibles les relations entre candidats, offres,
 compétences, métiers, formations et niveaux.
    La recommandation par graphe a également connu des avancées importantes. Les graph
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire               12                         Memoire Professionnel
-RAG, GraphRAG et orchestration agentique
-
 neural networks ont fourni des outils pour propager de l’information dans des graphes [18,
 37]. LightGCN a montré que, dans la recommandation collaborative, une architecture simpli-
 ﬁée de propagation sur graphe pouvait être très efﬁcace [15]. Ces travaux établissent l’intérêt
@@ -814,6 +827,12 @@ compétences possédées, compétences requises, niveau de formation, métier ci
 formation possible. Le GraphRAG étend alors la récupération vers des informations structu-
 rées par graphe. La ﬁgure 1.2 distingue trois niveaux fonctionnels. La rag récupère surtout
 des documents proches d’une requête et les transmet au llm ; elle reste donc efﬁcace pour une
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                13                        Memoire Professionnel
+RAG, GraphRAG et orchestration agentique
+
 recherche documentaire, mais son raisonnement dépend du contexte retrouvé. Le GraphRAG
 ajoute une représentation relationnelle : les entités et leurs liens permettent de naviguer entre
 compétences, métiers, offres, niveaux et formations. L’Agentic RAG va plus loin : il ne se limite
@@ -822,10 +841,6 @@ ajuste le contexte et produit une réponse. Cette distinction justiﬁe le choix
 biner retrieval vectoriel, graphe Neo4j et orchestration LangGraph pour traiter des requêtes
 emploi-compétences plus complexes qu’une simple recherche de documents.
 
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                13                        Memoire Professionnel
-RAG, GraphRAG et orchestration agentique
                Figure 1.2 – Différence fonctionnelle entre rag, GraphRAG et Agentic RAG
 
 
@@ -849,6 +864,10 @@ tectures générales, mais la ﬁabilité dépend de détails concrets : qualit�
 graphe, robustesse des requêtes, traçabilité des sources, gestion des cas sans résultat et critères
 de révision. C’est pourquoi l’architecture retenue ajoute un critic et des traces d’exécution. Le
 llm produit la réponse ﬁnale, mais les données récupérées et les outils appelés doivent rester
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                            14                               Memoire Professionnel
+RAG, GraphRAG et orchestration agentique
+
 observables.
 
 1.5.3 Évaluer la performance et la factualité
@@ -857,10 +876,6 @@ réponse générée. Elle doit d’abord mesurer la qualité de la récupératio
 tème retrouve-t-il les offres, compétences ou documents réellement pertinents ? La littérature
 en recherche d’information utilise pour cela des métriques de classement comme Precision@k,
 Recall@k, MRR et NDCG [35, 26]. Ces métriques supposent l’existence d’un ensemble de ré-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                            14                               Memoire Professionnel
-RAG, GraphRAG et orchestration agentique
-
 sultats pertinents, noté Rel (q), pour une requête q, et d’une liste classée de résultats retournés
 par le système.
    La Precision@k mesure la proportion de résultats pertinents parmi les k premiers résultats
@@ -871,10 +886,9 @@ alors :
                                Precision@k (q) =                       .                       (1.1)
                                                             k
    Cette métrique répond à la question suivante : parmi les premières recommandations afﬁ-
-chées, combien sont réellement utiles ? Dans un système emploi-compétences, une Precision@5
-élevée signiﬁe que les cinq premières offres proposées contiennent peu de résultats non per-
-tinents. Sa limite est qu’elle ne mesure pas si le système a retrouvé tous les bons résultats
-disponibles.
+chées, combien sont réellement utiles ? Dans ce mémoire, Precision@10 porte sur les dix offres
+placées en tête pour chaque candidat. Sa limite est qu’elle ne mesure pas si le système a
+retrouvé tous les bons résultats disponibles.
    Le Recall@k mesure au contraire la proportion des éléments pertinents retrouvés dans les
 k premiers résultats :
 
@@ -893,32 +907,33 @@ requête q, si rank q est le rang du premier résultat pertinent, alors le score
                                                       rank q
    Sur un ensemble de N requêtes, le MRR est :
 
-                                                1 N     1
-                                       MRR =      ∑
-                                                N q=1 rank q
-                                                             .                                 (1.4)
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                 15                         Memoire Professionnel
+RAG, GraphRAG et orchestration agentique
+
+
+                                               1 N     1
+                                      MRR =      ∑
+                                               N q=1 rank q
+                                                            .                                 (1.4)
 
    Cette métrique est utile lorsque l’on veut savoir si le système place rapidement au moins
 une bonne réponse. Dans une interface de recommandation, cela correspond à une logique
 pratique : l’utilisateur regarde souvent les premiers résultats avant de parcourir toute la liste.
    Le NDCG@k (Normalized Discounted Cumulative Gain) tient compte non seulement de la
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                 15                         Memoire Professionnel
-Positionnement de l’étude
-
 présence des résultats pertinents, mais aussi de leur ordre et éventuellement de leur degré de
 pertinence. Si reli désigne le niveau de pertinence du résultat placé au rang i, alors :
 
                                                 k
                                                       2reli − 1
-                                    DCG@k = ∑                       .                      (1.5)
+                                    DCG@k = ∑                    .                            (1.5)
                                                i =1
-                                                    log 2 ( i + 1 )
+                                                    log2 (i + 1)
+
    Le score est ensuite normalisé par le meilleur classement possible, noté IDCG@k :
 
                                                      DCG@k
-                                     NDCG@k =               .                              (1.6)
+                                     NDCG@k =               .                                 (1.6)
                                                      IDCG@k
    Cette métrique est particulièrement adaptée lorsque tous les résultats pertinents ne se
 valent pas. Par exemple, une offre parfaitement alignée avec les compétences du candidat
@@ -940,17 +955,16 @@ Neo4j, des critères de factualité pour la réponse générée, et une interpr�
 de l’utilité des recommandations.
 
 
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                16                        Memoire Professionnel
+Positionnement de l’étude
+
 1.6 Positionnement de l’étude
    Les travaux présentés dans cette revue montrent que le matching emploi-compétences ne
 peut pas être traité comme une simple recherche de mots-clés. Il exige à la fois une repré-
 sentation sémantique des textes, une structuration des relations métier-compétence-formation
 et un mécanisme de génération capable d’expliquer les résultats sans s’éloigner des données
 disponibles.
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                16                        Memoire Professionnel
-Positionnement de l’étude
-
    Cette étude se positionne à l’intersection de trois familles d’approches. La première est
 la recherche sémantique par embeddings, utilisée pour retrouver rapidement les offres, com-
 pétences ou documents proches d’une requête. La deuxième est le graphe de connaissances,
@@ -979,6 +993,10 @@ dings, les graphes de connaissances et la rag apportent chacun une réponse part
 problème, mais aucun ne sufﬁt isolément. La revue conduit donc à une position claire : le
 système à concevoir doit combiner une mémoire vectorielle pour retrouver rapidement des
 objets proches, un graphe pour vériﬁer les relations métier–compétence–formation, et une or-
+
+NGOULOU NGOUBILI Irch Deﬂuviaire               17                        Memoire Professionnel
+Positionnement de l’étude
+
 chestration agentique pour produire des réponses contrôlées. Le chapitre suivant traduit ce
 positionnement en démarche méthodologique, en précisant les données, les choix de modéli-
 sation et le protocole d’évaluation.
@@ -986,11 +1004,11 @@ sation et le protocole d’évaluation.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire               17                        Memoire Professionnel
-                                                Chapitre 2
+NGOULOU NGOUBILI Irch Deﬂuviaire            18                      Memoire Professionnel
+                                           Chapitre 2
 
  SOURCES DE DONNÉES ET APPROCHE
-                          MÉTHODOLOGIQUE
+                       MÉTHODOLOGIQUE
    Ce chapitre précise les données mobilisées et la logique de construction du système. Il ne
 présente pas encore les résultats : il explique comment les sources sont préparées, comment
 elles sont représentées, puis comment elles sont interrogées par un workﬂow hybride.
@@ -1001,30 +1019,40 @@ elles sont représentées, puis comment elles sont interrogées par un workﬂow
 d’aide à la décision, pas comme un modèle isolé.
 
 2.1.1 Démarche d’ingénierie appliquée retenue
-   La démarche retenue est une démarche d’ingénierie appliquée. Elle vise à construire un
-système de recommandation emploi–compétences combinant données structurées, embed-
-dings, graphe de connaissances, règles métier et rag. Ce choix répond directement au pro-
-blème étudié : les offres, proﬁls, compétences et référentiels sont hétérogènes et rarement
-comparables tels quels.
-   Quatre principes guident la méthode. La traçabilité impose de rattacher chaque recom-
-mandation à des données ou relations observables. L’hybridation combine pgvector, Neo4j et
-règles métier au lieu de dépendre d’une seule source. L’explicabilité oblige le système à signa-
-ler les compétences communes et manquantes. Le contrôle génératif limite le rôle du llm à
-une réponse fondée sur le contexte récupéré, conformément à la logique du rag [21, 11].
-   LangGraph est retenu comme cadre d’orchestration du workﬂow agentique [20]. Son rôle
-méthodologique est de router les requêtes, conserver les traces des outils appelés et permettre
-une révision lorsque le contexte récupéré est insufﬁsant.
+   Le travail suit une chaîne simple. Les offres, les proﬁls et les référentiels sont d’abord
+collectés et nettoyés. Les informations comparables, comme les métiers, les compétences, les
+niveaux de formation et les localisations, sont ensuite harmonisées. Le système recherche alors
+les offres proches d’un candidat, vériﬁe les compétences communes et manquantes, classe les
+résultats, puis produit une explication.
+
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire               19                      Memoire Professionnel
+Cadre méthodologique et sources de données
+            Figure 2.1 – Vue simpliﬁée du workﬂow de recommandation emploi–compétences
+
+
+
+
+                          Source : Nos travaux, synthèse du workﬂow méthodologique.
+
+
+   Cette organisation répond à quatre besoins. Premièrement, chaque recommandation doit
+pouvoir être reliée aux données utilisées. Deuxièmement, le classement ne doit pas dépendre
+d’un seul indice. Troisièmement, le système doit signaler les compétences déjà acquises et
+celles qui manquent. Enﬁn, la réponse rédigée doit rester ﬁdèle aux informations retrouvées
+[21, 11].
+   LangGraph coordonne ces étapes et conserve la trace des outils appelés [20]. Si les informa-
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                     20                               Memoire Professionnel
+Cadre méthodologique et sources de données
+
+tions récupérées sont insufﬁsantes, le système peut effectuer une recherche complémentaire
+avant de répondre.
    Le workﬂow complet est reporté en annexe à la ﬁgure A.1. Il suit une logique simple :
 la requête est analysée, pgvector retrouve les éléments proches, Neo4j vériﬁe les relations
 métier–compétence–formation, puis le llm formule une réponse contrôlée par le critic 1 . Le
-   1. Dans ce mémoire, le critic désigne un module de contrôle automatique qui vériﬁe si la réponse générée est
-sufﬁsamment appuyée par le contexte récupéré. Il ne remplace pas une validation humaine ; il sert de garde-fou
-contre les réponses peu fondées.
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                      18                           Memoire Professionnel
-Cadre méthodologique et sources de données
-
 tableau A.4, également placé en annexe, résume la correspondance entre objectifs spéciﬁques
 et choix méthodologiques.
 
@@ -1037,7 +1065,15 @@ rience, niveau attendu, compétences et description. Les proﬁls candidats déc
 le niveau, l’expérience, les compétences, la mobilité et l’objectif professionnel. Ces informa-
 tions sont utiles mais bruitées ; elles doivent donc être normalisées avant l’encodage et la
 construction du graphe.
+   1. Dans ce mémoire, le critic désigne un module de contrôle automatique qui vériﬁe si la réponse générée est
+sufﬁsamment appuyée par le contexte récupéré. Il ne remplace pas une validation humaine ; il sert de garde-fou
+contre les réponses peu fondées.
 
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                      21                           Memoire Professionnel
+Cadre méthodologique et sources de données
                 Table 2.1 – Sources de données mobilisées et utilisation méthodologique
 Source                Nature                    Utilisation dans la méthode
 
@@ -1062,10 +1098,6 @@ taires                fragmentés                la citation des sources.
 
 
 
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                           19                               Memoire Professionnel
-Représentation sémantique et graphe de connaissances
-
 2.1.3 Préparation et normalisation des données
    La normalisation prépare les données pour deux usages : l’encodage vectoriel et la création
 des relations Neo4j. Elle réduit les doublons, harmonise les champs textuels, sépare les valeurs
@@ -1077,6 +1109,12 @@ tion.
    Chaque offre et chaque candidat reçoit un champ text_to_embed. Il regroupe les infor-
 mations utiles à la recherche sémantique : titre, compétences, secteur, niveau, description et
 objectif.
+
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                           22                               Memoire Professionnel
+Représentation sémantique et graphe de connaissances
 
 2.1.4 Alignement des référentiels métiers et formations
    L’alignement rend comparables les annonces, les proﬁls et les référentiels. La mepc struc-
@@ -1101,11 +1139,6 @@ par apprentissage contrastif : rapprocher les paires pertinentes et éloigner le
 pertinentes. Les paires d’apprentissage sont construites à partir des relations et champs nor-
 malisés, puis le modèle adapté est évalué séparément du modèle de base.
 
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                20                       Memoire Professionnel
-Représentation sémantique et graphe de connaissances
-
 2.2.2 Indexation vectorielle dans PostgreSQL et pgvector
    Les embeddings sont stockés dans PostgreSQL avec pgvector, aﬁn de combiner vecteurs et
 métadonnées dans la même base [29]. L’indexation de type HNSW sert à accélérer la recherche
@@ -1118,6 +1151,11 @@ source, son score et le texte associé pour préserver la traçabilité.
    Neo4j représente la couche relationnelle du système. Les noeuds correspondent aux offres,
 candidats, compétences, métiers, secteurs, localisations et référentiels. Les relations décrivent
 les liens utiles au matching, par exemple REQUIERT entre offre et compétence ou POSSEDE entre
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                23                       Memoire Professionnel
+Représentation sémantique et graphe de connaissances
+
 candidat et compétence.
    Le graphe sert à vériﬁer les correspondances proposées par pgvector, expliquer les compé-
 tences communes ou manquantes et répondre à des questions relationnelles que la recherche
@@ -1144,24 +1182,24 @@ il sert uniquement de référence expérimentale pour comparer les classements.
 nées normalisées :
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                       21                             Memoire Professionnel
-Représentation sémantique et graphe de connaissances
-
-
-                         Rproxy (c, o ) = 0,45L(c, o ) + 0,30S(c, o ) + 0,25N (c, o ),
+                          Rproxy (c, o ) = 0,45L(c, o ) + 0,30S(c, o ) + 0,25N (c, o ),
 
 où L(c, o ) mesure le recouvrement lexical, S(c, o ) l’alignement sectoriel et N (c, o ) la compati-
 bilité de niveau ncf. Le recouvrement lexical est déﬁni par :
 
-                                                       | Tc ∩ To |
-                                     L(c, o ) =                                .
-                                                  max(min(| Tc |, | To |) , 1)
+                                                      | Tc ∩ To |
+                                    L(c, o ) =                                .
+                                                 max(min(| Tc |, | To |) , 1)
    La compatibilité ncf vaut 1 si le niveau du candidat couvre le niveau demandé, 0,70 pour
 un écart d’un niveau, 0,40 pour deux niveaux et 0,10 au-delà. Si l’un des niveaux est absent,
 une valeur neutre de 0,45 évite de transformer une donnée manquante en incompatibilité
 certaine.
    Le score continu Rproxy est utilisé comme gain gradué dans le calcul du NDCG. Pour
 Precision@10, Recall@10 et MRR@10, il est transformé en label binaire séparément pour chaque
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                        24                            Memoire Professionnel
+Orchestration agentique et génération contrôlée
+
 candidat. Une offre est déclarée pertinente lorsque :
 
 
@@ -1175,7 +1213,7 @@ Parzen Estimator [3]. Dans l’expérience retenue, la calibration porte sur deu
 sémantique pgvector et score Neo4j.
 
 
-              Scal (c, o ) = wsem Ssem (c, o ) + w Neo4j S Neo4j (c, o ),      wsem + w Neo4j = 1.
+              Scal (c, o ) = wsem Ssem (c, o ) + w Neo4j S Neo4j (c, o ),   wsem + w Neo4j = 1.
 
    À chaque essai, Optuna propose wsem , déduit w Neo4j = 1 − wsem , recalcule les scores, re-
 range les offres et évalue le classement. Trois objectifs sont comparés : NDCG@10, moyenne
@@ -1186,10 +1224,6 @@ du travail.
 manquantes. Elle transforme le classement en verdict opérationnel : compatibilité immédiate,
 compatibilité après montée en compétence, vivier ou proﬁl hors cible.
 
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                         22                            Memoire Professionnel
-Orchestration agentique et génération contrôlée
 
 2.3 Orchestration agentique et génération contrôlée
    Cette section présente le rôle du workﬂow agentique dans la méthode. Les détails d’implé-
@@ -1202,6 +1236,12 @@ outils adaptés : pgvector, Neo4j, recherche documentaire, score hybride ou diag
    Ce choix relève de l’Agentic RAG : l’agent orchestre des outils spécialisés autour d’un état
 partagé [41, 4]. Dans ce mémoire, l’agent reste borné : il route, trace et contrôle ; il ne remplace
 pas les bases ni les règles métier.
+
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                         25                         Memoire Professionnel
+Orchestration agentique et génération contrôlée
 
 2.3.2 Text2Cypher et rôle du LLM
    Deux usages du llm sont distingués. Text2Cypher transforme certaines questions relation-
@@ -1227,9 +1267,6 @@ formulée ne prouve pas que les bonnes informations ont été retrouvées ; inve
 retrieval ne garantit pas une bonne synthèse.
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                  23                       Memoire Professionnel
-Orchestration agentique et génération contrôlée
-
 Conclusion
    Ce chapitre a transformé la problématique en protocole opérationnel. Les données d’offres,
 de candidats et de référentiels sont d’abord normalisées, puis représentées dans deux mé-
@@ -1243,8 +1280,7 @@ contraintes de données et de ressources disponibles.
 
 
 
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                  24                   Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                  26                    Memoire Professionnel
                        Deuxième partie
 
    PRÉSENTATION DES RÉSULTATS ET
@@ -1253,12 +1289,12 @@ NGOULOU NGOUBILI Irch Deﬂuviaire                  24                   Memoire
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire   25    Memoire Professionnel
-                                                    Chapitre 3
+NGOULOU NGOUBILI Irch Deﬂuviaire   27    Memoire Professionnel
+                                          Chapitre 3
 
     CONSTRUCTION OPÉRATIONNELLE
-                        DU SYSTÈME HYBRIDE
-                      EMPLOI–COMPÉTENCES
+                    DU SYSTÈME HYBRIDE
+                  EMPLOI–COMPÉTENCES
    Ce chapitre suit le workﬂow réellement implémenté : préparation des données, adaptation
 de l’encodeur, indexation dans pgvector, construction du graphe Neo4j et calcul du score
 hybride. Seuls les résultats nécessaires pour justiﬁer ces choix techniques sont présentés ; leur
@@ -1272,7 +1308,20 @@ tor et Neo4j. Le corpus compte 13 957 offres pour 41 298 candidats. Ce rapport d
 augmente le risque de recommander selon la fréquence des secteurs ou des compétences ;
 il justiﬁe l’ajout d’un contrôle relationnel après le rappel sémantique. Les volumes complets
 ﬁgurent au tableau A.5 en annexe.
+   Les principales opérations appliquées sont :
 
+ä harmonisation de la casse, des espaces, des accents et des formats de texte ;
+ä suppression prudente des doublons strictement identiques ;
+ä normalisation des localisations, secteurs, niveaux et types de contrat ;
+ä conservation explicite des valeurs manquantes, sans inventer d’information ;
+ä composition d’un texte exploitable à partir du titre, des compétences et des métadonnées
+    disponibles lorsque la description est insufﬁsante.
+
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire               28                        Memoire Professionnel
+Données exploitables et contraintes de qualité du système
                        Figure 3.1 – Répartition des offres par source après nettoyage
 
 
@@ -1282,10 +1331,6 @@ il justiﬁe l’ajout d’un contrôle relationnel après le rappel sémantique
 
 
    Les offres proviennent de plateformes scrapées et de sources institutionnelles. Louma-Jobs
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                           26                               Memoire Professionnel
-Données exploitables et contraintes de qualité du système
-
 représente 43,14 % du corpus : les résultats peuvent reﬂéter les caractéristiques de cette source
 et ne décrivent pas exhaustivement le marché camerounais de l’emploi.
 
@@ -1298,6 +1343,12 @@ plateformes.
    La localisation est utilisée comme ﬁltre souple : 79,88 % des offres sont rattachées au Ca-
 meroun et 20,12 % à l’international. Une ville absente n’est pas imputée ; le pays disponible est
 conservé. Le diagnostic détaillé ﬁgure en annexe (ﬁgure A.4).
+
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                           29                               Memoire Professionnel
+Données exploitables et contraintes de qualité du système
 
 3.1.2.2 Compétences et descriptions : signal utile mais hétérogène
 
@@ -1315,12 +1366,6 @@ fournit une description que pour 4,90 % de ses offres. Pour éviter qu’une des
 produise un vecteur pauvre, le texte encodé combine titre, compétences, secteur, localisation
 et autres métadonnées disponibles.
 
-
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                           27                               Memoire Professionnel
-Adaptation du modèle d’embeddings au domaine emploi–compétences
-
 3.1.3 Nettoyage réalisé et limites conservées
    Le nettoyage harmonise les formats sans inventer les valeurs absentes. Les localisations
 suivent la priorité ville–pays et les doublons potentiels sont audités sans suppression auto-
@@ -1333,8 +1378,13 @@ pgvector et Neo4j. Il s’agit d’une actualisation par lots contrôlée, non d
 réel ; un changement du format d’une source scrapée exige d’adapter son mapping.
 
 
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                           30                               Memoire Professionnel
+Adaptation du modèle d’embeddings au domaine emploi–compétences
+
 3.2 Adaptation du modèle d’embeddings au domaine emploi–
-      compétences
+       compétences
    Après l’ETL, les textes nettoyés servent à adapter l’encodeur avant leur indexation dans
 pgvector. L’objectif est d’améliorer le classement sémantique, non de générer une réponse.
 
@@ -1358,38 +1408,49 @@ Total de paires         6 476 paires offre-description.
                          Source : Nos travaux, traitements Python et SentenceTransformer.
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                       28                              Memoire Professionnel
-Adaptation du modèle d’embeddings au domaine emploi–compétences
-
    sentence1 contient la représentation structurée de l’offre et sentence2 sa description. Les
 seuils de 40 et 120 caractères excluent les paires trop pauvres pour fournir un signal d’appren-
 tissage exploitable.
 
 3.2.2 Fine-tuning : contraintes de calcul et preuve de gain
+
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                       31                              Memoire Professionnel
+Adaptation du modèle d’embeddings au domaine emploi–compétences
+
 3.2.2.1 Paramétrage contraint et dynamique d’apprentissage
 
                     Table 3.2 – Hyperparamètres du ﬁne-tuning SentenceTransformer
-   Hyperparamètre                         Valeur
+Hyperparamètre            Valeur             Justiﬁcation
 
-   Nombre d’époques                       5
-   Batch size                             32
-   Négatifs       implicites        par 31
-   exemple
-   Learning rate maximal                  2 × 10−5
-   Scheduler                              Cosine avec warmup
-   Warmup                                 100 étapes conﬁgurées, limitées par les étapes disponibles de
-                                          l’époque
-   Perte                                  MultipleNegativesRankingLoss avec similarité cosinus
-   Temps      d’entraînement        ob- 15 160 s
-   servé
-   Checkpoint retenu                      Meilleur checkpoint sur validation autour de l’époque 4
+Nombre          maximal 5                    Plafond court retenu sous contrainte CPU pour observer
+d’époques                                    la stabilisation sans prolonger inutilement l’entraînement. Le
+                                             meilleur checkpoint apparaît autour de l’époque 4 ; la cin-
+                                             quième époque conﬁrme le léger recul.
+Taille de lot             32                 Compromis entre mémoire disponible, temps de calcul et diver-
+                                             sité des exemples comparés dans chaque lot.
+Négatifs implicites       31           par Avec un lot de 32 paires, les 31 autres descriptions servent de
+                          exemple            contre-exemples sans créer un ﬁchier supplémentaire de néga-
+                                             tifs.
+Taux     d’apprentis- 2 × 10−5               Valeur prudente pour adapter le modèle préentraîné sans mo-
+sage maximal                                 diﬁer brutalement ses représentations initiales.
+Calendrier du taux        Cosinus avec Augmentation progressive au démarrage, puis diminution
+                          warmup             contrôlée aﬁn de stabiliser la ﬁn de l’entraînement.
+Warmup                    100 étapes au Limite les mises à jour instables au début ; le nombre effectif
+                          maximum            reste borné par les étapes disponibles.
+                          MultipleNegatives
+Fonction de perte                        Adaptée au retrieval : elle rapproche chaque paire correcte et
+                          RankingLoss
+                                         éloigne les autres éléments du lot selon la similarité cosinus.
     Source : Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.
 
 
-   Ces choix répondent aux ressources disponibles. Les vecteurs de 384 dimensions réduisent
-le stockage et le coût de recherche ; le batch de 32 limite la mémoire tout en fournissant 31
-négatifs implicites par exemple ; cinq époques contiennent le temps d’entraînement. Le learning
-rate de 2 × 10−5 évite une modiﬁcation trop brutale des représentations initiales.
+   Ces choix répondent aux ressources disponibles. L’entraînement a duré 15 160 secondes
+sur CPU. Cinq époques ne signiﬁent pas que la cinquième est la meilleure : elles constituent
+une borne d’observation, tandis que le checkpoint retenu est celui qui obtient la meilleure
+validation autour de l’époque 4.
    La perte d’entraînement diminue de 2,445 à 0,132, tandis que la perte de test reste plus
 élevée (0,433) que celle d’entraînement (0,171). Cet écart signale une généralisation moins
 bonne sur les paires non vues, sans divergence du modèle. Le panneau des métriques montre
@@ -1399,39 +1460,41 @@ n’était donc pas justiﬁé.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                           29                               Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                           32                               Memoire Professionnel
 Adaptation du modèle d’embeddings au domaine emploi–compétences
-       Figure 3.3 – perte, généralisation, métriques de validation et calendrier du learning rate
+      Figure 3.3 – perte, généralisation, métriques de validation et calendrier du learning rate
 
 
 
 
-                       Source : Nos travaux, traitements Python et SentenceTransformer.
+                      Source : Nos travaux, traitements Python et SentenceTransformer.
 
 
 3.2.2.2 Preuve de gain sur le ranking sémantique
    Sur 953 paires de test, le ﬁne-tuning multiplie le NDCG@10 par 3,7 et le MRR@10 par
-4,2 par rapport au modèle de départ. Le détail ﬁgure au tableau A.6 en annexe ; l’évaluation
-complète est présentée au chapitre 4.
+4,2 par rapport au modèle de départ. La notation @10 signiﬁe que le calcul examine les dix
+premiers résultats retournés pour chaque requête. Le NDCG vériﬁe leur ordre, tandis que le
+MRR dépend de la position du premier résultat pertinent. Le détail ﬁgure au tableau A.6 en
+annexe ; l’évaluation complète est présentée au chapitre 4.
 
    Figure 3.4 – Comparaison des modèles d’embeddings : qualité de classement, rappel et latence
 
 
 
 
-                       Source : Nos travaux, traitements Python et SentenceTransformer
+                      Source : Nos travaux, traitements Python et SentenceTransformer
 
 
    Le modèle ﬁne-tuné obtient un NDCG@10 de 0,6232, un MRR@10 de 0,5874 et un Recall@10
 de 0,7398. Les barres de qualité de classement et de rappel justiﬁent son choix pour pgvector ;
 la latence rappelle toutefois que le meilleur modèle statistique doit rester compatible avec une
 recherche interactive. TF–IDF reste un complément rapide pour les correspondances lexicales
-exactes.
 
 
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                     30                              Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                    33                              Memoire Professionnel
 Mémoire vectorielle pgvector pour le retrieval
+
+exactes.
 
 3.2.3 Structure de l’espace vectoriel après ﬁne-tuning
 
@@ -1463,9 +1526,7 @@ cherche textuelle et les ﬁltres par type d’entité. L’identiﬁant commun 
 vers Neo4j.
 
 
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                      31                             Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                      34                             Memoire Professionnel
 Mémoire vectorielle pgvector pour le retrieval
                           Figure 3.6 – Schéma physique de la base pgvector
 
@@ -1498,22 +1559,27 @@ technique, pas la qualité sémantique de ce lien.
 
 3.3.2 Référentiels découpés en chunks interrogeables
    Les référentiels produisent 142 chunks : 43 pour les diplômes, 61 pour le MEPC 2013 et 38
-pour la NCF 2017. La ﬁgure du pipeline montre cinq étapes : identiﬁcation des documents,
+pour la NCF 2017. Le traitement suit cinq étapes :
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                     32                              Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                     35                              Memoire Professionnel
 Mémoire vectorielle pgvector pour le retrieval
 
-détection des titres, découpage structurel, validation des tailles et stockage dans pgvector.
-Les fragments de moins de 80 caractères sont fusionnés et la taille maximale est ﬁxée à 3 000
-caractères. La stratégie de secours par fenêtres glissantes n’a pas été utilisée dans l’index
-courant.
-                Figure 3.7 – Pipeline de chunking structurel des référentiels documentaires
+ä identiﬁer le document source et son référentiel ;
+ä détecter les titres et la hiérarchie des sections ;
+ä créer un chunk par unité documentaire cohérente ;
+ä vériﬁer la taille, puis fusionner les fragments de moins de 80 caractères et limiter les
+    chunks à 3 000 caractères ;
+ä stocker le texte et ses métadonnées dans pgvector pour la recherche.
+
+La stratégie de secours par fenêtres glissantes n’a pas été utilisée dans l’index courant.
+
+              Figure 3.7 – Pipeline de chunking structurel des référentiels documentaires
 
 
 
 
-           Source : Nos travaux, schématisation du pipeline de chunking documentaire et d’indexation pgvector.
+         Source : Nos travaux, schématisation du pipeline de chunking documentaire et d’indexation pgvector.
 
 
    La ﬁgure 3.7 doit être lue comme un contrôle de qualité du contexte injecté dans le RAG. Le
@@ -1529,14 +1595,14 @@ un passage qui a encore un sens seul. C’est ce qui rend le contexte utilisable
 LLM ne reçoit pas seulement du texte proche, mais un fragment rattaché à une source, une
 section et une position documentaire.
    La ﬁgure 3.8 complète cette lecture par trois diagnostics. Premièrement, la taille médiane
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                         36                              Memoire Professionnel
+Neo4j : mémoire relationnelle du matching
+
 de 116 tokens indique que les fragments sont assez courts pour être retrouvés et cités sans
 saturer le contexte. Deuxièmement, la présence de quelques chunks supérieurs à 400 tokens
 montre que certaines sections des référentiels restent denses ; ces fragments sont acceptables
 pour préserver le sens, mais ils doivent être surveillés car ils peuvent contenir plusieurs in-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                           33                              Memoire Professionnel
-Neo4j : mémoire relationnelle du matching
-
 formations. Troisièmement, la couverture moyenne de 42,9 % renseigne la part du texte utile
 conservée après nettoyage et structuration ; elle ne doit pas être interprétée comme une mesure
 directe de qualité, mais comme un indicateur de densité documentaire.
@@ -1561,13 +1627,13 @@ descriptivement pauvres. Les mesures complètes ﬁgurent en annexe.
 3.4 Neo4j : mémoire relationnelle du matching
    Dans le workﬂow méthodologique, Neo4j intervient après le rappel pgvector et avant le
 score hybride. pgvector propose des objets proches dans l’espace sémantique ; Neo4j vériﬁe
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                    37                             Memoire Professionnel
+Neo4j : mémoire relationnelle du matching
+
 ensuite si cette proximité repose sur des relations métier exploitables : compétences possédées,
 compétences requises, métiers, niveaux ncf, secteurs et localisations. Cette section présente
 donc la structure du graphe et les précautions nécessaires avant son usage dans le reranking.
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                    34                             Memoire Professionnel
-Neo4j : mémoire relationnelle du matching
 
 3.4.1 Schéma, noeuds et relations mobilisés par le matching
    Cette sous-section décrit la partie du graphe réellement utile au matching. L’objectif n’est
@@ -1591,17 +1657,16 @@ proximité textuelle ; Neo4j indique par quelles relations cette proximité peut
 
 
 
-      (a) Types de noeuds
-                                            (b) Répartition globale                  (c) Types de relations
+      (a) Types de noeuds                   (b) Répartition globale                  (c) Types de relations
           Source : Nos travaux, diagnostics Neo4j à partir du graphe de connaissances emploi-compétences.
 
 
-   Le chemin principal est Candidat → POSSEDE → Compétence ← REQUIERT ← OffreEmploi.
-Il permet de distinguer les compétences couvertes des compétences manquantes. Les liens
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                        35                             Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                        38                             Memoire Professionnel
 Neo4j : mémoire relationnelle du matching
 
+   Le chemin principal est Candidat → POSSEDE → Compétence ← REQUIERT ← OffreEmploi.
+Il permet de distinguer les compétences couvertes des compétences manquantes. Les liens
 vers le métier, le niveau ncf, le secteur et la localisation complètent l’explication. Leur ﬁabilité
 reste conditionnée par la qualité de l’extraction et de la normalisation.
 
@@ -1629,13 +1694,13 @@ avec 221 413 liens, suivies par NECESSITE (126 051) et REQUIERT (58 519). Le gra
 bien centré sur la chaîne candidat–compétence–offre, avec un enrichissement par les métiers
 de référence. C’est utile pour expliquer le skill gap, mais cela rend aussi le système sensible à la
 qualité d’extraction des compétences : une compétence mal extraite crée directement un lien
-erroné.
-   Le troisième panneau, « Degrés maximaux », révèle la présence de hubs. Les niveaux ncf
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                   36                       Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                   39                       Memoire Professionnel
 Neo4j : mémoire relationnelle du matching
 
+erroné.
+   Le troisième panneau, « Degrés maximaux », révèle la présence de hubs. Les niveaux ncf
 atteignent 10 261 connexions et certaines compétences 6 787, alors que le degré médian d’une
 compétence est de 4. Ces hubs sont utiles pour connecter le graphe, mais ils sont peu discri-
 minants pour recommander une offre précise. Ils ne doivent donc pas être interprétés comme
@@ -1665,13 +1730,13 @@ POSSEDE et REQUIERT. La composition détaillée est reportée en annexe.
 compétences 6 787, alors que le degré médian d’une compétence est de 4. Quelques libellés
 généraux concentrent donc une grande partie des chemins et sont peu discriminants.
    Le score Neo4j utilise donc la proportion de compétences requises couvertes, et non le
-degré brut des noeuds. Une compétence fréquente n’améliore pas automatiquement une re-
-commandation ; elle ne compte que si elle est exigée par l’offre et associée au candidat. Cette
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                         37                                Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                         40                                Memoire Professionnel
 Score hybride et reranking des recommandations
 
+degré brut des noeuds. Une compétence fréquente n’améliore pas automatiquement une re-
+commandation ; elle ne compte que si elle est exigée par l’offre et associée au candidat. Cette
 règle protège le reranking contre le bruit de popularité et prépare la section suivante, où Neo4j
 devient un signal pondéré du score hybride.
 
@@ -1703,13 +1768,15 @@ tandis que 31,30 % des scores Neo4j sont nuls. Le premier panneau montre donc un
 textuelle graduelle ; le second montre un signal relationnel plus sélectif. pgvector distingue des
 degrés de ressemblance entre presque tous les couples ; Neo4j écarte plus nettement ceux pour
 lesquels aucune compétence requise n’est couverte.
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                     41                              Memoire Professionnel
+Orchestration agentique du système par LangGraph
+
    Avec 500 essais Optuna, l’objectif NDCG@10 retient α = 0 et β = 1 : dans le vivier déjà
 présélectionné par pgvector, la couverture de compétences ordonne le mieux l’ensemble du
 top 10. L’objectif MRR@10–Precision@10 retient plutôt 0,6615 pour pgvector et 0,3385 pour
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                     38                              Memoire Professionnel
-Orchestration agentique du système par LangGraph
-
 Neo4j, car il valorise davantage le premier résultat pertinent. Les poids sont donc propres à
 l’objectif et à l’échantillon de calibration.
 
@@ -1748,7 +1815,7 @@ pour répondre.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                           39                               Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                           42                               Memoire Professionnel
 Orchestration agentique du système par LangGraph
                 Figure 3.14 – Workﬂow agentique orchestré dans LangGraph Studio
 
@@ -1782,7 +1849,7 @@ tion candidat–offre appelle le moteur hybride ; une demande de diagnostic vér
 des services. Le registre contient six outils principaux : diagnostic, recherche sémantique, re-
 cherche documentaire, interrogation Neo4j, recommandation hybride et synthèse globale du
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                     40                            Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                     43                            Memoire Professionnel
 Orchestration agentique du système par LangGraph
 
 graphe.
@@ -1821,7 +1888,7 @@ encore été exécutées. Le contexte est alors reconstruit et la réponse rég�
 peut constater que son contexte est insufﬁsant et demander plus de preuves avant de ﬁnaliser.
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                41                         Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                44                         Memoire Professionnel
 Orchestration agentique du système par LangGraph
 
 La boucle reste limitée à une seule révision aﬁn d’éviter une exécution indéﬁnie. Le chapitre 4
@@ -1839,10 +1906,10 @@ classement et la génération.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                42                     Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                45                     Memoire Professionnel
                                            Chapitre 4
 
-    ÉVALUATION DE LA PERFORMANCE
+   ÉVALUATION DE LA PERFORMANCE
                      INTERNE DU SYSTÈME
    Ce chapitre évalue le système implémenté au chapitre précédent. Il ne répète pas la descrip-
 tion technique des briques ; il vériﬁe ce que ces briques apportent effectivement au fonction-
@@ -1858,12 +1925,14 @@ vector contre pgvector enrichi par Neo4j utilise un tirage de 80 candidats avec 
 42 ; 69 candidats sont effectivement évalués après contrôles d’exécution. Enﬁn, la calibration
 du critic utilise un jeu contrastif de 102 évaluations construit à partir de 51 cas réels et de leurs
 contextes mélangés.
-   Les métriques de retrieval retenues sont classiques en recherche d’information : Recall@K,
-Precision@K, NDCG@K, MRR@K et HitRate@K. Le Recall@K mesure si les éléments pertinents
-sont récupérés dans les premiers résultats. Le NDCG@K évalue aussi leur ordre. Le MRR@K
-met l’accent sur le rang de la première bonne recommandation. Ces métriques sont complé-
-mentaires : un système peut retrouver une bonne offre dans le top 10 tout en la plaçant trop
-bas pour être utile à l’utilisateur.
+   Les métriques de retrieval sont calculées sur les premières offres du classement. La no-
+tation « @10 » signiﬁe que l’évaluation porte sur les dix offres considérées comme les plus
+compatibles avec chaque candidat. Precision@10 mesure la part de bonnes offres dans cette
+liste de dix ; Recall@10 mesure la part des offres pertinentes du vivier effectivement retrou-
+vées ; NDCG@10 vériﬁe si les meilleures offres sont placées en tête ; MRR@10 dépend du rang
+de la première bonne offre ; HitRate@10 indique seulement si le top 10 en contient au moins
+une. Ces métriques sont moyennées sur les candidats évalués et varient entre 0 et 1 : plus elles
+sont proches de 1, meilleur est le classement.
    Pour l’ablation, les deux conﬁgurations reçoivent le même pool initial de 30 offres pro-
 duit par pgvector. La conﬁguration pgvector seul conserve l’ordre vectoriel. La conﬁguration
 pgvector + graphe enrichit ce même pool avec Neo4j, puis le rerange à partir des relations
@@ -1871,12 +1940,11 @@ candidat–offre–compétence. Cette construction isole l’effet du graphe : l
 ne vient pas d’un corpus différent, mais de l’information relationnelle ajoutée au classement.
 
 
-4.2 Retrieval sémantique et apport mesuré du graphe
 
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                 43                         Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                 46                         Memoire Professionnel
 Retrieval sémantique et apport mesuré du graphe
 
+4.2 Retrieval sémantique et apport mesuré du graphe
 4.2.1 Modèle d’embeddings spécialisé
    Le premier test vériﬁe si le ﬁne-tuning du SentenceTransformer améliore réellement le
 retrieval. Le tableau 4.1 compare le modèle spécialisé à plusieurs modèles généralistes ou
@@ -1895,12 +1963,19 @@ multilingues sur les mêmes 473 requêtes de test.
                Source : Nos travaux, évaluation SentenceTransformer sur le jeu de test offre–proﬁl.
 
 
-   Le modèle ﬁne-tuné atteint un Recall@10 de 0.8520, contre 0.3192 pour MiniLM-L6 géné-
-raliste. L’écart est important : le modèle spécialisé retrouve beaucoup plus souvent l’élément
-attendu dans les dix premiers résultats. Le NDCG@10 passe de 0.1980 à 0.6336, ce qui montre
-aussi un meilleur ordre des résultats pertinents. La latence moyenne reste contenue à 32.77 ms
-par phrase, ce qui reste compatible avec une recherche interactive locale.
+   Le modèle ﬁne-tuné atteint un Recall@10 de 0,8520, contre 0,3192 pour MiniLM-L6 géné-
+raliste. Cela signiﬁe que, sur l’ensemble des requêtes de test, environ 85,2 % des éléments at-
+tendus sont retrouvés dans les dix premiers résultats. Le NDCG@10 passe de 0,1980 à 0,6336 :
+l’ordre obtenu représente 63,4 % de la qualité du classement idéal sur ce test. Cette mesure
+porte sur la position des résultats, pas sur une probabilité de recrutement. La latence moyenne
+reste contenue à 32,77 ms par phrase, ce qui reste compatible avec une recherche interactive
+locale.
 
+
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                       47                               Memoire Professionnel
+Retrieval sémantique et apport mesuré du graphe
                Figure 4.1 – Comparaison des modèles d’embeddings sur le jeu de test
 
 
@@ -1908,9 +1983,6 @@ par phrase, ce qui reste compatible avec une recherche interactive locale.
 
                Source : Nos travaux, évaluation SentenceTransformer sur le jeu de test offre–proﬁl.
 
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                       44                               Memoire Professionnel
-Retrieval sémantique et apport mesuré du graphe
 
    La ﬁgure 4.1 conﬁrme que le gain ne vient pas seulement d’une métrique isolée. Le modèle
 ﬁne-tuné domine sur la qualité de classement, le rappel et le compromis performance–latence.
@@ -1927,33 +1999,33 @@ présente les résultats obtenus sur les 69 candidats effectivement évalués.
 
              Table 4.2 – Comparaison retrieval : pgvector seul versus pgvector + graphe
 
-     Conﬁguration            Precision@5 Recall@10            NDCG@10          MRR@10        HitRate@10
+        Conﬁguration          Precision@10       Recall@10      NDCG@10         MRR@10        HitRate@10
 
-     pgvector seul                  0.4957          0.4491          0.5575         0.6908            0.9420
-     pgvector + graphe              0.6870          0.6147          0.7392         0.8093            0.9420
+        pgvector seul                  0.4623        0.4491           0.5575       0.6908             0.9420
+        pgvector + graphe              0.6087        0.6147           0.7392       0.8093             0.9420
 
-     Différence                    +0.1913        +0.1656          +0.1817       +0.1185             0.0000
+        Différence                   +0.1464        +0.1656         +0.1817       +0.1185             0.0000
               Source : Nos travaux, ablation du moteur de recommandation sur 69 candidats évalués.
 
 
-   L’ajout de Neo4j améliore Precision@5, Recall@10, NDCG@10 et MRR@10. Le Recall@10
-passe de 0.4491 à 0.6147, soit un gain de 0.1656. Le NDCG@10 passe de 0.5575 à 0.7392, ce
-qui montre que le graphe ne se contente pas de retrouver plus d’offres jugées pertinentes : il
-les place aussi dans un meilleur ordre. Le HitRate@10 reste stable à 0.9420 ; le pool vectoriel
-contient donc souvent au moins une bonne offre, mais Neo4j améliore son rang.
-   La lecture correcte est séquentielle. pgvector reste le premier étage : il constitue rapidement
-un vivier d’offres plausibles. Neo4j intervient ensuite pour départager ce vivier à partir des
-relations POSSEDE, REQUIERT, A_NIVEAU et REQUIERT_NIVEAU. L’amélioration mesurée vient donc
-du reranking relationnel, pas d’un remplacement de la recherche vectorielle.La ﬁgure met en
-évidence trois effets. Precision@5 augmente, ce qui signiﬁe que le haut de liste devient plus
-utile. Recall@10 augmente, donc davantage d’offres pertinentes sont récupérées dans les dix
-premières positions. NDCG@10 et MRR@10 progressent aussi, ce qui montre que les bonnes
-offres ne sont pas seulement présentes : elles sont mieux ordonnées.
 
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                      45                              Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                       48                               Memoire Professionnel
 Validation fonctionnelle du GraphRAG
+
+   L’ajout de Neo4j améliore toutes les mesures du top 10 sauf le HitRate, qui reste stable.
+Une Precision@10 de 0,6087 signiﬁe qu’en moyenne environ 6 des 10 offres afﬁchées après
+reranking sont jugées pertinentes par le proxy, contre environ 4,6 avec pgvector seul. Le Re-
+call@10 de 0,6147 signiﬁe que le top 10 récupère près de 61,5 % des offres pertinentes présentes
+dans le vivier évalué. Le NDCG@10 de 0,7392 indique que l’ordre obtenu atteint 73,9 % de la
+qualité du classement idéal déﬁni par ce proxy. Enﬁn, un MRR@10 de 0,8093 montre que la
+première offre pertinente apparaît généralement très près du début de la liste. Ces valeurs
+décrivent une cohérence interne avec le proxy de pertinence ; elles ne signiﬁent pas que 73,9 %
+des recommandations seraient validées par des recruteurs.
+   La lecture correcte est séquentielle. pgvector constitue d’abord un vivier de 30 offres plau-
+sibles. Neo4j départage ensuite ces offres à partir des relations POSSEDE, REQUIERT, A_NIVEAU
+et REQUIERT_NIVEAU. L’amélioration mesurée vient donc du nouvel ordre appliqué au même
+vivier, et non d’un changement des offres disponibles.
+
              Figure 4.2 – Effet de l’enrichissement graphe sur les métriques de retrieval
 
 
@@ -1969,6 +2041,10 @@ vériﬁer que le GraphRAG fonctionne correctement dans les usages métier. Cett
 donc la chaîne fonctionnelle : partir d’une demande utilisateur, activer les chemins Neo4j
 utiles, récupérer les entités reliées, puis transformer ces relations en contexte exploitable par la
 génération. La ﬁgure 4.3 synthétise ces contrôles selon cinq angles complémentaires : recherche
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                      49                              Memoire Professionnel
+Validation fonctionnelle du GraphRAG
+
 métier vers compétences, recherche compétence vers offres, calcul de skill gap, compatibilité
 ncf et comparaison RAG contre GraphRAG.
    Le rôle de cette ﬁgure n’est pas seulement illustratif. Elle sert de tableau de bord fonction-
@@ -1977,16 +2053,14 @@ problème ne vient pas nécessairement du llm ; il peut venir d’une relation m
 référentiel incomplet ou d’un chemin Neo4j trop pauvre. La lecture des sous-sections suivantes
 reprend donc les mêmes familles de tests que la ﬁgure aﬁn de relier les résultats chiffrés au
 fonctionnement concret du GraphRAG.
-   La ﬁgure doit être lue comme un contrôle de couverture fonctionnelle. Les deux pre-
-miers blocs vériﬁent la navigation relationnelle métier–compétence–offre ; les blocs centraux
-contrôlent le skill gap et le niveau ncf ; le dernier bloc compare le classement obtenu avec et
-sans graphe. Elle conﬁrme donc que Neo4j sert à la fois à récupérer des relations, à expliquer
-les écarts et à améliorer le reranking.
+   La ﬁgure doit être lue comme quatre diagnostics distincts, et non comme un score global.
+En haut, elle vériﬁe que le graphe permet de passer d’un métier à ses compétences et d’une
+compétence aux offres associées. En bas à gauche, elle montre la distribution des compétences
+manquantes par couple candidat–offre. En bas à droite, elle mesure la part des couples dont
+les niveaux ncf correspondent exactement. Elle contrôle donc le fonctionnement des chemins
+Neo4j ; elle ne prouve pas à elle seule la pertinence ﬁnale des recommandations.
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                      46                              Memoire Professionnel
-Validation fonctionnelle du GraphRAG
-
-           Figure 4.3 – Évaluation fonctionnelle des requêtes Neo4j utiles au GraphRAG
+        Figure 4.3 – Diagnostics fonctionnels des chemins Neo4j mobilisés par le GraphRAG
 
 
 
@@ -1994,6 +2068,10 @@ NGOULOU NGOUBILI Irch Deﬂuviaire                      46                      
           Source : Nos travaux, diagnostics Neo4j et GraphRAG sur les scénarios fonctionnels du système.
 
 
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                       50                              Memoire Professionnel
+Validation fonctionnelle du GraphRAG
 
 4.3.1 Requêtes relationnelles métier, compétence et offre
    La première partie de la ﬁgure 4.3 vériﬁe la navigation depuis un métier vers les com-
@@ -2016,11 +2094,6 @@ des correspondances trop générales.
 4.3.2 Skill gap, niveau NCF et comparaison GraphRAG
    La troisième lecture de la ﬁgure 4.3 porte sur le skill gap. Le calcul compare les compétences
 REQUIERT par l’offre aux compétences POSSEDE par le candidat. Sur l’échantillon fonctionnel,
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                       47                              Memoire Professionnel
-Reranking hybride et calibration du score
-
 le déﬁcit moyen est de 5,30 compétences et la médiane vaut 6. Ce résultat est utile parce qu’il
 montre que le GraphRAG ne se limite pas à dire qu’un candidat correspond ou ne correspond
 pas. Il identiﬁe les compétences manquantes et peut transformer un mauvais appariement
@@ -2033,6 +2106,11 @@ et les compétences détenues, un écart de niveau peut rester acceptable ; le g
 éclairer la décision, pas la remplacer.
    Enﬁn, la dernière partie de la ﬁgure 4.3 met en relation ces contrôles fonctionnels avec la
 comparaison RAG contre GraphRAG. Le RAG vectoriel produit le pool initial, tandis que le
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire               51                        Memoire Professionnel
+Reranking hybride et calibration du score
+
 GraphRAG ajoute les relations Neo4j pour reranger les offres et fournir des explications. Les
 résultats sont nets : le NDCG@10 passe de 0.5575 à 0.7392, le Recall@10 de 0.4491 à 0.6147 et
 le MRR@10 de 0.6908 à 0.8093. Le GraphRAG améliore donc l’ordre des recommandations et
@@ -2059,7 +2137,9 @@ médian n’est toutefois que de +1 : l’amélioration moyenne est donc inﬂue
 plus limité de remontées importantes et ne signiﬁe pas que chaque offre gagne quatre places.
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                  48                   Memoire Professionnel
+
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                  52                   Memoire Professionnel
 Reranking hybride et calibration du score
            Figure 4.4 – Distribution des déplacements de rang après reranking par le graphe
 
@@ -2087,7 +2167,7 @@ construit à partir des métadonnées normalisées.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                        49                              Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                        53                              Memoire Professionnel
 Reranking hybride et calibration du score
               Table 4.3 – Pondérations retenues selon la fonction objectif du score hybride
  Fonction objectif                             wsem    w Neo4j   NDCG@10       Precision@10 Recall@10          MRR@10
@@ -2098,12 +2178,14 @@ NGOULOU NGOUBILI Irch Deﬂuviaire                        49                    
             Source : Nos travaux, optimisation Optuna des poids du score hybride sur les sorties d’ablation.
 
 
-   Le résultat est clair mais doit être bien défendu. Lorsque l’objectif privilégie l’ordre global
-du top 10, Optuna retient un score Neo4j pur : wsem = 0 et w Neo4j = 1. Cela ne signiﬁe pas que
-pgvector est inutile ; cela signiﬁe qu’une fois le pool construit par pgvector, le meilleur signal
-de reclassement dans ce protocole est la couverture relationnelle calculée dans Neo4j. Lorsque
-l’objectif privilégie davantage la première bonne recommandation, le compromis devient hy-
-bride avec wsem = 0,6615 et w Neo4j = 0,3385.
+   Le résultat est clair mais doit être bien défendu. Un NDCG@10 de 0,9697 signiﬁe que, selon
+le proxy utilisé pour cette calibration, l’ordre du top 10 atteint 96,97 % de l’ordre idéal. Ce n’est
+ni une précision de 96,97 %, ni un taux de recrutement réussi. Lorsque l’objectif privilégie
+l’ordre global du top 10, Optuna retient un score Neo4j pur : wsem = 0 et w Neo4j = 1. Cela ne
+signiﬁe pas que pgvector est inutile ; cela signiﬁe qu’une fois le pool construit par pgvector,
+le meilleur signal de reclassement dans ce protocole est la couverture relationnelle calculée
+dans Neo4j. Lorsque l’objectif privilégie davantage la première bonne recommandation, le
+compromis devient hybride avec wsem = 0,6615 et w Neo4j = 0,3385.
 
                Figure 4.5 – Évolution de l’objectif NDCG@10 au cours des essais Optuna
 
@@ -2122,7 +2204,7 @@ jeu annoté par des recruteurs.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                          50                               Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                          54                               Memoire Professionnel
 Contrôle de génération par critic
             Figure 4.6 – Comparaison des pondérations retenues selon la fonction objectif
 
@@ -2157,7 +2239,7 @@ réels évalués deux fois, soit 102 évaluations. Le score moyen vaut 0.7725 av
 contre 0.0532 avec contexte mélangé ; la médiane passe de 0.7857 à 0.0000.
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                       51                              Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                       55                              Memoire Professionnel
 Contrôle de génération par critic
          Figure 4.7 – Distribution des scores du critic avec contexte réel et contexte mélangé
 
@@ -2187,7 +2269,7 @@ restent acceptées avec leur vrai contexte. Le choix n’est donc pas théorique
 de la grille où le système bloque les réponses les moins ancrées sans devenir excessivement
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                          52                                Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                          56                                Memoire Professionnel
 Contrôle de génération par critic
 
 sévère sur les réponses correctement contextualisées.
@@ -2218,7 +2300,7 @@ le pool pgvector : le NDCG@10 passe de 0.5575 à 0.7392 et le MRR@10 de 0.6908 �
 Troisièmement, le critic distingue correctement les réponses ancrées dans leur contexte des
 réponses confrontées à un contexte mélangé, ce qui justiﬁe le seuil opérationnel de 0,46.
 
-NGOULOU NGOUBILI Irch Deﬂuviaire                          53                                Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire                          57                                Memoire Professionnel
 Contrôle de génération par critic
 
    La limite principale reste l’absence d’annotation humaine indépendante. Les résultats dé-
@@ -2231,7 +2313,7 @@ des tests utilisateurs.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire             54                       Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire             58                       Memoire Professionnel
                                           Chapitre 5
 
          SYNTHÈSE ET DISCUSSION DES
@@ -2266,7 +2348,7 @@ rectement les réponses ancrées dans leur vrai contexte des réponses associée
 mélangé. Ce résultat ne prouve pas que toutes les réponses sont parfaites au sens métier, mais
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire               55                        Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire               59                        Memoire Professionnel
 Confrontation avec la littérature
 
 il montre que le système dispose d’un mécanisme de prudence avant de présenter une réponse
@@ -2306,35 +2388,33 @@ statut retenu reste prudent : une hypothèse peut être soutenue par les résult
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire               56                        Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire               60                        Memoire Professionnel
 Portée, limites et conditions d’usage
-                   Table 5.1 – Lecture des hypothèses de recherche au regard des résultats
-Hyp.        Idée testée                      Statut                  Justiﬁcation synthétique
+                     Table 5.1 – Lecture des hypothèses de recherche au regard des résultats
+Hyp.        Idée testée                        Statut                  Justiﬁcation synthétique
 
-H1          Uniﬁcation des référentiels Soutenue partiel- Les référentiels structurent les variables
-            métiers–compétences–             lement                  utiles au matching et au skill gap. L’effet
-            formations                                               propre de chaque référentiel n’a toutefois
-                                                                     pas été isolé par ablation séparée.
-H2          Apport du graphe Neo4j Soutenue                          L’ablation      montre     une   hausse   du
-            face au vectoriel seul                                   NDCG@10 de 0.5575 à 0.7392 et du
-                                                                     MRR@10 de 0.6908 à 0.8093 après reran-
-                                                                     king relationnel.
-H3          Apport du ﬁne-tuning des Soutenue                        Le modèle adapté obtient de meilleurs
-            embeddings                                               scores de ranking que le modèle de départ
-                                                                     et devient l’encodeur principal du retrieval
-                                                                     pgvector.
-H4          Agentic RAG et score hy- Soutenue                  avec Le workﬂow LangGraph orchestre les ou-
-            bride pour explicabilité et prudence                     tils et produit des réponses traçables. La
-            skill gap                                                qualité métier ﬁnale doit encore être vali-
-                                                                     dée par des experts humains.
-                           Source : Nos travaux, synthèse des résultats des chapitres 3 et 4.
+H1          Données structurées et mo- Soutenue partiel- Le modèle adapté améliore nettement le
+            dèle adapté au vocabulaire lement                          classement sémantique et les référentiels
+            de l’emploi                                                harmonisent les métiers, compétences et
+                                                                       niveaux. L’effet propre de chaque référen-
+                                                                       tiel n’a toutefois pas été isolé.
+H2          Apport des relations entre Soutenue                        À dix résultats, le NDCG passe de 0,5575 à
+            candidats, compétences et                                  0,7392 et le MRR de 0,6908 à 0,8093 après
+            offres                                                     l’ajout du graphe.
+H3          Pertinence et compréhen- Soutenue                    avec Le workﬂow combine recherche, relations
+            sion de la recommandation prudence                         et contrôle de la réponse, puis indique
+            complète                                                   les compétences couvertes et manquantes.
+                                                                       Une validation par des experts métier reste
+                                                                       nécessaire.
+                             Source : Nos travaux, synthèse des résultats des chapitres 3 et 4.
 
 
-   La lecture globale est donc favorable au système hybride, mais elle ne doit pas être surin-
-terprétée. Les hypothèses H2 et H3 sont les plus solidement appuyées, car elles reposent sur
-des comparaisons quantitatives directes. Les hypothèses H1 et H4 sont également cohérentes
-avec les résultats, mais elles dépendent davantage de la qualité des référentiels, du graphe
-construit et de futures validations utilisateur.
+   La lecture globale est favorable au système hybride, sans permettre une conclusion déﬁni-
+tive sur son usage en recrutement. H2 est la mieux étayée, car elle repose sur une comparaison
+directe entre deux classements appliqués au même vivier d’offres. H1 combine un gain quan-
+titatif du modèle adapté et un apport structurel des référentiels, dont l’effet séparé reste à
+mesurer. H3 est cohérente avec les contrôles réalisés, mais dépend encore d’une validation par
+des utilisateurs et des experts métier.
 
 
 5.4 Portée, limites et conditions d’usage
@@ -2345,13 +2425,12 @@ métier. Cette limite ne rend pas l’étude inutile ; elle précise simplement 
 Le mémoire valide une architecture et ses effets internes, pas encore un déploiement métier
 déﬁnitif.
    La deuxième limite concerne les données. Les offres proviennent de sources scrapées telles
-
-
-NGOULOU NGOUBILI Irch Deﬂuviaire                          57                                Memoire Professionnel
-Portée, limites et conditions d’usage
-
 que les plateformes d’emploi disponibles, avec des niveaux de complétude variables selon
 les champs. Le pipeline ETL réduit ce bruit par normalisation, mais il ne peut pas créer une
+
+NGOULOU NGOUBILI Irch Deﬂuviaire                            61                                Memoire Professionnel
+Portée, limites et conditions d’usage
+
 information absente dans la source initiale. Les recommandations restent donc dépendantes
 de la qualité des compétences, niveaux, secteurs et descriptions collectés.
    La troisième limite concerne le graphe. Les diagnostics montrent une dépendance à cer-
@@ -2372,7 +2451,7 @@ pour mobiliser les bons outils selon la requête.
 
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire              58                        Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire              62                        Memoire Professionnel
              CONCLUSION GÉNÉRALE ET
                               PERSPECTIVES
    Ce mémoire avait pour objectif de concevoir et d’évaluer un système hybride de recom-
@@ -2889,132 +2968,131 @@ NGOULOU NGOUBILI Irch Deﬂuviaire                         XIV                  
 
 NGOULOU NGOUBILI Irch Deﬂuviaire                      XV                               Memoire Professionnel
                      TABLE DES MATIÈRES
-Dédicace                                                                                        i
+Dédicace                                                                                       i
 
-Remerciements                                                                                  ii
+Remerciements                                                                                 ii
 
-Liste des sigles et abréviations                                                               v
+Liste des sigles et abréviations                                                              v
 
-Liste des tableaux                                                                            vii
+Liste des tableaux                                                                           vii
 
-Liste des ﬁgures                                                                             viii
+Liste des ﬁgures                                                                            viii
 
-Avant-propos                                                                                   ix
+Avant-propos                                                                                  ix
 
-Résumé                                                                                         xi
+Résumé                                                                                        xi
 
-Abstract                                                                                      xii
+Abstract                                                                                     xii
 
-Introduction générale                                                                          1
+Introduction générale                                                                         1
 
 
-I   CADRE THÉORIQUE ET EXPÉRIMENTAL                                                            5
+I   CADRE THÉORIQUE ET EXPÉRIMENTAL                                                           5
 
 1 FONDEMENTS THÉORIQUES ET REVUE DE LA LITTÉRATURE SUR L’IA GÉNÉ-
-  RATIVE ET LES SYSTÈMES DE RECOMMANDATION                                                      6
-  1.1 Vocabulaire opérationnel : du matching à l’Agentic RAG . . . . . . . . . . . . . .        6
-  1.2 Fondements économiques et problématique d’appariement . . . . . . . . . . . .             8
-      1.2.1 Marché du travail, recherche d’emploi et frictions . . . . . . . . . . . . . .      8
-      1.2.2 Capital humain, tâches et inadéquation des compétences . . . . . . . . .            9
-  1.3 Systèmes de recommandation et person-job ﬁt . . . . . . . . . . . . . . . . . . . .       9
-      1.3.1 Approches par contenu, collaboratives et hybrides . . . . . . . . . . . . .         9
+  RATIVE ET LES SYSTÈMES DE RECOMMANDATION                                                     6
+  1.1 Repères conceptuels de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 6
+      1.1.1 Vocabulaire opérationnel : du matching à l’Agentic RAG . . . . . . . . . .         6
+  1.2 Fondements économiques et problématique d’appariement . . . . . . . . . . . .            8
+      1.2.1 Marché du travail, recherche d’emploi et frictions . . . . . . . . . . . . . .     8
+      1.2.2 Capital humain, tâches et inadéquation des compétences . . . . . . . . .           9
+  1.3 Systèmes de recommandation et person-job ﬁt . . . . . . . . . . . . . . . . . . . .      9
+      1.3.1 Approches par contenu, collaboratives et hybrides . . . . . . . . . . . . .        9
       1.3.2 Spéciﬁcité du person-job ﬁt . . . . . . . . . . . . . . . . . . . . . . . . . . . 10
   1.4 LLMs, embeddings et graphes de connaissances . . . . . . . . . . . . . . . . . . . 11
       1.4.1 Grands modèles de langage et génération contrôlée . . . . . . . . . . . . . 11
       1.4.2 Embeddings, recherche sémantique et bases vectorielles . . . . . . . . . . 12
-      1.4.3 Graphes de connaissances et recommandation relationnelle . . . . . . . . 12
+      1.4.3 Graphes de connaissances et recommandation relationnelle . . . . . . . . 13
   1.5 RAG, GraphRAG et orchestration agentique . . . . . . . . . . . . . . . . . . . . . 13
       1.5.1 De la RAG au GraphRAG . . . . . . . . . . . . . . . . . . . . . . . . . . . . 13
-      1.5.2 Agentic RAG, critic et traçabilité . . . . . . . . . . . . . . . . . . . . . . . . 14
 
 
-NGOULOU NGOUBILI Irch Deﬂuviaire              XVI                        Memoire Professionnel
+NGOULOU NGOUBILI Irch Deﬂuviaire             XVI                        Memoire Professionnel
 TABLE DES MATIÈRES
 
-           1.5.3 Évaluer la performance et la factualité . . . . . . . . . . . . . . . . . . . .       14
-     1.6   Positionnement de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   16
+           1.5.2 Agentic RAG, critic et traçabilité . . . . . . . . . . . . . . . . . . . . . . . .    14
+           1.5.3 Évaluer la performance et la factualité . . . . . . . . . . . . . . . . . . . .       15
+     1.6   Positionnement de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   17
 
-2 SOURCES DE DONNÉES ET APPROCHE MÉTHODOLOGIQUE                                                        18
-  2.1 Cadre méthodologique et sources de données . . . . . . . . . . . . . . . . . . . .               18
-      2.1.1 Démarche d’ingénierie appliquée retenue . . . . . . . . . . . . . . . . . . .              18
-      2.1.2 Sources de données et leur rôle dans le système . . . . . . . . . . . . . . .              19
-      2.1.3 Préparation et normalisation des données . . . . . . . . . . . . . . . . . .               20
-      2.1.4 Alignement des référentiels métiers et formations . . . . . . . . . . . . . .              20
-  2.2 Représentation sémantique et graphe de connaissances . . . . . . . . . . . . . . .               20
-      2.2.1 Choix du modèle d’embeddings et ﬁne-tuning . . . . . . . . . . . . . . . .                 20
-      2.2.2 Indexation vectorielle dans PostgreSQL et pgvector . . . . . . . . . . . . .               21
-      2.2.3 Construction du graphe de connaissances sous Neo4j . . . . . . . . . . . .                 21
-      2.2.4 Score hybride et logique de skill gap . . . . . . . . . . . . . . . . . . . . .            21
-      2.2.5 Construction du proxy de pertinence pour l’évaluation . . . . . . . . . . .                21
-  2.3 Orchestration agentique et génération contrôlée . . . . . . . . . . . . . . . . . . .            23
-      2.3.1 Architecture Agentic RAG et orchestration LangGraph . . . . . . . . . . .                  23
-      2.3.2 Text2Cypher et rôle du LLM . . . . . . . . . . . . . . . . . . . . . . . . . .             23
-      2.3.3 Modes d’accès et traçabilité des décisions . . . . . . . . . . . . . . . . . . .           23
-      2.3.4 Protocole d’évaluation prévu du système . . . . . . . . . . . . . . . . . . .              23
+2 SOURCES DE DONNÉES ET APPROCHE MÉTHODOLOGIQUE                                                        19
+  2.1 Cadre méthodologique et sources de données . . . . . . . . . . . . . . . . . . . .               19
+      2.1.1 Démarche d’ingénierie appliquée retenue . . . . . . . . . . . . . . . . . . .              19
+      2.1.2 Sources de données et leur rôle dans le système . . . . . . . . . . . . . . .              21
+      2.1.3 Préparation et normalisation des données . . . . . . . . . . . . . . . . . .               22
+      2.1.4 Alignement des référentiels métiers et formations . . . . . . . . . . . . . .              23
+  2.2 Représentation sémantique et graphe de connaissances . . . . . . . . . . . . . . .               23
+      2.2.1 Choix du modèle d’embeddings et ﬁne-tuning . . . . . . . . . . . . . . . .                 23
+      2.2.2 Indexation vectorielle dans PostgreSQL et pgvector . . . . . . . . . . . . .               23
+      2.2.3 Construction du graphe de connaissances sous Neo4j . . . . . . . . . . . .                 23
+      2.2.4 Score hybride et logique de skill gap . . . . . . . . . . . . . . . . . . . . .            24
+      2.2.5 Construction du proxy de pertinence pour l’évaluation . . . . . . . . . . .                24
+  2.3 Orchestration agentique et génération contrôlée . . . . . . . . . . . . . . . . . . .            25
+      2.3.1 Architecture Agentic RAG et orchestration LangGraph . . . . . . . . . . .                  25
+      2.3.2 Text2Cypher et rôle du LLM . . . . . . . . . . . . . . . . . . . . . . . . . .             26
+      2.3.3 Modes d’accès et traçabilité des décisions . . . . . . . . . . . . . . . . . . .           26
+      2.3.4 Protocole d’évaluation prévu du système . . . . . . . . . . . . . . . . . . .              26
 
 
-II    PRÉSENTATION DES RÉSULTATS ET DISCUSSION                                                         25
+II    PRÉSENTATION DES RÉSULTATS ET DISCUSSION                                                         27
 
-3 CONSTRUCTION DU SYSTÈME HYBRIDE EMPLOI–COMPÉTENCES                                                   26
-  3.1 Données exploitables et contraintes de qualité du système . . . . . . . . . . . . .              26
-      3.1.1 Volumes disponibles après nettoyage . . . . . . . . . . . . . . . . . . . . .              26
-      3.1.2 Qualité des variables utiles au matching emploi-compétences . . . . . . .                  27
-            3.1.2.1 Localisation exploitable pour ﬁltrer sans exclure . . . . . . . . .                27
-            3.1.2.2 Compétences et descriptions : signal utile mais hétérogène . . .                   27
-      3.1.3 Nettoyage réalisé et limites conservées . . . . . . . . . . . . . . . . . . . .            28
-  3.2 Adaptation du modèle d’embeddings au domaine emploi–compétences . . . . .                        28
-      3.2.1 Encodeur retenu et paires contrastives . . . . . . . . . . . . . . . . . . . .             28
-      3.2.2 Fine-tuning : contraintes de calcul et preuve de gain . . . . . . . . . . . .              29
-            3.2.2.1 Paramétrage contraint et dynamique d’apprentissage . . . . . .                     29
-            3.2.2.2 Preuve de gain sur le ranking sémantique . . . . . . . . . . . . .                 30
-      3.2.3 Structure de l’espace vectoriel après ﬁne-tuning . . . . . . . . . . . . . . .             31
-  3.3 Mémoire vectorielle pgvector pour le retrieval . . . . . . . . . . . . . . . . . . . .           31
-      3.3.1 Schéma physique, tables et volumes indexés . . . . . . . . . . . . . . . . .               31
+3 CONSTRUCTION DU SYSTÈME HYBRIDE EMPLOI–COMPÉTENCES                                                   28
+  3.1 Données exploitables et contraintes de qualité du système . . . . . . . . . . . . .              28
+      3.1.1 Volumes disponibles après nettoyage . . . . . . . . . . . . . . . . . . . . .              28
+      3.1.2 Qualité des variables utiles au matching emploi-compétences . . . . . . .                  29
+            3.1.2.1 Localisation exploitable pour ﬁltrer sans exclure . . . . . . . . .                29
+            3.1.2.2 Compétences et descriptions : signal utile mais hétérogène . . .                   30
+      3.1.3 Nettoyage réalisé et limites conservées . . . . . . . . . . . . . . . . . . . .            30
+  3.2 Adaptation du modèle d’embeddings au domaine emploi–compétences . . . . .                        31
+      3.2.1 Encodeur retenu et paires contrastives . . . . . . . . . . . . . . . . . . . .             31
+      3.2.2 Fine-tuning : contraintes de calcul et preuve de gain . . . . . . . . . . . .              31
+            3.2.2.1 Paramétrage contraint et dynamique d’apprentissage . . . . . .                     32
+            3.2.2.2 Preuve de gain sur le ranking sémantique . . . . . . . . . . . . .                 33
+      3.2.3 Structure de l’espace vectoriel après ﬁne-tuning . . . . . . . . . . . . . . .             34
+  3.3 Mémoire vectorielle pgvector pour le retrieval . . . . . . . . . . . . . . . . . . . .           34
 
 
 NGOULOU NGOUBILI Irch Deﬂuviaire                  XVII                         Memoire Professionnel
 TABLE DES MATIÈRES
 
-         3.3.2 Référentiels découpés en chunks interrogeables . . . . . . . . . . . . . . .        32
-   3.4   Neo4j : mémoire relationnelle du matching . . . . . . . . . . . . . . . . . . . . . .     34
-         3.4.1 Schéma, noeuds et relations mobilisés par le matching . . . . . . . . . . .         35
-         3.4.2 Structure du graphe et dépendance aux hubs . . . . . . . . . . . . . . . .          36
-   3.5   Score hybride et reranking des recommandations . . . . . . . . . . . . . . . . . .        38
-         3.5.1 Formalisation du score hybride . . . . . . . . . . . . . . . . . . . . . . . . .    38
-         3.5.2 Effet du reranking hybride . . . . . . . . . . . . . . . . . . . . . . . . . . .    39
-   3.6   Orchestration agentique du système par LangGraph . . . . . . . . . . . . . . . .          39
-         3.6.1 Perception de la requête et planiﬁcation des outils . . . . . . . . . . . . .       40
-         3.6.2 Action, observation et construction du contexte . . . . . . . . . . . . . . .       41
-         3.6.3 Génération contrôlée et boucle de révision . . . . . . . . . . . . . . . . . .      41
+         3.3.1 Schéma physique, tables et volumes indexés . . . . . . . . . . . . . . . . .        34
+         3.3.2 Référentiels découpés en chunks interrogeables . . . . . . . . . . . . . . .        35
+   3.4   Neo4j : mémoire relationnelle du matching . . . . . . . . . . . . . . . . . . . . . .     37
+         3.4.1 Schéma, noeuds et relations mobilisés par le matching . . . . . . . . . . .         38
+         3.4.2 Structure du graphe et dépendance aux hubs . . . . . . . . . . . . . . . .          39
+   3.5   Score hybride et reranking des recommandations . . . . . . . . . . . . . . . . . .        41
+         3.5.1 Formalisation du score hybride . . . . . . . . . . . . . . . . . . . . . . . . .    41
+         3.5.2 Effet du reranking hybride . . . . . . . . . . . . . . . . . . . . . . . . . . .    42
+   3.6   Orchestration agentique du système par LangGraph . . . . . . . . . . . . . . . .          42
+         3.6.1 Perception de la requête et planiﬁcation des outils . . . . . . . . . . . . .       43
+         3.6.2 Action, observation et construction du contexte . . . . . . . . . . . . . . .       44
+         3.6.3 Génération contrôlée et boucle de révision . . . . . . . . . . . . . . . . . .      44
 
-4 ÉVALUATION DE LA PERFORMANCE INTERNE DU SYSTÈME                                                  43
-  4.1 Protocole expérimental et métriques retenues . . . . . . . . . . . . . . . . . . . . .       43
-  4.2 Retrieval sémantique et apport mesuré du graphe . . . . . . . . . . . . . . . . . .          43
-      4.2.1 Modèle d’embeddings spécialisé . . . . . . . . . . . . . . . . . . . . . . . .         44
-      4.2.2 Ablation pgvector seul contre pgvector enrichi par Neo4j . . . . . . . . .             45
-  4.3 Validation fonctionnelle du GraphRAG . . . . . . . . . . . . . . . . . . . . . . . .         46
-      4.3.1 Requêtes relationnelles métier, compétence et offre . . . . . . . . . . . . .          47
-      4.3.2 Skill gap, niveau NCF et comparaison GraphRAG . . . . . . . . . . . . . .              47
-  4.4 Reranking hybride et calibration du score . . . . . . . . . . . . . . . . . . . . . . .      48
-      4.4.1 Déplacements de rang après reranking par le graphe . . . . . . . . . . . .             48
-      4.4.2 Pondérations optimales avec Optuna . . . . . . . . . . . . . . . . . . . . .           49
-  4.5 Contrôle de génération par critic . . . . . . . . . . . . . . . . . . . . . . . . . . . .    51
-      4.5.1 Calibration contrastive du seuil de ﬁdélité . . . . . . . . . . . . . . . . . .        51
-      4.5.2 Interprétation des décisions accept/revise . . . . . . . . . . . . . . . . . .         52
+4 ÉVALUATION DE LA PERFORMANCE INTERNE DU SYSTÈME                                                  46
+  4.1 Protocole expérimental et métriques retenues . . . . . . . . . . . . . . . . . . . . .       46
+  4.2 Retrieval sémantique et apport mesuré du graphe . . . . . . . . . . . . . . . . . .          47
+      4.2.1 Modèle d’embeddings spécialisé . . . . . . . . . . . . . . . . . . . . . . . .         47
+      4.2.2 Ablation pgvector seul contre pgvector enrichi par Neo4j . . . . . . . . .             48
+  4.3 Validation fonctionnelle du GraphRAG . . . . . . . . . . . . . . . . . . . . . . . .         49
+      4.3.1 Requêtes relationnelles métier, compétence et offre . . . . . . . . . . . . .          51
+      4.3.2 Skill gap, niveau NCF et comparaison GraphRAG . . . . . . . . . . . . . .              51
+  4.4 Reranking hybride et calibration du score . . . . . . . . . . . . . . . . . . . . . . .      52
+      4.4.1 Déplacements de rang après reranking par le graphe . . . . . . . . . . . .             52
+      4.4.2 Pondérations optimales avec Optuna . . . . . . . . . . . . . . . . . . . . .           53
+  4.5 Contrôle de génération par critic . . . . . . . . . . . . . . . . . . . . . . . . . . . .    55
+      4.5.1 Calibration contrastive du seuil de ﬁdélité . . . . . . . . . . . . . . . . . .        55
+      4.5.2 Interprétation des décisions accept/revise . . . . . . . . . . . . . . . . . .         56
 
-5 SYNTHÈSE ET DISCUSSION DES RÉSULTATS                                                             55
-  5.1 Résultats majeurs de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   55
-  5.2 Confrontation avec la littérature . . . . . . . . . . . . . . . . . . . . . . . . . . . .    56
-  5.3 Discussion des hypothèses de recherche . . . . . . . . . . . . . . . . . . . . . . . .       56
-  5.4 Portée, limites et conditions d’usage . . . . . . . . . . . . . . . . . . . . . . . . . .    57
+5 SYNTHÈSE ET DISCUSSION DES RÉSULTATS                                                             59
+  5.1 Résultats majeurs de l’étude . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .   59
+  5.2 Confrontation avec la littérature . . . . . . . . . . . . . . . . . . . . . . . . . . . .    60
+  5.3 Discussion des hypothèses de recherche . . . . . . . . . . . . . . . . . . . . . . . .       60
+  5.4 Portée, limites et conditions d’usage . . . . . . . . . . . . . . . . . . . . . . . . . .    61
 
 Conclusion générale et perspectives                                                                 I
 
 Bibliographie                                                                                      II
 
 A ANNEXES                                                                                          VI
-
-
 
 
 NGOULOU NGOUBILI Irch Deﬂuviaire               XVIII                        Memoire Professionnel
