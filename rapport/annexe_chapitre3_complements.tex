@@ -18,7 +18,13 @@
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
-
+\begin{figure}[H]
+	\centering
+	\caption{Localisation nettoyée des offres}
+	\label{fig:implementation_localisation}
+	\includegraphics[width=0.54\textwidth]{figures/generated/implementation_deep_current/02_localisation_mixte.png}
+	\source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+\end{figure}
 \begin{table}[H]
   \centering
   \caption{Volumes réellement exploités par les modules de recommandation}
@@ -41,15 +47,26 @@
   \tableStyleEnd
   \source{Nos travaux, diagnostics PostgreSQL}
 \end{table}
-
-\begin{figure}[H]
-  \centering
-  \caption{Localisation nettoyée des offres}
-  \label{fig:implementation_localisation}
-  \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/02_localisation_mixte.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-\end{figure}
-
+\begin{table}[H]
+	\centering
+	\caption{Comparaison directe entre le baseline et le modèle fine-tuné}
+	\label{tab:implementation_baseline_vs_finetuned}
+	\tableStyleStart
+	\begin{tabularx}{0.86\textwidth}{Xrrr}
+		\rowcolor{darkblue}
+		\tabheader{Métrique test} & \tabheader{Baseline} & \tabheader{Fine-tuné} & \tabheader{Gain} \\
+		\midrule
+		NDCG@10 & 0,1681 & 0,6232 & +0,4552 \\
+		MRR@10 & 0,1410 & 0,5874 & +0,4463 \\
+		Recall@1 & 0,0986 & 0,5268 & +0,4281 \\
+		Recall@5 & 0,1983 & 0,6632 & +0,4648 \\
+		Recall@10 & 0,2560 & 0,7398 & +0,4837 \\
+		Precision@1 & 0,0986 & 0,5268 & +0,4281 \\
+		\bottomrule
+	\end{tabularx}
+	\tableStyleEnd
+	\source{Nos travaux, traitements Python et SentenceTransformer}
+\end{table}
 \begin{table}[H]
   \centering
   \caption{Synthèse des traitements de nettoyage utiles au moteur de recommandation}
@@ -69,28 +86,6 @@
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
-
-\begin{table}[H]
-  \centering
-  \caption{Comparaison directe entre le baseline et le modèle fine-tuné}
-  \label{tab:implementation_baseline_vs_finetuned}
-  \tableStyleStart
-  \begin{tabularx}{0.86\textwidth}{Xrrr}
-    \rowcolor{darkblue}
-    \tabheader{Métrique test} & \tabheader{Baseline} & \tabheader{Fine-tuné} & \tabheader{Gain} \\
-    \midrule
-    NDCG@10 & 0,1681 & 0,6232 & +0,4552 \\
-    MRR@10 & 0,1410 & 0,5874 & +0,4463 \\
-    Recall@1 & 0,0986 & 0,5268 & +0,4281 \\
-    Recall@5 & 0,1983 & 0,6632 & +0,4648 \\
-    Recall@10 & 0,2560 & 0,7398 & +0,4837 \\
-    Precision@1 & 0,0986 & 0,5268 & +0,4281 \\
-    \bottomrule
-  \end{tabularx}
-  \tableStyleEnd
-  \source{Nos travaux, traitements Python et SentenceTransformer}
-\end{table}
-
 \begin{table}[H]
   \centering
   \caption{Diagnostic statistique du chunking documentaire}
@@ -115,7 +110,6 @@
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
-
 \begin{table}[H]
   \centering
   \caption{Couverture documentaire et duplication des chunks}
@@ -136,7 +130,6 @@
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
-
 \begin{figure}[H]
   \centering
   \caption{Distribution de la cohérence sémantique intra-chunk par source}
@@ -144,7 +137,6 @@
   \includegraphics[width=0.72\textwidth]{figures/generated/implementation_deep_current/06_chunking_coherence_semantique.png}
   \source{Nos travaux, mesure Python de la similarité cosinus moyenne entre les phrases de chaque chunk.}
 \end{figure}
-
 \begin{table}[H]
   \centering
   \caption{Cohérence sémantique intra-chunk}
@@ -162,15 +154,13 @@
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
-
 \begin{figure}[H]
   \centering
   \caption{Composition du graphe par types de noeuds et relations}
   \label{fig:implementation_neo4j_composition}
-  \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
+  \includegraphics[width=0.5\textwidth]{figures/generated/implementation_deep_current/08_neo4j_composition.png}
   \source{Nos travaux, diagnostics Neo4j.}
 \end{figure}
-
 \begin{table}[H]
   \centering
   \caption{Hétérogénéité des degrés par famille de noeuds}
@@ -200,7 +190,7 @@
   \tableStyleStart
   \begin{tabularx}{0.92\textwidth}{Xr}
     \rowcolor{darkblue}
-    \tabheader{Indicateur} & \tabheader{Valeur} \\
+    \tabheader{Indicateurs} & \tabheader{Valeur} \\
     \midrule
     Couples candidat--offre évalués & 690 \\
     Candidats distincts & 69 \\

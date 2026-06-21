@@ -56,12 +56,12 @@ Le modèle \texttt{all-MiniLM-L6-v2} a été retenu pour ses vecteurs de 384 dim
     \rowcolor{darkblue}
     \tabheader{Élément} & \tabheader{Implémentation observée} \\
     \midrule
-    Modèle de départ & \texttt{sentence-transformers/all-MiniLM-L6-v2}, embeddings denses de 384 dimensions. \\
-    Rôle de \texttt{sentence1} & Représentation structurée de l'offre : titre, secteur, contrat, niveau d'études, expérience, ville et compétences. \\
+    Modèle de départ & \texttt{sentence-transformers/all-MiniLM-L6-v2}, embeddings denses de 384d. \\
+    Rôle de \texttt{sentence1} & titre, secteur, contrat, niveau d'études, expérience, ville et compétences. \\
     Rôle de \texttt{sentence2} & Détails nettoyés de l'annonce uniquement, c'est-à-dire le texte descriptif que le modèle doit rapprocher de la représentation structurée. \\
     Filtrage informatif & Conservation des paires avec compétences disponibles, \texttt{sentence1} d'au moins 40 caractères et \texttt{sentence2} d'au moins 120 caractères ; le champ \texttt{ft\_eligible} est appliqué lorsqu'il existe. \\
-    Nombre total de paires & 6\,476 paires offre--description. \\
-    Split & 4\,542 paires en train, 981 en validation et 953 en test, avec stratification par secteur principal. \\
+    Total de paires & 6\,476 paires offre-description. \\
+    %Split & 4\,542 paires en train, 981 en validation et 953 en test, avec stratification par secteur principal. \\
     %Fichiers produits & \filevar{data/finetune/pairs\_train.jsonl}, \filevar{pairs\_val.jsonl}, \filevar{pairs\_test.jsonl} et \filevar{pairs\_metadata.json}. \\
     \bottomrule
   \end{tabularx}
@@ -100,18 +100,15 @@ Le modèle \texttt{all-MiniLM-L6-v2} a été retenu pour ses vecteurs de 384 dim
 
 Ces choix répondent aux ressources disponibles. Les vecteurs de 384 dimensions réduisent le stockage et le coût de recherche ; le batch de 32 limite la mémoire tout en fournissant 31 négatifs implicites par exemple ; cinq époques contiennent le temps d'entraînement. Le \textit{learning rate} de $2\times10^{-5}$ évite une modification trop brutale des représentations initiales.
 
+La perte d'entraînement diminue de 2,445 à 0,132, tandis que la perte de test reste plus élevée (0,433) que celle d'entraînement (0,171). Cet écart signale une généralisation moins bonne sur les paires non vues, sans divergence du modèle. Le panneau des métriques montre un NDCG@10 maximal à l'époque~4, puis un léger recul ; le panneau du learning rate confirme une montée puis une décroissance contrôlée du pas d'apprentissage. Prolonger l'entraînement n'était donc pas justifié.
 \begin{figure}[H]
   \centering
-  \caption{Diagnostic du fine-tuning : perte, généralisation, métriques de validation et calendrier du learning rate}
+  \caption{perte, généralisation, métriques de validation et calendrier du learning rate}
   \label{fig:implementation_finetuning_courbes}
   \includegraphics[width=0.55\textwidth]{figures/generated/implementation_deep_current/04_finetuning_courbes.png}
-  \source{Nos travaux, traitements Python et SentenceTransformer, à partir des paires emploi--compétences et des entités nettoyées du projet.}
+  \source{Nos travaux, traitements Python et SentenceTransformer.}
 \end{figure}
-
-La perte d'entraînement diminue de 2,445 à 0,132, tandis que la perte de test reste plus élevée (0,433) que celle d'entraînement (0,171). Cet écart signale une généralisation moins bonne sur les paires non vues, sans divergence du modèle. Le panneau des métriques montre un NDCG@10 maximal à l'époque~4, puis un léger recul ; le panneau du learning rate confirme une montée puis une décroissance contrôlée du pas d'apprentissage. Prolonger l'entraînement n'était donc pas justifié.
-
 \subsubsection{Preuve de gain sur le ranking sémantique}
-
 Sur 953 paires de test, le fine-tuning multiplie le NDCG@10 par 3,7 et le MRR@10 par 4,2 par rapport au modèle de départ. Le détail figure au tableau~\ref{tab:implementation_baseline_vs_finetuned} en annexe ; l'évaluation complète est présentée au chapitre~4.
 
 \begin{figure}[H]
@@ -196,6 +193,12 @@ Les référentiels produisent 142 chunks : 43 pour les diplômes, 61 pour le MEP
   \source{Nos travaux, schématisation du pipeline de chunking documentaire et d'indexation pgvector.}
 \end{figure}
 
+La figure~\ref{fig:implementation_chunking_pipeline} doit être lue comme un contrôle de qualité du contexte injecté dans le RAG. Le découpage ne part pas d'une fenêtre arbitraire, mais de la structure réelle des référentiels : niveaux, domaines, groupes de métiers, diplômes et sections. Cette stratégie limite deux risques. D'abord, elle évite de couper une règle au milieu d'une phrase ou d'une section. Ensuite, elle évite de mélanger dans un même fragment plusieurs règles qui ne répondent pas à la même question.
+
+Concrètement, un chunk correspond à une unité interprétable : une partie de nomenclature, un niveau de formation, un groupe métier ou une description réglementaire. Lorsqu'une question porte sur un métier, une compétence ou un niveau \NCF{}, pgvector peut donc récupérer un passage qui a encore un sens seul. C'est ce qui rend le contexte utilisable par l'agent : le LLM ne reçoit pas seulement du texte proche, mais un fragment rattaché à une source, une section et une position documentaire.
+
+La figure~\ref{fig:implementation_chunking_diagnostics} complète cette lecture par trois diagnostics. Premièrement, la taille médiane de 116 tokens indique que les fragments sont assez courts pour être retrouvés et cités sans saturer le contexte. Deuxièmement, la présence de quelques chunks supérieurs à 400 tokens montre que certaines sections des référentiels restent denses ; ces fragments sont acceptables pour préserver le sens, mais ils doivent être surveillés car ils peuvent contenir plusieurs informations. Troisièmement, la couverture moyenne de 42,9\,\% renseigne la part du texte utile conservée après nettoyage et structuration ; elle ne doit pas être interprétée comme une mesure directe de qualité, mais comme un indicateur de densité documentaire.
+
 \begin{figure}[H]
   \centering
   \caption{Distribution des tailles, sources et couverture du chunking documentaire}
@@ -203,8 +206,7 @@ Les référentiels produisent 142 chunks : 43 pour les diplômes, 61 pour le MEP
   \includegraphics[width=0.7\textwidth]{figures/generated/implementation_deep_current/06_chunking_diagnostics.png}
   \source{Nos travaux, diagnostics Python du chunking documentaire.}
 \end{figure}
-
-La taille médiane est de 116 tokens, mais certains fragments dépassent 400 tokens. Les chunks courts risquent de manquer de contexte ; les plus longs peuvent mélanger plusieurs idées. La couverture moyenne de 42,9\,\% correspond aux tokens conservés, non à la proportion exacte d'information utile. Enfin, la cohérence moyenne plus faible des diplômes (0,268 contre 0,336 pour la NCF) signale que leur découpage doit être contrôlé en priorité. Les mesures complètes figurent en annexe.
+La comparaison par source montre aussi que les référentiels n'ont pas la même régularité. La NCF présente une cohérence moyenne plus élevée (0,336) que les diplômes (0,268), ce qui signifie que ses sections sont plus homogènes après découpage. Les diplômes demandent donc davantage de vigilance : leurs libellés peuvent être courts, hétérogènes ou très administratifs. Pour le système, cela implique que le retrieval documentaire est plus fiable lorsqu'il interroge des sections bien structurées, et plus fragile lorsqu'il dépend de fragments courts ou descriptivement pauvres. Les mesures complètes figurent en annexe.
 
 \section{Neo4j : mémoire relationnelle du matching}
 
@@ -221,24 +223,31 @@ Cette sous-section décrit la partie du graphe réellement utile au matching. L'
   \includegraphics[width=0.5\textwidth]{schema.png}
   \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
-
 La figure~\ref{fig:implementation_schema_graphe} montre deux fonctions du graphe : relier les candidats aux offres par les compétences et rattacher ces objets aux référentiels métier et formation. pgvector repère une proximité textuelle ; Neo4j indique par quelles relations cette proximité peut être expliquée.
-
 \begin{figure}[H]
-  \centering
-  \caption{Lecture conjointe des noeuds et relations Neo4j mobilisés par le matching}
-  \label{fig:implementation_neo4j_noeuds_relations}
-  \begin{minipage}[t]{0.3\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{noeuds_neo4j.png}
-    \caption*{\normalsize (a) Types de noeuds}
-  \end{minipage}\hfill
-  \begin{minipage}[t]{0.24\textwidth}
-    \centering
-    \includegraphics[width=\textwidth]{relations_neo4j.png}
-    \caption*{\normalsize (b) Types de relations}
-  \end{minipage}
-  \source{Nos travaux, diagnostics Neo4j, à partir du graphe de connaissances emploi--compétences construit dans le projet.}
+	\centering
+	\caption{Lecture conjointe des noeuds et relations Neo4j mobilisés par le matching}
+	\label{fig:implementation_neo4j_noeuds_relations}
+	
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=0.5\linewidth]{noeuds_neo4j.png}
+		\caption*{(a) Types de noeuds}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=0.99\linewidth]{sys.png}
+		\caption*{(b) Répartition globale}
+	\end{minipage}
+	\hfill
+	\begin{minipage}{0.32\textwidth}
+		\centering
+		\includegraphics[width=0.5\linewidth]{relations_neo4j.png}
+		\caption*{(c) Types de relations}
+	\end{minipage}
+	
+	\source{Nos travaux, diagnostics Neo4j à partir du graphe de connaissances emploi-compétences.}
 \end{figure}
 
 Le chemin principal est \texttt{Candidat} $\rightarrow$ \texttt{POSSEDE} $\rightarrow$ \texttt{Compétence} $\leftarrow$ \texttt{REQUIERT} $\leftarrow$ \texttt{OffreEmploi}. Il permet de distinguer les compétences couvertes des compétences manquantes. Les liens vers le métier, le niveau \NCF{}, le secteur et la localisation complètent l'explication. Leur fiabilité reste conditionnée par la qualité de l'extraction et de la normalisation.
@@ -251,7 +260,7 @@ Cette sous-section contrôle si le graphe est exploitable pour le GraphRAG. Dans
   \centering
   \caption{Tableau de bord statistique du graphe Neo4j}
   \label{fig:implementation_neo4j_dashboard}
-  \includegraphics[width=0.86\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
+  \includegraphics[width=0.56\textwidth]{figures/generated/implementation_deep_current/14_neo4j_dashboard_reseau.png}
   \source{Nos travaux, diagnostics Neo4j}
 \end{figure}
 
@@ -303,6 +312,7 @@ S_{\text{hybride}} =
 
 Sur 690 couples candidat--offre, le score pgvector est continu et centré autour de 0,52, tandis que 31,30\,\% des scores Neo4j sont nuls. Le premier panneau montre donc une proximité textuelle graduelle ; le second montre un signal relationnel plus sélectif. pgvector distingue des degrés de ressemblance entre presque tous les couples ; Neo4j écarte plus nettement ceux pour lesquels aucune compétence requise n'est couverte.
 
+Avec 500 essais Optuna, l'objectif NDCG@10 retient $\alpha=0$ et $\beta=1$ : dans le vivier déjà présélectionné par pgvector, la couverture de compétences ordonne le mieux l'ensemble du top~10. L'objectif MRR@10--Precision@10 retient plutôt 0,6615 pour pgvector et 0,3385 pour Neo4j, car il valorise davantage le premier résultat pertinent. Les poids sont donc propres à l'objectif et à l'échantillon de calibration.
 \begin{table}[H]
   \centering
   \caption{Résultats de calibration des poids du score hybride}
@@ -331,15 +341,15 @@ Sur 690 couples candidat--offre, le score pgvector est continu et centré autour
   \tableStyleEnd
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
 \end{table}
-
-Avec 500 essais Optuna, l'objectif NDCG@10 retient $\alpha=0$ et $\beta=1$ : dans le vivier déjà présélectionné par pgvector, la couverture de compétences ordonne le mieux l'ensemble du top~10. L'objectif MRR@10--Precision@10 retient plutôt 0,6615 pour pgvector et 0,3385 pour Neo4j, car il valorise davantage le premier résultat pertinent. Les poids sont donc propres à l'objectif et à l'échantillon de calibration.
 \subsection{Effet du reranking hybride}
 
 Neo4j ne relance pas la recherche : il réordonne le vivier pgvector selon la couverture de compétences. Les déplacements de rang et l'ablation avec ou sans graphe sont analysés au chapitre~4. Le tableau~\ref{tab:implementation_moteur_hybride_scores} en annexe conserve le résumé numérique.
 
-\section{Orchestration du système par LangGraph}
+\section{Orchestration agentique du système par LangGraph}
 
-Cette dernière brique relie les composants précédents dans une chaîne exécutable. LangGraph conserve un état partagé contenant la requête, le cas d'usage, les outils planifiés, leurs résultats, le contexte construit, la réponse, la décision du critic et les traces d'exécution. L'orchestrateur ne calcule donc pas lui-même la recommandation : il détermine quelles briques appeler et dans quel ordre.
+Cette dernière brique transforme les composants précédents en agent IA outillé. Dans ce mémoire, l'agent n'est pas un simple chatbot qui répond directement à partir d'un prompt. Il suit une boucle contrôlée : comprendre la demande, choisir les outils utiles, exécuter les recherches, observer les résultats, construire un contexte, générer une réponse, puis vérifier si cette réponse est suffisamment appuyée par les preuves.
+
+LangGraph sert à représenter cette boucle sous forme de graphe d'états. L'état partagé contient la requête, le cas d'usage, les outils planifiés, leurs résultats, le contexte construit, la réponse, la décision du critic et les traces d'exécution. L'agent ne remplace donc pas pgvector, Neo4j ou le score hybride ; il décide quand les mobiliser et comment combiner leurs sorties pour répondre.
 
 \begin{figure}[H]
   \centering
@@ -349,25 +359,33 @@ Cette dernière brique relie les composants précédents dans une chaîne exécu
   \source{Nos travaux, visualisation LangGraph Studio du workflow implémenté.}
 \end{figure}
 
-La figure montre le parcours complet de la requête : analyse, planification des outils, exécution, construction du contexte, génération, puis fin ou révision. Les flèches de retour vers \texttt{expand\_context} indiquent que le système peut enrichir les preuves avant de répondre. Elle situe donc LangGraph comme couche de coordination, pas comme moteur de scoring.
+La figure~\ref{fig:implementation_langgraph_orchestration} décrit le comportement de cet agent IA. Le noeud \texttt{analyse\_request} joue le rôle de perception : il transforme une question libre en intention exploitable. \texttt{plan\_tools} correspond à la planification : l'agent choisit les outils nécessaires au lieu d'appeler toutes les bases sans distinction. \texttt{execute\_tools} représente l'action : l'agent interroge pgvector, Neo4j ou le moteur hybride. \texttt{build\_context} correspond à l'observation organisée : les résultats bruts sont regroupés en preuves utilisables. Enfin, \texttt{generate\_final\_answer} produit la réponse à partir du contexte construit.
 
-\subsection{Analyse de la requête et choix des outils}
+Les flèches de retour vers \texttt{expand\_context} sont importantes. Elles montrent que l'agent peut réviser sa trajectoire lorsque les preuves sont insuffisantes : il élargit alors la recherche, reconstruit le contexte et régénère la réponse. L'agent reste cependant borné par le workflow ; il ne crée pas librement de nouvelles actions et ne modifie pas les bases. Cette contrainte est nécessaire pour garder un système défendable.
+
+\subsection{Perception de la requête et planification des outils}
 
 Le noeud \texttt{analyse\_request} extrait la question, recherche un identifiant candidat et classe la demande dans un cas d'usage : diagnostic, recommandation, analyse de \textit{skill gap}, consultation d'un référentiel, interrogation du graphe, orientation métier, synthèse globale ou recherche générale. Le noeud \texttt{plan\_tools} associe ensuite ce cas aux outils nécessaires.
 
-Le registre contient six outils principaux. Ils couvrent le diagnostic des services, les recherches sémantique et documentaire dans pgvector, l'interrogation Neo4j par Text2Cypher, la recommandation hybride et la synthèse globale du graphe. Ce routage limite les appels inutiles : une question sur un référentiel mobilise les chunks pgvector, une question relationnelle mobilise Neo4j et une recommandation candidat--offre appelle le moteur hybride.
+Cette étape correspond à la partie décisionnelle de l'agent. Une question sur un référentiel mobilise les chunks pgvector ; une question relationnelle mobilise Neo4j ; une recommandation candidat--offre appelle le moteur hybride ; une demande de diagnostic vérifie plutôt l'état des services. Le registre contient six outils principaux : diagnostic, recherche sémantique, recherche documentaire, interrogation Neo4j, recommandation hybride et synthèse globale du graphe.
 
-\subsection{Exécution des outils et construction du contexte}
+Cette planification évite deux erreurs fréquentes dans les applications \LLM{}. La première consiste à demander au modèle de répondre sans preuve. La seconde consiste à appeler tous les outils à chaque question, ce qui alourdit le système et produit du bruit. Ici, l'agent choisit le chemin le plus pertinent selon l'intention détectée.
+
+\subsection{Action, observation et construction du contexte}
 
 \texttt{execute\_tools} appelle les outils planifiés et conserve chaque résultat ou erreur dans l'état. \texttt{build\_context} rassemble ensuite les sorties hétérogènes dans une structure commune : offres candidates, compétences couvertes ou manquantes, lignes Neo4j, résultats sémantiques, fragments documentaires et état des services.
 
-Cette normalisation sépare la récupération de la génération. Le \LLM{} ne consulte pas directement les bases et ne choisit pas librement les données à utiliser ; il reçoit un contexte déjà récupéré et structuré. Les erreurs d'un outil restent également traçables sans supprimer les résultats valides produits par les autres outils.
+Dans une logique d'agent IA, cette étape correspond au couple action--observation. L'action est l'appel aux outils ; l'observation est la transformation des sorties en éléments interprétables. Par exemple, un résultat pgvector donne une proximité sémantique, tandis qu'un résultat Neo4j donne un chemin relationnel ou une couverture de compétences. Ces deux observations ne sont pas équivalentes ; elles doivent être rapprochées avant la génération.
+
+Cette normalisation sépare la récupération de la rédaction. Le \LLM{} ne consulte pas directement les bases et ne choisit pas librement les données à utiliser ; il reçoit un contexte déjà récupéré et structuré. Les erreurs d'un outil restent également traçables sans supprimer les résultats valides produits par les autres outils. C'est ce qui permet de justifier une réponse : l'agent peut indiquer les offres trouvées, les compétences couvertes, les compétences manquantes et les sources documentaires mobilisées.
 
 \subsection{Génération contrôlée et boucle de révision}
 
 \texttt{generate\_final\_answer} produit une réponse française à partir du contexte et impose la citation des identifiants ou sources disponibles. Si OpenRouter est indisponible, le système restitue les données récupérées sous une forme structurée plutôt que d'inventer une réponse.
 
-Le critic évalue ensuite l'ancrage de la réponse. Une décision \texttt{accept} termine le workflow. Une décision \texttt{revise} active \texttt{expand\_context}, augmente le top-$K$ dans la limite de 10 et ajoute les recherches pgvector ou Neo4j qui n'avaient pas encore été exécutées. Le contexte est alors reconstruit et la réponse régénérée. Cette boucle est limitée à une seule révision afin d'éviter une exécution indéfinie ; le chapitre~4 présente la calibration du seuil utilisé par ce contrôle.
+Le critic joue le rôle de contrôle interne de l'agent. Il ne vérifie pas toute la vérité métier de la réponse ; il vérifie si la réponse est suffisamment ancrée dans le contexte récupéré. Une décision \texttt{accept} termine le workflow. Une décision \texttt{revise} active \texttt{expand\_context}, augmente le top-$K$ dans la limite de 10 et ajoute les recherches pgvector ou Neo4j qui n'avaient pas encore été exécutées. Le contexte est alors reconstruit et la réponse régénérée.
+
+Cette boucle donne au système un comportement agentique : il ne répond pas seulement, il peut constater que son contexte est insuffisant et demander plus de preuves avant de finaliser. La boucle reste limitée à une seule révision afin d'éviter une exécution indéfinie. Le chapitre~4 présente la calibration du seuil utilisé par ce contrôle.
 
 \section*{Conclusion}
 

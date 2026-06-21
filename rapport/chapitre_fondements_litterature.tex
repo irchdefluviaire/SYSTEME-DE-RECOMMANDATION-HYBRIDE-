@@ -96,8 +96,8 @@ Les grands modèles de langage ont transformé le traitement automatique du lang
   \centering
   \caption{Évolution simplifiée des modèles de langage et des représentations textuelles}
   \label{fig:chronologie_llm_revue}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
   \includegraphics[width=0.75\textwidth]{figures/evolution_llms.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic}
 \end{figure}
 
 Deux grandes familles de modèles sont utiles pour ce mémoire. La première regroupe les modèles de représentation, comme BERT et Sentence-BERT. BERT apprend des représentations contextuelles bidirectionnelles adaptées à la compréhension du texte \cite{devlin2018bert}. Sentence-BERT adapte cette logique pour produire des embeddings de phrases comparables efficacement par similarité cosinus \cite{reimers2019sbert}. La seconde famille regroupe les modèles génératifs, comme GPT, T5 ou les modèles instruction-tuned. GPT-3 a montré qu'un modèle de grande taille pouvait effectuer des tâches variées à partir de quelques exemples dans le prompt \cite{brown2020language}. T5 a proposé une formulation unifiée des tâches NLP comme transformation texte-vers-texte \cite{raffel2020t5}. L'apprentissage par retour humain a ensuite amélioré la capacité des modèles à suivre des instructions \cite{ouyang2022training}.
@@ -124,20 +124,17 @@ Cependant, le présent mémoire ne cherche pas principalement à entraîner un G
 
 \subsection{De la RAG au GraphRAG}
 
-La génération augmentée par récupération, ou \RAG{}, combine une étape de recherche d'information et une étape de génération. Lewis et al. montrent que l'accès à une mémoire externe améliore les tâches intensives en connaissances, car le modèle ne dépend plus uniquement de ses paramètres internes \cite{lewis2020rag}. Les synthèses récentes sur la \RAG{} insistent sur les mêmes enjeux : qualité de la récupération, actualisation des connaissances, évaluation de la factualité et articulation entre retriever et générateur \cite{gao2023ragllm}.
+La \RAG{}, combine une étape de recherche d'information et une étape de génération. Lewis et al. montrent que l'accès à une mémoire externe améliore les tâches intensives en connaissances, car le modèle ne dépend plus uniquement de ses paramètres internes \cite{lewis2020rag}. Les synthèses récentes sur la \RAG{} insistent sur les mêmes enjeux : qualité de la récupération, actualisation des connaissances, évaluation de la factualité et articulation entre retriever et générateur \cite{gao2023ragllm}.
 
-Dans une \RAG{} classique, le système récupère des documents proches d'une requête, puis les transmet au \LLM{}. Cette architecture est utile, mais elle reste centrée sur des passages textuels. Pour le matching emploi-compétences, le contexte doit aussi intégrer des relations : compétences possédées, compétences requises, niveau de formation, métier cible, secteur et formation possible. Le GraphRAG étend alors la récupération vers des informations structurées par graphe.
-
+Dans une \RAG{} natif, le système récupère des documents proches d'une requête, puis les transmet au \LLM{}. Cette architecture est utile, mais elle reste centrée sur des passages textuels. Pour le matching emploi-compétences, le contexte doit aussi intégrer des relations : compétences possédées, compétences requises, niveau de formation, métier cible, secteur et formation possible. Le GraphRAG étend alors la récupération vers des informations structurées par graphe.
+La figure \ref{fig:rag_graphrag_agentic_rag_revue} distingue trois niveaux fonctionnels. La \RAG{} récupère surtout des documents proches d'une requête et les transmet au \LLM{} ; elle reste donc efficace pour une recherche documentaire, mais son raisonnement dépend du contexte retrouvé. Le GraphRAG ajoute une représentation relationnelle : les entités et leurs liens permettent de naviguer entre compétences, métiers, offres, niveaux et formations. L'Agentic RAG va plus loin : il ne se limite pas à récupérer une information, il planifie les étapes, choisit les outils, observe les résultats, ajuste le contexte et produit une réponse. Cette distinction justifie le choix du mémoire : combiner retrieval vectoriel, graphe Neo4j et orchestration LangGraph pour traiter des requêtes emploi-compétences plus complexes qu'une simple recherche de documents.
 \begin{figure}[H]
   \centering
   \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
   \label{fig:rag_graphrag_agentic_rag_revue}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
-  \includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
+  \includegraphics[width=0.5\textwidth]{figures/AgenticRAG.png}
+  \source{Nos travaux, traitements Python de nettoyage et de diagnostic.}
 \end{figure}
-
-La figure \ref{fig:rag_graphrag_agentic_rag_revue} distingue trois niveaux fonctionnels. La \RAG{} récupère surtout des documents proches d'une requête et les transmet au \LLM{} ; elle reste donc efficace pour une recherche documentaire, mais son raisonnement dépend du contexte retrouvé. Le GraphRAG ajoute une représentation relationnelle : les entités et leurs liens permettent de naviguer entre compétences, métiers, offres, niveaux et formations. L'Agentic RAG va plus loin : il ne se limite pas à récupérer une information, il planifie les étapes, choisit les outils, observe les résultats, ajuste le contexte et produit une réponse. Cette distinction justifie le choix du mémoire : combiner retrieval vectoriel, graphe Neo4j et orchestration LangGraph pour traiter des requêtes emploi-compétences plus complexes qu'une simple recherche de documents.
-
 \subsection{Agentic RAG, critic et traçabilité}
 
 Les travaux ReAct montrent l'intérêt d'alterner raisonnement et action outillée dans les modèles de langage \cite{yao2023react}. Self-RAG va plus loin en introduisant une logique d'auto-réflexion pour décider quand récupérer de l'information et comment critiquer la réponse \cite{asai2024selfrag}. Pour ce mémoire, ces travaux ne doivent pas être interprétés comme une autorisation à laisser un agent décider librement. Ils justifient plutôt une orchestration contrôlée : classifier l'intention, choisir les sources, récupérer les preuves, construire le contexte, générer, puis vérifier si la réponse est suffisamment fondée.
@@ -207,6 +204,9 @@ Cette étude se positionne à l'intersection de trois familles d'approches. La p
 La contribution du mémoire n'est donc pas de proposer un nouveau modèle de langage ou un nouvel algorithme de recommandation générique. Elle consiste à concevoir et évaluer une architecture hybride adaptée au contexte emploi-compétences : pgvector sert à la présélection sémantique, Neo4j apporte le signal relationnel et LangGraph orchestre les étapes de décision. Ce positionnement répond à une limite de la littérature : les approches générales de RAG ou de recommandation expliquent rarement comment articuler, dans un même système opérationnel, données locales, référentiels métiers, graphe, scoring hybride et contrôle de la génération.
 
 Le système proposé reste un outil d'aide à la décision. Il ne remplace ni le recruteur, ni le conseiller emploi. Son rôle est de rendre les correspondances plus lisibles : quelles offres sont proches du profil, quelles compétences expliquent le rapprochement, quels écarts subsistent et quelles pistes de montée en compétence peuvent être envisagées.
+
+\section*{Conclusion}
+Ce chapitre a établi le socle théorique du mémoire. Le matching emploi--compétences est d'abord un problème d'information imparfaite : les offres, profils, compétences et formations sont décrits avec des vocabulaires hétérogènes. Les systèmes de recommandation, les embeddings, les graphes de connaissances et la \RAG{} apportent chacun une réponse partielle à ce problème, mais aucun ne suffit isolément. La revue conduit donc à une position claire : le système à concevoir doit combiner une mémoire vectorielle pour retrouver rapidement des objets proches, un graphe pour vérifier les relations métier--compétence--formation, et une orchestration agentique pour produire des réponses contrôlées. Le chapitre suivant traduit ce positionnement en démarche méthodologique, en précisant les données, les choix de modélisation et le protocole d'évaluation.
 
 %\subsection{Acquis, manques et contribution du mémoire}
 
