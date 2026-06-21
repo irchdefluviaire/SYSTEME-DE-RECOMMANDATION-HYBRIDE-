@@ -591,7 +591,7 @@ Ce travail répond à un double enjeu. Sur le plan scientifique et méthodologiq
 \markboth{Résumé}{Résumé}
 \addcontentsline{toc}{chapter}{Résumé}
 \begin{spacing}{1.5}
-Ce mémoire s'inscrit dans le contexte du rapprochement entre offres d'emploi, profils candidats et compétences sur le marché camerounais pour la plateforme KmerAi. La problématique traitée est celle d'un matching souvent limité par les mots-clés, peu explicable et insuffisamment relié aux référentiels métiers et formations. L'objectif principal est donc de concevoir et d'évaluer un système de recommandation hybride capable de combiner recherche sémantique, graphe de connaissances et analyse du \textit{skill gap}.
+Ce mémoire s'inscrit dans le contexte du rapprochement entre offres d'emploi, profils candidats et compétences sur le marché camerounais pour la plateforme KmerAI. La problématique traitée est celle d'un matching souvent limité par les mots-clés, peu explicable et insuffisamment relié aux référentiels métiers et formations. L'objectif principal est donc de concevoir et d'évaluer un système de recommandation hybride capable de combiner recherche sémantique, graphe de connaissances et analyse du \textit{skill gap}.
 
 La démarche repose sur un pipeline complet : nettoyage des offres et profils, alignement avec les référentiels \ESCO{}, \MEPC{} et \NCF{}, fine-tuning d'un modèle SentenceTransformer, indexation dans PostgreSQL--pgvector, construction d'un graphe Neo4j et orchestration agentique avec LangGraph. Les données exploitées comprennent 13\,957 offres, 41\,298 candidats, 72\,643 embeddings d'entités et 142 chunks documentaires issus des référentiels.
 
@@ -773,7 +773,7 @@ L'avènement des LLMs a profondément redéfini le champ de l'IA appliquée au l
 \subsection{Définition et évolution historique des LLMs en NLP}
 Le NLP, désigne le sous-domaine de l'IA dédié au développement de technologies capables de comprendre, traiter et générer le langage humain (Alammar \& Grootendorst, 2024, chap. 1). Les deux termes sont aujourd'hui employés de manière largement interchangeable, en raison du succès continu des méthodes d'apprentissage automatique dans le traitement des problèmes linguistiques.
 
-Un modèle de langage est, dans sa définition la plus générale, un système probabiliste qui attribue une probabilité à une séquence de mots (ou plus précisément à une séquence de tokens). Un Large Language Model est un modèle de langage à très grand nombre de paramètres généralement entraîné sur un corpus textuel massif capable de représenter ou de générer du texte avec une cohérence proche de celle de l'humain. Alammar et Grootendorst (2024) insistent toutefois sur le caractère évolutif de cette définition : le qualificatif « large » est arbitraire et dépend de l'état de l'art à un instant donné. Les auteurs proposent une lecture étendue qui inclut, sous le vocable LLM, à la fois les modèles génératifs (de type GPT, qui produisent du texte) et les modèles de représentation (de type BERT, qui produisent des plongements vectoriels exploitables pour la classification, la recherche sémantique ou le clustering). L'histoire du NLP peut être structurée en quatre grandes étapes successives comme illuste la figure \ref{fig:chronologie_llm}:
+Un modèle de langage est, dans sa définition la plus générale, un système probabiliste qui attribue une probabilité à une séquence de mots (ou plus précisément à une séquence de tokens). Un Large Language Model est un modèle de langage à très grand nombre de paramètres généralement entraîné sur un corpus textuel massif capable de représenter ou de générer du texte avec une cohérence proche de celle de l'humain. Alammar et Grootendorst (2024) insistent toutefois sur le caractère évolutif de cette définition : le qualificatif « large » est arbitraire et dépend de l'état de l'art à un instant donné. Les auteurs proposent une lecture étendue qui inclut, sous le vocable LLM, à la fois les modèles génératifs (de type GPT, qui produisent du texte) et les modèles de représentation (de type BERT, qui produisent des plongements vectoriels exploitables pour la classification, la recherche sémantique ou le clustering). L'histoire du NLP peut être structurée en quatre grandes étapes successives, comme l'illustre la figure \ref{fig:chronologie_llm}:
 \subsubsection{Les approches statistiques et le sac-de-mots (Bag-of-Words)} 
 La représentation textuelle par sac-de-mots, théorisée dans les années 1950 et popularisée dans les années 2000, constitue le point de départ historique du NLP moderne. Elle consiste à découper un texte en tokens (généralement des mots), à construire un vocabulaire, puis à représenter chaque document par un vecteur de comptages. Bien que simple et toujours utile en complément de modèles plus récents, cette approche présente une limite fondamentale : elle ignore la sémantique et le contexte, considérant le texte comme un simple ensemble non ordonné de mots.
 \begin{figure}[H]
@@ -781,10 +781,10 @@ La représentation textuelle par sac-de-mots, théorisée dans les années 1950 
   \caption{Évolution chronologique des LLMs (2013-2024)}
   \label{fig:chronologie_llm}
   \includegraphics[width=0.75\textwidth]{figures/evolution_llms.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \source{Nos travaux, schématisation conceptuelle à partir de Mikolov et al. (2013), Bahdanau et al. (2015), Vaswani et al. (2017), Devlin et al. (2018) et Brown et al. (2020).}
 \end{figure}
 \subsubsection{Les représentations vectorielles denses Word2Vec (2013):}
-L'introduction de Word2Vec par Mikolov et al. (2013) marque une rupture majeure. A l'aide d'un réseau de neurones peu profond, le modèle apprend des plongements vectoriels (embeddings) qui capturent les régularités sémantiques entre mots, en s'appuyant sur l'hypothèse distributionnelle selon laquelle « des mots qui apparaissent dans des contextes similaires ont des sens similaires ». Pour la première fois, des opérations algébriques sur les vecteurs de mots (par exemple roi - homme + femme = reine) deviennent significatives. Word2Vec produit toutefois des représentations statiques : le mot « banque » a la même représentation, qu'il désigne une institution financière ou la rive d'un fleuve.
+L'introduction de Word2Vec par Mikolov et al. (2013) marque une rupture majeure. À l'aide d'un réseau de neurones peu profond, le modèle apprend des plongements vectoriels (embeddings) qui capturent les régularités sémantiques entre mots, en s'appuyant sur l'hypothèse distributionnelle selon laquelle « des mots qui apparaissent dans des contextes similaires ont des sens similaires ». Pour la première fois, des opérations algébriques sur les vecteurs de mots (par exemple roi - homme + femme = reine) deviennent significatives. Word2Vec produit toutefois des représentations statiques : le mot « banque » a la même représentation, qu'il désigne une institution financière ou la rive d'un fleuve.
 
 \subsubsection{Les réseaux récurrents et l'introduction de l'attention (2014-2016)}
 Pour modéliser le caractère séquentiel du langage, les RNN, notamment dans leurs variantes LSTM et GRU, ont été largement adoptés. Couplés en architecture encodeur-décodeur, ils ont permis d'aborder des tâches complexes comme la traduction automatique. Cependant, le traitement séquentiel impose la compression de toute l'information d'une phrase d'entrée dans un unique vecteur de contexte, ce qui dégrade les performances sur les longues séquences. Bahdanau, Cho et Bengio (2014) introduisent alors le mécanisme d'attention, qui permet au décodeur de pondérer dynamiquement les états cachés de l'encodeur et de « se concentrer » sur les portions pertinentes de la séquence d'entrée à chaque étape de génération.
@@ -886,7 +886,7 @@ sont distants dans le texte.
   \caption{Mécanisme de self-attention}
   \label{fig:self_attention}
   \includegraphics[width=0.8\textwidth]{figures/self_attention.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \source{Nos travaux, schématisation conceptuelle à partir de Vaswani et al. (2017).}
 \end{figure}
 %\begin{align}
 %  \operatorname{MultiHead}(\mat{Q},\mat{K},\mat{V})
@@ -907,7 +907,7 @@ L'enchaînement de ces éléments self-attention, normalisation, FFN, connexions
   \caption{Architecture complète du Transformer}
   \label{fig:transformers}
   \includegraphics[width=0.5\textwidth]{figures/trans.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \source{Nos travaux, schématisation conceptuelle à partir de Vaswani et al. (2017).}
 \end{figure}
 %\subsubsection{Spécificités du décodeur : attention masquée et attention croisée}
 %Le décodeur du Transformer présente deux caractéristiques distinctives qui le différencient de l'encodeur.
@@ -1168,7 +1168,7 @@ Pour le présent projet, cette distinction est déterminante. Le modèle d'embed
   \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
   \label{fig:rag_graphrag_agentic_rag}
   \includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic, à partir des données collectées du projet.}
+  \source{Nos travaux, schématisation conceptuelle à partir de Lewis et al. (2020), Hogan et al. (2021), Yao et al. (2023), Gao et al. (2023) et Asai et al. (2024).}
 \end{figure}
 
 La figure \ref{fig:rag_graphrag_agentic_rag} illustre la rupture entre une \RAG{} traditionnelle et une architecture agentique. Dans le flux traditionnel, la requête traverse une chaîne relativement fixe : indexation, récupération d'un document, génération, puis réponse finale. Dans le flux agentique, la requête passe par un ou plusieurs agents capables de coordonner la récupération, de solliciter plusieurs outils et d'organiser la réponse. L'image met surtout en évidence que l'Agentic RAG n'est pas seulement une meilleure recherche documentaire ; c'est une organisation dynamique de la recherche et de la génération.
@@ -1450,12 +1450,14 @@ L'instance courante vérifiée par le diagnostic du système contient les volume
     \rowcolor{darkblue}
     \tabheader{Type d'entité} & \tabheader{Nombre} & \tabheader{Rôle dans le retrieval} \\
     \midrule
-    \filevar{OFFRE\_EMPLOI} & 15\,722 & Corpus principal de recommandation d'offres. \\
+    \filevar{OFFRE\_EMPLOI} & 13\,957 & Corpus principal de recommandation d'offres. \\
     \filevar{COMPETENCE} & 13\,939 & Recherche et enrichissement des compétences. \\
     \filevar{METIER} & 3\,039 & Orientation métier et rapprochement avec les profils. \\
-    \filevar{CANDIDAT} & 1\,105 & Recherche candidat--offre et comparaison de profils. \\
+    \filevar{CANDIDAT} & 41\,298 & Recherche candidat--offre et comparaison de profils. \\
     \filevar{GROUPE\_BASE\_MEPC} & 209 & Ancrage métier national. \\
     \filevar{DOMAINE\_DETAILLE\_NCF} & 201 & Ancrage formation national. \\
+    \midrule
+    \textbf{Total entités structurées} & \textbf{72\,643} & Embeddings d'entités hors chunks documentaires. \\
     \bottomrule
   \end{tabularx}
   \tableStyleEnd
@@ -1990,14 +1992,14 @@ Les perspectives prolongent directement ce travail. À court terme, le système 
 		\rowcolor{darkblue}
 		\tabheader{Type d'entité} & \tabheader{Nombre} & \tabheader{Source principale} \\
 		\midrule
-		\filevar{OFFRE\_EMPLOI} & 15\,722 & Scraping KmerAI \\
+		\filevar{OFFRE\_EMPLOI} & 13\,957 & Scraping KmerAI \\
 		\filevar{COMPETENCE} & 13\,939 & Référentiel \ESCO{} v1.1 \\
 		\filevar{METIER} & 3\,039 & Référentiel \ESCO{} v1.1 \\
-		\filevar{CANDIDAT} & 1\,105 & Base locale de profils demandeurs \\
+		\filevar{CANDIDAT} & 41\,298 & Base locale de profils demandeurs \\
 		\filevar{GROUPE\_BASE\_MEPC} & 209 & INS Cameroun - \MEPC{} 2013 \\
 		\filevar{DOMAINE\_DETAILLE\_NCF} & 201 & INS Cameroun - \NCF{} 2017 \\
 		\midrule
-		\textbf{Total} & \textbf{34\,215} & \\
+		\textbf{Total entités structurées} & \textbf{72\,643} & Hors 142 chunks documentaires indexés séparément. \\
 		\bottomrule
 	\end{tabularx}
 	\tableStyleEnd

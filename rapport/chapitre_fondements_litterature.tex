@@ -97,7 +97,7 @@ Les grands modèles de langage ont transformé le traitement automatique du lang
   \caption{Évolution simplifiée des modèles de langage et des représentations textuelles}
   \label{fig:chronologie_llm_revue}
   \includegraphics[width=0.75\textwidth]{figures/evolution_llms.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic}
+  \source{Nos travaux, schématisation conceptuelle à partir de Mikolov et al. (2013), Bahdanau et al. (2015), Vaswani et al. (2017), Devlin et al. (2018) et Brown et al. (2020).}
 \end{figure}
 
 Deux grandes familles de modèles sont utiles pour ce mémoire. La première regroupe les modèles de représentation, comme BERT et Sentence-BERT. BERT apprend des représentations contextuelles bidirectionnelles adaptées à la compréhension du texte \cite{devlin2018bert}. Sentence-BERT adapte cette logique pour produire des embeddings de phrases comparables efficacement par similarité cosinus \cite{reimers2019sbert}. La seconde famille regroupe les modèles génératifs, comme GPT, T5 ou les modèles instruction-tuned. GPT-3 a montré qu'un modèle de grande taille pouvait effectuer des tâches variées à partir de quelques exemples dans le prompt \cite{brown2020language}. T5 a proposé une formulation unifiée des tâches NLP comme transformation texte-vers-texte \cite{raffel2020t5}. L'apprentissage par retour humain a ensuite amélioré la capacité des modèles à suivre des instructions \cite{ouyang2022training}.
@@ -126,14 +126,14 @@ Cependant, le présent mémoire ne cherche pas principalement à entraîner un G
 
 La \RAG{}, combine une étape de recherche d'information et une étape de génération. Lewis et al. montrent que l'accès à une mémoire externe améliore les tâches intensives en connaissances, car le modèle ne dépend plus uniquement de ses paramètres internes \cite{lewis2020rag}. Les synthèses récentes sur la \RAG{} insistent sur les mêmes enjeux : qualité de la récupération, actualisation des connaissances, évaluation de la factualité et articulation entre retriever et générateur \cite{gao2023ragllm}.
 
-Dans une \RAG{} natif, le système récupère des documents proches d'une requête, puis les transmet au \LLM{}. Cette architecture est utile, mais elle reste centrée sur des passages textuels. Pour le matching emploi-compétences, le contexte doit aussi intégrer des relations : compétences possédées, compétences requises, niveau de formation, métier cible, secteur et formation possible. Le GraphRAG étend alors la récupération vers des informations structurées par graphe.
+Dans une \RAG{} native, le système récupère des documents proches d'une requête, puis les transmet au \LLM{}. Cette architecture est utile, mais elle reste centrée sur des passages textuels. Pour le matching emploi-compétences, le contexte doit aussi intégrer des relations : compétences possédées, compétences requises, niveau de formation, métier cible, secteur et formation possible. Le GraphRAG étend alors la récupération vers des informations structurées par graphe.
 La figure \ref{fig:rag_graphrag_agentic_rag_revue} distingue trois niveaux fonctionnels. La \RAG{} récupère surtout des documents proches d'une requête et les transmet au \LLM{} ; elle reste donc efficace pour une recherche documentaire, mais son raisonnement dépend du contexte retrouvé. Le GraphRAG ajoute une représentation relationnelle : les entités et leurs liens permettent de naviguer entre compétences, métiers, offres, niveaux et formations. L'Agentic RAG va plus loin : il ne se limite pas à récupérer une information, il planifie les étapes, choisit les outils, observe les résultats, ajuste le contexte et produit une réponse. Cette distinction justifie le choix du mémoire : combiner retrieval vectoriel, graphe Neo4j et orchestration LangGraph pour traiter des requêtes emploi-compétences plus complexes qu'une simple recherche de documents.
 \begin{figure}[H]
   \centering
   \caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
   \label{fig:rag_graphrag_agentic_rag_revue}
   \includegraphics[width=0.5\textwidth]{figures/AgenticRAG.png}
-  \source{Nos travaux, traitements Python de nettoyage et de diagnostic.}
+  \source{Nos travaux, schématisation conceptuelle à partir de Lewis et al. (2020), Hogan et al. (2021), Yao et al. (2023), Gao et al. (2023) et Asai et al. (2024).}
 \end{figure}
 \subsection{Agentic RAG, critic et traçabilité}
 
