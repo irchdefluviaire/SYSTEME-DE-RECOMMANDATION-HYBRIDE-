@@ -1,15 +1,17 @@
-[0] Config.pm:328> INFO - This is Biber 2.21
-[0] Config.pm:331> INFO - Logfile is 'Memoire_GT_ISE_2026.blg'
-[367] biber-MSWIN64:342> INFO - === 
-[544] Biber.pm:421> INFO - Reading 'Memoire_GT_ISE_2026.bcf'
-[721] Biber.pm:1002> INFO - Found 41 citekeys in bib section 0
-[737] Biber.pm:4487> INFO - Processing section 0
-[766] Biber.pm:4678> INFO - Looking for bibtex file 'references.bib' for section 0
-[847] bibtex.pm:1713> INFO - LaTeX decoding ...
-[928] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
-[1346] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'variable = shifted' with 'variable = non-ignorable'
-[1346] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'normalization = NFD' with 'normalization = prenormalized'
-[1347] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'fr-FR'
-[1347] Biber.pm:4313> INFO - No sort tailoring available for locale 'fr-FR'
-[1460] bbl.pm:676> INFO - Writing 'Memoire_GT_ISE_2026.bbl' with encoding 'UTF-8'
-[1497] bbl.pm:779> INFO - Output to Memoire_GT_ISE_2026.bbl
+[1] Config.pm:328> INFO - This is Biber 2.21
+[2] Config.pm:331> INFO - Logfile is 'Memoire_GT_ISE_2026.blg'
+[633] biber-MSWIN64:342> INFO - === 
+[851] Biber.pm:421> INFO - Reading 'Memoire_GT_ISE_2026.bcf'
+[1199] Biber.pm:1002> INFO - Found 45 citekeys in bib section 0
+[1253] Biber.pm:4487> INFO - Processing section 0
+[1316] Biber.pm:4678> INFO - Looking for bibtex file 'references.bib' for section 0
+[1490] bibtex.pm:1713> INFO - LaTeX decoding ...
+[1741] bibtex.pm:1519> INFO - Found BibTeX data source 'references.bib'
+[2913] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[2913] UCollate.pm:68> INFO - Overriding locale 'fr-FR' defaults 'variable = shifted' with 'variable = non-ignorable'
+[2913] Biber.pm:4307> INFO - Sorting list 'nyt/global//global/global/global' of type 'entry' with template 'nyt' and locale 'fr-FR'
+[2913] Biber.pm:4313> INFO - No sort tailoring available for locale 'fr-FR'
+[3185] bbl.pm:676> INFO - Writing 'Memoire_GT_ISE_2026.bbl' with encoding 'UTF-8'
+[3316] bbl.pm:779> INFO - Output to Memoire_GT_ISE_2026.bbl
+[3317] Biber.pm:132> WARN - legacy month field 'feb' in entry 'ilo2024jobsgap' is not an integer - this will probably not sort properly.
+[3318] Biber.pm:134> INFO - WARNINGS: 1
