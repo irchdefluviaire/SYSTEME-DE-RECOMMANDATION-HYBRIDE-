@@ -1,0 +1,367 @@
+Préparation des données et fine-tuning
+          du modèle d’embeddings
+     Support technique pour la présentation PowerPoint
+
+
+
+
+       Système hybride de recommandation emploi–compétences
+
+
+
+
+   Ce document rassemble les éléments à expliquer au jury : transformation
+   des données, niveaux NCF, preuve du fine-tuning, paramètres optimisés,
+   distinction avec LoRA, résultats et limites de validité.
+
+
+
+
+                                 Juin 2026
+Support technique de soutenance                           Recommandation emploi–compétences
+
+
+Table des matières
+
+1 Préparation et normalisation des données                                                         2
+   1.1   Chaîne de traitement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    2
+   1.2   Exemple simple . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .    2
+
+2 Niveaux de la NCF utilisés par le système                                                        3
+
+3 Le modèle a-t-il réellement été fine-tuné ?                                                      3
+
+4 Protocole d’entraînement                                                                         5
+
+5 Quels paramètres ont été optimisés ?                                                             5
+
+6 Pourquoi ce n’est pas du LoRA                                                                    7
+
+7 Résultats avant et après fine-tuning                                                             7
+
+8 Trame recommandée pour le PowerPoint                                                             9
+
+9 Questions probables du jury                                                                      9
+
+10 Sources techniques vérifiées                                                                   10
+
+
+
+
+                                                 1
+Support technique de soutenance                           Recommandation emploi–compétences
+
+
+Préparation et normalisation des données
+La normalisation transforme des offres et des profils hétérogènes en informations comparables.
+Elle ne crée pas une information absente : elle nettoie, organise et code ce qui est disponible.
+
+
+Chaîne de traitement
+
+1. Nettoyer les textes : suppression des espaces inutiles, valeurs vides explicites et résidus
+   provenant du scraping.
+
+2. Uniformiser les écritures : par exemple, « douala », « DOUALA » et « Douala » sont
+   ramenés à une modalité commune.
+
+3. Séparer les valeurs multiples : « Python ; Excel / SQL » devient une liste de trois
+   compétences.
+
+4. Coder les qualifications : les diplômes et niveaux d’études sont rapprochés des niveaux
+   de la Nomenclature camerounaise des formations (NCF).
+
+5. Construire le texte d’encodage : le champ text_to_embed réunit le titre, les compé-
+   tences, le secteur, le niveau, l’expérience et la description disponibles.
+
+
+Exemple simple
+
+ Donnée brute           « Data analyst ; douala ; Bac+5 ; Python/Excel/SQL »
+ Donnée     normali-    Métier : Data Analyst ; ville : Douala ; niveau NCF : 8 ; compétences :
+ sée                    Python, Excel et SQL.
+Les données normalisées alimentent deux représentations complémentaires : la mémoire vec-
+torielle compare le sens global des textes ; le graphe crée des relations explicites telles que
+CANDIDAT--POSSEDE--COMPETENCE et OFFRE--REQUIERT--COMPETENCE.
+
+  Point de vigilance
+  Le pipeline ne supprime pas automatiquement toutes les lignes répétées. Il audite les
+  doublons et conserve les observations ; il retire surtout les répétitions internes aux listes,
+  par exemple [Python, Python, Excel] devient [Python, Excel].
+
+  Formulation orale conseillée
+  « La normalisation met les offres et les candidats dans un langage commun. Elle rend
+  les champs comparables avant l’encodage vectoriel et avant la création des relations du
+  graphe. »
+
+
+
+
+                                                2
+Support technique de soutenance                         Recommandation emploi–compétences
+
+
+Niveaux de la NCF utilisés par le système
+Les codes NCF ne sont pas des notes. Ils ordonnent les types de formation et facilitent la
+comparaison entre le niveau d’un candidat et celui demandé par une offre.
+
+  Code     Niveau de formation                                  Exemples
+
+    1      Formation sur le tas                                 Apprentissage pratique,
+                                                                attestation
+    2      Formation courte en centre agréé                     Formation généralement
+                                                                inférieure à un an
+    3      Primaire et post-primaire                            CEP, SAR/SM
+    4      Secondaire premier cycle                             BEPC, CAP, BEP
+    5      Secondaire second cycle                              Baccalauréat, agent
+                                                                technique
+    6      Postsecondaire court, Bac+2                          BTS, DUT, HND, DEUG
+    7      Supérieur premier cycle, Bac+3                       Licence, ingénieur des
+                                                                travaux
+    8      Supérieur second cycle, Bac+4 ou Bac+5               Master I et II, maîtrise,
+                                                                ingénieur de conception
+    9      Niveau doctoral, Bac+6 et plus                       Doctorat, PhD
+Ainsi, un Master ou Bac+5 correspond au niveau NCF 8, une Licence au niveau 7, un
+BTS/DUT au niveau 6 et un Doctorat au niveau 9. Pour les candidats, le diplôme déclaré, plus
+précis, est utilisé en priorité ; le niveau d’étude général sert de solution de repli.
+
+   Point de vigilance
+   Le fichier de configuration classe actuellement Master 1 au niveau 7, alors que la NCF
+   chargée dans le projet place Master I et II au niveau 8. Ce mapping doit être corrigé
+   avant une nouvelle exécution complète, sinon certaines compatibilités de qualification
+   seront sous-estimées.
+
+
+
+Le modèle a-t-il réellement été fine-tuné ?
+Oui. Un fine-tuning suppose que l’on parte d’un modèle préentraîné, que l’on calcule une perte
+sur des données propres au domaine, puis que l’on modifie ses poids par rétropropagation. Les
+artefacts du projet montrent ces trois éléments.
+
+— modèle de départ : sentence-transformers/all-MiniLM-L6-v2 ;
+
+— appel effectif à trainer.train() ;
+
+— checkpoints contenant les poids, l’optimiseur et le scheduler ;
+
+
+
+                                               3
+Support technique de soutenance                         Recommandation emploi–compétences
+
+
+— cinq époques et 710 étapes enregistrées ;
+
+— modèle final sauvegardé dans models/st_finetuned/final ;
+
+— perte observée passant d’environ 2,45 au début à environ 0,13 en fin d’entraînement.
+
+   Formulation orale conseillée
+   « Il s’agit d’un vrai fine-tuning, car les poids du Transformer ont été optimisés sur des
+   paires du domaine emploi. La présence des checkpoints, des gradients, de l’état de l’opti-
+   miseur et du modèle final exclut une simple réévaluation du modèle de base. »
+
+
+
+
+                                               4
+Support technique de soutenance                         Recommandation emploi–compétences
+
+
+Protocole d’entraînement
+
+ Élément                            Valeur retenue
+
+ Modèle initial                     all-MiniLM-L6-v2
+ Architecture                       6 couches Transformer, 12 têtes d’attention
+ Dimension des embeddings           384
+ Paires d’entraînement              4 542
+ Paires de validation               981
+ Paires de test                     953
+ Époques                            5
+ Taille de lot                      32
+ Taux d’apprentissage               2 × 10−5
+ Perte                              Multiple Negatives Ranking Loss
+ Scheduler                          Cosine avec warmup
+ Weight decay                       0,01
+ Critère du meilleur check- NDCG@10 de validation
+ point
+ Meilleur checkpoint                Époque 4, NDCG@10 = 0,6492
+ Durée enregistrée                  Environ 15 160 secondes, soit 4 h 13 min
+La perte contrastive rapproche la représentation des métadonnées d’une offre de celle de sa
+description. Dans un lot de 32 paires positives, les autres descriptions du lot servent de né-
+gatifs implicites. Le modèle apprend donc à distinguer la bonne description des descriptions
+concurrentes sans nécessiter une annotation négative manuelle pour chaque paire.
+
+
+
+Quels paramètres ont été optimisés ?
+Le modèle final contient 22 713 216 paramètres. L’audit du modèle montre que 100 % de
+ces paramètres étaient entraînables. Ils appartiennent à l’encodeur :
+
+— embeddings des tokens et des positions ;
+
+— matrices Query, Key et Value de l’attention ;
+
+— projections de sortie de l’attention ;
+
+— couches feed-forward ;
+
+— paramètres des LayerNorm des six couches Transformer.
+
+Le mean pooling calcule la moyenne des représentations des tokens et la dernière étape normalise
+le vecteur. Ces deux modules ne contiennent aucun poids entraînable. Le tokenizer et son
+
+
+                                               5
+Support technique de soutenance                           Recommandation emploi–compétences
+
+
+vocabulaire de 30 522 tokens n’ont pas été réentraînés.
+
+  Point de vigilance
+  Les paramètres appris ne doivent pas être confondus avec les hyperparamètres. Les poids
+  du Transformer sont appris automatiquement ; le nombre d’époques, la taille de lot et le
+  taux d’apprentissage sont fixés avant l’entraînement.
+
+
+
+
+                                               6
+Support technique de soutenance                           Recommandation emploi–compétences
+
+
+Pourquoi ce n’est pas du LoRA
+
+ Aspect                    Fine-tuning réalisé                 LoRA
+
+ Poids initiaux            Tous entraînables                   Généralement gelés
+ Paramètres ajoutés        Aucun adaptateur                    Petites matrices de faible rang
+ Part entraînée            100 % des 22,7 millions             Faible proportion des para-
+                                                               mètres
+ Bibliothèque PEFT         Non utilisée                        Habituellement utilisée
+ Sortie                    Modèle complet sauvegardé           Adaptateurs séparés ou fusion-
+                                                               nés
+LoRA approxime la mise à jour d’une matrice W par deux petites matrices :
+
+                                          W ′ = W + BA,
+
+où le rang de BA est faible. Cette stratégie réduit la mémoire nécessaire pour adapter les grands
+modèles. Elle n’a pas été utilisée ici : aucune couche n’est gelée et aucun adaptateur de faible
+rang n’est injecté.
+
+  Formulation orale conseillée
+  « Nous avons effectué un fine-tuning complet, et non du LoRA. Ce choix reste réalisable
+  parce que MiniLM est un encodeur compact de 22,7 millions de paramètres, très inférieur
+  à la taille des grands modèles génératifs. »
+
+
+
+Résultats avant et après fine-tuning
+
+ Métrique                         Modèle initial       Modèle fine-tuné         Gain absolu
+
+ NDCG@10                               0,1681                0,6232               +0,4552
+ MRR@10                                0,1410                0,5874               +0,4463
+ Recall@1                              0,0986                0,5268               +0,4281
+ Recall@5                              0,1983                0,6632               +0,4648
+ Recall@10                             0,2560                0,7398               +0,4837
+
+Le Recall@10 de 0,7398 signifie que le modèle retrouve environ 74 % des descriptions attendues
+parmi les dix premiers résultats du protocole de test. Le NDCG@10 de 0,6232 indique que les
+bons résultats sont aussi mieux placés en tête de liste qu’avec le modèle initial.
+
+
+
+
+                                                 7
+Support technique de soutenance                        Recommandation emploi–compétences
+
+
+  Point de vigilance
+  Cette évaluation mesure une tâche de récupération construite à partir des offres : retrou-
+  ver la description correspondant aux métadonnées de la même offre. Elle démontre une
+  adaptation sémantique au domaine, mais pas encore une pertinence candidat–offre vali-
+  dée par des recruteurs. Les chiffres ne doivent donc pas être présentés comme une preuve
+  directe de qualité du recrutement.
+
+
+
+
+                                              8
+Support technique de soutenance                          Recommandation emploi–compétences
+
+
+Trame recommandée pour le PowerPoint
+1. Diapositive 1 – Pourquoi normaliser ? Montrer un exemple brut puis normalisé.
+
+2. Diapositive 2 – Niveaux NCF. Présenter uniquement les niveaux 5 à 9 les plus mobilisés
+   dans les offres, avec Bac+5 → niveau 8.
+
+3. Diapositive 3 – Données de fine-tuning. Aﬀicher les trois tailles de split et la construc-
+   tion métadonnées → description.
+
+4. Diapositive 4 – Entraînement. Présenter modèle initial, perte contrastive, cinq époques,
+   batch 32 et meilleur checkpoint.
+
+5. Diapositive 5 – Paramètres entraînés. Insister sur 22,7 millions de paramètres, 100 %
+   entraînables, et préciser « pas de LoRA ».
+
+6. Diapositive 6 – Résultats. Comparer NDCG@10, MRR@10 et Recall@10 avant/après.
+
+7. Diapositive 7 – Limite. Expliquer que le test valide le retrieval d’offres, mais qu’une
+   annotation humaine candidat–offre reste nécessaire.
+
+
+
+Questions probables du jury
+Pourquoi avoir fine-tuné MiniLM ?
+Le vocabulaire et les formulations des offres camerounaises diffèrent des textes généraux sur
+lesquels le modèle initial a été préentraîné. L’adaptation contrastive améliore leur représenta-
+tion.
+Pourquoi cinq époques ?
+Les métriques de validation progressent jusqu’à l’époque 4, puis reculent légèrement à l’époque
+5. Le mécanisme de meilleur checkpoint conserve donc l’état de l’époque 4. Les cinq époques
+servent à observer cette stabilisation, pas à aﬀirmer que la dernière époque est nécessairement
+la meilleure.
+Pourquoi ne pas utiliser LoRA ?
+Le modèle ne contient que 22,7 millions de paramètres. Un fine-tuning complet reste possible
+sur la machine disponible et permet d’adapter directement tout l’encodeur.
+Le modèle apprend-il directement le matching candidat–offre ?
+Non. Il apprend d’abord une représentation adaptée aux offres. Le matching final combine
+ensuite la similarité vectorielle et les relations du graphe. Une validation humaine indépendante
+reste nécessaire pour mesurer la pertinence métier réelle.
+
+
+
+Sources techniques vérifiées
+
+
+                                               9
+Support technique de soutenance                    Recommandation emploi–compétences
+
+
+
+— Configuration : src/02_finetune_st/config_st.json.
+
+— Entraînement : src/02_finetune_st/train_sentence_transformer.py.
+
+— Données : data/finetune/pairs_train.jsonl, pairs_val.jsonl et pairs_test.jsonl.
+
+— État du trainer : models/st_finetuned/checkpoints/checkpoint-710/trainer_state.
+  json.
+
+— Modèle final : models/st_finetuned/final/model.safetensors.
+
+— Comparaison : models/st_finetuned/eval_comparatif/evaluation_comparatif.json.
+
+— Référentiel NCF : data/processed/ncf_niveaux.parquet.
+
+— Référence scientifique : Reimers, N. et Gurevych, I. (2019), Sentence-BERT : Sentence
+  Embeddings using Siamese BERT-Networks, EMNLP-IJCNLP.
+
+
+
+
+                                          10
+

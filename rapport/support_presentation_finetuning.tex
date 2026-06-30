@@ -1,0 +1,547 @@
+\documentclass[12pt,a4paper]{article}
+
+\usepackage{fontspec}
+\setmainfont{Latin Modern Roman}
+\usepackage[french]{babel}
+\usepackage[a4paper,margin=2cm]{geometry}
+\usepackage{setspace}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{xcolor}
+\usepackage{amsmath}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+\usepackage[most]{tcolorbox}
+\usepackage{titlesec}
+
+\definecolor{mainblue}{HTML}{123A63}
+\definecolor{accent}{HTML}{008C95}
+\definecolor{lightblue}{HTML}{EDF4F8}
+\definecolor{warning}{HTML}{9A5B00}
+
+\hypersetup{colorlinks=true,linkcolor=mainblue,urlcolor=accent}
+\setstretch{1.15}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.45em}
+\setlist[itemize]{leftmargin=1.4em,itemsep=0.25em,topsep=0.25em}
+\setlist[enumerate]{leftmargin=1.5em,itemsep=0.25em,topsep=0.25em}
+\titleformat{\section}{\Large\bfseries\color{mainblue}}{}{0pt}{}[\color{accent}\titlerule]
+\titleformat{\subsection}{\large\bfseries\color{accent}}{}{0pt}{}
+
+\pagestyle{fancy}
+\setlength{\headheight}{15pt}
+\fancyhf{}
+\lhead{Support technique de soutenance}
+\rhead{Recommandation emploi--compétences}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\newtcolorbox{oralbox}{
+  colback=lightblue,
+  colframe=mainblue,
+  boxrule=0.7pt,
+  arc=2pt,
+  title=Formulation orale conseillée,
+  fonttitle=\bfseries
+}
+
+\newtcolorbox{alertbox}{
+  colback=orange!5,
+  colframe=warning,
+  boxrule=0.7pt,
+  arc=2pt,
+  title=Point de vigilance,
+  fonttitle=\bfseries
+}
+
+\begin{document}
+
+\begin{titlepage}
+  \centering
+  \vspace*{2.2cm}
+  {\color{mainblue}\rule{\textwidth}{1.2pt}}\\[0.8cm]
+  {\Huge\bfseries Données, fine-tuning et diagnostics\\[0.25cm]
+  du système hybride\par}
+  \vspace{0.5cm}
+  {\Large Support technique pour la présentation PowerPoint\par}
+  \vspace{0.8cm}
+  {\color{accent}\rule{0.72\textwidth}{0.8pt}}\\[1.2cm]
+  {\large Système hybride de recommandation emploi--compétences\par}
+  \vfill
+  \begin{tcolorbox}[colback=lightblue,colframe=mainblue,arc=2pt,width=0.86\textwidth]
+  Ce document rassemble les éléments à expliquer au jury : transformation des données,
+  niveaux NCF, preuve du fine-tuning, paramètres optimisés, distinction avec LoRA,
+  calibration bayésienne, structure du graphe, dépendance aux hubs et limites de validité.
+  \end{tcolorbox}
+  \vfill
+  {\large Juin 2026}
+\end{titlepage}
+
+\tableofcontents
+\newpage
+
+\section{Préparation et normalisation des données}
+
+La normalisation transforme des offres et des profils hétérogènes en informations comparables.
+Elle ne crée pas une information absente : elle nettoie, organise et code ce qui est disponible.
+
+\subsection{Chaîne de traitement}
+
+\begin{enumerate}
+  \item \textbf{Nettoyer les textes :} suppression des espaces inutiles, valeurs vides explicites
+  et résidus provenant du scraping.
+  \item \textbf{Uniformiser les écritures :} par exemple, \og douala\fg{}, \og DOUALA\fg{}
+  et \og Douala \fg{} sont ramenés à une modalité commune.
+  \item \textbf{Séparer les valeurs multiples :} \og Python ; Excel / SQL\fg{} devient une
+  liste de trois compétences.
+  \item \textbf{Coder les qualifications :} les diplômes et niveaux d'études sont rapprochés
+  des niveaux de la Nomenclature camerounaise des formations (NCF).
+  \item \textbf{Construire le texte d'encodage :} le champ \texttt{text\_to\_embed} réunit
+  le titre, les compétences, le secteur, le niveau, l'expérience et la description disponibles.
+\end{enumerate}
+
+\subsection{Exemple simple}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.22\textwidth}X}
+\toprule
+Donnée brute & \og Data analyst ; douala ; Bac+5 ; Python/Excel/SQL \fg{} \\
+\midrule
+Donnée normalisée & Métier : Data Analyst ; ville : Douala ; niveau NCF : 8 ;
+compétences : Python, Excel et SQL. \\
+\bottomrule
+\end{tabularx}
+
+Les données normalisées alimentent deux représentations complémentaires : la mémoire
+vectorielle compare le sens global des textes ; le graphe crée des relations explicites telles
+que \texttt{CANDIDAT--POSSEDE--COMPETENCE} et \texttt{OFFRE--REQUIERT--COMPETENCE}.
+
+\begin{alertbox}
+Le pipeline ne supprime pas automatiquement toutes les lignes répétées. Il audite les doublons
+et conserve les observations ; il retire surtout les répétitions internes aux listes, par exemple
+\texttt{[Python, Python, Excel]} devient \texttt{[Python, Excel]}.
+\end{alertbox}
+
+\begin{oralbox}
+« La normalisation met les offres et les candidats dans un langage commun. Elle rend les champs
+comparables avant l'encodage vectoriel et avant la création des relations du graphe. »
+\end{oralbox}
+
+\newpage
+\section{Niveaux de la NCF utilisés par le système}
+
+Les codes NCF ne sont pas des notes. Ils ordonnent les types de formation et facilitent la
+comparaison entre le niveau d'un candidat et celui demandé par une offre.
+
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}p{0.08\textwidth}X>{\raggedright\arraybackslash}p{0.31\textwidth}}
+\toprule
+\textbf{Code} & \textbf{Niveau de formation} & \textbf{Exemples} \\
+\midrule
+1 & Formation sur le tas & Apprentissage pratique, attestation \\
+2 & Formation courte en centre agréé & Formation généralement inférieure à un an \\
+3 & Primaire et post-primaire & CEP, SAR/SM \\
+4 & Secondaire premier cycle & BEPC, CAP, BEP \\
+5 & Secondaire second cycle & Baccalauréat, agent technique \\
+6 & Postsecondaire court, Bac+2 & BTS, DUT, HND, DEUG \\
+7 & Supérieur premier cycle, Bac+3 & Licence, ingénieur des travaux \\
+8 & Supérieur second cycle, Bac+4 ou Bac+5 & Master I et II, maîtrise, ingénieur de conception \\
+9 & Niveau doctoral, Bac+6 et plus & Doctorat, PhD \\
+\bottomrule
+\end{tabularx}
+
+Ainsi, un Master ou Bac+5 correspond au \textbf{niveau NCF 8}, une Licence au niveau 7,
+un BTS/DUT au niveau 6 et un Doctorat au niveau 9. Pour les candidats, le diplôme déclaré,
+plus précis, est utilisé en priorité ; le niveau d'étude général sert de solution de repli.
+
+\begin{alertbox}
+Le fichier de configuration classe actuellement \texttt{Master 1} au niveau 7, alors que la NCF
+chargée dans le projet place Master I et II au niveau 8. Ce mapping doit être corrigé avant une
+nouvelle exécution complète, sinon certaines compatibilités de qualification seront sous-estimées.
+\end{alertbox}
+
+\section{Le modèle a-t-il réellement été fine-tuné ?}
+
+Oui. Un fine-tuning suppose que l'on parte d'un modèle préentraîné, que l'on calcule une perte
+sur des données propres au domaine, puis que l'on modifie ses poids par rétropropagation.
+Les artefacts du projet montrent ces trois éléments.
+
+\begin{itemize}
+  \item modèle de départ : \texttt{sentence-transformers/all-MiniLM-L6-v2} ;
+  \item appel effectif à \texttt{trainer.train()} ;
+  \item checkpoints contenant les poids, l'optimiseur et le scheduler ;
+  \item cinq époques et 710 étapes enregistrées ;
+  \item modèle final sauvegardé dans \texttt{models/st\_finetuned/final} ;
+  \item perte observée passant d'environ 2,45 au début à environ 0,13 en fin d'entraînement.
+\end{itemize}
+
+\begin{oralbox}
+« Il s'agit d'un vrai fine-tuning, car les poids du Transformer ont été optimisés sur des paires
+du domaine emploi. La présence des checkpoints, des gradients, de l'état de l'optimiseur et du
+modèle final exclut une simple réévaluation du modèle de base. »
+\end{oralbox}
+
+\newpage
+\section{Protocole d'entraînement}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.34\textwidth}X}
+\toprule
+Élément & Valeur retenue \\
+\midrule
+Modèle initial & all-MiniLM-L6-v2 \\
+Architecture & 6 couches Transformer, 12 têtes d'attention \\
+Dimension des embeddings & 384 \\
+Paires d'entraînement & 4\,542 \\
+Paires de validation & 981 \\
+Paires de test & 953 \\
+Époques & 5 \\
+Taille de lot & 32 \\
+Taux d'apprentissage & $2\times10^{-5}$ \\
+Perte & Multiple Negatives Ranking Loss \\
+Scheduler & Cosine avec warmup \\
+Weight decay & 0,01 \\
+Critère du meilleur checkpoint & NDCG@10 de validation \\
+Meilleur checkpoint & Époque 4, NDCG@10 = 0,6492 \\
+Durée d'entraînement enregistrée & 15\,157 secondes, soit 4 h 12 min 37 s, sur CPU \\
+\bottomrule
+\end{tabularx}
+
+La perte contrastive rapproche la représentation des métadonnées d'une offre de celle de sa
+description. Dans un lot de 32 paires positives, les autres descriptions du lot servent de
+négatifs implicites. Le modèle apprend donc à distinguer la bonne description des descriptions
+concurrentes sans nécessiter une annotation négative manuelle pour chaque paire.
+
+\begin{oralbox}
+« Le fine-tuning complet sur cinq époques a duré 15\,157 secondes, soit environ 4 heures et
+13 minutes sur CPU. Cette durée correspond à l'entraînement enregistré ; elle n'inclut pas toute
+la préparation des données ni les analyses réalisées après l'entraînement. »
+\end{oralbox}
+
+\section{Quels paramètres ont été optimisés ?}
+
+Le modèle final contient \textbf{22\,713\,216 paramètres}. L'audit du modèle montre que
+\textbf{100\,\% de ces paramètres étaient entraînables}. Ils appartiennent à l'encodeur :
+
+\begin{itemize}
+  \item embeddings des tokens et des positions ;
+  \item matrices Query, Key et Value de l'attention ;
+  \item projections de sortie de l'attention ;
+  \item couches feed-forward ;
+  \item paramètres des LayerNorm des six couches Transformer.
+\end{itemize}
+
+Le mean pooling calcule la moyenne des représentations des tokens et la dernière étape normalise
+le vecteur. Ces deux modules ne contiennent aucun poids entraînable. Le tokenizer et son
+vocabulaire de 30\,522 tokens n'ont pas été réentraînés.
+
+\begin{alertbox}
+Les paramètres appris ne doivent pas être confondus avec les hyperparamètres. Les poids du
+Transformer sont appris automatiquement ; le nombre d'époques, la taille de lot et le taux
+d'apprentissage sont fixés avant l'entraînement.
+\end{alertbox}
+
+\newpage
+\section{Pourquoi ce n'est pas du LoRA}
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.25\textwidth}XX}
+\toprule
+Aspect & Fine-tuning réalisé & LoRA \\
+\midrule
+Poids initiaux & Tous entraînables & Généralement gelés \\
+Paramètres ajoutés & Aucun adaptateur & Petites matrices de faible rang \\
+Part entraînée & 100\,\% des 22,7 millions & Faible proportion des paramètres \\
+Bibliothèque PEFT & Non utilisée & Habituellement utilisée \\
+Sortie & Modèle complet sauvegardé & Adaptateurs séparés ou fusionnés \\
+\bottomrule
+\end{tabularx}
+
+LoRA approxime la mise à jour d'une matrice $W$ par deux petites matrices :
+\[
+W' = W + BA,
+\]
+où le rang de $BA$ est faible. Cette stratégie réduit la mémoire nécessaire pour adapter les
+grands modèles. Elle n'a pas été utilisée ici : aucune couche n'est gelée et aucun adaptateur
+de faible rang n'est injecté.
+
+\begin{oralbox}
+« Nous avons effectué un fine-tuning complet, et non du LoRA. Ce choix reste réalisable parce
+que MiniLM est un encodeur compact de 22,7 millions de paramètres, très inférieur à la taille
+des grands modèles génératifs. »
+\end{oralbox}
+
+\section{Résultats avant et après fine-tuning}
+
+\begin{tabularx}{\textwidth}{X>{\centering\arraybackslash}p{0.21\textwidth}>{\centering\arraybackslash}p{0.21\textwidth}>{\centering\arraybackslash}p{0.18\textwidth}}
+\toprule
+\textbf{Métrique} & \textbf{Modèle initial} & \textbf{Modèle fine-tuné} & \textbf{Gain absolu} \\
+\midrule
+NDCG@10 & 0,1681 & \textbf{0,6232} & +0,4552 \\
+MRR@10 & 0,1410 & \textbf{0,5874} & +0,4463 \\
+Recall@1 & 0,0986 & \textbf{0,5268} & +0,4281 \\
+Recall@5 & 0,1983 & \textbf{0,6632} & +0,4648 \\
+Recall@10 & 0,2560 & \textbf{0,7398} & +0,4837 \\
+\bottomrule
+\end{tabularx}
+
+Le Recall@10 de 0,7398 signifie que le modèle retrouve environ 74\,\% des descriptions attendues
+parmi les dix premiers résultats du protocole de test. Le NDCG@10 de 0,6232 indique que les bons
+résultats sont aussi mieux placés en tête de liste qu'avec le modèle initial.
+
+\begin{alertbox}
+Cette évaluation mesure une tâche de récupération construite à partir des offres : retrouver la
+description correspondant aux métadonnées de la même offre. Elle démontre une adaptation
+sémantique au domaine, mais pas encore une pertinence candidat--offre validée par des recruteurs.
+Les chiffres ne doivent donc pas être présentés comme une preuve directe de qualité du recrutement.
+\end{alertbox}
+
+\newpage
+\section{Optimisation bayésienne avec l'échantillonneur TPE}
+
+Le terme correct est \textbf{échantillonneur TPE}, et non \og échantillon TPE\fg{}. TPE signifie
+\emph{Tree-structured Parzen Estimator}. Dans Optuna, cet algorithme choisit les paramètres à
+tester au prochain essai en exploitant les résultats déjà observés.
+
+\subsection{Principe général}
+
+Après quelques essais initiaux, TPE sépare les combinaisons évaluées en deux groupes :
+
+\begin{itemize}
+  \item les essais ayant obtenu les meilleurs résultats ;
+  \item les essais ayant produit des résultats moins bons.
+\end{itemize}
+
+Il estime ensuite deux distributions :
+\[
+l(w)=p(w\mid \text{bon résultat})
+\qquad\text{et}\qquad
+g(w)=p(w\mid \text{résultat moins bon}).
+\]
+
+TPE privilégie les paramètres pour lesquels le rapport suivant est élevé :
+\[
+\frac{l(w)}{g(w)}.
+\]
+
+Il recherche donc des valeurs fréquentes parmi les bons essais et rares parmi les mauvais.
+L'algorithme ne calcule pas directement la solution optimale : il apprend progressivement dans
+quelle zone effectuer les prochains essais, tout en conservant une part d'exploration.
+
+\subsection{Application au score hybride}
+
+Pour chaque couple candidat--offre, le score calibré prend la forme :
+\[
+S(c,o)=\alpha S_{\mathrm{sem}}(c,o)+\beta S_{\mathrm{Neo4j}}(c,o),
+\qquad \alpha+\beta=1.
+\]
+
+À chaque essai, Optuna propose deux poids bruts, les normalise, recalcule le score des offres,
+classe les résultats de chaque candidat et mesure le NDCG@10 moyen. Le processus réalisé dans
+le projet comprend 500 essais sur 690 couples candidat--offre associés à 69 candidats, avec une
+graine fixée à 42.
+
+\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}p{0.18\textwidth}>{\centering\arraybackslash}p{0.22\textwidth}X}
+\toprule
+\textbf{Poids Neo4j} & \textbf{NDCG@10} & \textbf{Lecture simplifiée} \\
+\midrule
+0,10 & 0,82 & Faible performance observée \\
+0,30 & 0,87 & Amélioration du classement \\
+0,70 & 0,94 & Zone prometteuse \\
+0,80 & 0,96 & Bon essai ; TPE explorera probablement autour de cette zone \\
+\bottomrule
+\end{tabularx}
+
+Cet exemple est pédagogique : ces quatre valeurs ne constituent pas les résultats bruts du projet.
+Elles illustrent seulement la manière dont TPE déplace progressivement sa recherche.
+
+\begin{alertbox}
+L'optimisation utilise ici \texttt{proxy\_relevance} comme vérité de référence. Elle recherche donc
+les poids qui reproduisent au mieux ce proxy, et non une pertinence certifiée par des recruteurs.
+Le résultat doit être confirmé sur un jeu indépendant annoté par des experts. De plus, la solution
+exacte \og Neo4j seul\fg{} a été évaluée comme cas limite après les essais TPE, car l'espace de
+recherche imposait un poids strictement positif à chaque composante.
+\end{alertbox}
+
+\begin{oralbox}
+« L'échantillonneur TPE est une méthode d'optimisation bayésienne qui modélise séparément les
+bonnes et les mauvaises combinaisons de poids. Il propose ensuite les essais ayant la plus forte
+probabilité d'améliorer le NDCG@10, sans devoir tester uniformément toutes les combinaisons. »
+\end{oralbox}
+
+\newpage
+\section{Structure du graphe et dépendance aux hubs}
+
+Cette analyse vérifie si le graphe peut relier candidats, compétences et offres sans dépendre
+excessivement de quelques nœuds génériques. Elle intervient avant le reranking : un graphe trop
+fragmenté explique mal les recommandations ; un graphe dominé par des hubs produit au contraire
+des rapprochements trop larges.
+
+\subsection{Comptages Cypher et projection matching}
+
+Des requêtes Cypher comptent directement dans Neo4j les nœuds par label, les relations par type
+et le nombre de voisins de chaque nœud. Le graphe complet contient 90\,230 nœuds et 550\,542
+relations.
+
+Une \textbf{projection matching} est ensuite construite en conservant les relations utiles :
+\texttt{POSSEDE}, \texttt{REQUIERT}, \texttt{NECESSITE}, \texttt{CORRESPOND\_MEPC},
+\texttt{A\_NIVEAU}, \texttt{REQUIERT\_NIVEAU\_NCF}, \texttt{DANS\_SECTEUR} et
+\texttt{LOCALISEE\_A}. Cette projection compte 72\,516 nœuds et 499\,080 arêtes.
+
+Pour étudier la connectivité, elle est transformée en graphe simple non dirigé avec NetworkX.
+Le diagnostic vérifie alors l'existence d'une connexion sans interpréter son orientation.
+
+\begin{alertbox}
+La projection non dirigée convient au diagnostic de structure, mais pas à l'interprétation métier
+finale : elle ignore le sens des relations et peut fusionner plusieurs liens entre les mêmes nœuds.
+\end{alertbox}
+
+\subsection{Degré et identification des hubs}
+
+Le degré d'un nœud est son nombre de voisins. Les statistiques calculées par type de nœud sont la
+moyenne, la médiane, le minimum, le maximum et la variance. Pour les compétences, le degré médian
+est de 4, alors que le maximum atteint 6\,787. Les niveaux NCF atteignent jusqu'à 10\,261 connexions.
+
+La distribution des degrés est représentée sur des axes logarithmiques afin de rendre visibles
+simultanément les nombreux nœuds faiblement connectés et les quelques hubs. La longue traîne
+observée signifie que la connectivité est très concentrée.
+
+\begin{tabularx}{\textwidth}{>{\bfseries}p{0.27\textwidth}X}
+\toprule
+Indicateur & Interprétation \\
+\midrule
+Degré élevé & Le nœud est relié à de nombreuses entités ; il facilite la navigation. \\
+Hub générique & Le nœud relie beaucoup d'objets mais discrimine peu les offres. \\
+Degré médian faible & La majorité des nœuds possède seulement quelques relations ciblées. \\
+Variance élevée & Les connexions sont très inégalement réparties entre les nœuds. \\
+\bottomrule
+\end{tabularx}
+
+Un degré élevé n'est donc pas une preuve de pertinence. Une compétence générale comme la
+communication peut être fréquente sans suffire à justifier une recommandation précise.
+
+\subsection{Densité et composante géante}
+
+Pour un graphe non dirigé comportant $n$ nœuds et $m$ arêtes, la densité est :
+\[
+D=\frac{2m}{n(n-1)}.
+\]
+
+Une faible densité n'est pas automatiquement un défaut : une offre doit être reliée uniquement
+aux compétences, niveaux et secteurs qui la décrivent, et non à toutes les entités du graphe.
+
+La composante géante est le plus grand groupe de nœuds accessibles les uns depuis les autres.
+Dans la projection initiale, elle contient 72\,516 nœuds. Les principaux chemins
+candidat--compétence--offre sont donc disponibles pour le GraphRAG.
+
+\subsection{Test de robustesse par retrait ciblé}
+
+Les nœuds sont classés par degré décroissant. Le programme retire ensuite les 1\,\%, 5\,\% et
+10\,\% les plus connectés, puis recalcule la taille de la composante géante.
+
+\begin{tabularx}{\textwidth}{>{\centering\arraybackslash}p{0.25\textwidth}>{\centering\arraybackslash}p{0.28\textwidth}X}
+\toprule
+\textbf{Hubs retirés} & \textbf{Composante géante restante} & \textbf{Lecture} \\
+\midrule
+0\,\% & 100\,\% & Projection initiale connectée \\
+1\,\% & 30,1\,\% & Forte dépendance aux nœuds les plus connectés \\
+5\,\% & 11,3\,\% & Fragmentation importante \\
+10\,\% & 0,07\,\% & Effondrement presque total de la projection \\
+\bottomrule
+\end{tabularx}
+
+Il s'agit d'une attaque ciblée et non d'une panne aléatoire. Le résultat montre une dépendance
+structurelle aux hubs, mais ne prouve pas à lui seul que Neo4j est inutilisable. Le retrait touche
+aussi des nœuds organisateurs comme les niveaux NCF, les secteurs et les localisations ; une forte
+fragmentation est donc partiellement attendue.
+
+\subsection{Protection contre le bruit de popularité}
+
+Le score Neo4j n'utilise pas le degré brut. Il mesure la couverture des compétences :
+\[
+S_{\mathrm{Neo4j}}(c,o)=
+\frac{|\mathcal{C}_{c}\cap\mathcal{C}_{o}|}{|\mathcal{C}_{o}|},
+\]
+où $\mathcal{C}_{c}$ désigne les compétences du candidat et $\mathcal{C}_{o}$ celles requises par
+l'offre. Une compétence fréquente ne compte que si elle est possédée par le candidat et demandée
+par l'offre. Cette règle limite le biais de popularité dans le reranking.
+
+\begin{oralbox}
+« L'analyse combine des comptages Cypher, une projection NetworkX, la distribution des degrés,
+la composante géante et un retrait ciblé des hubs. Le graphe est connecté mais dépend de quelques
+nœuds génériques. Nous utilisons donc la couverture des compétences, et non le degré brut, comme
+signal Neo4j du score hybride. »
+\end{oralbox}
+
+\section{Trame recommandée pour le PowerPoint}
+
+\begin{enumerate}
+  \item \textbf{Diapositive 1 -- Pourquoi normaliser ?} Montrer un exemple brut puis normalisé.
+  \item \textbf{Diapositive 2 -- Niveaux NCF.} Présenter uniquement les niveaux 5 à 9 les plus
+  mobilisés dans les offres, avec Bac+5 $\rightarrow$ niveau 8.
+  \item \textbf{Diapositive 3 -- Données de fine-tuning.} Afficher les trois tailles de split et
+  la construction métadonnées $\rightarrow$ description.
+  \item \textbf{Diapositive 4 -- Entraînement.} Présenter modèle initial, perte contrastive,
+  cinq époques, batch 32 et meilleur checkpoint.
+  \item \textbf{Diapositive 5 -- Paramètres entraînés.} Insister sur 22,7 millions de paramètres,
+  100\,\% entraînables, et préciser « pas de LoRA ».
+  \item \textbf{Diapositive 6 -- Résultats.} Comparer NDCG@10, MRR@10 et Recall@10 avant/après.
+  \item \textbf{Diapositive 7 -- Calibration TPE.} Montrer la boucle proposition des poids,
+  classement, calcul du NDCG@10 et nouvel essai.
+  \item \textbf{Diapositive 8 -- Structure du graphe.} Présenter degré, hubs et composante géante.
+  \item \textbf{Diapositive 9 -- Robustesse.} Montrer l'effet du retrait ciblé et expliquer
+  pourquoi le score n'utilise pas le degré brut.
+  \item \textbf{Diapositive 10 -- Limites.} Expliquer que le test valide le retrieval d'offres et
+  que l'optimisation dépend d'un proxy ; une annotation humaine reste nécessaire.
+\end{enumerate}
+
+\section{Questions probables du jury}
+
+\textbf{Pourquoi avoir fine-tuné MiniLM ?}\par
+Le vocabulaire et les formulations des offres camerounaises diffèrent des textes généraux sur
+lesquels le modèle initial a été préentraîné. L'adaptation contrastive améliore leur représentation.
+
+\textbf{Pourquoi cinq époques ?}\par
+Les métriques de validation progressent jusqu'à l'époque 4, puis reculent légèrement à l'époque 5.
+Le mécanisme de meilleur checkpoint conserve donc l'état de l'époque 4. Les cinq époques servent
+à observer cette stabilisation, pas à affirmer que la dernière époque est nécessairement la meilleure.
+
+\textbf{Pourquoi ne pas utiliser LoRA ?}\par
+Le modèle ne contient que 22,7 millions de paramètres. Un fine-tuning complet reste possible sur
+la machine disponible et permet d'adapter directement tout l'encodeur.
+
+\textbf{Le modèle apprend-il directement le matching candidat--offre ?}\par
+Non. Il apprend d'abord une représentation adaptée aux offres. Le matching final combine ensuite
+la similarité vectorielle et les relations du graphe. Une validation humaine indépendante reste
+nécessaire pour mesurer la pertinence métier réelle.
+
+\textbf{Comment TPE choisit-il le prochain essai ?}\par
+Il compare les distributions des paramètres associés aux bons et aux moins bons résultats, puis
+privilégie les valeurs fréquentes dans le premier groupe et rares dans le second. Il maintient
+toutefois une part d'exploration afin de ne pas rester bloqué trop tôt dans une zone sous-optimale.
+
+\textbf{Un hub très connecté est-il une compétence très pertinente ?}\par
+Non. Le degré mesure la connectivité, pas la pertinence pour un candidat donné. Une compétence
+générale peut être reliée à de nombreuses offres tout en étant peu discriminante. Le score utilise
+donc la proportion des compétences requises effectivement possédées.
+
+\section{Sources techniques vérifiées}
+
+\begin{itemize}
+  \item Configuration : \path{src/02_finetune_st/config_st.json}.
+  \item Entraînement : \path{src/02_finetune_st/train_sentence_transformer.py}.
+  \item Données : \path{data/finetune/pairs_train.jsonl}, \path{pairs_val.jsonl} et
+  \path{pairs_test.jsonl}.
+  \item État du trainer : \path{models/st_finetuned/checkpoints/checkpoint-710/trainer_state.json}.
+  \item Modèle final : \path{models/st_finetuned/final/model.safetensors}.
+  \item Comparaison : \path{models/st_finetuned/eval_comparatif/evaluation_comparatif.json}.
+  \item Calibration TPE : \path{src/07_evaluation/optimize_hybrid_weights.py}.
+  \item Résultats Optuna : \path{outputs/evaluation/hybrid_weight_optimization/best_weights_ndcg.json}.
+  \item Diagnostic du graphe : \path{scripts/generate_neo4j_network_diagnostics.py}.
+  \item Robustesse : dossier \path{outputs/memoire_stats/implementation_deep_current},
+  fichier \path{18_neo4j_robustesse.csv}.
+  \item Référentiel NCF : \path{data/processed/ncf_niveaux.parquet}.
+  \item Référence scientifique : Reimers, N. et Gurevych, I. (2019),
+  \emph{Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks}, EMNLP-IJCNLP.
+\end{itemize}
+
+\end{document}
