@@ -1,0 +1,677 @@
+                CONCEPTION D’UN SYSTÈME DE RECOMMANDATION HYBRIDE POUR LE
+
+                MATCHING EMPLOI-COMPETENCES AUX CAMEROUN PAR INTÉGRATION DES LLMs
+                                          ET DE GRAPHE DE CONNAISSANCE
+
+                                             Mémoire soutenu par :
+                                     NGOULOU NGOUBILI Irch Defluviaire
+                                            En vue de l’obtention du :
+                    Diplôme d’Ingénieur Statisticien économiste , Data Science & Marketing
+
+                                            Yaoundé , 07 Juillet 2026
+
+
+   Encadrante                                   Président du jury                                Examinateur
+
+Dr FOUTSE Yuehgoh                        Dr WANSOUWE WANBITCHING                             Pr MELATAGIA Paulin
+PLAN DE LA PRESENTATION
+
+  01    Introduction générale
+
+
+  02    Concepts généraux et état de l’art
+
+
+  03    Méthodologie
+
+
+  04    Implémentations et Résultats
+
+
+  05    Conclusion
+
+                                             2/35
+Veuillez
+insérer
+l'icône
+
+
+
+
+           01
+                               CONTEXTE
+
+                Introduction   PROBLEMATIQUE
+
+                               OBJECTIFS ET HYPOTHÈSES
+
+
+
+
+                                               3/35
+Contexte                                                                              Problématique
+
+
+
+           6,5 %
+           Taux de chômages des jeunes (2025)
+           Source : INS, 2025
+
+
+
+
+           23,2 %                                          C’est dans ce contexte que , KmerAI, ONG
+           Des jeunes NEET                                 Camerounaise engagée dans l’IA et l’impact social,
+           (Ni en emploi, ni en études, ni en formation)   se propose de développer une solution pour
+           Source : INS, 2025
+                                                           améliorer l’employabilité et connecter les talents
+                                                           aux opportunités.
+
+           67,8 %
+           Des emplois sont vulnérables
+           Source : INS, 2025
+
+
+
+
+                                                                                                  4/35
+Problématique                                                                                                            Objectifs
+
+
+ ✓ Profils et offres décrits avec des termes différents ;
+ ✓ Matching encore largement fondé sur des mots-clés et filtres statiques ;
+ ✓ Compétences implicites et équivalences sémantiques peu détectées ;
+ ✓ Référentiels métiers et formations insuffisamment exploités.
+
+
+
+
+                                                                    ✓ Correspondances candidat-offre difficiles à expliquer ;
+                                                                    ✓ Compétences manquantes mal identifiées ;
+                                                                    ✓ Faible accompagnement vers une montée en compétences.
+
+
+
+
+ Comment concevoir un système de recommandation hybride, fondé sur les LLMs et les graphes de
+connaissances, capable de mesurer les écarts de compétence entre un profil et une offre d’emploi,
+                puis de recommander un parcours de montée en compétences ?
+
+                                                                                                                                5/35
+  Objectifs                                                                                                 Hypothèses
+
+
+
+ Concevoir et évaluer un système de recommandation hybride emploi-compétences pour appuyer la
+                       décision de recrutement et la montée en compétence
+
+
+
+Normaliser les offres et profils,   Fine-tuner un modèle de      Construire un graphe des           Orchestrer et évaluer le
+puis les aligner avec les           type encodeur au domaine     relations      candidats-offres-   pipeline de production
+référentiels pour obtenir des       emploi-compétences      et   compétences et définir un score    des verdicts du système.
+variables de matching fiables.      stocker ses embeddings.      hybride de recommandation.
+
+
+
+
+                                                                                                                     6/35
+Hypothèses
+
+
+
+
+             HP   H1
+
+
+             H3   H2
+
+
+
+
+                       7/35
+Veuillez
+insérer
+l'icône
+
+
+
+
+           02
+                Etat de l’art   CONCEPTS GENERAUX
+
+                                ETAT DE L’ART
+
+
+
+
+                                                8/35
+ Veuillez
+ insérer
+ l'icône
+              Définition des concepts clé de l’étude
+                        Evolution de l’IA générative
+
+                                                           Deep Learning                                    Essor de l’IA              IA agentique
+ IA traditionnelle                       ML                                       Transformers
+                                                                                                             générative              (Notre approche)
+
+
+                                                          Traitement des
+                                Modèles statistiques et                        Architecture                RAG, LLMs capable de
+                                                          données complexes
+                                algorithmes apprenant                                                                                Modèles agentiques,
+Les règles explicites                                     (Images, Textes,     Transformers et             générer du texte,
+                                sur les données
+                                                                               Transfert Learning          vidéos, images et audio
+                                                                                                                                         MCP, ReAct
+                                                          audios): CNN, RNN,
+                                                          LSTM
+
+   Année 1990                     Années 2000             A partir de 2010      A partir de 2017                   2021                 Aujourd’hui
+        Concepts clés mobilisés dans l’étude
+
+
+
+
+            Revue de la littérature                        Présentation des données                 Approche Méthodologique
+ Etat de l’art des systèmes de recommandations
+                                                                centrée sur le
+       Etudes empiriques sur les systèmes de                      matching            Capital humain, tâches et inadéquation des
+                recommandations                                   emploi-
+                                                                cempétences           compétences et asymétrie d’informations
+
+Recommandation par contenu                                                        1    Capital humain
+  Regarde les caractéristiques du profil et de l’offre pour                      La formation, l’expérience et les compétences constituent des
+  calculer la similarité .                                                       investissements qui améliorent la productivité et
+  (Pazzani & Billus, 2007)                                                       l’employabilité.
+                                                                                 Becker, 1964
+Recommandation par filtrage collaboratif
+   S’appuie sur le comportement et les préférences similaires                    2 Tâches et inadéquation des compétences
+   entre utilisateurs .
+   (Burke 2022, Netflix, Facebook, TikTok)                                       Un diplôme ou un intitulé de métier ne suffit pas :
+                                                                                 l’appariement doit porter sur les tâches et les compétences
+                                                                                 réellement requises par l’emploi.
+Graphe de connaissance                                                           Autor, 2013
+  Modélisent explicitement les relations entre métiers,
+  compétences , formations et autres.
+  (Hogan et all, 2021)                                                            3 Asymétrie d’information et appariement
+                                                                                 Des compétences mal décrites et une information
+RAG et GraphRAG                                                                  incomplète peuvent faire coexister candidats disponibles et
+   Combinent récupération d’informations et génération                           postes vacants, malgré des besoins compatibles.
+   contextualisées pour les réponses plus riches.                                Akerlof, 1970 ; Spence, 1973 ; Mortensen et Pissarides, 1994
+   (Lewis et all, 2020 ; Edge et all 2024)
+                                                                                                                                  10/35
+Veuillez
+insérer
+l'icône
+
+
+
+
+           03
+                METHODOLOGIE
+                               DONNEES
+
+                               ARCHITECTURE
+
+
+
+
+                                         11/35
+     Applications de la Base ESCO                                                                      Pyramide des compétences et connaissances
+                             Systèmes de
+                           Recommandation
+                                                        Analyse du                                                                                                         ✓ occupations_fr.csv : 3 039 professions ;
+                                                         Marché
+                               Suggestions de
+                              formations pour       Extraction de tendances
+                                                                                                                     Compétences
+                                                                                                                                     Maîtrise des langues et
+                                                                                                                                                                           ✓ skills_fr.csv : compétences et
+                                                                                                                     linguistiques
+                           combler les lacunes en     à partir des données                                                           terminologies
+                                                                                                                                                                              connaissances;
+                               compétences              d'offres d'emploi
+
+                                                                                                                     Compétences         Compétences                       ✓ occupationSkillRelations_fr.csv :
+                                                                                                                                         applicables à divers
+                                                                                                                     transversales       secteurs                             relations métiers–compétences;
+Matching Job-CV
+Algorithmes pour aligner
+                                                                              Interopérabilité                                                                             ✓ skillSkillRelations_fr.csv : relations
+                                                                              Traduction automatique                                          Aptitudes pratiques et
+   les compétences des
+                                                                              des profils entre les                  Compétences              application des                 entre compétences;
+      candidats avec les                                                                                                                      connaissances
+   exigences des postes
+                                                                              systèmes RH
+                                                                                                                                                                           ✓ skillsHierarchy_fr.csv : hiérarchie des
+                                                                                                                    Connaissances
+                                                                                                                                                                              compétences;
+                                                                                                                                                   Savoirs théoriques et
+                                                                                                                                                   factuels
+                                                                                                                                                                           ✓ skillGroups_fr.csv : groupes de
+                                                                                                                                                                              compétences ;
+   ❑ ESCO signifie European Skills, Competences, Qualifications and Occupations. Il s’agit d’une classification                                                            ✓ ISCOGroups_fr.csv : groupes
+          multilingue développée par la Commission européenne pour décrire les métiers, les compétences et les relations professionnels ISCO.
+          qui les relient.
+
+
+
+                                                      ESCO fournit un vocabulaire commun pour harmoniser les compétences extraites des profils et des offres.
+                                                      Les identifiants ESCO permettent ensuite de construire le graphe de connaissance, utilisées pour mesurer la
+                                                      couverture des compétences et déterminer le skill gap.
+Veuillez
+insérer
+l'icône
+           Chaîne de construction du système hybride emploi-compétences
+                                                                                                                    Contexte explicable
+                             Données préparées                                                                  Scores, compétences couvertes,
+                      Offres, profils et référentiels nettoyés,                                              compétences manquantes et niveaux NCF
+                               normalisés et alignés                                                                   transmis à l’agent.
+
+
+
+
+                                                           Adaptation des
+                                                                                                       Modélisation du
+   01            ETL et
+                 normalisation
+                                           02              embeddings et
+                                                           indexation                  03              graphe de
+                                                                                                       données (Neo4j)
+                                                                                                                              0404Agentic GraphRAG
+                                                           pgvector
+
+
+
+
+                                                                  Deux mémoires complémentaires
+                                                         La sémantique retrouve les offres proches ; le graphe
+                                                             de connaissance vérifie les relations métier.
+
+
+
+
+           Revue de la littérature                                 Présentation des données                          Approche Méthodologique
+                 Construction du proxy de pertinence candidat–offre
+En l’absence d’annotations humaines (recruteurs), la pertinence d’une offre pour un profil est
+approchée par un proxy indépendant combinant recouvrement lexical, compatibilité sectorielle et
+niveau NCF. Ce proxy fournit une référence commune pour évaluer deux classements produits sur le
+même vivier d’offres : pgvector seul et pgvector enrichi par Neo4j.
+
+                        Trois niveaux mobilisés:
+                                                  𝑻𝒄 ∩𝑻𝒐
+                        -    𝑳 𝒄, 𝒐 =                            ; 𝒄𝒐𝒓𝒓𝒆𝒔𝒑𝒐𝒏𝒅𝒂𝒏𝒄𝒆 𝒍𝒆𝒙𝒊𝒄𝒂𝒍𝒆
+                                           𝒎𝒂𝒙(𝒎𝒊𝒏 𝑻𝒄 , 𝑻𝒐 ,𝟏)
+                                            𝑺𝒆𝒄𝒕𝒄 ∩𝑺𝒆𝒄𝒕𝒐
+                        -    𝑆 𝑐, 𝑜 =                      , 𝒄𝒐𝒎𝒑𝒂𝒕𝒊𝒃𝒊𝒍𝒊𝒕é 𝒔𝒆𝒄𝒕𝒐𝒓𝒊𝒆𝒍𝒍𝒆
+                                               𝑺𝒆𝒄𝒕𝒄
+                        -    𝑁 𝑐, 𝑜 , 𝐸𝑐𝑎𝑟𝑡 𝑛𝑖𝑣𝑒𝑎𝑢 𝑑𝑒 𝑓𝑜𝑟𝑚𝑎𝑡𝑖𝑜𝑛
+                        -    Pertinence est la combinaison linéaire des trois niveaux mobilisés le co𝑢𝑝𝑙𝑒 𝑜𝑓𝑓𝑟𝑒 −
+                             𝑐𝑎𝑛𝑑𝑖𝑑𝑎𝑡 𝑒𝑠𝑡 𝑝𝑒𝑟𝑡𝑖𝑛𝑒𝑛𝑡 𝑠𝑖 𝑝𝑟𝑜𝑥𝑦 ≥ max(0,35, 𝑄70% )
+
+        Score hybride est ainsi défini :
+                               𝑠𝑐𝑜𝑟𝑒_ℎ𝑦𝑏𝑟𝑖𝑑𝑒 = 𝑤𝑝𝑔𝑣𝑒𝑐𝑡𝑜𝑟 𝑆𝑠𝑒𝑚 + 𝑤𝑛𝑒𝑜4𝑗 𝑆𝑟𝑒𝑙 , 𝑎𝑣𝑒𝑐 𝑤𝑝𝑔𝑣𝑒𝑐𝑡𝑜𝑟 + 𝑤𝑛𝑒𝑜4𝑗 = 1
+        ❑ pgvector mesure la proximité sémantique ;
+        ❑ Neo4j mesure principalement la couverture relationnelle des compétences au travers des requêtes Cypher;
+        ❑ le proxy détermine indépendamment les offres présumées pertinentes ;
+        ❑ NDCG@10, Recall@10 et MRR@10 comparent les classements à cette référence.
+
+Revue de la littérature                             Présentation des données                 Approche Méthodologique
+01.   ETL et Normalisation des
+              données
+     Stratégie de normalisation et de chunking des documents réfentiels
+
+
+
+
+     La NCF organise les spécialités selon une hiérarchie allant du grand domaine au domaine détaillé. Cette structure est
+      conservée lors du découpage afin d’associer les formations des candidats aux spécialités et aux exigences de qualification
+Stratégie: harmoniser diplômes, certifications et parcours de formation selon les niveaux NCF afin de faciliter leur
+      des offres.
+comparaison avec les exigences des offres d’emploi
+                                                                                                                              17
+     Revue de la littérature                   Présentation des données              Approche Méthodologique
+      Pipeline de traitement de données
+
+Extraction                        Transformation                              Chargement
+❑ Offres d’emploi issues du web
+    scraping
+                                  ❑ Nettoyer les textes et traiter les
+❑ Profils candidats
+                                    valeurs manquantes
+❑ Référentiels ESCO, MEPC, NCF
+                                  ❑ Harmoniser métiers,
+    et diplômes                                                               ❑ Fichier .parquet
+                                    compétences, secteurs et
+Sites web: LinkedIn, Jobartis                                                 ❑ Base de données vectorielle
+                                    localisations
+Cameroun, Emploi.cm,                                                          ❑ Graphe de connaissance
+                                  ❑ Convertir les diplômes en
+Lumajobs,com
+                                    niveaux NCF
+Sources de données:
+                                  ❑ Créer des identifiants uniques
+- Demandeurs (FNE)
+- Offres d’emploi (FNE, ACPE et
+    site web)
+
+
+Outils utilisés: Module Python construit
+
+     Revue de la littérature         Présentation des données            Approche Méthodologique
+        Structure des données après l’ETL
+Offres d’emploi
+                                           Caractéristiques de l’emploi        Qualification demandée
+                                           •     titre_poste                   •   ncf_niveau_code
+                                           •     employeur                     •   niveau_etudes_raw
+❑ Offres d’emploi issues du web            •     type_entreprise_norm          •   experience_min_ans
+    scraping                               •     secteurs_list                 •   niveau_experience_raw
+❑ Profils candidats                        •     ville_principale              •   skills_list
+❑ Référentiels ESCO, MEPC, NCF et          •     villes_list                   •   skills_raw
+    diplômes                               •     type_contrat_norm                               Fine-tuning
+Sites web: LinkedIn, Jobartis              •     secteur_principal                               • pair_query_text : titre, secteur,
+Cameroun, Emploi.cm,                       •     groupe_contrat_norm                               contrat, niveau et compétences ;
+Lumajobs,com                                                                                     • pair_details_text : description
+Sources de données:                    Contenu textuel                                             détaillée ;
+- Demandeurs (FNE)                     •       details_raw : annonce originale ;                 • ft_eligible : indique si l’offre peut
+- Offres d’emploi (FNE, ACPE et site   •       details_clean : texte nettoyé ;                     servir à l’apprentissage.
+    web)                               •       details_truncated : version limitée en taille ;
+                                       •       text_to_embed : texte consolidé pour l’encodage
+                                               vectoriel.
+
+
+        Revue de la littérature                   Présentation des données          Approche Méthodologique
+        Structure des données après l’ETL
+                                       Identification                   Caractéristiques individuelles
+Demandeurs d’emploi                    • candidat_id                    • age
+                                       • matricule_raw                  • genre
+                                       • source_row_number
+❑ Offres d’emploi issues du web        Formation et qualification        Projet professionnel
+    scraping                           •   diplome_raw                   •    metier_vise
+❑ Profils candidats                    •   niveau_etude_raw              •    secteur_metier
+❑ Référentiels ESCO, MEPC, NCF et      •   ncf_code_diplome              •    secteur_activite_cand
+    diplômes                           •   ncf_code_niveau_etude         •    secteur_demande
+Sites web: LinkedIn, Jobartis          •   ncf_niveau_final              •    objectif
+Cameroun, Emploi.cm,                   •   qualification_declaree
+Lumajobs,com                           •   qualification_metier
+Sources de données:                    •   filiere_specialite
+- Demandeurs (FNE)                                                           Contrôle et représentation
+- Offres d’emploi (FNE, ACPE et site                                         • is_matricule_duplicate
+                                       Mobilité
+    web)                                                                     • matricule_duplicate_count
+                                       • mobilite_geo_bool
+                                       • mobilite_geo_villes                 • matricule_duplicate_rank
+                                       • mobilite_geo_raw                    text_to_embed: Métier visé +
+                                                                             Secteur + Niveau NCF + Études
+                                                                             + Filière + Qualification + Objectif
+        Revue de la littérature              Présentation des données   Approche Méthodologique
+02.      Fine tuning du modèle
+      d’embeddings et indexation
+    Veuillez
+    insérer
+    l'icône
+                Adaptation du modèle d’embeddings au domaine
+                emploi-compétences       Construction des paires d’apprentissage
+                                                                                                          Chaque paire associe les caractéristiques structurées d’une offre à sa
+                                                                                                          description détaillée. Au total, 6 476 paires offre–description ont été
+                                                                                                          constituées.
+                                                                                                              Répartition des données
+
+                                                                                                          Les paires ont été séparées en 4 542 pour l’entraînement, 981 pour la
+                                                                                                          validation et 953 pour le test, afin de mesurer la capacité de généralisation.
+                                                                                                          La fonction de perte est le MultipleNegatives RankingLoss
+
+
+
+
+                Configuration retenue
+                ❑ Modèle initial : all-MiniLM-L6-v2
+                ❑ Embeddings de 384 dimensions
+                ❑ Fine-tuning complet, sans LoRA
+                ❑ 5 époques, batch de 32, learning rate de 2.10−5
+                ❑ Durée : 4 h 12 min 37 s sur GPU
+La perte d’entraînement diminue rapidement puis se stabilise, indiquant que le modèle apprend les
+correspondances entre les métadonnées et les descriptions des offres. Le NDCG@10 et le MRR@10
+progressent jusqu’aux dernières époques, tandis que l’écart entre les pertes d’entraînement, de validation
+et de test invite à surveiller la généralisation. La décroissance du learning rate permet de stabiliser les
+mises à jour en fin d’apprentissage.
+                                                                                                                                                                            22
+               Revue de la littérature                                 Présentation des données                           Approche Méthodologique
+Comparaison des modèles de recherche sémantique
+                                                                                                                             ANSH
+
+
+
+
+                                                        NDCG@10 : 0,6232                                    Le SentenceTransformer fine-tuné obtient les
+                                                        Le classement atteint 62,32 % de l’ordre idéal.
+Les modèles sont comparés sur le même jeu de                                                                meilleurs scores de classement et de rappel. Son
+                                                        MRR@10 : 0,5874
+test et la même tâche : retrouver, dans le top 10, la   L’offre pertinente apparaît généralement dans les   coût d’inférence est supérieur aux méthodes
+description correspondant aux caractéristiques          premières positions.
+                                                                                                            lexicales, mais reste justifié par le gain de qualité
+                                                        Recall@10 : 0,7398
+d’une offre.                                            Environ 74 % des éléments attendus sont retrouvés   sémantique.
+                                                        dans le top 10.
+           Revue de la littérature                           Présentation des données                   Approche Méthodologique
+03.
+  Modélisation du graphe de connaissance et
+         score hybride de matching
+
+
+
+                                       24
+                               Schema et structure du graphe de connaissance
+
+
+
+
+                            Interprétation : Le graphe relie les candidats aux offres par les compétences possédées et requises.
+                            Les référentiels métier et formation complètent ce chemin afin d’expliquer la compatibilité, le niveau
+                            requis et les compétences manquantes.
+Revue de la littérature   Présentation des données                   Approche Méthodologique
+   Complémentarité des scores pgvector et Neo4j dans le reranking
+
+
+                                                            𝒔𝒄𝒐𝒓𝒆𝒉𝒚𝒃𝒓𝒊𝒅𝒆 = 𝜶𝑺𝒑𝒈𝒗𝒆𝒄𝒕𝒐𝒓 + 𝜷𝑺𝒏𝒆𝒐𝟒𝒋 ; 𝜶 + 𝜷 = 𝟏
+                                               ❖ 𝛼: proximité sémantique entre le profil et l’offre ;
+                                               ❖ 𝛽 : proportion des compétences requises couvertes ;
+                                               Reranking : reclassement du vivier initial avant sélection du top 10.
+
+
+
+                                   Top 10 offres             Enrichissement
+                                 sémantiquement                                             Score hybride                 Top 10 final
+                                    similaires                    Neo4j
+
+
+                             •690 couples             •Requête Cypher        •Calcul du score                       •Reranking
+                             offres-profil            •Modèle Text_to_Cypher hybride
+
+
+
+
+                                  Sur les 690 couples évalués, le score pgvector est continu et concentré autour de 0,53 : il distingue
+                                  progressivement les degrés de proximité textuelle. Le score Neo4j est plus discontinu : certains couples ne
+                                  partagent aucune compétence, tandis que d’autres présentent une forte couverture, avec une médiane de
+                                  0,83. Les deux scores apportent donc des informations complémentaires.
+
+
+
+
+Revue de la littérature   Présentation des données                            Approche Méthodologique
+04.   Orchestration & Agentic
+            GraphRAG
+                 Architecture de l’agent GraphRAG
+
+   1 Orchestration agentique du GraphRAG avec LangGraph
+
+Intentions à détectée                  Exemple de requête utilisateur
+                                       « Quelles offres correspondent au profil du
+                                                                                                         1 Requête utilisateurs
+Recommandation d’offres
+                                       candidat PPKOU2501080016340 ? »
+
+Analyse du skill gap
+                                       « Quelles compétences manquent à ce
+                                       candidat (profile) pour devenir Data Analyst ? »                  2Analyse de l’intention
+                                       « Quel niveau NCF correspond à un diplôme de
+Recherche documentaire
+
+Question relationnelle sur le graphe
+                                       Master ? »
+                                       « Quelles compétences sont associées au                          3 Planification des outils
+                                       métier de développeur web ? »
+                                       « Quelles offres exigent la maîtrise de Python ?
+Recherche par compétence
+
+                                                                                                        4 Exécution
+                                       »
+                                                                                                                    des
+                                       « Quels métiers sont accessibles avec une
+Orientation métier
+                                       formation en statistique à Douala ? »                              recherches
+                                       « Quelle formation peut combler les
+Recherche de formation                 compétences manquantes de ce candidat
+                                       (specifier le profil) vivant à Douala? »                             Construction
+Synthèse du graphe
+                                       « Combien d’offres, de candidats et de
+                                       compétences sont présents dans le graphe
+                                                                                                        5 du contexte
+                                       pour Yaoundé ? »
+
+Diagnostic du système
+                                       « Les services pgvector, Neo4j et le modèle
+                                       d’embeddings sont-ils disponibles ? »
+                                                                                                        6 Génération et contrôle
+          Revue de la littérature                Présentation des données                 Approche Méthodologique
+              Sélection et mobilisation des outils
+
+1 Planification dynamique selon la demande utilisateur
+
+
+                                    Analyse du skill gap                                  Recherche documentaire
+                     Neo4j, Compétences couvertes et manquantes                           Pgvector, Chunks des référentiels
+
+
+
+
+                                                                   02               03
+                                                                                                         Question relationnelle
+                                                                                                         Requête Cypher, Chemins et entités du
+                                                                                                         graphe
+         Recommandation d’offres                                          Choix
+            pgvector + Neo4j, top 10 offres bien classées
+                                                            01           d’outils
+                                                                                         04
+
+
+
+
+       Revue de la littérature                                Présentation des données   Approche Méthodologique
+        Génération contrôlée et révision
+
+
+
+
+1. Le LLM reçoit uniquement le contexte préparé par l’agent.
+2. Le critic vérifie l’ancrage de la réponse dans les preuves.
+3. Si le score est supérieur ou égal à 0,46, la réponse est acceptée si le LLM (LangGraph) juge accepte également.
+4. Sinon, l’agent élargit le contexte et régénère la réponse.
+5. Les outils et les résultats restent traçables.
+Externalisation du système via API et interface Chatbot
+
+
+
+
+                                                          31
+05.   Evaluation interne du système
+                 hybride
+                  Performance au niveau de brique de solution
+Protocole d’évaluation                             Modèle d’embedding fine-tuné                Algorithme d’indexation HNSW pour réduire la complexité de
+                                                                                               la recherche dans la base de données vectorielle.
+❖ 80 candidats tirés aléatoirement;                                                            ❑ Complexité sans index = 𝑂(𝑛381 )
+                                                                                               ❑ Complexité avec HNSW = 𝑂(𝑙𝑜𝑔𝑛)
+❖ 69 candidats effectivement                       ❖ NDCG@10 : 0,6232;
+     évalués;                                      ❖ MRR@10 : 0,5874;                          Requête candidat → embedding → recherche top-k dans
+
+❖ 30 offres présélectionnées par                                                               pgvector → offres les plus proches
+                                                   ❖ Recall@10 : 0,7398;
+     pgvector;                                     ❖ comparaison avec BM25, TF-IDF
+❖ Top 10 utilisé pour les métriques;                    et modèles avec plus de                Ablation pgvector
+❖ Proxy de pertinence en l’absence                      dimension et multi-langue;
+                                                                                               Métrique     pgvector                pgvector + Neo4j
+     d’annotations humaines.
+                                                                                               NDCG@10      0,5575                  0,7392
+
+                                                                                               MRR@10       0,6908                  0,8093
+
+                                                                                               Recall@10    0,4491                  0,6147
+Sur quelles données et selon quelle référence le   le fine-tuning améliore-t-il la recherche
+système est-il évalué ?
+                                                   sémantique ?
+           Calibration des poids avec l’optimisation bayésienne (OPTUNA)
+
+             𝒔𝒄𝒐𝒓𝒆_𝒉𝒚𝒃𝒓𝒊𝒅𝒆 = 𝒘𝒑𝒈𝒗𝒆𝒄𝒕𝒐𝒓 𝑺𝒔𝒆𝒎 + 𝒘𝒏𝒆𝒐𝟒𝒋 𝑺𝒓𝒆𝒍 , 𝒂𝒗𝒆𝒄 𝒘𝒑𝒈𝒗𝒆𝒄𝒕𝒐𝒓 + 𝒘𝒏𝒆𝒐𝟒𝒋 = 𝟏
+
+Fonction objectif: NDCG, Moyenne(NDCG,Recall,précision), Moyenne(MRR,precision)
+
+
+
+
+                                                                              Seuil critique sur les décisions accept/revise
+            Bilan, limites et perspectives du système hybride
+                                   Forces                       Faiblesses
+ Architecture hybride combinant pgvector, Neo4j et
+                                                                Absence d’annotations indépendantes par des
+   Agentic GraphRAG.Amélioration du classement :
+                                                                recruteurs.Évaluation fondée en partie sur un proxy de
+             NDCG@10 de 0,5575 à 0,7392 avec le
+                                                                pertinence.Qualité variable des données collectées et
+      graphe.Recommandations explicables par les
+                                                                dépendance aux relations extraites.
+           compétences couvertes et manquantes.
+                                                        F   W
+                                                        R   P
+                          Risques                               Perspectives
+            Biais liés aux plateformes constituant le           Intégration de l’API et du chatbot au site de
+corpus.Évolution des offres, métiers et compétences             KmerAI.Déploiement du graphe sur Neo4j
+dans le temps.Données personnelles et exigences de              Aura.Publication des artefacts et évaluations sur
+   confidentialité.Réponses insuffisantes lorsque le            Hugging Face.Constitution d’un jeu de données annoté
+                  contexte récupéré est incomplet..             par des experts métier.
+Veuillez
+insérer
+l'icône
+
+
+
+
+           Merci pour votre
+              attention
+                     Communauté Economique et Monétaire de l’Afrique Centrale
+                                                (CEMAC)
+                    Institut Sous régional de Statistiques et d’Économie Appliquée
+                                                 (ISSEA)
+                                      Organisation Internationale
+
+
+                     Thème
+                     CONCEPTION D’UN SYSTÈME DE RECOMMANDATION HYBRIDE POUR LE MATCHING
+
+                     EMPLOI-COMPETENCES AUX CAMEROUN PAR INTÉGRATION DES LLMs ET DE GRAPHE
+
+                     DE CONNAISSANCES
+                     Data Science et Marketing
+
+                     Impétrant : NGOULOU NGOUBILI Irch Defluviaire
+
+                    Yaoundé 07 Juillet 2026
+
+
+
+   Encadrante                              Président du jury                             Examinateur
+Dr FOUTSE Yuehgoh                 Dr WANSOUWE WANBITCHING                            Pr MELATAGIA Paulin
+
