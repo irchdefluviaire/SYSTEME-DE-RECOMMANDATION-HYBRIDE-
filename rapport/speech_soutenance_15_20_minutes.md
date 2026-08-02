@@ -4,11 +4,11 @@
 
 Le texte ci-dessous est concu pour etre prononce naturellement. Les diapositives de transition doivent etre passees rapidement. Les formulations entre crochets sont des consignes et ne doivent pas etre lues.
 
-## Diapositive 1 - Page de garde (25 s)
+## Diapositive 1 - Page de garde (20 s)
 
 Monsieur le President du jury, Mesdames et Messieurs les membres du jury, bonjour. Je suis NGOULOU NGOUBILI Irch Defluviaire, eleve ingenieur statisticien economiste, option Data Science et Marketing. Mon travail porte sur la conception d'un systeme de recommandation hybride pour le matching emploi-competences au Cameroun, combinant modeles de langage et graphes de connaissances. L'objectif est de recommander des offres, mais aussi d'expliquer les correspondances et les competences manquantes.
 
-## Diapositive 2 - Plan (20 s)
+## Diapositive 2 - Plan (15 s)
 
 Ma presentation suit cinq temps. Je partirai du contexte et de la problematique, puis je presenterai les concepts et les travaux qui fondent l'etude. J'exposerai ensuite les donnees et la methodologie, avant de montrer l'implementation et les principaux resultats. Je terminerai par les limites, les perspectives et une demonstration du systeme.
 
@@ -16,7 +16,7 @@ Ma presentation suit cinq temps. Je partirai du contexte et de la problematique,
 
 Je commence par le contexte, la problematique, les objectifs et les hypotheses de l'etude.
 
-## Diapositive 4 - Contexte (35 s)
+## Diapositive 4 - Contexte (30 s)
 
 Le taux de chomage des jeunes, pris seul, donne une lecture incomplete du marche du travail camerounais. Les estimations OIT diffusees par la Banque mondiale donnent 6,5 % en 2025. Mais 23,2 % des jeunes etaient ni en emploi, ni en etudes, ni en formation en 2021, et l'emploi vulnerable representait 67,8 % de l'emploi total en 2024. Ces indicateurs decrivent des dimensions differentes, mais montrent ensemble une insertion fragile. KmerAI cherche donc a mieux connecter les talents aux opportunites a partir d'outils d'intelligence artificielle adaptes au contexte local.
 
@@ -36,11 +36,11 @@ Trois hypotheses guident l'etude. La premiere suppose que des donnees structuree
 
 Ces hypotheses s'appuient sur les concepts et les travaux presentes dans l'etat de l'art.
 
-## Diapositive 9 - Concepts et evolution de l'IA (25 s)
+## Diapositive 9 - Concepts et evolution de l'IA (50 s)
 
-Cette frise montre le passage des regles explicites vers l'apprentissage automatique, le deep learning, les Transformers, puis l'IA generative et agentique. Mon travail se situe a la derniere etape : le modele ne se contente pas de generer du texte. Il utilise des outils, consulte deux memoires de donnees, construit un contexte et controle sa reponse. L'agent reste toutefois encadre par un workflow defini.
+Cette frise presente une evolution des modes de traitement de l'information. L'intelligence artificielle traditionnelle applique principalement des regles programmees par un expert : elle execute ce qui a ete explicitement prevu. Le machine learning apprend plutot des regularites statistiques a partir des donnees afin de classer ou de predire. Le deep learning est une branche du machine learning fondee sur des reseaux de neurones profonds capables d'apprendre des representations complexes du texte, de l'image ou du son. En 2017, les Transformers introduisent l'auto-attention, qui permet de contextualiser chaque mot en fonction des autres mots de la sequence. Les LLM utilisent cette architecture a grande echelle ; l'IA generative produit ensuite un nouveau contenu en estimant les suites de tokens les plus plausibles. Le RAG ajoute une recherche d'informations externes avant la generation afin de mieux ancrer la reponse. Enfin, l'IA agentique ajoute un objectif, un etat, une planification, des outils et une boucle d'observation et de revision. Dans mon systeme, SentenceTransformer assure la representation semantique, GPT-OSS-20B formule les reponses et LangGraph orchestre les appels a pgvector, Neo4j et au critic. L'agent n'est donc pas autonome sans limite : ses actions restent bornees par le workflow implemente.
 
-## Diapositive 10 - Revue de la litterature (40 s)
+## Diapositive 10 - Revue de la litterature (35 s)
 
 La recommandation par contenu compare les caracteristiques du profil et de l'offre, mais reste sensible a la representation choisie. Le filtrage collaboratif exige des historiques d'interactions, qui sont insuffisants ici. Les graphes rendent explicites les relations entre metiers, competences et formations. Le RAG ajoute des preuves a la generation, et le GraphRAG ajoute une navigation relationnelle. Sur le plan economique, Becker souligne le role du capital humain, Autor celui des taches, tandis qu'Akerlof, Spence, Mortensen et Pissarides montrent les effets de l'information imparfaite et des frictions d'appariement. Mon positionnement consiste donc a hybrider recherche semantique, graphe et orchestration agentique.
 
@@ -48,11 +48,11 @@ La recommandation par contenu compare les caracteristiques du profil et de l'off
 
 Je presente maintenant les donnees mobilisees et la chaine methodologique retenue.
 
-## Diapositive 12 - Donnees mobilisees (35 s)
+## Diapositive 12 - Donnees mobilisees (30 s)
 
 Le systeme exploite 55 255 observations du marche de l'emploi : 13 957 offres et 41 298 profils candidats. Ces donnees sont completees par 17 178 entites de referentiels, dont 13 939 competences ESCO et 3 039 professions, ainsi que les nomenclatures camerounaises des metiers, des formations et des diplomes. L'objectif n'est pas d'empiler les sources, mais de les harmoniser afin de produire des variables comparables et des relations exploitables par la recherche vectorielle et le graphe.
 
-## Diapositive 13 - Base ESCO (30 s)
+## Diapositive 13 - Base ESCO (25 s)
 
 ESCO est la classification europeenne multilingue des professions et des competences. Dans ce projet, elle fournit un vocabulaire commun et des identifiants stables. Les fichiers des professions, des competences, des hierarchies et des relations metier-competence permettent de reconnaitre qu'un meme besoin peut etre formule differemment dans un profil et dans une offre. ESCO sert donc a normaliser les concepts et a construire les relations utilisees pour calculer la couverture des competences et le skill gap.
 
@@ -100,9 +100,9 @@ Tous les modeles sont compares sur la meme tache : retrouver dans le top 10 la d
 
 La troisieme brique est le graphe de connaissances et le score hybride.
 
-## Diapositive 25 - Structure du graphe (40 s)
+## Diapositive 25 - Structure et lecture du graphe (50 s)
 
-Le chemin central relie un candidat a une competence par `POSSEDE`, puis une offre a cette competence par `REQUIERT`. Il permet de distinguer les competences couvertes des competences manquantes. Les relations vers le metier, le secteur, la localisation et le niveau NCF enrichissent l'explication. Les relations `POSSEDE`, `NECESSITE` et `REQUIERT` dominent logiquement le graphe. Neo4j ne remplace donc pas la similarite semantique : il transforme une proximite textuelle en chemins explicables, sous reserve que les relations extraites soient fiables.
+Le graphe contient principalement 41 298 candidats, 13 957 offres, 13 939 competences et 3 039 metiers. Son chemin de matching central est `Candidat-POSSEDE-Competence-REQUIERT-Offre`. Les 221 413 relations `POSSEDE` decrivent les competences rattachees aux profils, les 58 519 relations `REQUIERT` celles demandees par les offres, et les 126 051 relations `NECESSITE` enrichissent les metiers avec ESCO. L'intersection entre competences possedees et requises donne la couverture ; leur difference donne le skill gap. Les liens `A_NIVEAU` et `REQUIERT_NIVEAU_NCF` controlent la qualification, tandis que secteur, localisation, MEPC et ISCO apportent du contexte. La distribution est tres heterogene : certaines competences generales sont des hubs relies a de nombreuses offres. Pour eviter un biais de popularite, le score ne repose pas sur le degre brut du noeud, mais sur la proportion des exigences propres a chaque offre effectivement couvertes. Neo4j ne remplace donc pas pgvector : il confirme, corrige et explique sa proximite semantique.
 
 ## Diapositive 26 - Score hybride, Cypher et reranking (50 s)
 
@@ -122,7 +122,7 @@ Cette diapositive decompose la decision de l'agent. `analyse_request` detecte l'
 
 ## Diapositive 30 - Generation controlee (30 s)
 
-Les sorties des outils sont rassemblees dans un contexte structure, puis transmises au modele GPT-OSS-20B via OpenRouter. Le critic mesure ensuite si la reponse est suffisamment ancree dans les preuves. Le seuil operationnel est 0,46 : au-dessus, la reponse peut etre acceptee ; en dessous, le workflow demande une revision ou un elargissement du contexte. Ce controle mesure surtout la fidelite lexicale au contexte. Il ne remplace pas une validation humaine de la verite metier.
+Les sorties des outils sont d'abord rassemblees dans un contexte structure : offres retrouvees, scores, competences couvertes et manquantes, niveaux NCF et passages documentaires. Ce contexte est transmis a GPT-OSS-20B par l'intermediaire d'OpenRouter, qui est une passerelle d'acces au modele et non le LLM lui-meme. Apres generation, le critic compare les termes significatifs de la reponse aux preuves recuperees. Si le score atteint 0,46, la decision est `accept` ; sinon, elle est `revise` et le workflow peut elargir le contexte avant une nouvelle generation. Cette boucle limite les reponses deconnectees des sources et conserve les traces des outils appeles. Elle ne garantit toutefois pas la verite metier : une reponse peut etre fidele a un contexte lui-meme incomplet.
 
 ## Diapositive 31 - Demonstration API et chatbot (4 min)
 
@@ -136,27 +136,29 @@ Je vais maintenant montrer comment les briques precedentes fonctionnent ensemble
 4. **60 s - Skill gap.** Demander : « Pour la meilleure offre, distingue les competences acquises, manquantes et essentielles manquantes. »
 5. **30 s - Conclusion de la demo.** Dire : « Cette sequence montre la complementarite des deux memoires : pgvector retrouve, Neo4j explique et l'agent organise la reponse. »
 
+Pendant la demonstration, ne lisez pas toute la reponse. Montrez trois preuves seulement : l'offre arrivee en tete, une competence couverte et une competence manquante. Affichez ensuite les traces pour identifier les outils effectivement mobilises. Si une reponse prend du temps, expliquez le chemin du workflow au lieu d'attendre en silence : analyse de l'intention, appel du moteur hybride, construction du contexte, generation et critic.
+
 En cas de panne reseau ou de service, utiliser une capture ou une video locale et commenter exactement les memes etapes.
 
 ## Diapositive 32 - Transition : evaluation (5 s)
 
-Apres cette demonstration fonctionnelle, je presente l'evaluation interne du systeme.
+La demonstration montre que le workflow s'execute. Elle ne suffit pas a prouver sa performance. Je passe donc a l'evaluation interne de chacune de ses briques.
 
 ## Diapositive 33 - Performance des briques (55 s)
 
-Deux evaluations sont distinguees. D'abord, le modele d'embeddings est teste sur 953 paires non vues : il atteint 0,6232 en NDCG@10, 0,5874 en MRR@10 et 0,7398 en Recall@10. Ensuite, l'ablation demande 80 candidats tires aleatoirement avec la graine 42 ; 69 sont effectivement evalues et 11 echouent pour des erreurs techniques. Pour chaque candidat, pgvector fournit exactement le meme pool initial de 30 offres aux deux variantes. La premiere conserve l'ordre vectoriel ; la seconde enrichit ces offres avec Neo4j puis les reclasse. Au top 10, le NDCG passe de 0,5575 a 0,7392, le MRR de 0,6908 a 0,8093 et le Recall de 0,4491 a 0,6147. La comparaison isole donc l'effet du reranking sur le meme vivier, selon le proxy. HNSW accelere la recherche approximative en evitant une comparaison exhaustive, mais il ne garantit pas une complexite universelle en logarithme.
+Deux evaluations sont distinguees. D'abord, le modele d'embeddings est teste sur 953 paires non vues : il atteint 0,6232 en NDCG@10, 0,5874 en MRR@10 et 0,7398 en Recall@10. Le suffixe `@10` signifie que l'on observe les dix premiers resultats. Le NDCG juge leur ordre, le MRR la position du premier resultat pertinent et le Recall la part des resultats attendus effectivement retrouves. Ensuite, l'ablation demande 80 candidats tires aleatoirement avec la graine 42 ; 69 sont effectivement evalues et 11 echouent pour des erreurs techniques. Pour chaque candidat, pgvector fournit exactement le meme pool initial de 30 offres aux deux variantes. La premiere conserve l'ordre vectoriel ; la seconde enrichit ces offres avec Neo4j puis les reclasse. Au top 10, le NDCG passe de 0,5575 a 0,7392, le MRR de 0,6908 a 0,8093 et le Recall de 0,4491 a 0,6147. La comparaison mesure donc l'effet du graphe sur le meme vivier, selon le proxy, mais pas encore la satisfaction d'un recruteur. HNSW accelere la recherche approximative en evitant une comparaison exhaustive, sans garantir une complexite universelle en logarithme.
 
 ## Diapositive 34 - Optimisation bayesienne et critic (60 s)
 
-La calibration porte sur 690 couples, soit dix offres pour chacun des 69 candidats. A chaque essai, Optuna propose deux poids positifs, les normalise pour que leur somme vaille un, recalcule le score hybride, reclasse les dix offres de chaque candidat et moyenne la metrique cible. Le sampler TPE separe progressivement les essais performants des essais moins performants, modelise leurs distributions de poids, puis propose davantage de combinaisons dans les zones susceptibles d'ameliorer l'objectif. Apres 500 essais, l'objectif NDCG@10 est maximal sur la frontiere Neo4j seul, avec un NDCG de 0,9697 selon le proxy. Pour l'objectif combinant MRR et precision, les poids retenus sont environ 0,6615 pour pgvector et 0,3385 pour Neo4j. Ces poids ne sont pas universels : ils dependent du proxy et d'un top 10 deja selectionne. Enfin, le critic est calibre separement sur 102 comparaisons, 51 contextes reels et 51 contextes melanges. Le seuil 0,46 rejette les 51 contextes melanges et accepte 50 contextes reels sur 51.
+La calibration porte sur 690 couples, soit dix offres pour chacun des 69 candidats. A chaque essai, Optuna propose deux poids, les normalise pour que leur somme vaille un, recalcule le score hybride, reclasse les offres de chaque candidat et moyenne la fonction objectif. Contrairement a une grille exhaustive, l'optimisation bayesienne exploite les resultats deja observes. Le sampler TPE separe les essais performants des essais moins performants, estime deux distributions de poids, puis teste davantage les zones offrant le meilleur potentiel d'amelioration. Apres 500 essais, l'objectif NDCG@10 est maximal sur la frontiere Neo4j seul, avec 0,9697 selon le proxy. Ce resultat signifie que, dans un vivier deja rappele par pgvector, la couverture des competences ordonne tres bien le top 10 selon cette reference. Pour l'objectif combinant MRR et precision, le compromis devient 0,6615 pour pgvector et 0,3385 pour Neo4j. Il n'existe donc pas un poids optimal independant de l'objectif. De plus, Precision@10 et Recall@10 varient peu dans ce fichier limite a dix offres ; NDCG et MRR sont les criteres les plus discriminants. Enfin, le critic est calibre separement sur 102 comparaisons : le seuil 0,46 rejette les 51 contextes melanges et accepte 50 contextes reels sur 51.
 
 ## Diapositive 35 - Bilan, limites et perspectives (45 s)
 
-Le bilan doit rester factuel. Premier resultat : sur le benchmark semantique, le modele adapte atteint 0,6232 en NDCG@10 et 0,7398 en Recall@10. Deuxieme resultat : sur le meme pool de 30 offres, l'ajout du graphe fait progresser le NDCG@10 de 0,5575 a 0,7392 et fournit les competences couvertes et manquantes. Troisieme resultat : le critic calibre a 0,46 distingue presque parfaitement les contextes reels des contextes melanges dans ce protocole lexical. Ces resultats soutiennent surtout l'hypothese de l'apport relationnel, mais ne prouvent pas encore la satisfaction d'un recruteur. Les limites sont l'absence d'annotations humaines, le biais potentiel du proxy, les 11 echecs d'evaluation et la qualite variable des donnees scrapees. Les priorites sont donc un jeu annote par des experts, des tests utilisateurs, l'integration au site KmerAI, puis le deploiement du graphe sur Neo4j Aura et la documentation des artefacts sur Hugging Face.
+Le bilan doit rester factuel. Premier resultat : le modele adapte atteint 0,6232 en NDCG@10 et 0,7398 en Recall@10 ; l'hypothese H1 est donc soutenue sur la representation semantique, mais l'effet propre de chaque referentiel n'a pas ete isole. Deuxieme resultat : sur le meme pool de 30 offres, l'ajout du graphe fait progresser le NDCG@10 de 0,5575 a 0,7392 et fournit les competences couvertes et manquantes ; H2 est l'hypothese la mieux soutenue. Troisieme resultat : le critic calibre a 0,46 separe presque parfaitement contextes reels et melanges dans le test lexical ; H3 reste soutenue avec prudence, car aucune evaluation utilisateur ne prouve encore que les explications sont comprises et utiles. Les limites sont donc l'absence d'annotations humaines, le biais potentiel du proxy, les 11 echecs techniques et la qualite variable des donnees scrapees. Les priorites sont un jeu annote par des recruteurs, des tests utilisateurs, l'integration au site KmerAI, le deploiement sur Neo4j Aura et la documentation reproductible des artefacts sur Hugging Face.
 
-## Diapositive 36 - Remerciement (10 s)
+## Diapositive 36 - Remerciement (5 s)
 
-En conclusion, ce travail valide une architecture operationnelle et l'apport interne du graphe, mais il reste un outil d'aide a la decision qui doit encore etre valide par des experts metier. Je vous remercie pour votre attention et je suis disponible pour vos questions.
+En conclusion, ce travail ne remplace pas le recruteur : il lui fournit un classement, des preuves relationnelles et un diagnostic de competences. Il valide une architecture operationnelle et un apport interne mesurable du graphe, dont la prochaine etape est la validation metier. Je vous remercie pour votre attention et je suis disponible pour vos questions.
 
 ## Diapositives 37-38 - Fin ou secours
 
