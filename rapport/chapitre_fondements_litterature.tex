@@ -74,6 +74,10 @@ L'apport de cette littérature est de montrer que l'inadéquation emploi-compét
 
 Les systèmes de recommandation cherchent à classer des items selon leur pertinence probable pour un utilisateur. La littérature distingue classiquement les approches fondées sur le contenu, le filtrage collaboratif et les approches hybrides \cite{adomavicius2005toward,ricci2011recommender}. Dans le contexte de ce mémoire, l'utilisateur peut être un candidat, un conseiller emploi ou une plateforme ; les items peuvent être des offres, compétences, métiers ou formations.
 
+Cette typologie doit toutefois être actualisée. Les approches profondes de recommandation prolongent le filtrage par contenu en encodant les descriptions d'offres et de profils dans des représentations contextuelles. BERT fournit des représentations sensibles au contexte, tandis que Sentence-BERT rend ces représentations directement comparables pour la recherche par similarité \cite{devlin2018bert,reimers2019sbert}. Dans un domaine où les intitulés sont hétérogènes, cette couche sémantique peut rapprocher « analyste de données », « data analyst » et des descriptions de compétences voisines ; elle ne démontre cependant pas, à elle seule, la compatibilité professionnelle.
+
+Les approches fondées sur la connaissance complètent ce signal en imposant une structure explicite : ontologies, référentiels et graphes relient métiers, compétences, formations et profils. Des travaux récents en ressources humaines illustrent cette direction : HRGraph combine extraction par \LLM{} et graphe de connaissances pour des tâches de recommandation d'emploi \cite{wasi2024hrgraph}, tandis que Yang et Shen articulent graphe de connaissances, GCN, apprentissage par renforcement et filtrage collaboratif profond pour la prédiction de compétences \cite{yang2025talentgraph}. Ces résultats ne sont pas transposables automatiquement au cas d'étude ; ils motivent plutôt une architecture qui sépare rappel sémantique, contrôle relationnel et décision humaine.
+
 Le tableau~\ref{tab:comparaison_approches_recommandation} compare ces familles dans le contexte de l'emploi \cite{pazzani2007content,koren2009matrix,he2017ncf,burke2002hybrid}.
 
 \begin{table}[H]
@@ -87,6 +91,8 @@ Le tableau~\ref{tab:comparaison_approches_recommandation} compare ces familles d
 \midrule
 Par contenu & Compare les caractéristiques des profils et des offres. & Fonctionne sans historique de clics et permet d'expliquer les ressemblances. & Dépend de la qualité des descriptions et peut rester trop proche du profil initial. & Les formulations varient entre sources et certaines descriptions sont incomplètes. \\
 Collaborative & Utilise les comportements passés d'utilisateurs semblables. & Peut découvrir des préférences qui ne sont pas écrites dans les profils. & Exige beaucoup d'interactions et gère mal les nouveaux utilisateurs ou les nouvelles offres. & Les historiques de clics, candidatures et recrutements sont insuffisants. \\
+Sémantique profonde & Encode offres et profils par des représentations contextuelles (BERT et SBERT). & Dépasse les synonymes, variantes d'intitulés et proximités lexicales. & Sensible au domaine, aux données d'entraînement et à la qualité des labels. & Sert au rappel initial ; une similarité forte ne constitue pas une preuve de compatibilité. \\
+Fondée sur la connaissance & Exploite ontologies, référentiels ou graphe métier--compétence--formation. & Rend les contraintes et les explications relationnelles explicites. & Dépend de la couverture, de la qualité et de la maintenance des relations. & Le graphe vérifie et explique le vivier ; il ne remplace pas les données manquantes. \\
 Hybride & Combine plusieurs signaux : textes, relations et règles métier. & Compense les faiblesses d'une source et améliore l'explication. & Demande de calibrer les signaux et rend le système plus complexe. & Sa qualité dépend encore de la fiabilité des données et des relations du graphe. \\
 \bottomrule
 \end{tabularx}
@@ -121,12 +127,18 @@ L'acquis de cette littérature est considérable : les \LLM{} savent reformuler,
   \centering
   \caption{Évolution simplifiée des modèles de langage et des représentations textuelles}
   \label{fig:chronologie_llm_revue}
-  \includegraphics[width=0.75\textwidth]{figures/evolution_llms.png}
+  \includegraphics[width=0.92\textwidth]{figures/evolution_llms.png}
   \source{Nos travaux, schématisation conceptuelle à partir de Mikolov et al. (2013)}
 \end{figure}
 \subsection{Embeddings, recherche sémantique et bases vectorielles}
 
 Après la clarification conceptuelle, l'enjeu est de savoir dans quelles conditions les représentations vectorielles sont fiables pour la recherche d'information. Les benchmarks montrent que les modèles d'embeddings doivent être évalués sur des tâches variées, car un bon modèle généraliste peut être insuffisant dans un domaine spécialisé \cite{thakur2021beir,muennighoff2022mteb}. Cette observation justifie l'adaptation d'un modèle SentenceTransformer au vocabulaire emploi-compétences.
+
+Techniquement, un bi-encodeur transforme séparément la requête $q$ et un document $d$ en vecteurs $e(q)$ et $e(d)$. Après normalisation $L_2$, leur proximité est calculée par similarité cosinus :
+\[
+s_{sem}(q,d)=\frac{e(q)^\top e(d)}{\lVert e(q)\rVert_2\lVert e(d)\rVert_2}.
+\]
+Le moteur restitue un vivier top-$K$ plutôt qu'une décision finale. Pour conserver une latence praticable, ce vivier est retrouvé par recherche approximative de plus proches voisins : avec HNSW, les paramètres de construction $M$ et $ef_{construction}$ règlent la richesse de l'index, alors que $ef_{search}$ arbitre, à l'interrogation, entre rappel et temps de réponse \cite{malkov2018hnsw,johnson2019faiss}. Le fine-tuning contrastif est donc pertinent seulement s'il améliore le classement sur des paires emploi--profil tenues à l'écart de l'apprentissage.
 
 La recherche sémantique résout une partie du problème de vocabulaire, mais elle reste une approximation. Deux textes proches peuvent cacher une incompatibilité : niveau insuffisant, compétence obligatoire absente, localisation incompatible ou métier trop éloigné. La similarité vectorielle doit donc être traitée comme un signal de présélection, non comme une décision finale.
 
@@ -151,7 +163,7 @@ Dans une \RAG{} native, le système récupère des documents proches d'une requ�
 	\centering
 	\caption{Différence fonctionnelle entre \RAG{}, GraphRAG et Agentic RAG}
 	\label{fig:rag_graphrag_agentic_rag_revue}
-	\includegraphics[width=0.55\textwidth]{figures/AgenticRAG.png}
+	\includegraphics[width=0.92\textwidth]{figures/AgenticRAG.png}
 	\source{Nos travaux sur drawio}
 \end{figure}
 La figure \ref{fig:rag_graphrag_agentic_rag_revue} distingue trois niveaux fonctionnels. La \RAG{} récupère surtout des documents proches d'une requête et les transmet au \LLM{} ; elle reste donc efficace pour une recherche documentaire, mais son raisonnement dépend du contexte retrouvé. Le GraphRAG ajoute une représentation relationnelle : les entités et leurs liens permettent de naviguer entre compétences, métiers, offres, niveaux et formations. L'Agentic RAG va plus loin : il ne se limite pas à récupérer une information, il planifie les étapes, choisit les outils, observe les résultats, ajuste le contexte et produit une réponse. Cette distinction justifie le choix du mémoire : combiner retrieval vectoriel, graphe Neo4j et orchestration LangGraph pour traiter des requêtes emploi-compétences plus complexes qu'une simple recherche de documents.
@@ -160,6 +172,8 @@ La figure \ref{fig:rag_graphrag_agentic_rag_revue} distingue trois niveaux fonct
 Les travaux ReAct montrent l'intérêt d'alterner raisonnement et action outillée dans les modèles de langage \cite{yao2023react}. Self-RAG va plus loin en introduisant une logique d'auto-réflexion pour décider quand récupérer de l'information et comment critiquer la réponse \cite{asai2024selfrag}. Pour ce mémoire, ces travaux ne doivent pas être interprétés comme une autorisation à laisser un agent décider librement. Ils justifient plutôt une orchestration contrôlée : classifier l'intention, choisir les sources, récupérer les preuves, construire le contexte, générer, puis vérifier si la réponse est suffisamment fondée.
 
 Le manque de la littérature est ici opérationnel. Beaucoup de travaux décrivent des architectures générales, mais la fiabilité dépend de détails concrets : qualité des chunks, schéma du graphe, robustesse des requêtes, traçabilité des sources, gestion des cas sans résultat et critères de révision. %C'est pourquoi l'architecture retenue ajoute un critic et des traces d'exécution. Le \LLM{} produit la réponse finale, mais les données récupérées et les outils appelés doivent rester observables.
+
+Dans le pipeline proposé, cette exigence se traduit par un état explicitement typé : requête, intention, plan d'outils, résultats de recherche, preuves, réponse, score du critic et trace. Les transitions sont bornées : après un top-$K$ vectoriel, le graphe vérifie les relations autorisées ; une requête Text2Cypher est limitée au schéma et à la lecture seule ; le critic ne peut ouvrir qu'une révision limitée avant l'acceptation ou le refus de répondre. Cette conception distingue le rôle du \LLM{} -- interpréter ou formuler -- de celui des sources, qui portent les preuves. Elle limite les boucles incontrôlées et rend chaque recommandation audit-able.
 %\section{Évaluation, acquis de la littérature et positionnement du mémoire}
 
 \subsection{Évaluer la performance et la factualité}
@@ -209,6 +223,8 @@ NDCG@k=\frac{DCG@k}{IDCG@k}.
 \end{equation}
 
 Cette métrique est particulièrement adaptée lorsque tous les résultats pertinents ne se valent pas. Par exemple, une offre parfaitement alignée avec les compétences du candidat devrait être mieux classée qu'une offre seulement partiellement compatible.
+
+Dans cette étude, la métrique principale retenue pour comparer et calibrer le reranking est donc \textbf{NDCG@10}. Elle récompense simultanément la pertinence graduée et le bon ordre des dix premières offres, qui constituent la zone effectivement consultée par l'utilisateur. Recall@10 est la métrique de garde-fou : un gain de NDCG ne serait pas acceptable s'il faisait disparaître une grande part des offres pertinentes. Precision@10 et MRR@10 restent secondaires, respectivement pour contrôler la qualité moyenne de la liste et la position de la première offre pertinente \cite{thakur2021beir,muennighoff2022mteb}. Ces mesures sont interprétées comme des diagnostics internes tant qu'aucun jugement métier indépendant n'est disponible.
 
 Dans une architecture \RAG{}, l'évaluation ne s'arrête pas au classement des résultats. Elle doit aussi mesurer la qualité de la réponse générée à partir du contexte récupéré. RAGAS distingue notamment la fidélité au contexte, la pertinence de la réponse, la qualité de la récupération et l'usage des sources \cite{es2024ragas}. La \textbf{fidélité} vérifie si les affirmations de la réponse sont supportées par les éléments récupérés. La \textbf{pertinence de réponse} vérifie si la réponse traite effectivement la question posée. La \textbf{couverture des sources} vérifie si le contexte contient suffisamment d'informations pour répondre. Enfin, la \textbf{traçabilité} vérifie si les preuves ou citations sont identifiables.
 
