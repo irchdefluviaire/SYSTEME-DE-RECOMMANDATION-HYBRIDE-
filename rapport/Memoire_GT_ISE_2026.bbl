@@ -256,105 +256,6 @@
       \verb https://arxiv.org/abs/1409.0473
       \endverb
     \endentry
-    \entry{worldbank2026youthcameroon}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=f6c39ad1600ad3d1f419189803388200}{%
-           family={{Banque mondiale}},
-           familyi={B\bibinitperiod}}}%
-      }
-      \strng{namehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{fullhash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{fullhashraw}{f6c39ad1600ad3d1f419189803388200}
-      \strng{bibnamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorbibnamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authornamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorfullhash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorfullhashraw}{f6c39ad1600ad3d1f419189803388200}
-      \field{extraname}{1}
-      \field{sortinit}{B}
-      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{note}{Indicateur SL.UEM.1524.ZS, base des Indicateurs du développement dans le monde}
-      \field{title}{Chômage des jeunes de 15 à 24 ans au Cameroun, estimations modélisées de l'OIT}
-      \field{urlday}{22}
-      \field{urlmonth}{6}
-      \field{urlyear}{2026}
-      \field{year}{2026}
-      \field{urldateera}{ce}
-      \verb{urlraw}
-      \verb https://api.worldbank.org/v2/country/CMR/indicator/SL.UEM.1524.ZS?format=json
-      \endverb
-      \verb{url}
-      \verb https://api.worldbank.org/v2/country/CMR/indicator/SL.UEM.1524.ZS?format=json
-      \endverb
-    \endentry
-    \entry{worldbank2026vulnerablecameroon}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=f6c39ad1600ad3d1f419189803388200}{%
-           family={{Banque mondiale}},
-           familyi={B\bibinitperiod}}}%
-      }
-      \strng{namehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{fullhash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{fullhashraw}{f6c39ad1600ad3d1f419189803388200}
-      \strng{bibnamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorbibnamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authornamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorfullhash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorfullhashraw}{f6c39ad1600ad3d1f419189803388200}
-      \field{extraname}{2}
-      \field{sortinit}{B}
-      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{note}{Indicateur SL.EMP.VULN.ZS, base des Indicateurs du développement dans le monde}
-      \field{title}{Emploi vulnérable au Cameroun, estimations modélisées de l'OIT}
-      \field{urlday}{22}
-      \field{urlmonth}{6}
-      \field{urlyear}{2026}
-      \field{year}{2026}
-      \field{urldateera}{ce}
-      \verb{urlraw}
-      \verb https://api.worldbank.org/v2/country/CMR/indicator/SL.EMP.VULN.ZS?format=json
-      \endverb
-      \verb{url}
-      \verb https://api.worldbank.org/v2/country/CMR/indicator/SL.EMP.VULN.ZS?format=json
-      \endverb
-    \endentry
-    \entry{worldbank2026neetcameroon}{online}{}{}
-      \name{author}{1}{}{%
-        {{hash=f6c39ad1600ad3d1f419189803388200}{%
-           family={{Banque mondiale}},
-           familyi={B\bibinitperiod}}}%
-      }
-      \strng{namehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{fullhash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{fullhashraw}{f6c39ad1600ad3d1f419189803388200}
-      \strng{bibnamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorbibnamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authornamehash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorfullhash}{f6c39ad1600ad3d1f419189803388200}
-      \strng{authorfullhashraw}{f6c39ad1600ad3d1f419189803388200}
-      \field{extraname}{3}
-      \field{sortinit}{B}
-      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{note}{Indicateur SL.UEM.NEET.ZS, base des Indicateurs du développement dans le monde}
-      \field{title}{Part des jeunes sans emploi et ne suivant ni études ni formation au Cameroun}
-      \field{urlday}{22}
-      \field{urlmonth}{6}
-      \field{urlyear}{2026}
-      \field{year}{2026}
-      \field{urldateera}{ce}
-      \verb{urlraw}
-      \verb https://api.worldbank.org/v2/country/CMR/indicator/SL.UEM.NEET.ZS?format=json
-      \endverb
-      \verb{url}
-      \verb https://api.worldbank.org/v2/country/CMR/indicator/SL.UEM.NEET.ZS?format=json
-      \endverb
-    \endentry
     \entry{becker1964human}{book}{}{}
       \name{author}{1}{}{%
         {{hash=72e0824c9fba8f7f957b80cb8dbe85d2}{%
@@ -588,6 +489,37 @@
       \verb https://aclanthology.org/2024.eacl-demo.16/
       \endverb
     \endentry
+    \entry{fnepresentation}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=c46807861c534cc5380a9584c83eaa8c}{%
+           family={{Fonds National de l'Emploi}},
+           familyi={F\bibinitperiod}}}%
+      }
+      \strng{namehash}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{fullhash}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{fullhashraw}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{bibnamehash}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{authorbibnamehash}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{authornamehash}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{authorfullhash}{c46807861c534cc5380a9584c83eaa8c}
+      \strng{authorfullhashraw}{c46807861c534cc5380a9584c83eaa8c}
+      \field{sortinit}{F}
+      \field{sortinithash}{2638baaa20439f1b5a8f80c6c08a13b4}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{note}{Page institutionnelle, date de publication non indiquée}
+      \field{title}{Le Fonds National de l'Emploi : présentation et missions}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://emploi.fnecm.org/fne
+      \endverb
+      \verb{url}
+      \verb https://emploi.fnecm.org/fne
+      \endverb
+    \endentry
     \entry{gao2023ragllm}{misc}{}{}
       \name{author}{10}{}{%
         {{hash=572def57560315de76cedfc3e17c2eb2}{%
@@ -665,6 +597,69 @@
       \endverb
       \verb{url}
       \verb https://arxiv.org/abs/2312.10997
+      \endverb
+    \endentry
+    \entry{goyal2023jobxmlc}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{hash=55ecc559e7c4d7081ab63a1cd52eaa58}{%
+           family={Goyal},
+           familyi={G\bibinitperiod},
+           given={Nidhi},
+           giveni={N\bibinitperiod}}}%
+        {{hash=3516b72086312d67166be851b0d2b73a}{%
+           family={Kalra},
+           familyi={K\bibinitperiod},
+           given={Jushaan},
+           giveni={J\bibinitperiod}}}%
+        {{hash=ccbd29bd91b856f83653cd8f5f7cbfbf}{%
+           family={Sharma},
+           familyi={S\bibinitperiod},
+           given={Charu},
+           giveni={C\bibinitperiod}}}%
+        {{hash=b541de33bbcf47fbf594639c56db63f9}{%
+           family={Mutharaju},
+           familyi={M\bibinitperiod},
+           given={Raghava},
+           giveni={R\bibinitperiod}}}%
+        {{hash=3c2460de7f41f2f139da445f46464dc7}{%
+           family={Sachdeva},
+           familyi={S\bibinitperiod},
+           given={Niharika},
+           giveni={N\bibinitperiod}}}%
+        {{hash=f03e6d53b7822da60db6d200acb0220e}{%
+           family={Kumaraguru},
+           familyi={K\bibinitperiod},
+           given={Ponnurangam},
+           giveni={P\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Association for Computational Linguistics}%
+      }
+      \strng{namehash}{77b06038763d9fef259ac7512c723ef1}
+      \strng{fullhash}{91f218ecb258002aaa7e023360ffd071}
+      \strng{fullhashraw}{91f218ecb258002aaa7e023360ffd071}
+      \strng{bibnamehash}{77b06038763d9fef259ac7512c723ef1}
+      \strng{authorbibnamehash}{77b06038763d9fef259ac7512c723ef1}
+      \strng{authornamehash}{77b06038763d9fef259ac7512c723ef1}
+      \strng{authorfullhash}{91f218ecb258002aaa7e023360ffd071}
+      \strng{authorfullhashraw}{91f218ecb258002aaa7e023360ffd071}
+      \field{sortinit}{G}
+      \field{sortinithash}{32d67eca0634bf53703493fb1090a2e8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{Findings of the Association for Computational Linguistics: EACL 2023}
+      \field{title}{JobXMLC: EXtreme Multi-Label Classification of Job Skills with Graph Neural Networks}
+      \field{year}{2023}
+      \field{pages}{2181\bibrangedash 2191}
+      \range{pages}{11}
+      \verb{doi}
+      \verb 10.18653/v1/2023.findings-eacl.163
+      \endverb
+      \verb{urlraw}
+      \verb https://aclanthology.org/2023.findings-eacl.163/
+      \endverb
+      \verb{url}
+      \verb https://aclanthology.org/2023.findings-eacl.163/
       \endverb
     \endentry
     \entry{hamilton2020graph}{book}{}{}
@@ -878,6 +873,43 @@
       \range{pages}{37}
       \verb{doi}
       \verb 10.1145/3447772
+      \endverb
+    \endentry
+    \entry{ins2023eesi3emploi}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=e9c534848aa92807274b5a87a4207c94}{%
+           family={{Institut National de la Statistique du Cameroun}},
+           familyi={I\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Institut National de la Statistique du Cameroun}%
+      }
+      \list{location}{1}{%
+        {Yaoundé, Cameroun}%
+      }
+      \strng{namehash}{e9c534848aa92807274b5a87a4207c94}
+      \strng{fullhash}{e9c534848aa92807274b5a87a4207c94}
+      \strng{fullhashraw}{e9c534848aa92807274b5a87a4207c94}
+      \strng{bibnamehash}{e9c534848aa92807274b5a87a4207c94}
+      \strng{authorbibnamehash}{e9c534848aa92807274b5a87a4207c94}
+      \strng{authornamehash}{e9c534848aa92807274b5a87a4207c94}
+      \strng{authorfullhash}{e9c534848aa92807274b5a87a4207c94}
+      \strng{authorfullhashraw}{e9c534848aa92807274b5a87a4207c94}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Troisième Enquête sur l'Emploi et le Secteur Informel (EESI3), phase 1 : Enquête sur l'emploi, rapport principal}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://ins-cameroun.cm/statistique/eesi3-phase-1-enquete-sur-lemploi-rapport-principal/
+      \endverb
+      \verb{url}
+      \verb https://ins-cameroun.cm/statistique/eesi3-phase-1-enquete-sur-lemploi-rapport-principal/
       \endverb
     \endentry
     \entry{johnson2019faiss}{article}{}{}
@@ -1330,6 +1362,41 @@
       \verb https://aclanthology.org/2023.eacl-main.148/
       \endverb
     \endentry
+    \entry{ilo2023pptdcameroun}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=a5f55917d11d8173f417a71e34ab1ed3}{%
+           family={{Organisation Internationale du Travail}},
+           familyi={O\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Organisation Internationale du Travail}%
+      }
+      \strng{namehash}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{fullhash}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{fullhashraw}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{bibnamehash}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{authorbibnamehash}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{authornamehash}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{authorfullhash}{a5f55917d11d8173f417a71e34ab1ed3}
+      \strng{authorfullhashraw}{a5f55917d11d8173f417a71e34ab1ed3}
+      \field{extraname}{1}
+      \field{sortinit}{O}
+      \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Programme Pays de Travail Décent Cameroun 2023--2026}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2023}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.ilo.org/sites/default/files/2024-07/PPTD%20-%20Cameroun%202023-2026.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.ilo.org/sites/default/files/2024-07/PPTD%20-%20Cameroun%202023-2026.pdf
+      \endverb
+    \endentry
     \entry{ilo2024jobsgap}{report}{}{}
       \name{author}{1}{}{%
         {{hash=a5f55917d11d8173f417a71e34ab1ed3}{%
@@ -1347,6 +1414,7 @@
       \strng{authornamehash}{a5f55917d11d8173f417a71e34ab1ed3}
       \strng{authorfullhash}{a5f55917d11d8173f417a71e34ab1ed3}
       \strng{authorfullhashraw}{a5f55917d11d8173f417a71e34ab1ed3}
+      \field{extraname}{2}
       \field{sortinit}{O}
       \field{sortinithash}{2cd7140a07aea5341f9e2771efe90aae}
       \field{labelnamesource}{author}
@@ -1355,7 +1423,20 @@
       \field{number}{13}
       \field{series}{Spotlight on Work Statistics}
       \field{title}{The Jobs Gap: Measuring Labour Underutilisation Beyond Unemployment}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
       \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{doi}
+      \verb 10.54394/JWPM3037
+      \endverb
+      \verb{urlraw}
+      \verb https://www.ilo.org/publications/jobs-gap-measuring-labour-underutilisation-beyond-unemployment-0
+      \endverb
+      \verb{url}
+      \verb https://www.ilo.org/publications/jobs-gap-measuring-labour-underutilisation-beyond-unemployment-0
+      \endverb
     \endentry
     \entry{ouyang2022training}{article}{}{}
       \true{moreauthor}
@@ -1643,6 +1724,41 @@
       \verb https://aclanthology.org/D19-1410/
       \endverb
     \endentry
+    \entry{rasipefin2024}{report}{}{}
+      \name{author}{1}{}{%
+        {{hash=e5692489f3a1e4b88e2627d51ed353ed}{%
+           family={{République du Cameroun}},
+           familyi={R\bibinitperiod}}}%
+      }
+      \list{institution}{1}{%
+        {Ministère des Finances}%
+      }
+      \strng{namehash}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{fullhash}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{fullhashraw}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{bibnamehash}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{authorbibnamehash}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{authornamehash}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{authorfullhash}{e5692489f3a1e4b88e2627d51ed353ed}
+      \strng{authorfullhashraw}{e5692489f3a1e4b88e2627d51ed353ed}
+      \field{sortinit}{R}
+      \field{sortinithash}{5e1c39a9d46ffb6bebd8f801023a9486}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{11}
+      \field{title}{Rapport sur la situation et les perspectives économiques, sociales et financières de la Nation : exercice 2024}
+      \field{urlday}{5}
+      \field{urlmonth}{8}
+      \field{urlyear}{2026}
+      \field{year}{2024}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://rfp.cm/wp-content/uploads/2024/12/rapports_fr.pdf
+      \endverb
+      \verb{url}
+      \verb https://rfp.cm/wp-content/uploads/2024/12/rapports_fr.pdf
+      \endverb
+    \endentry
     \entry{ricci2011recommender}{book}{}{}
       \name{editor}{4}{}{%
         {{hash=5abb1d77d80f46918651a5bbc5ee8371}{%
@@ -1685,6 +1801,73 @@
       \field{year}{2011}
       \verb{doi}
       \verb 10.1007/978-0-387-85820-3
+      \endverb
+    \endentry
+    \entry{schlichtkrull2018rgcn}{inproceedings}{}{}
+      \name{author}{6}{}{%
+        {{hash=6ec7927039c725d24cf5ca7d10c58159}{%
+           family={Schlichtkrull},
+           familyi={S\bibinitperiod},
+           given={Michael\bibnamedelima Sejr},
+           giveni={M\bibinitperiod\bibinitdelim S\bibinitperiod}}}%
+        {{hash=26d8bcbda6afaf96334bf47c8fb88a75}{%
+           family={Kipf},
+           familyi={K\bibinitperiod},
+           given={Thomas\bibnamedelima N.},
+           giveni={T\bibinitperiod\bibinitdelim N\bibinitperiod}}}%
+        {{hash=ce81cf506005b442900420d22686bf9c}{%
+           family={Bloem},
+           familyi={B\bibinitperiod},
+           given={Peter},
+           giveni={P\bibinitperiod}}}%
+        {{hash=2e539e2ef093fd4fb83f6961292d598a}{%
+           family={Berg},
+           familyi={B\bibinitperiod},
+           given={Rianne},
+           giveni={R\bibinitperiod},
+           prefix={van\bibnamedelima den},
+           prefixi={v\bibinitperiod\bibinitdelim d\bibinitperiod}}}%
+        {{hash=38c1cf91413109beb40bd024b86e0969}{%
+           family={Titov},
+           familyi={T\bibinitperiod},
+           given={Ivan},
+           giveni={I\bibinitperiod}}}%
+        {{hash=53d2880ad8047b61cdae2c6b2803e763}{%
+           family={Welling},
+           familyi={W\bibinitperiod},
+           given={Max},
+           giveni={M\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{2fc1e7566d54f9c490e75968f822c9cc}
+      \strng{fullhash}{c112779a40d932e3f257773d03bfd3ed}
+      \strng{fullhashraw}{c112779a40d932e3f257773d03bfd3ed}
+      \strng{bibnamehash}{2fc1e7566d54f9c490e75968f822c9cc}
+      \strng{authorbibnamehash}{2fc1e7566d54f9c490e75968f822c9cc}
+      \strng{authornamehash}{2fc1e7566d54f9c490e75968f822c9cc}
+      \strng{authorfullhash}{c112779a40d932e3f257773d03bfd3ed}
+      \strng{authorfullhashraw}{c112779a40d932e3f257773d03bfd3ed}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{booktitle}{The Semantic Web -- 15th International Conference, ESWC 2018}
+      \field{series}{Lecture Notes in Computer Science}
+      \field{title}{Modeling Relational Data with Graph Convolutional Networks}
+      \field{volume}{10843}
+      \field{year}{2018}
+      \field{pages}{593\bibrangedash 607}
+      \range{pages}{15}
+      \verb{doi}
+      \verb 10.1007/978-3-319-93417-4_38
+      \endverb
+      \verb{urlraw}
+      \verb https://doi.org/10.1007/978-3-319-93417-4_38
+      \endverb
+      \verb{url}
+      \verb https://doi.org/10.1007/978-3-319-93417-4_38
       \endverb
     \endentry
     \entry{spence1973job}{article}{}{}

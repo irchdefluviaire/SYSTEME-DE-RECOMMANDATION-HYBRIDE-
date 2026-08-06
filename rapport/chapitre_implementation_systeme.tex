@@ -27,9 +27,8 @@ Le matching exploite la description, les compétences, la localisation, le secte
 
 \subsubsection{Localisation exploitable pour filtrer sans exclure}
 La localisation est utilisée comme filtre souple : 79,88\,\% des offres sont rattachées au Cameroun et 20,12\,\% à l'international. Une ville absente n'est pas imputée ; le pays disponible est conservé. Le diagnostic détaillé figure en annexe (figure~\ref{fig:implementation_localisation}).
-
 \subsubsection{Compétences et descriptions : signal utile mais hétérogène}
-
+Les libellés fréquents mélangent compétences observables et domaines d'activité ; ils sont utilisés comme indices de rapprochement, non comme preuve de maîtrise. Louma-Jobs ne fournit une description que pour 4,90\,\% de ses offres. Pour éviter qu'une description absente produise un vecteur pauvre, le texte encodé combine titre, compétences, secteur, localisation et autres métadonnées disponibles.
 \begin{figure}[H]
   \centering
   \caption{Compétences fréquentes et disponibilité descriptive}
@@ -37,8 +36,6 @@ La localisation est utilisée comme filtre souple : 79,88\,\% des offres sont ra
   \includegraphics[width=0.90\textwidth]{figures/generated/implementation_deep_current/03_competences_descriptions.png}
   \source{Nos travaux, traitements Python de nettoyage et de diagnostic.}
 \end{figure}
-
-Les libellés fréquents mélangent compétences observables et domaines d'activité ; ils sont utilisés comme indices de rapprochement, non comme preuve de maîtrise. Louma-Jobs ne fournit une description que pour 4,90\,\% de ses offres. Pour éviter qu'une description absente produise un vecteur pauvre, le texte encodé combine titre, compétences, secteur, localisation et autres métadonnées disponibles.
 
 \subsection{Nettoyage réalisé et limites conservées}
 
@@ -81,7 +78,7 @@ Son fine-tuning adapte cet espace généraliste aux intitulés, secteurs, niveau
 \subsection{Fine-tuning : contraintes de calcul et preuve de gain}
 
 \subsubsection{Paramétrage contraint et dynamique d'apprentissage}
-
+Ces choix répondent aux ressources disponibles. L'entraînement a duré 15\,160 secondes sur CPU. Cinq époques ne signifient pas que la cinquième est la meilleure : elles constituent une borne d'observation, tandis que le checkpoint retenu est celui qui obtient la meilleure validation autour de l'époque~4.
 \begin{table}[H]
   \centering
   \caption{Hyperparamètres du fine-tuning SentenceTransformer}
@@ -103,15 +100,12 @@ Son fine-tuning adapte cet espace généraliste aux intitulés, secteurs, niveau
   \tableStyleEnd
   \source{Nos travaux}
 \end{table}
-
-Ces choix répondent aux ressources disponibles. L'entraînement a duré 15\,160 secondes sur CPU. Cinq époques ne signifient pas que la cinquième est la meilleure : elles constituent une borne d'observation, tandis que le checkpoint retenu est celui qui obtient la meilleure validation autour de l'époque~4.
-
 La perte d'entraînement diminue de 2,445 à 0,132, tandis que la perte de test reste plus élevée (0,433) que celle d'entraînement (0,171). Cet écart signale une généralisation moins bonne sur les paires non vues, sans divergence du modèle. Le panneau des métriques montre un NDCG@10 maximal à l'époque~4, puis un léger recul ; le panneau du learning rate confirme une montée puis une décroissance contrôlée du pas d'apprentissage. Prolonger l'entraînement n'était donc pas justifié.
 \begin{figure}[H]
   \centering
   \caption{perte, généralisation, métriques de validation et calendrier du learning rate}
   \label{fig:implementation_finetuning_courbes}
-  \includegraphics[width=0.92\textwidth]{figures/generated/implementation_deep_current/04_finetuning_courbes.png}
+  \includegraphics[width=0.82\textwidth]{figures/generated/implementation_deep_current/04_finetuning_courbes.png}
   \source{Nos travaux, traitements Python et SentenceTransformer.}
 \end{figure}
 \subsubsection{Preuve de gain sur le ranking sémantique}
@@ -134,7 +128,7 @@ La projection porte sur 1\,810 embeddings : 350 offres, 350 candidats, 350 méti
   \includegraphics[width=0.94\textwidth]{figures/generated/implementation_deep_current/07_espace_vectoriel_embeddings.png}
   \source{Nos travaux, traitements Python et SentenceTransformer}
 \end{figure}
-Les offres sont toutefois plus dispersées et forment plusieurs prolongements autour du noyau. Leurs textes combinent davantage d'informations -- intitulé, missions, contraintes, secteur et localisation -- ce qui produit des représentations plus variées que les libellés généralement courts des métiers ou des compétences. Les petits groupes éloignés peuvent correspondre à des domaines spécialisés, à des formulations rares ou à des descriptions peu renseignées. Ils doivent être contrôlés, mais leur éloignement ne prouve pas à lui seul une erreur d'encodage.
+Les offres sont toutefois plus dispersées et forment plusieurs prolongements autour du noyau. Leurs textes combinent davantage d'informations intitulé, missions, contraintes, secteur et localisation -- ce qui produit des représentations plus variées que les libellés généralement courts des métiers ou des compétences. Les petits groupes éloignés peuvent correspondre à des domaines spécialisés, à des formulations rares ou à des descriptions peu renseignées. Ils doivent être contrôlés, mais leur éloignement ne prouve pas à lui seul une erreur d'encodage.
 
 La figure montre donc que l'espace permet des voisinages entre objets de nature différente, condition nécessaire au retrieval emploi--compétences. Elle ne démontre cependant pas que chaque voisin est une bonne recommandation. UMAP réduit les vecteurs de 384 dimensions à deux dimensions et privilégie les voisinages locaux ; les axes UMAP~1 et UMAP~2 n'ont pas de signification métier directe. La qualité finale est vérifiée par les métriques de classement, puis par les relations Neo4j utilisées pour confirmer ou corriger la proximité sémantique. Une projection t-SNE pourrait compléter ce diagnostic : elle met souvent davantage en évidence les groupes locaux, mais dépend fortement de la perplexité, du taux d'apprentissage, du nombre d'itérations et de la graine aléatoire. UMAP et t-SNE doivent donc être lus comme des visualisations exploratoires convergentes, jamais comme une mesure de performance ou une preuve de séparation métier.
 %\begin{figure}[H]
@@ -156,7 +150,7 @@ La table \texttt{embeddings} stocke les entités structurées ; \texttt{doc\_chu
   \centering
   \caption{Schéma physique de la base pgvector}
   \label{fig:implementation_schema_pgvector}
-  \includegraphics[width=0.90\textwidth]{pgvector.png}
+  \includegraphics[width=0.80\textwidth]{pgvector.png}
   \source{Nos travaux, diagnostics PostgreSQL--pgvector}
 \end{figure}
 L'instance contient 72\,643 embeddings d'entités et 142 embeddings documentaires, tous en 384 dimensions. Les identifiants communs permettent de replacer les résultats vectoriels dans le graphe afin de récupérer leurs relations métier. Cette continuité est un lien technique ; elle ne constitue pas, à elle seule, une preuve de qualité sémantique.
@@ -194,15 +188,15 @@ Les référentiels produisent 142 chunks : 43 pour les diplômes, 61 pour le MEP
   \item stocker le texte et ses métadonnées dans pgvector pour la recherche.
 \end{itemize}
 La stratégie de secours par fenêtres glissantes n'a pas été utilisée dans l'index courant.La figure~\ref{fig:implementation_chunking_pipeline} doit être lue comme un contrôle de qualité du contexte injecté dans le RAG. Le découpage ne part pas d'une fenêtre arbitraire, mais de la structure réelle des référentiels : niveaux, domaines, groupes de métiers, diplômes et sections. Cette stratégie limite deux risques. D'abord, elle évite de couper une règle au milieu d'une phrase ou d'une section. Ensuite, elle évite de mélanger dans un même fragment plusieurs règles qui ne répondent pas à la même question.
+
+Concrètement, un chunk correspond à une unité interprétable : une partie de nomenclature, un niveau de formation, un groupe métier ou une description réglementaire. Lorsqu'une question porte sur un métier, une compétence ou un niveau \NCF{}, pgvector peut donc récupérer un passage qui a encore un sens seul. C'est ce qui rend le contexte utilisable par l'agent : le LLM ne reçoit pas seulement du texte proche, mais un fragment rattaché à une source, une section et une position documentaire.
 \begin{figure}[H]
   \centering
   \caption{Pipeline de chunking structurel des référentiels documentaires}
   \label{fig:implementation_chunking_pipeline}
-  \includegraphics[width=0.90\textwidth]{chunking.png}
+  \includegraphics[width=0.80\textwidth]{chunking.png}
   \source{Nos travaux, schématisation du pipeline de chunking documentaire et d'indexation pgvector.}
 \end{figure}
-Concrètement, un chunk correspond à une unité interprétable : une partie de nomenclature, un niveau de formation, un groupe métier ou une description réglementaire. Lorsqu'une question porte sur un métier, une compétence ou un niveau \NCF{}, pgvector peut donc récupérer un passage qui a encore un sens seul. C'est ce qui rend le contexte utilisable par l'agent : le LLM ne reçoit pas seulement du texte proche, mais un fragment rattaché à une source, une section et une position documentaire.
-
 La figure~\ref{fig:implementation_chunking_diagnostics} complète cette lecture par trois diagnostics. Premièrement, la taille médiane de 116 tokens indique que les fragments sont assez courts pour être retrouvés et cités sans saturer le contexte. Deuxièmement, la présence de quelques chunks supérieurs à 400 tokens montre que certaines sections des référentiels restent denses ; ces fragments sont acceptables pour préserver le sens, mais ils doivent être surveillés car ils peuvent contenir plusieurs informations. Troisièmement, la couverture moyenne de 42,9\,\% renseigne la part du texte utile conservée après nettoyage et structuration ; elle ne doit pas être interprétée comme une mesure directe de qualité, mais comme un indicateur de densité documentaire.
 
 La comparaison par source montre aussi que les référentiels n'ont pas la même régularité. La NCF présente une cohérence moyenne plus élevée (0,336) que les diplômes (0,268), ce qui signifie que ses sections sont plus homogènes après découpage. Les diplômes demandent donc davantage de vigilance : leurs libellés peuvent être courts, hétérogènes ou très administratifs. Pour le système, cela implique que le retrieval documentaire est plus fiable lorsqu'il interroge des sections bien structurées, et plus fragile lorsqu'il dépend de fragments courts ou descriptivement pauvres. Les mesures complètes figurent en annexe.

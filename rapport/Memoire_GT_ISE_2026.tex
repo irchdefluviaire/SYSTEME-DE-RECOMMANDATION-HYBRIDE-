@@ -647,6 +647,7 @@ Outre la formation continue, l'ISSEA dispose de cinq principales filières : les
 Afin de permettre aux étudiants de mettre en pratique les connaissances théoriques et académiques acquises au cours de leur formation, l'ISSEA intègre des stages académiques et professionnels dans ses cursus. Dans la filière ISE cycle long, un premier stage est effectué en deuxième année pour une durée minimale de deux mois au sein d'une structure publique, parapublique ou privée. Le second stage, réalisé en cinquième année, marque la fin de la formation. D'une durée comprise entre trois et six mois, il donne lieu à la rédaction d'un mémoire professionnel en vue de l'obtention du diplôme d'Ingénieur Statisticien Économiste.
 
 Le présent mémoire a ainsi été élaboré à l'issue d'un stage professionnel effectué à la Direction de la Recherche et Développement de KmerAI, du 10 mars au 30 juin 2026. Les travaux réalisés dans ce cadre portent sur le thème suivant :\textbf{CONCEPTION D'UN PIPELINE HYBRIDE DE RECHERCHE SÉMANTIQUE POUR LES RECOMMANDATIONS D'EMPLOI-COMPÉTENCES, FONDÉ SUR LES LLMs ET LES GRAPHES DE CONNAISSANCES}
+\end{spacing}
 
 \chapter*{RÉSUMÉ}
 \markboth{Résumé}{Résumé}
@@ -689,6 +690,14 @@ Digital employment services must match job offers, candidate profiles and skills
 %\vspace{-1.4cm}
 \section*{Contexte et justification}
 \markright{Contexte et justification}
+Au Cameroun, la difficulté d'insertion professionnelle ne peut pas être appréciée à partir du seul taux de chômage. Les données de la troisième Enquête sur l'Emploi et le Secteur Informel (EESI3), réalisée en 2021 par l'Institut National de la Statistique, montrent qu'environ une personne de 14 ans ou plus sur deux occupe un emploi (taux d'emploi de 50,8\,\%). Ce repère ne renseigne toutefois ni sur la qualité ni sur la stabilité de cet emploi. Dans le même temps, le taux de chômage au sens du BIT est de 6,1\,\% : il décrit le chômage ouvert, sans couvrir les personnes sous-employées ou éloignées de la recherche active d'emploi \cite{ins2023eesi3emploi}.
+
+L'ampleur de la sous-utilisation de la main-d'œuvre complète donc ce premier diagnostic. L'indicateur SU2, qui combine chômage et sous-emploi lié au temps de travail, atteint 23,0\,\%, tandis que le SU4 atteint 26,3\,\% en y ajoutant la main-d'œuvre potentielle. Ces indicateurs sont complémentaires et ne doivent ni être additionnés ni être interprétés comme une même mesure. Pour les jeunes de 15 à 34 ans, la situation est plus défavorable : le chômage atteint 10,5\,\%, le SU2 27,3\,\% et le SU4 31,7\,\%. Cette lecture est cohérente avec la recommandation de l'Organisation Internationale du Travail (OIT) de compléter le chômage par des indicateurs plus larges, tels que le \emph{jobs gap}, afin de mieux rendre compte des personnes qui souhaitent travailler sans satisfaire toutes les conditions statistiques du chômage \cite{ilo2024jobsgap}.
+
+L'emploi informel représente par ailleurs 86,6\,\% de l'emploi total, réparti entre l'informel non agricole (52,0\,\%) et l'informel agricole (34,7\,\%), contre 5,1\,\% pour le secteur privé formel \cite{ins2023eesi3emploi}. Dans un marché où l'informalité est prépondérante, l'enjeu n'est donc pas seulement de diffuser davantage d'offres, mais aussi de rendre les compétences, les exigences des postes et les parcours de formation comparables.
+
+Le Fonds National de l'Emploi (FNE), service public de l'emploi du Cameroun, intervient précisément dans cette fonction d'intermédiation : information sur le marché du travail, orientation, insertion des demandeurs d'emploi et appui à l'auto-emploi \cite{fnepresentation}. En 2023, le bilan gouvernemental rapporte 53\,375 prospections d'emploi auprès des entreprises ayant conduit à 21\,719 insertions, dont 21\,503 en emploi salarié et 216 en emploi indépendant \cite{rasipefin2024}. Ces résultats constituent des flux administratifs d'insertion ; ils ne mesurent ni des créations nettes d'emplois à l'échelle nationale ni la durée des placements. Le Programme Pays de Travail Décent Cameroun 2023--2026 de l'OIT prévoit d'ailleurs le renforcement des capacités du FNE et des dispositifs d'observation à produire et diffuser l'information sur le marché du travail \cite{ilo2023pptdcameroun}.
+
 Les plateformes d'emploi doivent rapprocher des offres, des profils et des référentiels de compétences qui ne mobilisent ni les mêmes vocabulaires ni le même niveau de détail. Les intitulés de poste sont fréquemment ambigus, les compétences sont parfois implicites ou exprimées par des synonymes, et les descriptions incomplètes limitent la pertinence de filtres exacts. Il en résulte un double risque : écarter des profils réellement compatibles et produire des recommandations dont le raisonnement reste opaque. Les modèles d'appariement montrent que ces frictions informationnelles compliquent la rencontre entre candidats et emplois \cite{mortensen1994job,pissarides2000equilibrium}.
 
 La recherche sémantique réduit une partie de cette variabilité en rapprochant des formulations de sens voisin ; elle ne permet toutefois pas, à elle seule, de vérifier qu'un candidat détient les compétences indispensables, le niveau requis ou une trajectoire de formation cohérente. À l'inverse, un graphe de connaissances rend ces relations explicites, mais ne constitue pas seul un mécanisme de rappel efficace dans des collections textuelles volumineuses. La justification de l'étude réside donc dans leur complémentarité : la recherche hybride permet de constituer un vivier sémantiquement pertinent, puis de contrôler, classer et expliquer ce vivier au moyen des relations candidat--compétence--offre--formation.
@@ -705,7 +714,7 @@ La question centrale est la suivante :
 \begin{center}
 \begin{tcolorbox}[problematiquebox,width=0.94\textwidth]
 \centering
-\textit{\textbf{Comment proposer et opérationnaliser un pipeline de recommandation emploi--compétences par recherche hybride, combinant rappel sémantique, vérification par graphe de connaissances et génération contrôlée par \LLM{}, afin de produire des classements traçables et des explications fondées sur des preuves ?}}
+\textit{\textbf{Comment proposer et opérationnaliser un pipeline de recommandation emploi--compétences par recherche hybride, combinant rappel sémantique, vérification par graphe de connaissances et génération contrôlée par un \LLM{} ?}}
 \end{tcolorbox}
 \end{center}
 
@@ -1256,9 +1265,6 @@ Dans le pipeline proposé, les éléments récupérés sont réunis dans un cont
 \subsection{Sources de données et leur rôle dans le système}
 
 Les données se répartissent en deux groupes. Les données opérationnelles décrivent les offres et les candidats. Les référentiels \ESCO{}, \MEPC{} et \NCF{} apportent les nomenclatures nécessaires pour interpréter les métiers, compétences et niveaux de formation.
-
-Les offres décrivent les postes disponibles : titre, employeur, secteur, localisation, expérience, niveau attendu, compétences et description. Les profils candidats décrivent le diplôme, le niveau, l'expérience, les compétences, la mobilité et l'objectif professionnel. Ces informations sont utiles mais bruitées ; elles doivent donc être normalisées avant l'encodage et la construction du graphe.
-
 \begin{table}[H]
   \centering
   \caption{Sources de données mobilisées et utilisation méthodologique}
@@ -1268,7 +1274,7 @@ Les offres décrivent les postes disponibles : titre, employeur, secteur, locali
     \rowcolor{darkblue}
     \tabheader{Données mobilisée} & \tabheader{Nature} & \tabheader{Utilisation dans la méthode} \\
     \midrule
-    Offres d'emploi & Données opérationnelles collectées par KmerAI et FNE & Normalisation, extraction de compétences, génération de \filevar{text\_to\_embed}, indexation vectorielle, création des noeuds d'offres et calcul des scores de matching. \\
+    Offres d'emploi & Données opérationnelles collectées dans le corpus du projet à partir de plateformes d'emploi, dont la plateforme du FNE & Normalisation, extraction de compétences, génération de \filevar{text\_to\_embed}, indexation vectorielle, création des noeuds d'offres et calcul des scores de matching. \\
     Profils candidats & Base locale de demandeurs & Normalisation du niveau, du diplôme, de la mobilité et du métier visé ; création des embeddings candidats ; analyse de compatibilité avec les offres. \\
     \ESCO{} & Référentiel métiers-compétences & Source de métiers, compétences, groupes ISCO et relations métier-compétence, utilisée pour structurer le graphe et enrichir les correspondances. \\
     \MEPC{} & Nomenclature camerounaise des métiers & Ancrage national des métiers, structuration hiérarchique et alignement partiel avec les groupes internationaux. \\
@@ -1279,7 +1285,7 @@ Les offres décrivent les postes disponibles : titre, employeur, secteur, locali
   \tableStyleEnd
   \source{Nos travaux}
 \end{table}
-
+Les offres décrivent les postes disponibles : titre, employeur, secteur, localisation, expérience, niveau attendu, compétences et description. Les profils candidats décrivent le diplôme, le niveau, l'expérience, les compétences, la mobilité et l'objectif professionnel. Ces informations sont utiles mais bruitées ; elles doivent donc être normalisées avant l'encodage et la construction du graphe.
 \subsection{Préparation et normalisation des données}
 
 La normalisation prépare les données pour deux usages : l'encodage vectoriel et la création des relations Neo4j. Elle réduit les doublons, harmonise les champs textuels, sépare les valeurs multiples et transforme les compétences en listes exploitables.
@@ -1811,8 +1817,8 @@ La figure compare deux lectures. Le panneau multi-objectifs montre que les poids
 \centering
 \caption{Comparaison des pondérations retenues selon la fonction objectif}
 \label{fig:eval_hybrid_weights_best}
-\includegraphics[width=0.92\textwidth]{figures/generated/evaluation/hybrid_weights_multi_objective_comparison.png}\par\vspace{0.45cm}
-\includegraphics[width=0.92\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison_ndcg.png}
+\includegraphics[width=0.10\textwidth]{figures/generated/evaluation/hybrid_weights_multi_objective_comparison.png}
+\includegraphics[width=0.10\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison_ndcg.png}
 \source{Nos travaux, optimisation Optuna des poids du score hybride.}
 \end{figure}
 La conclusion opérationnelle est la suivante : pgvector doit être conservé pour le rappel initial, tandis que Neo4j doit peser fortement dans le classement final lorsque les relations \filevar{POSSEDE} et \filevar{REQUIERT} sont disponibles. La calibration reste cependant dépendante du proxy de pertinence ; une validation humaine est nécessaire avant d'en faire des poids définitifs.
