@@ -1518,40 +1518,6 @@
       \verb https://proceedings.neurips.cc/paper_files/paper/2022/hash/b1efde53be364a73914f58805a001731-Abstract-Conference.html
       \endverb
     \endentry
-    \entry{pazzani2007content}{article}{}{}
-      \name{author}{2}{}{%
-        {{hash=322c0d05bf49c6888d62bf2d57ec465e}{%
-           family={Pazzani},
-           familyi={P\bibinitperiod},
-           given={Michael\bibnamedelima J.},
-           giveni={M\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
-        {{hash=8e2715b58f26d42675ca26b0290bf7be}{%
-           family={Billsus},
-           familyi={B\bibinitperiod},
-           given={Daniel},
-           giveni={D\bibinitperiod}}}%
-      }
-      \strng{namehash}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{fullhash}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{fullhashraw}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{bibnamehash}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{authorbibnamehash}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{authornamehash}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{authorfullhash}{857efa9bc3bdfc791e155690ca08c342}
-      \strng{authorfullhashraw}{857efa9bc3bdfc791e155690ca08c342}
-      \field{sortinit}{P}
-      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
-      \field{labelnamesource}{author}
-      \field{labeltitlesource}{title}
-      \field{journaltitle}{The Adaptive Web}
-      \field{title}{Content-Based Recommendation Systems}
-      \field{year}{2007}
-      \field{pages}{325\bibrangedash 341}
-      \range{pages}{17}
-      \verb{doi}
-      \verb 10.1007/978-3-540-72079-9_10
-      \endverb
-    \endentry
     \entry{pgvector2024}{online}{}{}
       \name{author}{1}{}{%
         {{hash=4402409d12f9a786ef5a2894e6b6d99b}{%

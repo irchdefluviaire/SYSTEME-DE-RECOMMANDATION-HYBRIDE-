@@ -1817,8 +1817,14 @@ La figure compare deux lectures. Le panneau multi-objectifs montre que les poids
 \centering
 \caption{Comparaison des pondérations retenues selon la fonction objectif}
 \label{fig:eval_hybrid_weights_best}
-\includegraphics[width=0.10\textwidth]{figures/generated/evaluation/hybrid_weights_multi_objective_comparison.png}
-\includegraphics[width=0.10\textwidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison_ndcg.png}
+\begin{minipage}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/generated/evaluation/hybrid_weights_multi_objective_comparison.png}
+\end{minipage}\hfill
+\begin{minipage}[t]{0.49\textwidth}
+  \centering
+  \includegraphics[width=\linewidth]{figures/generated/evaluation/hybrid_weights_ndcg_comparison_ndcg.png}
+\end{minipage}
 \source{Nos travaux, optimisation Optuna des poids du score hybride.}
 \end{figure}
 La conclusion opérationnelle est la suivante : pgvector doit être conservé pour le rappel initial, tandis que Neo4j doit peser fortement dans le classement final lorsque les relations \filevar{POSSEDE} et \filevar{REQUIERT} sont disponibles. La calibration reste cependant dépendante du proxy de pertinence ; une validation humaine est nécessaire avant d'en faire des poids définitifs.
