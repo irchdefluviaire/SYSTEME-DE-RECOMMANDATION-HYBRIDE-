@@ -1,0 +1,53 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: article_scientifique.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: unsrtnat.bst
+Reallocating 'name_of_file' (item size: 1) to 11 items.
+Database file #1: references.bib
+Warning--entry type for "minfop2013ncm" isn't style-file defined
+--line 101 of file references.bib
+Warning--entry type for "europeancommission2024esco" isn't style-file defined
+--line 319 of file references.bib
+You've used 22 entries,
+            2481 wiz_defined-function locations,
+            697 strings with 9292 characters,
+and the built_in function-call counts, 10389 in all, are:
+= -- 882
+> -- 569
+< -- 20
++ -- 216
+- -- 172
+* -- 798
+:= -- 1602
+add.period$ -- 85
+call.type$ -- 22
+change.case$ -- 43
+chr.to.int$ -- 22
+cite$ -- 22
+duplicate$ -- 517
+empty$ -- 911
+format.name$ -- 200
+if$ -- 2259
+int.to.chr$ -- 1
+int.to.str$ -- 23
+missing$ -- 20
+newline$ -- 135
+num.names$ -- 67
+pop$ -- 205
+preamble$ -- 1
+purify$ -- 22
+quote$ -- 0
+skip$ -- 355
+stack$ -- 0
+substring$ -- 514
+swap$ -- 140
+text.length$ -- 10
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 148
+warning$ -- 0
+while$ -- 82
+width$ -- 0
+write$ -- 326
+(There were 2 warnings)

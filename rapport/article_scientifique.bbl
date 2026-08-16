@@ -1,0 +1,172 @@
+\begin{thebibliography}{22}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Akerlof(1970)]{akerlof1970lemons}
+George~A. Akerlof.
+\newblock The market for "lemons": Quality uncertainty and the market
+  mechanism.
+\newblock \emph{The Quarterly Journal of Economics}, 84\penalty0 (3):\penalty0
+  488--500, 1970.
+\newblock \doi{10.2307/1879431}.
+
+\bibitem[Spence(1973)]{spence1973job}
+Michael Spence.
+\newblock Job market signaling.
+\newblock \emph{The Quarterly Journal of Economics}, 87\penalty0 (3):\penalty0
+  355--374, 1973.
+\newblock \doi{10.2307/1882010}.
+
+\bibitem[Mortensen and Pissarides(1994)]{mortensen1994job}
+Dale~T. Mortensen and Christopher~A. Pissarides.
+\newblock Job creation and job destruction in the theory of unemployment.
+\newblock \emph{The Review of Economic Studies}, 61\penalty0 (3):\penalty0
+  397--415, 1994.
+\newblock \doi{10.2307/2297896}.
+
+\bibitem[Pissarides(2000)]{pissarides2000equilibrium}
+Christopher~A. Pissarides.
+\newblock \emph{Equilibrium Unemployment Theory}.
+\newblock MIT Press, Cambridge, MA, 2 edition, 2000.
+
+\bibitem[Reimers and Gurevych(2019)]{reimers2019sbert}
+Nils Reimers and Iryna Gurevych.
+\newblock Sentence-bert: Sentence embeddings using siamese bert-networks.
+\newblock In \emph{Proceedings of EMNLP-IJCNLP}, pages 3982--3992, 2019.
+\newblock URL \url{https://aclanthology.org/D19-1410/}.
+
+\bibitem[Muennighoff(2022)]{muennighoff2022sgpt}
+Niklas Muennighoff.
+\newblock Sgpt: Gpt sentence embeddings for semantic search, 2022.
+
+\bibitem[Hogan et~al.(2021)Hogan, Blomqvist, Cochez, d'Amato, de~Melo,
+  Gutierrez, Kirrane, Gayo, Navigli, Neumaier, et~al.]{hogan2021knowledge}
+Aidan Hogan, Eva Blomqvist, Michael Cochez, Claudia d'Amato, Gerard de~Melo,
+  Claudio Gutierrez, Sabrina Kirrane, José Emilio~Labra Gayo, Roberto Navigli,
+  Sebastian Neumaier, et~al.
+\newblock Knowledge graphs.
+\newblock \emph{ACM Computing Surveys}, 54\penalty0 (4):\penalty0 1--37, 2021.
+\newblock \doi{10.1145/3447772}.
+
+\bibitem[Schlichtkrull et~al.(2018)Schlichtkrull, Kipf, Bloem, van~den Berg,
+  Titov, and Welling]{schlichtkrull2018rgcn}
+Michael~Sejr Schlichtkrull, Thomas~N. Kipf, Peter Bloem, Rianne van~den Berg,
+  Ivan Titov, and Max Welling.
+\newblock Modeling relational data with graph convolutional networks.
+\newblock In \emph{The Semantic Web -- 15th International Conference, ESWC
+  2018}, volume 10843 of \emph{Lecture Notes in Computer Science}, pages
+  593--607. Springer, 2018.
+\newblock \doi{10.1007/978-3-319-93417-4_38}.
+\newblock URL \url{https://doi.org/10.1007/978-3-319-93417-4_38}.
+
+\bibitem[Lewis et~al.(2020)Lewis, Perez, Piktus, Petroni, Karpukhin, Goyal,
+  Küttler, Lewis, Yih, Rocktäschel, et~al.]{lewis2020rag}
+Patrick Lewis, Ethan Perez, Aleksandra Piktus, Fabio Petroni, Vladimir
+  Karpukhin, Naman Goyal, Heinrich Küttler, Mike Lewis, Wen-tau Yih, Tim
+  Rocktäschel, et~al.
+\newblock Retrieval-augmented generation for knowledge-intensive nlp tasks.
+\newblock \emph{Advances in Neural Information Processing Systems},
+  33:\penalty0 9459--9474, 2020.
+\newblock URL
+  \url{https://proceedings.neurips.cc/paper/2020/hash/6b493230205f780e1bc26945df7481e5-Abstract.html}.
+
+\bibitem[Pazzani and Billsus(2007)]{pazzani2007content}
+Michael~J. Pazzani and Daniel Billsus.
+\newblock Content-based recommendation systems.
+\newblock \emph{The Adaptive Web}, pages 325--341, 2007.
+\newblock \doi{10.1007/978-3-540-72079-9_10}.
+
+\bibitem[Koren et~al.(2009)Koren, Bell, and Volinsky]{koren2009matrix}
+Yehuda Koren, Robert Bell, and Chris Volinsky.
+\newblock Matrix factorization techniques for recommender systems.
+\newblock \emph{Computer}, 42\penalty0 (8):\penalty0 30--37, 2009.
+\newblock \doi{10.1109/MC.2009.263}.
+
+\bibitem[Ricci et~al.(2011)Ricci, Rokach, Shapira, and
+  Kantor]{ricci2011recommender}
+Francesco Ricci, Lior Rokach, Bracha Shapira, and Paul~B. Kantor, editors.
+\newblock \emph{Recommender Systems Handbook}.
+\newblock Springer, 2011.
+\newblock \doi{10.1007/978-0-387-85820-3}.
+
+\bibitem[Burke(2002)]{burke2002hybrid}
+Robin Burke.
+\newblock Hybrid recommender systems: Survey and experiments.
+\newblock \emph{User Modeling and User-Adapted Interaction}, 12:\penalty0
+  331--370, 2002.
+\newblock \doi{10.1023/A:1021240730564}.
+
+\bibitem[Thakur et~al.(2021)Thakur, Reimers, R{\"u}ckl{\'e}, Srivastava, and
+  Gurevych]{thakur2021beir}
+Nandan Thakur, Nils Reimers, Andreas R{\"u}ckl{\'e}, Abhishek Srivastava, and
+  Iryna Gurevych.
+\newblock {BEIR}: A heterogeneous benchmark for zero-shot evaluation of
+  information retrieval models.
+\newblock In \emph{Advances in Neural Information Processing Systems},
+  volume~34, pages 28974--28989, 2021.
+\newblock URL \url{https://arxiv.org/abs/2104.08663}.
+
+\bibitem[Muennighoff et~al.(2023)Muennighoff, Tazi, Magne, and
+  Reimers]{muennighoff2022mteb}
+Niklas Muennighoff, Nouamane Tazi, Lo{\"i}c Magne, and Nils Reimers.
+\newblock {MTEB}: Massive text embedding benchmark.
+\newblock In \emph{Proceedings of the 17th Conference of the European Chapter
+  of the Association for Computational Linguistics}, pages 2014--2037, 2023.
+\newblock URL \url{https://aclanthology.org/2023.eacl-main.148/}.
+
+\bibitem[Goyal et~al.(2023)Goyal, Kalra, Sharma, Mutharaju, Sachdeva, and
+  Kumaraguru]{goyal2023jobxmlc}
+Nidhi Goyal, Jushaan Kalra, Charu Sharma, Raghava Mutharaju, Niharika Sachdeva,
+  and Ponnurangam Kumaraguru.
+\newblock Jobxmlc: Extreme multi-label classification of job skills with graph
+  neural networks.
+\newblock In \emph{Findings of the Association for Computational Linguistics:
+  EACL 2023}, pages 2181--2191. Association for Computational Linguistics,
+  2023.
+\newblock \doi{10.18653/v1/2023.findings-eacl.163}.
+\newblock URL \url{https://aclanthology.org/2023.findings-eacl.163/}.
+
+\bibitem[He et~al.(2020)He, Deng, Wang, Li, Zhang, and Wang]{he2020lightgcn}
+Xiangnan He, Kuan Deng, Xiang Wang, Yan Li, Yongdong Zhang, and Meng Wang.
+\newblock Lightgcn: Simplifying and powering graph convolution network for
+  recommendation.
+\newblock In \emph{Proceedings of SIGIR}, pages 639--648, 2020.
+
+\bibitem[Yao et~al.(2023)Yao, Zhao, Yu, Du, Shafran, Narasimhan, and
+  Cao]{yao2023react}
+Shunyu Yao, Jeffrey Zhao, Dian Yu, Nan Du, Izhak Shafran, Karthik Narasimhan,
+  and Yuan Cao.
+\newblock React: Synergizing reasoning and acting in language models.
+\newblock In \emph{International Conference on Learning Representations}, 2023.
+\newblock URL \url{https://openreview.net/forum?id=WE_vluYUL-X}.
+
+\bibitem[Asai et~al.(2024)Asai, Wu, Wang, Sil, and Hajishirzi]{asai2024selfrag}
+Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and Hannaneh Hajishirzi.
+\newblock Self-rag: Learning to retrieve, generate, and critique through
+  self-reflection.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+\newblock URL \url{https://openreview.net/forum?id=hSyW5go0v8}.
+
+\bibitem[{European Commission}(2024)]{europeancommission2024esco}
+{European Commission}.
+\newblock Esco: European skills, competences, qualifications and occupations,
+  2024.
+\newblock URL \url{https://esco.ec.europa.eu/}.
+
+\bibitem[{Ministère de l'Emploi et de la Formation
+  Professionnelle}(2013)]{minfop2013ncm}
+{Ministère de l'Emploi et de la Formation Professionnelle}.
+\newblock Nomenclature camerounaise des métiers, 2013.
+
+\bibitem[Akiba et~al.(2019)Akiba, Sano, Yanase, Ohta, and
+  Koyama]{akiba2019optuna}
+Takuya Akiba, Shotaro Sano, Toshihiko Yanase, Takeru Ohta, and Masanori Koyama.
+\newblock Optuna: A next-generation hyperparameter optimization framework.
+\newblock In \emph{Proceedings of the 25th ACM SIGKDD International Conference
+  on Knowledge Discovery and Data Mining}, pages 2623--2631, 2019.
+\newblock \doi{10.1145/3292500.3330701}.
+
+\end{thebibliography}
