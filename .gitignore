@@ -7,9 +7,6 @@ __pycache__/
 .agents
 # Project artifacts
 /models/
-
-=======
->>>>>>> 4083789 (Initial commit)
 # C extensions
 *.so
 .vscode
@@ -230,7 +227,7 @@ __marimo__/
 *.out
 *.log
 *.synctex.gz
-.env.example
+!.env.example
 .langgraph_api/.langgraph_ops.pckl
 rapport/Memoire_GT_ISE_2026.tex
 .claude/settings.local.json

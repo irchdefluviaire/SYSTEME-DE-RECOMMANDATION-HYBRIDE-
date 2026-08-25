@@ -1,0 +1,152 @@
+name: kmerai-demo
+
+x-app-environment: &app-environment
+  PG_HOST: postgres
+  PG_PORT: "5432"
+  PG_DB: ${PG_DB:-kmer_ai}
+  PG_USER: ${PG_USER:-postgres}
+  PG_PASSWORD: ${PG_PASSWORD:?Definissez PG_PASSWORD dans .env}
+  NEO4J_URI: bolt://neo4j:7687
+  NEO4J_USER: ${NEO4J_USER:-neo4j}
+  NEO4J_PASSWORD: ${NEO4J_PASSWORD:?Definissez NEO4J_PASSWORD dans .env}
+  NEO4J_DATABASE: ${NEO4J_DATABASE:-neo4j}
+  MODEL_PATH: /app/models/st_finetuned/final
+  AGENT_USE_REAL_DBS: "1"
+  TEXT2CYPHER_DISABLE_HF: "1"
+
+x-app-base: &app-base
+  image: kmerai-runtime:demo
+  build:
+    context: .
+    dockerfile: Dockerfile
+  env_file:
+    - .env
+  environment: *app-environment
+  volumes:
+    - ./models/st_finetuned/final:/app/models/st_finetuned/final:ro
+    - ./data:/app/data:ro
+  networks:
+    - backend
+
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.6-pg17
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PG_DB:-kmer_ai}
+      POSTGRES_USER: ${PG_USER:-postgres}
+      POSTGRES_PASSWORD: ${PG_PASSWORD:?Definissez PG_PASSWORD dans .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./src/04_pgvector/schema_pgvector.sql:/docker-entrypoint-initdb.d/10-pgvector.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+    networks:
+      - backend
+
+  neo4j:
+    image: neo4j:2026.07.1
+    restart: unless-stopped
+    environment:
+      NEO4J_AUTH: ${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:?Definissez NEO4J_PASSWORD dans .env}
+      NEO4J_server_memory_heap_initial__size: 512m
+      NEO4J_server_memory_heap_max__size: 1g
+      NEO4J_server_memory_pagecache_size: 512m
+    volumes:
+      - neo4j_data:/data
+      - neo4j_logs:/logs
+    healthcheck:
+      test: ["CMD-SHELL", "cypher-shell -u neo4j -p '$${NEO4J_AUTH#*/}' 'RETURN 1' >/dev/null 2>&1"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 40s
+    networks:
+      - backend
+
+  api:
+    <<: *app-base
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - test -s /app/models/st_finetuned/final/modules.json && exec python -m uvicorn src.06_api.main:app --host 0.0.0.0 --port 8000 --workers 1
+    depends_on:
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 20s
+      timeout: 10s
+      retries: 12
+      start_period: 90s
+
+  ui:
+    <<: *app-base
+    restart: unless-stopped
+    command:
+      - sh
+      - -c
+      - test -s /app/models/st_finetuned/final/modules.json && exec python -m streamlit run chatbot_app.py --server.address=0.0.0.0 --server.port=8501 --server.headless=true --browser.gatherUsageStats=false
+    depends_on:
+      postgres:
+        condition: service_healthy
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8501/_stcore/health', timeout=5)"]
+      interval: 20s
+      timeout: 10s
+      retries: 12
+      start_period: 90s
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./deploy/gcp/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      api:
+        condition: service_healthy
+      ui:
+        condition: service_healthy
+    networks:
+      - backend
+
+  init-neo4j:
+    <<: *app-base
+    profiles: ["init"]
+    command: ["python", "src/03_knowledge_graph/load_neo4j.py"]
+    restart: "no"
+    depends_on:
+      neo4j:
+        condition: service_healthy
+
+  init-pgvector:
+    <<: *app-base
+    profiles: ["init"]
+    command: ["python", "src/04_pgvector/embed_all_entities.py", "--model", "/app/models/st_finetuned/final", "--batch-size", "64"]
+    restart: "no"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
+  neo4j_data:
+  neo4j_logs:
+  caddy_data:
+  caddy_config:
+
+networks:
+  backend:
+    driver: bridge
