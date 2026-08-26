@@ -24,3 +24,5 @@ COPY --chown=app:app . .
 USER app
 
 EXPOSE 8000 8501
+
+CMD ["streamlit", "run", "chatbot_app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true", "--browser.gatherUsageStats=false", "--server.enableCORS=false"]
